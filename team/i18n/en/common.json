@@ -4,5 +4,8 @@
   "gate.G2": "Technical design approval",
   "gate.G3": "Sprint acceptance",
   "decision.validated": "approved",
-  "decision.changes-requested": "changes requested"
+  "decision.changes-requested": "changes requested",
+  "decision.accepte": "accepted",
+  "decision.accepte-avec-reserves": "accepted with reservations",
+  "decision.refuse": "rejected"
 }

@@ -201,9 +201,15 @@ const questions = (() => {
   if (existsSync(dir)) {
     return readdirSync(dir).filter((f) => /^Q-\d+.*\.md$/.test(f)).sort().map((f) => {
       const { meta, body } = parseFront(read(join(dir, f)));
-      const part = (t) => ((body.split(/^##\s+/m).find((s) => norm(s.split('\n')[0]).startsWith(norm(t))) || '').split('\n').slice(1).join(' ').trim());
+      // Sections in the order of forum.md: question, context, hypothesis, answer. Their titles are in the
+      // project language, so they are found by position; by their French title in a project before 0.4.0.
+      const parts = body.split(/^##\s+/m).slice(1);
+      const textOf = (s) => (s || '').split('\n').slice(1).join(' ').trim();
+      const byTitle = (t) => textOf(parts.find((s) => norm(s.split('\n')[0]).startsWith(norm(t))));
+      const answered = meta.statut === 'repondue';
+      const hypAt = parts.length > 2 && !(answered && parts.length === 3) ? parts[2] : null;
       return { id: meta.id || f.match(/^(Q-\d+)/)[1], statut: meta.statut || 'ouverte', bloquant: meta.bloquant === 'oui',
-        lie: [].concat(meta.lie_a || []), text: part('Question'), hyp: part('Hypothèse') };
+        lie: [].concat(meta.lie_a || []), text: LEGACY ? byTitle('Question') : textOf(parts[0]), hyp: LEGACY ? byTitle('Hypothèse') : textOf(hypAt) };
     });
   }
   if (!LEGACY) return [];

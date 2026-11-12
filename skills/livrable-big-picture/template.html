@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="statut" content="brouillon">
+  <meta name="date" content="AAAA-MM-JJ">
   <title>Big picture · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,7 +36,7 @@
     </header>
 
     <section class="section" data-level="obligatoire">
-      <h2>Objectifs et périmètre</h2>
+      <h2 id="objectifs-et-perimetre">Objectifs et périmètre</h2>
       <p class="hint">Ce que cette big picture doit permettre, et ce qu'elle regarde. La vision et les personas sont dans le cadrage : on ne les recopie pas.</p>
       <div class="grid c2">
         <div class="card soft">
@@ -55,7 +57,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Légende</h2>
+      <h2 id="legende">Légende</h2>
       <p class="hint">La légende de l'event storming big picture (Brandolini). La garder telle quelle : tous les projets lisent la même.</p>
       <div class="legend">
         <span><i style="background:var(--es-event)"></i>Événement métier (« J'ai … », vécu par l'acteur)</span>
@@ -70,13 +72,13 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Frise des événements</h2>
+      <h2 id="frise-des-evenements">Frise des événements</h2>
       <p class="hint">Les phases se suivent de gauche à droite et passent à la ligne. Dans une phase, un couloir par flux, une colonne par moment : l'événement en tête (« J'ai … », du point de vue de son acteur), puis l'acteur, le système, le hotspot ou l'opportunité. Les flèches suivent le flux dans une phase ; un renvoi « → 3 » indique où le couloir continue.</p>
-      <!-- data-lanes : les couloirs, dans l'ordre d'affichage. Un couloir dont le nom commence par "Hors" est grisé et sans flèches.
+      <!-- data-lanes : les couloirs, dans l'ordre d'affichage. data-lanes-out : ceux qui sont hors périmètre, grisés et sans flèches.
            Chaque .bp-col : data-lane (son couloir) et data-t (son moment dans la phase, les colonnes s'alignent d'un couloir à l'autre).
            Flèches : automatiques d'un événement au suivant de son couloir. data-flow="end" sur une colonne coupe la chaîne
            (alternatives). Flèche entre couloirs : id="ev-xxx" sur la cible, data-links="ev-xxx" sur l'événement source. -->
-      <div class="bp-frise" data-lanes="Flux A ; Flux B ; Hors périmètre">
+      <div class="bp-frise" data-lanes="Flux A ; Flux B ; Hors périmètre" data-lanes-out="Hors périmètre">
 
         <div class="bp-phase" data-phase="1. Phase">
           <div class="bp-col" data-lane="Flux A" data-t="1">
@@ -115,7 +117,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Événements pivots</h2>
+      <h2 id="evenements-pivots">Événements pivots</h2>
       <p class="hint">Les 3 à 6 événements après lesquels le domaine ne revient pas en arrière, ou qui passent la main à un autre acteur. Chacun clôt une phase.</p>
       <table>
         <thead><tr><th>Événement</th><th>Phase</th><th>Ce qui change après</th><th>Qui prend la main</th></tr></thead>
@@ -126,7 +128,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Acteurs et systèmes externes</h2>
+      <h2 id="acteurs-et-systemes-externes">Acteurs et systèmes externes</h2>
       <p class="hint">Chaque acteur renvoie à un persona du cadrage (« Application » pour les réactions automatiques). Chaque système externe dit ce qu'il apporte au parcours.</p>
       <div class="grid c2">
         <div>
@@ -151,7 +153,7 @@
     </section>
 
     <section class="section hotspots" data-level="obligatoire">
-      <h2>Hotspots</h2>
+      <h2 id="hotspots">Hotspots</h2>
       <p class="hint">Questions, conflits entre règles, risques. Un hotspot qui attend une réponse métier cite sa question Q-xxx, en lien vers son fichier. Liste vide : l'écrire.</p>
       <table>
         <thead><tr><th>Type</th><th>Hotspot</th><th>Phase</th><th>Question</th><th>Bloquant</th></tr></thead>
@@ -164,7 +166,7 @@
     </section>
 
     <section class="section opportunities" data-level="recommande">
-      <h2>Opportunités</h2>
+      <h2 id="opportunites">Opportunités</h2>
       <p class="hint">Les idées d'amélioration repérées en route. Elles nourrissent la story map, sans engagement.</p>
       <table>
         <thead><tr><th>Opportunité</th><th>Phase</th><th>Valeur attendue</th></tr></thead>

@@ -52,7 +52,8 @@ successives. Chaque passe a son objet.
    (« J'ai cliqué sur Valider »). Viser large, y compris les échecs et ce qui sortira du périmètre.
 2. **Flux.** Regrouper les événements en **couloirs**, un par flux ou scénario qui se lit d'une traite
    (« réservation ponctuelle », « réservation récurrente », « gestion du parc »). Ce qui est vu mais
-   exclu va dans un couloir « Hors périmètre ».
+   exclu va dans un couloir « Hors périmètre » (nommé dans la langue du projet), déclaré aussi dans
+   `data-lanes-out` pour être grisé.
 3. **Chronologie et phases.** Ordonner chaque couloir dans le temps, puis découper l'ensemble en
    **phases** (4 à 7). Dans une phase, `data-t` donne le moment : deux événements simultanés de deux
    couloirs ont le même `data-t`.

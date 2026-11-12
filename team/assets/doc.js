@@ -27,6 +27,9 @@
     "common.decision.validated": "validé",
     "common.decision.changes-requested": "retours demandés",
     "common.date.short": "dd.mm.yyyy",
+    "common.decision.accepte": "accepté",
+    "common.decision.accepte-avec-reserves": "accepté avec réserves",
+    "common.decision.refuse": "refusé",
     "doc.close": "Fermer",
     "doc.info.aria": "Explication : {title}",
     "doc.completeness.missing": {"one":"{n} section obligatoire à compléter : {list}","other":"{n} sections obligatoires à compléter : {list}"},
@@ -1422,8 +1425,9 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // <div class="bp-frise" data-lanes="Flow A ; Flow B ; Hors périmètre">
   //   <div class="bp-phase" data-phase="1. Name">
   //     <div class="bp-col" data-lane="Flow A" data-t="1">stickies stacked top to bottom</div>
-  // data-t is the time slot inside the phase (columns align across lanes). A lane whose name starts
-  // with "Hors" is drawn greyed.
+  // data-t is the time slot inside the phase (columns align across lanes). The lanes named in
+  // data-lanes-out="Out of scope" are drawn greyed; without that attribute (pages before 0.4.0), a lane
+  // whose name starts with "Hors".
   // Flow arrows: inside a phase, each event is linked to the next event of its lane, except in "Hors"
   // lanes. data-flow="end" on a .bp-col stops the chain after it. Between phases the frise wraps, so a
   // lane that goes on gets a continuation mark instead of a long arrow: "→ 3" on its last event, "2 →"
@@ -1432,7 +1436,8 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   function frise() {
     $$('.bp-frise').forEach((f, fi) => {
       const lanes = (f.dataset.lanes || '').split(';').map((l) => l.trim()).filter(Boolean);
-      const isOut = (l) => /^hors/i.test(l);
+      const outs = f.hasAttribute('data-lanes-out') ? f.dataset.lanesOut.split(';').map((l) => l.trim()).filter(Boolean) : null;
+      const isOut = (l) => (outs ? outs.includes(l) : /^hors/i.test(l));
       f.classList.add('diagram');
       const chains = new Map(lanes.map((l) => [l, []]));
       const phaseNo = (p) => ((p.dataset.phase || '').match(/^\s*(\d+)/) || [])[1];

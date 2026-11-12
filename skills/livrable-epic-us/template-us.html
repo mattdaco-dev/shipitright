@@ -55,17 +55,17 @@
     </header>
 
     <section class="section" data-level="obligatoire">
-      <h2>Contexte</h2>
+      <h2 id="contexte">Contexte</h2>
       <p><span class="todo">où on est dans le produit, ce qui existe et pourquoi ça ne suffit pas. 2 à 4 lignes : un agent qui découvre le produit doit pouvoir situer la story.</span></p>
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Besoin</h2>
+      <h2 id="besoin">Besoin</h2>
       <p class="us-need"><b>En tant que</b> <span class="todo">un seul rôle</span>, <b>je veux</b> <span class="todo">capacité</span>, <b>afin de</b> <span class="todo">finalité livrée par cette story</span>.</p>
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Périmètre</h2>
+      <h2 id="perimetre">Périmètre</h2>
       <div class="scope two">
         <div class="in"><h4>Dans la story</h4>
           <ul><li><span class="todo">ce que la story livre</span></li></ul>
@@ -77,7 +77,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Règles fonctionnelles</h2>
+      <h2 id="regles-fonctionnelles">Règles fonctionnelles</h2>
       <p class="hint">Invariants déclaratifs, numérotés. Une règle de gestion partagée cite son RG-xx. Une question ouverte porte son badge, qui renvoie à la question.</p>
       <table>
         <thead><tr><th style="width:56px">N°</th><th>Règle</th><th style="width:110px">Règle de gestion</th></tr></thead>
@@ -89,7 +89,7 @@
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Exigences transverses</h2>
+      <h2 id="exigences-transverses">Exigences transverses</h2>
       <p class="hint">Ce que la recette vérifie sans qu'une règle métier le dise : états de l'écran, accessibilité, libellés, performance, sécurité. Une ligne par exigence, avec la façon de la vérifier.</p>
       <table>
         <thead><tr><th style="width:215px">Catégorie</th><th>Exigence</th><th style="width:210px">Vérification</th></tr></thead>
@@ -104,7 +104,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Critères d'acceptation</h2>
+      <h2 id="criteres-d-acceptation">Critères d'acceptation</h2>
       <p class="hint">Scénarios numérotés, un comportement chacun, sans donnée de test. Un ticket, un test ou une campagne cite un scénario par son identifiant US-xxx/S2, en lien vers l'ancre #S2 de cette page.</p>
       <!-- Plain text. Each "Scénario n : title" becomes a card anchored #Sn. Keywords: Étant donné, Quand, Alors, Et, Mais.
            Visible labels between « », variable parts between &lt;chevrons&gt;. -->
@@ -123,7 +123,7 @@ Scénario 2 : <span class="todo">cas bloqué ou erreur</span>
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Écrans et prototype</h2>
+      <h2 id="ecrans-et-prototype">Écrans et prototype</h2>
       <p class="hint">Chaque écran et état touché, avec son lien dans le prototype et sa capture (US-xxx_&lt;ce-qu-elle-montre&gt;.jpg, à côté de la story). Story sans écran : l'écrire.</p>
       <table>
         <thead><tr><th>Écran</th><th>État</th><th>Prototype</th><th>Ce qu'il montre</th></tr></thead>
@@ -139,7 +139,7 @@ Scénario 2 : <span class="todo">cas bloqué ou erreur</span>
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Données d'exemple</h2>
+      <h2 id="donnees-d-exemple">Données d'exemple</h2>
       <p class="hint">Fictives, pour le QA et les devs. Chaque jeu dit quel scénario il illustre. Aucune règle ici.</p>
       <table>
         <thead><tr><th>Jeu</th><th>Illustre</th><th>Données</th></tr></thead>
@@ -150,7 +150,7 @@ Scénario 2 : <span class="todo">cas bloqué ou erreur</span>
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Notes techniques</h2>
+      <h2 id="notes-techniques">Notes techniques</h2>
       <div class="info-body" hidden>
         <p>Remplies par l'architecte en P3. Endpoints, traitements, entités et schémas : bloc généré par <code>team/scripts/detaillee-pages.mjs</code> depuis la balise <code>meta name="endpoints"</code> et la <a href="../../30-conception/detaillee/index.html">conception détaillée</a>, ne pas l'éditer. L'architecte écrit les contraintes et le tableau scénario, élément qui le sert, écran. Pas de chemins de code.</p>
       </div>
@@ -167,14 +167,14 @@ Scénario 2 : <span class="todo">cas bloqué ou erreur</span>
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Points à trancher</h2>
+      <h2 id="points-a-trancher">Points à trancher</h2>
       <ul>
         <li><a class="qmark" href="../../questions.html#Q-xxx">Q-xxx</a> <span class="todo">question ouverte, hypothèse retenue en attendant, bloquante ou non. Aucune : l'écrire</span></li>
       </ul>
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Definition of Ready</h2>
+      <h2 id="definition-of-ready">Definition of Ready</h2>
       <!-- Tick an item with class="done". The count next to the title is computed. -->
       <ul class="checklist">
         <li>Un seul acteur dans le besoin, et le « afin de » se vérifie à la recette de la story</li>

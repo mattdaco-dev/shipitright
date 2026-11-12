@@ -29,6 +29,10 @@ la langue du projet**, titres de sections et étiquettes d'en-tête compris (`<b
 `<b>Status</b>` en anglais). Il ne traduit ni les attributs ni les valeurs codées : ce sont eux que les
 scripts lisent.
 
+Les titres de sections des gabarits portent un `id` fixe (`<h2 id="matrice-de-couverture">`) : on
+traduit le titre, jamais l'`id`, et les liens d'un livrable à l'autre restent valides. Une section
+ajoutée et citée ailleurs reçoit aussi un `id` explicite.
+
 ## 3. Ce que les scripts lisent : jamais du texte visible
 
 Un script ou `check-livrable` ne repère jamais un champ, une section ou une valeur par son libellé
@@ -54,8 +58,11 @@ visible. Il lit :
 Fichiers sans attribut (Markdown, YAML) : la structure se lit sur une forme fixe, jamais sur un mot.
 
 - Schéma YAML de l'API : première ligne `# domain: <libellé du domaine>`.
-- Question (`.team/questions/`) : sa réponse est la dernière section `##` d'une question au statut
-  `repondue`, quel que soit son titre (format : `team/conventions/forum.md`).
+- Question (`.team/questions/`) : sections `##` dans un ordre fixe, question, contexte, hypothèse,
+  réponse, quels que soient leurs titres (format : `team/conventions/forum.md`).
+- Livrable rédigé à la main : `<meta name="statut">` (`brouillon`, `en-revue`, `valide`) et
+  `<meta name="date">` (ISO), tenues à jour avec son en-tête ; les gabarits les portent déjà. La page de
+  pilotage ne lit qu'elles.
 
 ## 4. Journal : la décision d'un gate
 

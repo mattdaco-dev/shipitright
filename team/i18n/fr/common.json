@@ -5,5 +5,8 @@
   "gate.G3": "Recette du sprint",
   "decision.validated": "validé",
   "decision.changes-requested": "retours demandés",
-  "date.short": "dd.mm.yyyy"
+  "date.short": "dd.mm.yyyy",
+  "decision.accepte": "accepté",
+  "decision.accepte-avec-reserves": "accepté avec réserves",
+  "decision.refuse": "refusé"
 }

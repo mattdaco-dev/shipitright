@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="statut" content="brouillon">
+  <meta name="date" content="AAAA-MM-JJ">
   <title>Conception fonctionnelle · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,14 +35,14 @@
     </header>
 
     <section class="section" data-level="obligatoire">
-      <h2>Périmètre et références</h2>
+      <h2 id="perimetre-et-references">Périmètre et références</h2>
       <p class="hint">Ce que cette conception couvre, et les livrables dont elle découle.</p>
       <dl class="defs">
         <dt>Release couverte</dt><dd><span class="todo">ex. MVP</span></dd>
         <dt>Epics</dt><dd><a href="epics/EPIC-01-slug.html">EPIC-01</a> <span class="todo">nom</span></dd>
         <dt>Hors de cette conception</dt><dd><span class="todo">ce qui est traité plus tard, avec la raison</span></dd>
       </dl>
-      <h3>Livrables liés</h3>
+      <h3 id="livrables-lies">Livrables liés</h3>
       <ul>
         <li><a href="../00-cadrage/cadrage.html">Cadrage et vision</a></li>
         <li><a href="../10-analyse/big-picture.html">Big picture</a></li>
@@ -50,7 +52,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Parcours fonctionnels</h2>
+      <h2 id="parcours-fonctionnels">Parcours fonctionnels</h2>
       <p class="hint">Un parcours par activité de la story map, dans le même formalisme pour tous : une couleur par type d'étape, les règles et messages en pastilles. Le parcours décrit ce qui se passe, pas les écrans.</p>
       <div class="legend">
         <span><i class="pf-start"></i>Déclencheur</span>
@@ -76,7 +78,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Règles de gestion</h2>
+      <h2 id="regles-de-gestion">Règles de gestion</h2>
       <p class="hint">Une règle par ligne, phrase déclarative, numéro stable. Les règles du cadrage gardent leur numéro. Une règle abandonnée reste, barrée, avec la raison. Les colonnes Stories et Écrans font la traçabilité : chaque règle a au moins une story.</p>
       <div class="table-wrap">
         <table>
@@ -95,7 +97,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Modèle conceptuel des données métier</h2>
+      <h2 id="modele-conceptuel-des-donnees-metier">Modèle conceptuel des données métier</h2>
       <p class="hint">Les objets que le métier manipule, leurs attributs clés au format nom [type métier] et leurs relations. Aux deux bouts de chaque relation, la cardinalité côté objet : combien de cet objet pour un de l'autre (0:1, 1:1, 0:n, 1:n). Pas de clés techniques ni de types SQL : le modèle physique revient à l'architecte.</p>
       <!-- One card per object: name in <b>, one attribute per line "name <i>[business type]</i>".
            Relations: data-links="target|label|card near the source|card near the target" (0:1, 1:1, 0:n, 1:n).
@@ -118,7 +120,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Cycles de vie des objets métier</h2>
+      <h2 id="cycles-de-vie-des-objets-metier">Cycles de vie des objets métier</h2>
       <p class="hint">Un diagramme par objet qui a un statut. Chaque transition dit son événement ; le tableau précise l'acteur et la condition.</p>
       <h3><span class="todo">Objet métier</span></h3>
       <!-- States: pf-node state (state final for an end state), start: pf-node dot. Each transition carries its event. -->
@@ -136,7 +138,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Rôles et droits</h2>
+      <h2 id="roles-et-droits">Rôles et droits</h2>
       <p class="hint">Qui peut faire quoi, et sur quelle portée. Une colonne par rôle du cadrage.</p>
       <div class="table-wrap">
         <table>
@@ -150,7 +152,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Questions et hypothèses</h2>
+      <h2 id="questions-et-hypotheses">Questions et hypothèses</h2>
       <p class="hint">Ce qui n'est pas tranché. Chaque question est aussi posée dans .team/questions/. Liste vide : l'écrire.</p>
       <table>
         <thead><tr><th>Id</th><th>Question ou hypothèse</th><th>Bloquante</th><th>Impacte</th><th>Statut</th></tr></thead>
@@ -162,7 +164,7 @@
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Notifications et messages</h2>
+      <h2 id="notifications-et-messages">Notifications et messages</h2>
       <p class="hint">Messages vus par l'utilisateur, e-mails, notifications. Libellé au mot près, parties variables entre chevrons.</p>
       <div class="table-wrap">
         <table>
@@ -175,7 +177,7 @@
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Calculs et algorithmes métier</h2>
+      <h2 id="calculs-et-algorithmes-metier">Calculs et algorithmes métier</h2>
       <p class="hint">Formule, entrées, règles d'arrondi, cas limites, et un exemple chiffré fictif.</p>
       <div class="card" id="CALC-01">
         <h4>CALC-01 · <span class="todo">nom du calcul</span></h4>
@@ -190,7 +192,7 @@
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Exigences non fonctionnelles métier</h2>
+      <h2 id="exigences-non-fonctionnelles-metier">Exigences non fonctionnelles métier</h2>
       <p class="hint">Ce que le métier attend en délais, volumes, disponibilité, conservation. Chaque exigence est mesurable.</p>
       <table>
         <thead><tr><th>Type</th><th>Exigence</th><th>Cible</th><th>Source</th></tr></thead>
@@ -202,7 +204,7 @@
     </section>
 
     <section class="section" data-level="facultatif">
-      <h2>Glossaire complémentaire</h2>
+      <h2 id="glossaire-complementaire">Glossaire complémentaire</h2>
       <p class="hint">Termes apparus depuis le cadrage. À reporter ensuite dans le glossaire du cadrage.</p>
       <dl class="defs">
         <dt><span class="todo">terme</span></dt><dd>définition</dd>

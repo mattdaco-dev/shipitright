@@ -70,7 +70,11 @@ Un projet de test se crée hors du dépôt, jamais dedans.
 ```sh
 claude plugin validate .                                        # plugin et marketplace
 node team/scripts/check-livrable.mjs team/exemples/formats/docs # exemples sans KO
+node team/scripts/i18n-fallback.mjs --check                     # libellés fr embarqués à jour, fr et en mêmes clés
 ```
+
+Après un changement de `team/assets/`, recopier les assets dans `team/exemples/formats/docs/_assets/`
+et relancer `node team/scripts/i18n-assets.mjs team/exemples/formats`.
 
 Après un changement de script, le lancer aussi sur un projet factice créé par
 `team/scripts/init-projet.sh <slug> "<Nom>" <dossier>`, hors du dépôt.

@@ -42,7 +42,7 @@
     </header>
 
     <section class="section" data-level="obligatoire" data-section="physical-model">
-      <h2>Modèle physique</h2>
+      <h2 id="modele-physique">Modèle physique</h2>
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
@@ -60,14 +60,14 @@
 );
 -- <span class="todo">la requête que l'index sert, avec l'endpoint ou le traitement en lien</span>
 CREATE INDEX <span class="todo">nom_index</span> ON <span class="todo">nom_table(colonnes)</span>;</code></pre>
-      <h3>Règles hors de la base</h3>
+      <h3 id="regles-hors-de-la-base">Règles hors de la base</h3>
       <ul>
         <li><span class="todo">RG-xx en lien : pourquoi elle ne peut pas être une contrainte (heure courante, autre ligne, session), et où elle vit (objet du domaine, TR-xx en lien) ; sans objet, retirer ce titre et la liste</span></li>
       </ul>
     </section>
 
     <section class="section" data-level="recommande">
-      <h2>Machine à états</h2>
+      <h2 id="machine-a-etats">Machine à états</h2>
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
@@ -86,7 +86,7 @@ CREATE INDEX <span class="todo">nom_index</span> ON <span class="todo">nom_table
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Qui agit dessus</h2>
+      <h2 id="qui-agit-dessus">Qui agit dessus</h2>
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
@@ -99,7 +99,7 @@ CREATE INDEX <span class="todo">nom_index</span> ON <span class="todo">nom_table
     </section>
 
     <section class="section" id="points-ouverts" data-level="recommande">
-      <h2>Points ouverts</h2>
+      <h2 id="points-ouverts">Points ouverts</h2>
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur cette entité.</dd>

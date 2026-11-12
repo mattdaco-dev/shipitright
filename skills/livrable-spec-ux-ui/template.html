@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="statut" content="brouillon">
+  <meta name="date" content="AAAA-MM-JJ">
   <title>Spécifications UX/UI · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -33,7 +35,7 @@
     </header>
 
     <section class="section" data-level="obligatoire">
-      <h2>Principes UX</h2>
+      <h2 id="principes-ux">Principes UX</h2>
       <p class="hint">Trois à six principes propres au produit. Chacun dit ce qu'il change concrètement sur les écrans, en citant l'écran ou la règle concernés.</p>
       <div class="grid c3">
         <div class="card">
@@ -48,21 +50,21 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Design system appliqué</h2>
+      <h2 id="design-system-applique">Design system appliqué</h2>
       <p class="hint">Le design system du projet, déclaré dans .team/socle.md. La spec ne recopie ni ses tokens, ni ses composants, ni sa grille : elle dit lesquels elle utilise, et décrit seulement ce que le produit ajoute ou change.</p>
       <dl class="defs">
         <dt>Socle</dt><dd><a href="../../.team/socles/design-systems/NOM_DS/socle.md"><span class="todo">nom du socle</span></a></dd>
         <dt>Version</dt><dd><span class="todo">version du DS</span></dd>
         <dt>Statut</dt><dd><span class="todo">imposé au projet, ou créé pour le projet (à valider à G1)</span></dd>
       </dl>
-      <h3>Composants utilisés</h3>
+      <h3 id="composants-utilises">Composants utilisés</h3>
       <table>
         <thead><tr><th>Composant du DS</th><th>Variante</th><th>Écrans</th></tr></thead>
         <tbody>
           <tr><td><span class="todo">nom exact dans le DS</span></td><td></td><td><a href="#EC-01">EC-01</a></td></tr>
         </tbody>
       </table>
-      <h3>Compléments et écarts</h3>
+      <h3 id="complements-et-ecarts">Compléments et écarts</h3>
       <p class="hint">Complément : ce que le DS ne prévoit pas (composant propre au produit, comportement responsive d'un écran). Écart : ce qui s'éloigne du DS, avec sa raison. Liste vide : l'écrire.</p>
       <table>
         <thead><tr><th>Élément</th><th>Nature</th><th>Écrans</th><th>Ce qui est décidé</th></tr></thead>
@@ -73,7 +75,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Parcours utilisateurs</h2>
+      <h2 id="parcours-utilisateurs">Parcours utilisateurs</h2>
       <p class="hint">Wireflow : un schéma par persona, les écrans EC-xx enchaînés par l'action qui fait passer de l'un à l'autre. Une boîte de dialogue appartient à son écran et y revient quand on la ferme : pas de flèche de retour. Un refus qui laisse sur l'écran est un état de l'écran : il figure en pastille, pas en étape. Le titre cite les parcours fonctionnels couverts.</p>
       <div class="legend">
         <span><i class="pf-screen"></i>Écran</span>
@@ -92,7 +94,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Inventaire des écrans</h2>
+      <h2 id="inventaire-des-ecrans">Inventaire des écrans</h2>
       <p class="hint">Une carte par écran, qui mène à son détail. Vignette : capture du prototype (captures/EC-xx-nominal.png), hachurée tant qu'elle n'est pas prise. Les tags listent les états décrits ; un état barré (classe na) est sans objet pour l'écran.</p>
       <div class="screens">
         <a class="screen-card" href="#EC-01">
@@ -104,7 +106,7 @@
           </div>
         </a>
       </div>
-      <h3>Couverture des stories</h3>
+      <h3 id="couverture-des-stories">Couverture des stories</h3>
       <p class="hint">Chaque story front a un écran, chaque écran a une story. Une ligne par story de la release.</p>
       <table>
         <thead><tr><th>Story</th><th>Écrans</th><th>États propres à la story</th></tr></thead>
@@ -115,7 +117,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Détail des écrans</h2>
+      <h2 id="detail-des-ecrans">Détail des écrans</h2>
       <p class="hint">Un bloc par écran, à dupliquer. Les messages fonctionnels citent leur MSG-xx et sont repris au mot près, parties variables entre chevrons ; les messages d'interface (états vide, erreur technique) sont définis ici en MSG-Uxx, avec une ancre. Un état sans objet le dit. Une boîte de dialogue se décrit sous son écran, ancre EC-xx-&lt;nom&gt;.</p>
 
       <h3 id="EC-01">EC-01 · <span class="todo">nom de l'écran</span></h3>
@@ -156,7 +158,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Formats de données</h2>
+      <h2 id="formats-de-donnees">Formats de données</h2>
       <p class="hint">Les formats du design system s'appliquent (dates, heures, nombres, montants). Ne figurent ici que les données propres au produit, avec leur affichage et leur saisie.</p>
       <table>
         <thead><tr><th>Donnée</th><th>Affichage</th><th>Saisie</th><th>Exemple fictif</th></tr></thead>
@@ -167,7 +169,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Accessibilité</h2>
+      <h2 id="accessibilite">Accessibilité</h2>
       <p class="hint">Le niveau et les règles générales viennent du design system. Ici, ce que le produit ajoute, vérifiable à la recette.</p>
       <dl class="defs">
         <dt>Niveau visé</dt><dd><span class="todo">celui du DS, ou plus exigeant avec la raison</span></dd>
@@ -178,7 +180,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Lien vers le prototype</h2>
+      <h2 id="lien-vers-le-prototype">Lien vers le prototype</h2>
       <p class="hint">Le prototype est la version cliquable de cette spec, aux tokens du design system. Il doit couvrir les mêmes écrans et les mêmes états.</p>
       <dl class="defs">
         <dt>Chemin</dt><dd><a href="../../prototype/index.html">prototype/index.html</a></dd>
@@ -189,7 +191,7 @@
     </section>
 
     <section class="section" data-level="facultatif">
-      <h2>Micro-interactions</h2>
+      <h2 id="micro-interactions">Micro-interactions</h2>
       <p class="hint">Transitions, retours visuels, temps de réponse perçus, quand le DS ne les fixe pas.</p>
       <table>
         <thead><tr><th>Interaction</th><th>Déclencheur</th><th>Effet</th><th>Durée</th></tr></thead>
