@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>US-006 Réserver une série · Réservation de salles</title>
+  <!-- Story metadata, read and filtered by the agents: grep 'name="epic" content="EPIC-02"' -->
+  <meta name="id" content="US-006">
+  <meta name="type" content="story">
+  <meta name="epic" content="EPIC-02">
+  <meta name="statut" content="brouillon">
+  <meta name="valide_par" content="humain">
+  <meta name="valide_le" content="12.10.2026">
+  <meta name="priorite" content="should">
+  <meta name="release" content="MVP">
+  <meta name="acteur" content="employé">
+  <meta name="ecrans" content="EC-04">
+  <meta name="regles" content="RG-01 RG-02 RG-03 RG-04 RG-05">
+  <meta name="endpoints" content="EP-04 EP-09 EP-10">
+  <meta name="depend_de" content="US-005">
+  <meta name="taille" content="M">
+  <meta name="front" content="40">
+  <meta name="notion_url" content="">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">User story US-006</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../story-map.html">← Story map</a><br><a href="../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications · <a href="../epics/EPIC-02-recherche-et-reservation.html">EPIC-02 Recherche et réservation</a></div>
+      <h1><span class="doc-kind">US-006</span> : Réserver une série quotidienne ou hebdomadaire</h1>
+      <div class="meta">
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Priorité</b> <span class="moscow should">Should</span></span>
+        <span><b>Release</b> MVP</span>
+        <span><b>Taille</b> M</span>
+        <span><b>Front / back</b> 40 / 60</span>
+        <span><b>Acteur</b> <a href="../../00-cadrage/cadrage.html#PER-01">employé</a></span>
+        <span><b>Dépend de</b> <a href="US-005-reserver-un-creneau.html">US-005</a></span>
+        <span><b>Validée</b> par l'humain au G1 du 12.10.2026</span>
+      </div>
+      <div class="meta">
+        <span><b>Sources</b> <a href="../conception-fonctionnelle.html#PF-02">PF-02</a>, <a href="../conception-fonctionnelle.html#RG-04">RG-04</a>, <a href="../conception-fonctionnelle.html#RG-05">RG-05</a>, <a href="../conception-fonctionnelle.html#CALC-01">CALC-01</a>, <a href="../conception-fonctionnelle.html#MSG-04">MSG-04</a>, <a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Contexte</h2>
+      <p>Les réunions d'équipe reviennent chaque semaine, parfois chaque jour. Avec la seule réservation ponctuelle (<a href="US-005-reserver-un-creneau.html">US-005</a>), l'employé repose le même créneau autant de fois et découvre les conflits un par un. La série pose toutes les occurrences en une fois et montre d'emblée celles qui tombent sur un créneau déjà pris.</p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Besoin</h2>
+      <p class="us-need"><b>En tant qu'</b>employé, <b>je veux</b> réserver une salle sur un même créneau chaque jour ouvré ou chaque semaine, jusqu'à une date de fin, <b>afin de</b> poser ma réunion régulière une seule fois.</p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Périmètre</h2>
+      <div class="scope two">
+        <div class="in"><h4>Dans la story</h4>
+          <ul>
+            <li>le choix de la fréquence (quotidienne, hebdomadaire) et de la date de fin dans le formulaire de réservation ;</li>
+            <li>le calcul des occurrences et le contrôle de chacune ;</li>
+            <li>la présentation des occurrences en conflit et la confirmation ;</li>
+            <li>la création des occurrences libres.</li>
+          </ul>
+        </div>
+        <div class="out"><h4>Hors story</h4>
+          <ul>
+            <li>l'annulation d'une occurrence ou de la série (<a href="US-008-annuler-une-reservation.html">US-008</a>, <a href="US-009-annuler-une-serie.html">US-009</a>) ;</li>
+            <li>la série mensuelle (<a href="US-012-reserver-une-serie-mensuelle.html">US-012</a>, release R3) ;</li>
+            <li>la garantie contre deux demandes simultanées (<a href="../../questions.html#Q-001">Q-001</a>).</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Règles fonctionnelles</h2>
+      <p class="hint">Invariants déclaratifs, numérotés. Une règle de gestion partagée cite son RG-xx. Une question ouverte porte son badge, qui renvoie à la question.</p>
+      <table>
+        <thead><tr><th style="width:56px">N°</th><th>Règle</th><th style="width:110px">Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr id="R1"><td>R1</td><td>Une série est quotidienne, sur les jours ouvrés du lundi au vendredi, ou hebdomadaire, le même jour de la semaine que la première occurrence.</td><td><a href="../conception-fonctionnelle.html#RG-04">RG-04</a></td></tr>
+          <tr id="R2"><td>R2</td><td>La dernière occurrence tombe au plus 3 mois après la première. Une date de fin au-delà est refusée.</td><td><a href="../conception-fonctionnelle.html#RG-04">RG-04</a></td></tr>
+          <tr id="R3"><td>R3</td><td>Chaque occurrence respecte les règles du créneau : pas de 15 minutes, heures ouvrées, 4 heures au plus, pas dans le passé.</td><td><a href="../conception-fonctionnelle.html#RG-02">RG-02</a>, <a href="../conception-fonctionnelle.html#RG-03">RG-03</a></td></tr>
+          <tr id="R4"><td>R4</td><td>Une occurrence qui chevauche une réservation active de la salle est en conflit.</td><td><a href="../conception-fonctionnelle.html#RG-01">RG-01</a></td></tr>
+          <tr id="R5"><td>R5</td><td>Les occurrences en conflit sont présentées avant toute création. Après confirmation, seules les occurrences libres sont créées ; sans confirmation, rien n'est créé.</td><td><a href="../conception-fonctionnelle.html#RG-05">RG-05</a></td></tr>
+          <tr id="R6"><td>R6</td><td>Les jours fériés ne sont pas exclus du calcul. <a class="qmark" href="../../questions.html#Q-005">Q-005</a></td><td>hypothèse</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Exigences transverses</h2>
+      <p class="hint">Ce que la recette vérifie sans qu'une règle métier le dise : états de l'écran, accessibilité, libellés, performance, sécurité. Une ligne par exigence, avec la façon de la vérifier.</p>
+      <table>
+        <thead><tr><th style="width:215px">Catégorie</th><th>Exigence</th><th style="width:210px">Vérification</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag info">État</span> chargement</td><td>Pendant le calcul des occurrences et l'enregistrement, un indicateur de chargement s'affiche et le bouton de confirmation est inactif.</td><td>recette visuelle</td></tr>
+          <tr><td><span class="tag info">État</span> erreur</td><td>Un échec d'enregistrement affiche un message d'erreur et ne crée aucune occurrence.</td><td>scénario <a href="#S7">S7</a></td></tr>
+          <tr><td><span class="tag violet">Accessibilité</span> annonce</td><td>À l'ouverture, la liste des occurrences en conflit est annoncée par le lecteur d'écran.</td><td>test au lecteur d'écran</td></tr>
+          <tr><td><span class="tag violet">Accessibilité</span> clavier</td><td>Le focus va sur « Créer les &lt;n&gt; occurrences libres » à l'ouverture ; « Échap » abandonne sans rien créer.</td><td>scénario <a href="#S6">S6</a>, test clavier</td></tr>
+          <tr><td><span class="tag">Libellés</span></td><td>Les textes affichés reprennent la conception fonctionnelle au mot près (<a href="../conception-fonctionnelle.html#MSG-02">MSG-02</a>, <a href="../conception-fonctionnelle.html#MSG-04">MSG-04</a>). Aucune chaîne en dur.</td><td>revue de code</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Critères d'acceptation</h2>
+      <p class="hint">Scénarios numérotés, un comportement chacun, sans donnée de test. Un ticket, un test ou une campagne cite un scénario par son identifiant US-006/S4, en lien vers l'ancre #S4 de cette page.</p>
+      <pre class="gherkin">
+Scénario 1 : réserver une série sans conflit
+  Étant donné qu'aucune occurrence de la série ne chevauche une réservation de la salle
+  Quand l'employé réserve une série hebdomadaire jusqu'à une date de fin valide
+  Alors toutes les occurrences sont créées
+  Et le message « Réservation confirmée : &lt;salle&gt;, le &lt;date&gt; de &lt;début&gt; à &lt;fin&gt;. » s'affiche pour la première occurrence
+
+Scénario 2 : la série quotidienne saute le week-end
+  Étant donné qu'une série quotidienne commence un vendredi
+  Quand l'employé la réserve
+  Alors l'occurrence suivante tombe le lundi
+
+Scénario 3 : la date de fin dépasse 3 mois
+  Étant donné que la date de fin choisie tombe plus de 3 mois après la première occurrence
+  Quand l'employé valide la série
+  Alors la série n'est pas créée
+  Et le formulaire signale la date de fin comme invalide
+
+Scénario 4 : des occurrences sont en conflit
+  Étant donné que certaines occurrences chevauchent une réservation de la salle
+  Quand l'employé valide la série
+  Alors le message « &lt;n&gt; occurrences sur &lt;total&gt; sont déjà prises et ne seront pas créées. » s'affiche
+  Et la liste des occurrences en conflit s'affiche avec leur date
+  Et aucune occurrence n'est encore créée
+
+Scénario 5 : confirmer malgré les conflits
+  Étant donné que les occurrences en conflit sont présentées
+  Quand l'employé confirme
+  Alors seules les occurrences libres sont créées
+
+Scénario 6 : renoncer à la série
+  Étant donné que les occurrences en conflit sont présentées
+  Quand l'employé choisit « Annuler » ou appuie sur « Échap »
+  Alors aucune occurrence n'est créée
+
+Scénario 7 : l'enregistrement échoue
+  Étant donné que l'application ne peut pas enregistrer la série
+  Quand l'employé confirme
+  Alors un message d'erreur s'affiche
+  Et aucune occurrence n'est créée
+      </pre>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Écrans et prototype</h2>
+      <p class="hint">Chaque écran et état touché, avec son lien dans le prototype et sa capture (US-006_&lt;ce-qu-elle-montre&gt;.jpg, à côté de la story).</p>
+      <table>
+        <thead><tr><th>Écran</th><th>État</th><th>Prototype</th><th>Ce qu'il montre</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a></td><td>série, nominal</td><td><a href="../../../prototype/index.html#EC-04">#EC-04</a>, Répéter : Chaque semaine</td><td>fréquence et date de fin</td></tr>
+          <tr><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a></td><td>conflits</td><td><a href="../../../prototype/index.html#EC-04">#EC-04</a>, série sur Alzette à 10:30, puis Réserver</td><td>message MSG-04 et liste des occurrences prises</td></tr>
+          <tr><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a></td><td>erreur</td><td><a href="../../../prototype/index.html#EC-04">#EC-04</a>, barre : Réglages &gt; États &gt; Erreur</td><td>échec d'enregistrement</td></tr>
+        </tbody>
+      </table>
+      <div class="shots">
+        <figure class="shot"><img src="US-006_serie-nominale.jpg" alt=""><figcaption>Série, nominal · <code>US-006_serie-nominale.jpg</code></figcaption></figure>
+        <figure class="shot"><img src="US-006_conflits.jpg" alt=""><figcaption>Conflits présentés · <code>US-006_conflits.jpg</code></figcaption></figure>
+        <figure class="shot"><img src="US-006_erreur.jpg" alt=""><figcaption>Erreur d'enregistrement · <code>US-006_erreur.jpg</code></figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Données d'exemple</h2>
+      <p class="hint">Fictives, pour le QA et les devs. Chaque jeu dit quel scénario il illustre. Aucune règle ici.</p>
+      <table>
+        <thead><tr><th>Jeu</th><th>Illustre</th><th>Données</th></tr></thead>
+        <tbody>
+          <tr id="D1"><td>D1</td><td><a href="#S1">S1</a></td><td>salle « Atlas », hebdomadaire, mardi 06.10.2026 10h00-11h00, fin 29.12.2026 : 13 occurrences</td></tr>
+          <tr id="D2"><td>D2</td><td><a href="#S2">S2</a></td><td>salle « Atlas », quotidienne, vendredi 09.10.2026 9h00-9h30 : occurrence suivante lundi 12.10.2026</td></tr>
+          <tr id="D3"><td>D3</td><td><a href="#S4">S4</a>, <a href="#S5">S5</a></td><td>comme D1, avec le mardi 20.10.2026 10h00-11h00 déjà réservé : 1 conflit, 12 occurrences créées</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Notes techniques</h2>
+      <div class="info-body" hidden>
+        <p>Endpoints, traitements, entités et schémas : générés par <code>team/scripts/detaillee-pages.mjs</code> depuis la balise <code>meta name="endpoints"</code> et la <a href="../../30-conception/detaillee/index.html">conception détaillée</a>, ne pas les éditer. L'architecte écrit en P3 les contraintes et le tableau scénario, élément, écran. Pas de chemins de code.</p>
+      </div>
+      <!-- gen:story-tech -->
+      <dl class="defs">
+        <dt>Endpoints</dt><dd><a href="../../30-conception/detaillee/endpoints/EP-04.html">EP-04</a> <code>GET /salles</code> Lister les salles <span class="tag ok">contrat figé</span><br><a href="../../30-conception/detaillee/endpoints/EP-09.html">EP-09</a> <code>POST /series/apercu</code> Calculer les occurrences d'une série et leurs conflits <span class="tag ok">contrat figé</span><br><a href="../../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> <code>POST /series</code> Créer une série <span class="tag ok">contrat figé</span></dd>
+        <dt>Traitements</dt><dd><a href="../../30-conception/detaillee/traitements/TR-01.html">TR-01</a> Calculer les occurrences et leurs conflits<br><a href="../../30-conception/detaillee/traitements/TR-02.html">TR-02</a> Contrôler et enregistrer un créneau</dd>
+        <dt>Entités</dt><dd><a href="../../30-conception/detaillee/entites/EN-03.html">EN-03</a> Salle (lecture)<br><a href="../../30-conception/detaillee/entites/EN-05.html">EN-05</a> Réservation (écriture)<br><a href="../../30-conception/detaillee/entites/EN-06.html">EN-06</a> Série (écriture)</dd>
+        <dt>Schémas</dt><dd><a href="../../30-conception/detaillee/schemas/Salle.html"><code>Salle</code></a>, <a href="../../30-conception/detaillee/schemas/SerieDemande.html"><code>SerieDemande</code></a>, <a href="../../30-conception/detaillee/schemas/SerieApercu.html"><code>SerieApercu</code></a>, <a href="../../30-conception/detaillee/schemas/SerieConfirmation.html"><code>SerieConfirmation</code></a>, <a href="../../30-conception/detaillee/schemas/SerieCreee.html"><code>SerieCreee</code></a></dd>
+      </dl>
+      <!-- /gen -->
+      <dl class="defs">
+        <dt>Contraintes</dt><dd>création atomique dans une transaction immédiate ; arbitrage PO : une occurrence confirmée prise depuis l'aperçu fait répondre <a href="../../30-conception/detaillee/transverse/erreurs.html#SERIE_CONFLITS_CHANGES"><code>SERIE_CONFLITS_CHANGES</code></a> sans rien créer ; une série de plus de 3 mois est refusée, pas tronquée (<a href="../../30-conception/detaillee/traitements/TR-01.html">TR-01</a>, arbitrage)</dd>
+      </dl>
+      <table>
+        <thead><tr><th>Scénario</th><th>Servi par</th><th>Écran</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#S1">S1</a> sans conflit</td><td><a href="../../30-conception/detaillee/endpoints/EP-09.html">EP-09</a> sans conflit, puis <a href="../../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> avec tous les jours</td><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a>, puis <a href="../../20-ux/spec-ux-ui.html#EC-05">EC-05</a> avec <a href="../conception-fonctionnelle.html#MSG-02">MSG-02</a></td></tr>
+          <tr><td><a href="#S2">S2</a> week-end sauté</td><td><a href="../../30-conception/detaillee/traitements/TR-01.html">TR-01</a>, étape des dates</td><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a>, récapitulatif</td></tr>
+          <tr><td><a href="#S3">S3</a> plus de 3 mois</td><td><a href="../../30-conception/detaillee/endpoints/EP-09.html">EP-09</a> <a href="../../30-conception/detaillee/transverse/erreurs.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a> ; sélecteur « Jusqu'au » borné</td><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a>, <a href="../../20-ux/spec-ux-ui.html#MSG-U13">MSG-U13</a></td></tr>
+          <tr><td><a href="#S4">S4</a> conflits présentés</td><td><a href="../../30-conception/detaillee/endpoints/EP-09.html">EP-09</a>, rien n'est écrit</td><td><a href="../../20-ux/spec-ux-ui.html#EC-04-conflits">Conflits de la série</a>, <a href="../conception-fonctionnelle.html#MSG-04">MSG-04</a></td></tr>
+          <tr><td><a href="#S5">S5</a> confirmer malgré les conflits</td><td><a href="../../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> avec les jours confirmés</td><td>dialogue, puis <a href="../../20-ux/spec-ux-ui.html#EC-05">EC-05</a></td></tr>
+          <tr><td><a href="#S6">S6</a> renoncer</td><td>aucun appel d'écriture</td><td>dialogue, « Échap »</td></tr>
+          <tr><td><a href="#S7">S7</a> échec d'enregistrement</td><td><a href="../../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> <a href="../../30-conception/detaillee/transverse/erreurs.html#ERREUR_INTERNE"><code>ERREUR_INTERNE</code></a>, transaction annulée</td><td><a href="../../20-ux/spec-ux-ui.html#EC-04">EC-04</a>, <a href="../../20-ux/spec-ux-ui.html#MSG-U06">MSG-U06</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Points à trancher</h2>
+      <ul>
+        <li><a class="qmark" href="../../questions.html#Q-005">Q-005</a> Les jours fériés sont-ils exclus des séries ? Hypothèse retenue en attendant : non (<a href="#R6">R6</a>). Non bloquant.</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Definition of Ready</h2>
+      <ul class="checklist">
+        <li class="done">Un seul acteur dans le besoin, et le « afin de » se vérifie à la recette de la story</li>
+        <li class="done">Chaque règle est déclarative ; les règles partagées citent leur RG-xx</li>
+        <li class="done">Les scénarios sont numérotés, nommés, complets, sans donnée de test</li>
+        <li class="done">Nominal, cas bloqué, chaque acteur, chaque parcours et l'état d'erreur sont couverts</li>
+        <li class="done">Les libellés sont au mot près, conformes à la conception fonctionnelle</li>
+        <li class="done">Chaque écran touché est cité, atteignable dans le prototype, avec sa capture</li>
+        <li class="done">Aucun point à trancher bloquant ; chaque question ouverte porte son badge Q-xxx</li>
+        <li class="done">Taille XS à L (une story XL se découpe avant d'entrer en sprint), part front renseignée, dépendances listées</li>
+        <li>Notes techniques et endpoints renseignés par l'architecte (requis avant le sprint planning)</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../_assets/doc.js"></script>
+</body>
+</html>

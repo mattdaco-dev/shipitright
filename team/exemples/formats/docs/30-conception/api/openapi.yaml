@@ -1,0 +1,213 @@
+# Contrat d'API de Réservation de salles : source de vérité entre backend et frontend, et source des
+# pages endpoints et schémas de la conception détaillée (team/scripts/detaillee-pages.mjs).
+# Exemple de format (team/exemples/formats). Périmètre : toute l'application, MVP, releases R2 et R3, soit les
+# 21 endpoints de la conception macro.
+#
+# Fichiers : ce fichier racine déclare info, tags, la liste des chemins et le nom de chaque composant ;
+# le contenu est dans des fichiers reliés par $ref externes :
+#   paths/<chemin>.yaml              un fichier par chemin (path item), toutes ses opérations
+#   components/schemas/<domaine>.yaml schémas regroupés par domaine (commun, session, salles,
+#                                    reservations, series, statistiques, erreurs) ; la première
+#                                    ligne « # Domaine « Libellé » » nomme la card du domaine
+#   components/parameters.yaml, components/responses.yaml
+# Un schéma, un paramètre ou une réponse n'existe que s'il est nommé ici sous components ; ailleurs,
+# on le cite par un $ref relatif à son fichier (« ../components/schemas/salles.yaml#/Salle »).
+# Validation : npx @redocly/cli@2.58.2 lint openapi.yaml (depuis ce dossier).
+#
+# Conventions (ADR-0004, docs/adr/0004-conventions-api-json.html) :
+#   - OpenAPI 3.1, toutes les routes sous /api
+#   - corps en application/json, ressources à plat, identifiants entiers
+#   - dates AAAA-MM-JJ, heures HH:MM (minutes depuis minuit en base seulement)
+#   - erreurs en application/problem+json (RFC 9457) avec un champ "code" métier stable
+#   - conflit en 409, règle de saisie en 422, requête mal formée en 400
+#   - pas de pagination : chaque liste est bornée par ses filtres
+#   - authentification par cookie de session opaque (ADR-0003)
+#
+# Évolution du contrat d'API (CF-58, CF-59 du contrat de conformité, detaillee/transverse/conformite.html) :
+#   - une opération "fige" ne perd rien et ne change rien. Seuls les ajouts rétrocompatibles sont
+#     permis : paramètre ou propriété de requête facultatifs, propriété de réponse, valeur d'enum
+#     annoncée d'avance avec sa release (x-enum-releases). Avant sa release, un élément annoncé n'est
+#     ni envoyé par le serveur ni accepté par lui (400 VALIDATION).
+#   - le front ignore une propriété de réponse et traduit une valeur d'enum qu'il ne connaît pas
+#     comme le cas générique de l'écran.
+#   - une opération "provisoire" change librement jusqu'au sprint planning qui la fige.
+#   - info.version : majeure interdite sans ADR accepté (rupture d'une opération figée) ; mineure à
+#     chaque ajout rétrocompatible figé, ou opération qui passe de provisoire à figée ; correctif
+#     pour un changement sans effet sur une opération figée (texte, exemple, opération provisoire).
+#   - chaque version a son entrée en tête de info.x-changelog, tenue à la main par l'architecte au
+#     planning qui fige ou ajoute ; le générateur refuse une version sans entrée.
+#
+# Extensions de la team (lues par le générateur, ignorées par les outils OpenAPI) :
+#   info        x-changelog      [{ version, date AAAA-MM-JJ, changes: ["genre : texte"] }], la plus
+#                                récente d'abord ; genre : ajout, annonce, figé, correction, rupture
+#   opération   x-endpoint-id    EP-xx de la conception macro (obligatoire)
+#               x-release        première release qui en a besoin : MVP, R2, R3
+#               x-contract       fige (contrat figé, le front part sur un mock) ou provisoire (question ouverte)
+#               x-roles          rôles admis : employe, gestionnaire, ou public
+#               x-module         module du code backend où vit l'opération (domain/reservation) ;
+#                                une ligne de la table des modules de l'organisation du code
+#               x-data-control   contrôles sur les données, au-delà du rôle (liste de phrases)
+#               x-processes      traitements TR-xx appelés
+#               x-entities       accès aux entités, en lettres d'une matrice CRUD (C création, R lecture,
+#                                U mise à jour, D suppression) : [{ id: EN-xx, access: CU }] pour un accès
+#                                direct ; [{ id: EN-xx, access: C, via: TR-xx }] pour l'accès réellement
+#                                obtenu par un traitement de x-processes, inclus dans ce que le traitement
+#                                déclare (meta entites) ; une ligne par entité que touche chaque traitement
+#               x-rules          règles de gestion RG-xx et calculs CALC-xx appliqués
+#               x-idempotence    comportement d'un second appel identique
+#               x-sequence       diagramme de séquence mermaid ; l'endpoint ouvre et ferme la transaction
+#               x-open           points ouverts, rangés par impact décroissant, chacun écrit une seule
+#                                fois, ici s'il porte sur l'opération : [{ impact: fort | moyen | faible,
+#                                sujet: ce qui reste à trancher, hypothese: ce que le code suit en
+#                                attendant, question: Q-xxx si elle est posée }] ; fort : modèle de
+#                                données ou opération figée ; moyen : opération provisoire, traitement,
+#                                schéma non figé, écran ; faible : libellé, message, cas limite
+#   réponse     x-codes          codes d'erreur métier (CodeErreur) que la réponse peut porter
+#   paramètre   x-release        release qui ajoute le paramètre, s'il arrive après l'opération
+#   schéma      x-entity         entité EN-xx dont le schéma est la projection réelle (pas un calcul)
+#               x-release        sur une propriété : release qui l'ajoute, si elle arrive plus tard
+#               x-enum-releases  valeurs d'enum annoncées et leur release : { mensuelle: R3 }
+#               x-for-codes      sur une propriété de Probleme : codes qui la renseignent
+#               x-error-catalog  sur CodeErreur : statut, cas, comportement à l'écran de chaque code,
+#                                et entity, l'entité EN-xx que le code met en cause
+#
+# Niveaux d'exigence contrôlés par le générateur :
+#   toute opération   x-endpoint-id, x-release, x-contract, x-roles, x-module : erreur s'il manque
+#   figée qui écrit   (C, U ou D) x-idempotence, x-sequence, x-entities ou x-processes : erreur
+#   figée en lecture  x-entities ou x-processes : erreur ; x-sequence : avertissement s'il manque
+#   provisoire        summary, x-roles, x-entities ou x-processes, x-open : erreur s'il manque ;
+#                     séquence et exemples facultatifs
+openapi: 3.1.0
+info:
+  title: Réservation de salles API
+  version: 1.1.4
+  description: >-
+    API du pilote Réservation de salles, toutes releases. Les opérations x-contract "fige" sont
+    figées ; les opérations "provisoire" (releases R2 et R3) attendent la réponse à un point d'attention de la
+    conception macro et seront figées au sprint planning qui les prend.
+  x-changelog:
+    - version: 1.1.4
+      date: '2026-10-09'
+      changes:
+        - "correction : lecture faite pour un contrôle déclarée en R dans x-entities (EP-08 et EP-10 CR, EP-19 RU via TR-02 ; EP-12 et EP-13 RU via TR-06 ; EP-15 CR, EP-16 et EP-17 RU sur EN-03 ; EP-20 RU), sans effet sur les opérations"
+    - version: 1.1.3
+      date: '2026-10-09'
+      changes:
+        - "correction : accès réellement obtenu par un traitement déclaré par chaque appelant (x-entities avec via), sans effet sur les opérations"
+        - "correction : exemple de la réponse 201 de EP-10, sans effet sur l'opération"
+        - "correction : réponse 403 propre à EP-19 et EP-20 (titulaire seulement), opérations provisoires"
+    - version: 1.1.2
+      date: '2026-10-08'
+      changes:
+        - "correction : module de code backend de chaque opération (x-module), sans effet sur les opérations"
+    - version: 1.1.1
+      date: '2026-10-08'
+      changes:
+        - "correction : textes du catalogue des erreurs et du cookie de session sans hypothèse ; chaque hypothèse est un point ouvert de son opération (x-open), sans effet sur les opérations"
+    - version: 1.1.0
+      date: '2026-10-07'
+      changes:
+        - "ajout : propriété `annulable` de `Reservation`, calculée par le serveur comme dans `MaReservation` (RG-03, RG-11)"
+        - "annonce : valeur `mensuelle` de `Frequence` pour la release R3"
+        - "annonce : valeurs PERIODE_INVALIDE (release R2) et HORS_FENETRE_PRESENCE (release R3) de CodeErreur"
+    - version: 1.0.0
+      date: '2026-10-07'
+      changes:
+        - "figé : 17 opérations du MVP ; EP-18 à EP-21 provisoires"
+        - "annonce : paramètres du et au de EP-06 pour la release R2"
+  license:
+    name: usage interne, données fictives
+    identifier: CC0-1.0
+servers:
+  - url: http://localhost:3000/api
+    description: local, backend Fastify
+security:
+  - sessionCookie: []
+tags:
+  - name: session
+    description: connexion, utilisateur courant, déconnexion
+  - name: salles
+    description: parc de salles, recherche d'une salle libre
+  - name: equipements
+    description: référentiel des équipements
+  - name: reservations
+    description: occupation, réservation ponctuelle, annulation, modification, présence
+  - name: series
+    description: aperçu, création et annulation d'une série
+  - name: statistiques
+    description: taux d'occupation du parc
+
+paths:
+  /session: {$ref: paths/session.yaml}
+  /salles: {$ref: paths/salles.yaml}
+  /salles/disponibles: {$ref: paths/salles-disponibles.yaml}
+  /salles/{id}: {$ref: paths/salles-id.yaml}
+  /salles/{id}/desactivation: {$ref: paths/salles-id-desactivation.yaml}
+  /equipements: {$ref: paths/equipements.yaml}
+  /reservations: {$ref: paths/reservations.yaml}
+  /reservations/{id}: {$ref: paths/reservations-id.yaml}
+  /reservations/{id}/annulation: {$ref: paths/reservations-id-annulation.yaml}
+  /reservations/{id}/presence: {$ref: paths/reservations-id-presence.yaml}
+  /moi/reservations: {$ref: paths/moi-reservations.yaml}
+  /series/apercu: {$ref: paths/series-apercu.yaml}
+  /series: {$ref: paths/series.yaml}
+  /series/{id}/annulation: {$ref: paths/series-id-annulation.yaml}
+  /creneaux/plus-proche: {$ref: paths/creneaux-plus-proche.yaml}
+  /statistiques/occupation: {$ref: paths/statistiques-occupation.yaml}
+
+components:
+  securitySchemes:
+    sessionCookie:
+      type: apiKey
+      in: cookie
+      name: rs_session
+      description: >-
+        Jeton opaque posé par POST /session (EP-01), HttpOnly, SameSite=Strict (ADR-0003).
+
+  parameters:
+    Jour: {$ref: components/parameters.yaml#/Jour}
+    Debut: {$ref: components/parameters.yaml#/Debut}
+    Fin: {$ref: components/parameters.yaml#/Fin}
+    Participants: {$ref: components/parameters.yaml#/Participants}
+    Equipements: {$ref: components/parameters.yaml#/Equipements}
+    IdSalle: {$ref: components/parameters.yaml#/IdSalle}
+    IdReservation: {$ref: components/parameters.yaml#/IdReservation}
+
+  schemas:
+    Jour: {$ref: components/schemas/commun.yaml#/Jour}
+    Heure: {$ref: components/schemas/commun.yaml#/Heure}
+    Role: {$ref: components/schemas/session.yaml#/Role}
+    ConnexionDemande: {$ref: components/schemas/session.yaml#/ConnexionDemande}
+    Utilisateur: {$ref: components/schemas/session.yaml#/Utilisateur}
+    StatutSalle: {$ref: components/schemas/salles.yaml#/StatutSalle}
+    Salle: {$ref: components/schemas/salles.yaml#/Salle}
+    SalleDetail: {$ref: components/schemas/salles.yaml#/SalleDetail}
+    SalleDemande: {$ref: components/schemas/salles.yaml#/SalleDemande}
+    SalleDesactivee: {$ref: components/schemas/salles.yaml#/SalleDesactivee}
+    Equipement: {$ref: components/schemas/salles.yaml#/Equipement}
+    Reservation: {$ref: components/schemas/reservations.yaml#/Reservation}
+    ReservationDemande: {$ref: components/schemas/reservations.yaml#/ReservationDemande}
+    MaReservation: {$ref: components/schemas/reservations.yaml#/MaReservation}
+    AnnulationDemande: {$ref: components/schemas/reservations.yaml#/AnnulationDemande}
+    Frequence: {$ref: components/schemas/series.yaml#/Frequence}
+    SerieDemande: {$ref: components/schemas/series.yaml#/SerieDemande}
+    SerieConfirmation: {$ref: components/schemas/series.yaml#/SerieConfirmation}
+    Occurrence: {$ref: components/schemas/series.yaml#/Occurrence}
+    SerieApercu: {$ref: components/schemas/series.yaml#/SerieApercu}
+    SerieCreee: {$ref: components/schemas/series.yaml#/SerieCreee}
+    SerieAnnulee: {$ref: components/schemas/series.yaml#/SerieAnnulee}
+    CreneauPropose: {$ref: components/schemas/reservations.yaml#/CreneauPropose}
+    StatistiquesOccupation: {$ref: components/schemas/statistiques.yaml#/StatistiquesOccupation}
+    OccupationSalle: {$ref: components/schemas/statistiques.yaml#/OccupationSalle}
+    CodeErreur: {$ref: components/schemas/erreurs.yaml#/CodeErreur}
+    Probleme: {$ref: components/schemas/erreurs.yaml#/Probleme}
+
+  responses:
+    BadRequest: {$ref: components/responses.yaml#/BadRequest}
+    Unauthorized: {$ref: components/responses.yaml#/Unauthorized}
+    Forbidden: {$ref: components/responses.yaml#/Forbidden}
+    SalleIntrouvable: {$ref: components/responses.yaml#/SalleIntrouvable}
+    ReservationIntrouvable: {$ref: components/responses.yaml#/ReservationIntrouvable}
+    CreneauPris: {$ref: components/responses.yaml#/CreneauPris}
+    DejaCommencee: {$ref: components/responses.yaml#/DejaCommencee}
+    InternalError: {$ref: components/responses.yaml#/InternalError}

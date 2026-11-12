@@ -1,0 +1,65 @@
+# Domaine « Erreurs » : schémas nommés dans openapi.yaml sous components/schemas
+
+CodeErreur:
+  type: string
+  description: >-
+    code métier stable, traduit par le front en message MSG-xx ou MSG-Uxx. VALIDATION,
+    NON_AUTHENTIFIE et ERREUR_INTERNE sont communs à tous les écrans.
+  enum:
+    - VALIDATION
+    - NON_AUTHENTIFIE
+    - INTERDIT
+    - NOM_PRIS
+    - ERREUR_INTERNE
+  x-error-catalog:
+    VALIDATION:
+      status: 400
+      case: paramètre ou corps hors schéma ; erreurs[] par champ
+      screen: ne doit pas arriver (saisie bornée par l'écran) ; traité comme l'erreur technique de
+        l'écran
+    NON_AUTHENTIFIE:
+      status: 401
+      case: session absente ou expirée
+      screen: écran de connexion, puis retour à la page demandée
+    INTERDIT:
+      status: 403
+      case: rôle insuffisant
+      screen: A REMPLACER
+    NOM_PRIS:
+      entity: EN-01
+      status: 409
+      case: une ressource active porte déjà ce nom
+      screen: A REMPLACER, message sous le champ Nom
+    ERREUR_INTERNE:
+      status: 500
+      case: imprévu ; transaction annulée, rien n'est écrit
+      screen: message d'erreur de l'écran avec « Réessayer »
+Probleme:
+  type: object
+  description: >-
+    Erreur au format RFC 9457 (application/problem+json), avec le champ code. Le front traduit
+    `code`, jamais `title` ni `detail`.
+  required: [title, status, code]
+  properties:
+    type: {type: string, default: about:blank}
+    title: {type: string, description: résumé stable pour un même code}
+    status: {type: integer}
+    detail: {type: string, description: 'explication propre à l''occurrence, jamais affichée telle quelle'}
+    instance: {type: string, description: 'identifiant de requête, pour les journaux'}
+    code: {$ref: '#/CodeErreur'}
+    champ:
+      type: string
+      description: champ du corps en cause
+      x-for-codes: [NOM_PRIS]
+    erreurs:
+      type: array
+      description: erreurs de forme, une par champ
+      x-for-codes: [VALIDATION]
+      items:
+        type: object
+        required: [champ, message]
+        properties:
+          champ: {type: string}
+          message: {type: string}
+  examples:
+    - {type: about:blank, title: Nom déjà pris, status: 409, code: NOM_PRIS, champ: nom}

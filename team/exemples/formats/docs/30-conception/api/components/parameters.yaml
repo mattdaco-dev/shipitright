@@ -1,0 +1,46 @@
+# components/parameters, each entry referenced by openapi.yaml
+
+Jour:
+  name: jour
+  in: query
+  required: true
+  schema: {$ref: 'schemas/commun.yaml#/Jour'}
+Debut:
+  name: debut
+  in: query
+  required: true
+  schema: {$ref: 'schemas/commun.yaml#/Heure'}
+Fin:
+  name: fin
+  in: query
+  required: true
+  schema: {$ref: 'schemas/commun.yaml#/Heure'}
+Participants:
+  name: participants
+  in: query
+  required: true
+  description: nombre de participants, comparé à la capacité
+  schema: {type: integer, minimum: 1, maximum: 200}
+Equipements:
+  name: equipements
+  in: query
+  required: false
+  description: identifiants d'équipements séparés par des virgules, tous exigés
+  style: form
+  explode: false
+  schema:
+    type: array
+    items: {type: integer, minimum: 1}
+    uniqueItems: true
+IdSalle:
+  name: id
+  in: path
+  required: true
+  description: identifiant de salle
+  schema: {type: integer, minimum: 1}
+IdReservation:
+  name: id
+  in: path
+  required: true
+  description: identifiant de réservation
+  schema: {type: integer, minimum: 1}

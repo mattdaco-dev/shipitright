@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analyse NOM_CHANTIER · NOM_PROJET</title>
+  <!-- Analysis metadata, read by pilotage-pages.mjs for the inventory docs/10-analyse/index.html.
+       auteur: "ia" when a team agent handled the chantier, else the person's name.
+       statut: brouillon | en-revue | valide. chantier: en-cours | termine | restitue-partiel.
+       pour: the phase or release the chantier prepares (P1, P2, P3, R2...); P1 for a chantier of P1.
+       Keep them in line with the Auteur, Statut, Pour and Chantier fields of the header. -->
+  <meta name="type" content="analyse">
+  <meta name="auteur" content="ia">
+  <meta name="statut" content="brouillon">
+  <meta name="chantier" content="en-cours">
+  <meta name="pour" content="P1">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Analyse : NOM_CHANTIER</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <!-- Kicker: keep "P1 · Analyse et exploration" when pour is P1. Otherwise, proposed form:
+           "Analyse pour la release R2" (or "Analyse pour P2", "Analyse pour P3"). -->
+      <div class="kicker">P1 · Analyse et exploration</div>
+      <h1><span class="doc-kind">Analyse</span> : NOM_CHANTIER</h1>
+      <p class="lede"><span class="todo">la question du chantier, formulée pour qu'on sache quand on y a répondu</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> IA</span>
+        <span><b>Contributeurs</b> Architecte (faisabilité)</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <!-- Pour: a phase in plain text (P1, P2, P3); a release in its tag: <span data-release>R2</span> -->
+        <span><b>Pour</b> P1</span>
+        <span><b>Chantier</b> <span class="tag info">en cours</span>, <span class="tag ok">terminé</span> ou <span class="tag danger">restitué partiel</span></span>
+        <span><b>Sources</b> <a href="../00-cadrage/cadrage.html">cadrage</a>, <a href="big-picture.html">big picture</a>, <span class="todo">questions Q-xxx, autres analyses, références externes, en liens</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Question du chantier</h2>
+      <p class="hint">La question est dans le chapeau. Ici : pourquoi elle se pose, et où s'arrête le chantier.</p>
+      <dl class="defs">
+        <dt>Pourquoi</dt><dd><span class="todo">ce qui la rend nécessaire : hotspot, objectif, contrainte</span></dd>
+        <dt>Hors du chantier</dt><dd><span class="todo">sujets voisins qu'on ne traite pas ici</span></dd>
+        <dt>Timebox</dt><dd><span class="todo">limite donnée par le brief</span></dd>
+        <dt>Avancement</dt><dd><span class="todo">en cours avec la passe qui reste, terminé, ou restitué partiel avec la raison</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Constats</h2>
+      <p class="hint">Ce qui est établi. Un constat sans source est une hypothèse.</p>
+      <table>
+        <thead><tr><th style="width:60px">N°</th><th>Constat</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr id="C1"><td>C1</td><td><span class="todo">fait établi</span></td><td>cadrage, Q-xxx</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Cas limites et exceptions</h2>
+      <p class="hint">Situations rares, erreurs, valeurs aux bornes. Chacune a un comportement attendu ou une question.</p>
+      <table>
+        <thead><tr><th>Situation</th><th>Comportement attendu</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">cas limite</span></td><td><span class="todo">ce qui doit se passer</span></td><td><span class="tag ok">établi</span></td></tr>
+          <tr><td><span class="todo">exception</span></td><td>Q-xxx</td><td><span class="tag accent">question</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Exploration des solutions</h2>
+      <p class="hint">Pistes envisagées et existant observé (outils actuels, solutions du marché, pratiques du domaine).</p>
+      <div class="grid c3">
+        <div class="card">
+          <h4>Option A : <span class="todo">nom</span></h4>
+          <p><span class="todo">principe en deux phrases</span></p>
+          <dl class="defs">
+            <dt>Forces</dt><dd><span class="todo">ce qu'elle apporte</span></dd>
+            <dt>Limites</dt><dd><span class="todo">ce qu'elle coûte ou empêche</span></dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h4>Option B : <span class="todo">nom</span></h4>
+          <p><span class="todo">principe en deux phrases</span></p>
+          <dl class="defs">
+            <dt>Forces</dt><dd></dd>
+            <dt>Limites</dt><dd></dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Options comparées</h2>
+      <p class="hint">Critères tirés du cadrage, poids de 1 à 3, notes de 1 à 5. Total = somme des notes × poids. Chantier descriptif sans choix à faire : l'écrire.</p>
+      <h3>Critères</h3>
+      <table>
+        <thead><tr><th>Critère</th><th class="num">Poids</th><th>Ce qu'on mesure</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">critère</span></td><td class="num">3</td><td><span class="todo">objectif ou contrainte du cadrage</span></td></tr>
+          <tr><td><span class="todo">critère</span></td><td class="num">2</td><td></td></tr>
+        </tbody>
+      </table>
+      <h3>Notation</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Option</th><th class="num">Critère 1 (×3)</th><th class="num">Critère 2 (×2)</th><th class="num">Total</th><th>Commentaire</th></tr></thead>
+          <tbody>
+            <tr class="recommended"><td>Option A</td><td class="num"><span class="score s4">4</span></td><td class="num"><span class="score s3">3</span></td><td class="num"><b>18</b></td><td><span class="todo">justification des notes discutables</span></td></tr>
+            <tr><td>Option B</td><td class="num"><span class="score s2">2</span></td><td class="num"><span class="score s5">5</span></td><td class="num"><b>16</b></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Recommandation</h2>
+      <p class="hint">L'option ou la conclusion retenue, et pourquoi. Le PO tranche ensuite.</p>
+      <div class="callout decision">
+        <b>Recommandation</b>
+        <span class="todo">option retenue ou conclusion du chantier</span>
+      </div>
+      <dl class="defs">
+        <dt>Pourquoi</dt><dd><span class="todo">arguments, en citant constats et critères</span></dd>
+        <dt>Conditions</dt><dd><span class="todo">ce qui doit être vrai pour qu'elle tienne</span></dd>
+        <dt>Pour conclure</dt><dd><span class="todo">si restitué partiel : ce qui manque, redécoupage proposé. Sinon : sans objet</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Impacts sur les autres livrables</h2>
+      <p class="hint">Ce que la recommandation change ailleurs. Le BA ne modifie pas les livrables des autres : il signale.</p>
+      <table>
+        <thead><tr><th>Livrable</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td><a href="big-picture.html">Big picture</a></td><td><span class="todo">événement, hotspot ou opportunité à ajouter ou corriger</span></td></tr>
+          <tr><td><a href="../20-specs/story-map.html">Story map</a></td><td><span class="todo">tâche ou story concernée</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Questions et hypothèses</h2>
+      <p class="hint">Les questions posées au PO dans .team/questions/, et les hypothèses prises pour avancer. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question</th><th>Bloquante</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="todo">question</span></td><td><span class="tag">non</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothese">
+        <b>HYPOTHÈSE</b>
+        <span class="todo">ce qu'on suppose vrai, et la question qui la confirmera</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="facultatif">
+      <h2>Synthèse inter-chantiers</h2>
+      <p class="hint">Liens et tensions avec les autres chantiers, quand le BA les a lus.</p>
+      <table>
+        <thead><tr><th>Chantier</th><th>Lien ou tension</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">autre-chantier.html</span></td><td><span class="todo">point commun, contradiction, dépendance</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

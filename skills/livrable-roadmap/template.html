@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Roadmap · NOM_PROJET</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Roadmap</div>
+    <nav></nav>
+    <div class="toc-back"><a href="index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">Roadmap</span> : NOM_PROJET</h1>
+      <p class="lede"><span class="todo">une phrase : où en est le projet</span>. En Humain assisté par IA, la recette du MVP est probable le <span data-plan="mvp:p50">…</span>, au plus tard le <span data-plan="mvp:p85">…</span> par prudence.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> PO</span>
+        <span><b>Contributeurs</b> SM, Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Mise à jour</b> première version, avant G1</span>
+        <span><b>Sources</b> <a href="20-specs/story-map.html">story map</a>, <a href="00-cadrage/cadrage.html">cadrage</a>, <a href="questions.html">questions</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Releases</h2>
+      <p class="hint">Les releases de la story map, avec leur objectif et leur date de recette G3, reprise du <a href="#calendrier-de-realisation">calendrier</a> en Humain assisté par IA : probable (50 % de chances) et prudente (85 %).</p>
+      <table>
+        <thead><tr><th>Release</th><th>Objectif</th><th>Recette G3</th><th>Epics</th><th>Stories</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag accent">MVP</span></td><td><span class="todo">objectif repris de la story map</span></td><td>probable <span data-plan="mvp:p50">…</span>, prudente <span data-plan="mvp:p85">…</span></td><td>EPIC-01, EPIC-02</td><td class="num">2</td><td><span class="tag info">en spécification</span></td></tr>
+          <tr><td><span class="tag warn">R2</span></td><td><span class="todo">objectif</span></td><td>probable <span data-plan="r2:p50">…</span>, prudente <span data-plan="r2:p85">…</span></td><td>EPIC-02</td><td class="num">1</td><td><span class="tag">prévu</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Roadmap</h2>
+      <p class="hint">Une colonne par phase (P0 à P3), puis une par release, dans l'ordre de la story map ; une colonne Later s'ajoute pour les stories sans release. Une ligne Livrables avec une carte par livrable de phase (prévu, produit en attente de son gate, validé), puis les epics en lignes. Les gates sont les barres verticales entre les colonnes, avec leur verdict une fois franchis. Un item par story : identifiant en lien et titre court. Les dates sont dans le calendrier ; le découpage en sprints se fait au sprint planning.</p>
+      <div class="legend">
+        <span><i style="background:var(--accent-soft)"></i>Prévu</span><span><i style="background:repeating-linear-gradient(135deg,var(--ok-soft),var(--ok-soft) 3px,#fff 3px,#fff 5px);border:1px dashed var(--ok)"></i>Produit, en attente du gate</span>
+        <span><i style="background:var(--ok-soft)"></i>Validé au gate, story recettée</span>
+        <span><i style="background:var(--danger-soft)"></i>Menacé</span>
+        <span><i class="gate"></i>Gate</span><span><i class="gate" style="background:var(--ok)"></i>Gate franchi</span>
+      </div>
+      <div class="roadmap">
+        <div class="rm-grid" style="--cols: 6">
+<div class="rm-head">Epic</div>
+<div class="rm-head" data-gate="G0|validé" data-gate-name="Validation du cadrage">P0 Cadrage</div>
+<div class="rm-head">P1 Analyse</div>
+<div class="rm-head" data-gate="G1" data-gate-name="Validation de la conception fonctionnelle">P2 Specs, UX</div>
+<div class="rm-head" data-gate="G2" data-gate-name="Validation de la conception technique">P3 Conception</div>
+<div class="rm-head" data-gate="G3" data-gate-name="Validation de la recette du MVP">MVP</div>
+<div class="rm-head" data-gate="G3" data-gate-name="Validation de la recette de la release R2">R2</div>
+
+<div class="rm-lane">Livrables</div>
+<div><div class="rm-item done"><a href="00-cadrage/cadrage.html">Cadrage et vision</a></div><div class="rm-item done">Socles du projet</div></div>
+<div><div class="rm-item made"><a href="10-analyse/big-picture.html">Big picture</a></div><div class="rm-item made"><a href="20-specs/story-map.html">Story map</a></div></div>
+<div><div class="rm-item"><a href="20-specs/conception-fonctionnelle.html">Conception fonctionnelle</a></div><div class="rm-item">Epics et stories</div><div class="rm-item"><a href="20-ux/spec-ux-ui.html">Spec UX/UI</a></div><div class="rm-item"><a href="../prototype/index.html">Prototype</a></div><div class="rm-item"><a href="roadmap.html">Roadmap</a></div></div>
+<div><div class="rm-item"><a href="30-conception/macro.html">Conception technique macro</a></div><div class="rm-item"><a href="30-conception/detaillee/index.html">Conception technique détaillée</a></div><div class="rm-item"><a href="30-conception/api/openapi.yaml">Contrat d'API</a></div><div class="rm-item"><a href="30-conception/detaillee/transverse/conformite.html">Conformité</a></div><div class="rm-item"><a href="40-qa/strategie.html">Stratégie de test</a></div></div>
+<div></div>
+<div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-01-xxx.html">EPIC-01</a> <span class="todo">nom</span></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-001-xxx.html">US-001</a> <span class="todo">titre court</span></div></div>
+<div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-02-xxx.html">EPIC-02</a> <span class="todo">nom</span></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item risk"><a href="20-specs/stories/US-002-xxx.html">US-002</a> <span class="todo">titre court</span> <small>menacée : <a href="#risques">risque</a></small></div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-003-xxx.html">US-003</a> <span class="todo">titre court</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Estimation macro</h2>
+      <div class="callout warn">
+        <b>Source des estimations : estimation macro, pas encore celle de l'équipe</b>
+        Posée en P2 par l'architecte et le SM, à partir de la taille des stories. Quand l'équipe aura estimé les stories dans l'outil du projet (Jira ou autre, selon la configuration du framework), ses estimations remplaceront celles-ci et le calendrier s'ajustera. Jusque-là, toutes les valeurs sont des hypothèses.
+      </div>
+      <dl class="defs">
+        <dt>Réalisation selon le mode</dt><dd><b>Humain</b> : un développeur sans assistance, en jours de travail (j). <b>Assisté IA</b> : le même avec un assistant de code. <b>IA en autonomie</b> : les heures de travail des agents (h)</dd>
+        <dt>Validation, recette</dt><dd>la charge humaine qui reste dans tous les modes, en jours : validation métier de chaque story, gates, recette</dd>
+        <dt>Travaux hors stories</dt><dd>conception, socle, campagne QA et recette : leurs valeurs viennent de la configuration du <a href="#calendrier-de-realisation">calendrier</a>, pour n'être écrites qu'une fois. La conception et la campagne QA automatisée sont des durées, pas de la charge de l'équipe</dd>
+        <dt>Échelle</dt><dd>les valeurs des stories sont calculées depuis leur taille ; le bouton de réglage, en haut à droite de la section, change l'échelle (dans ton navigateur seulement) et le calendrier suit</dd>
+        <dt>Front</dt><dd>la part du travail de la story côté front, en %, le reste côté back ; elle sert à répartir la charge entre développeurs front, back et full stack dans le calendrier</dd>
+        <dt>Taille</dt><dd>XS à XL, la complexité relative, qui ne dépend pas du mode. Les valeurs des stories vont du froid (faible) au chaud (élevé), colonne par colonne ; les travaux hors stories ne sont pas colorés.</dd>
+      </dl>
+      <div class="table-wrap est" data-h="XS:1 S:2 M:4 L:5 XL:8" data-assist="50" data-agent="0.5" data-hpart="XS:0.25 S:0.25 M:0.5 L:0.75 XL:1" data-source="Valeurs de l'exemple, posées à l'estime, non mesurées.">
+        <h4 class="est-title">Conception</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr class="work" data-rel="conception" data-items="p1 p2 revue-g1 p3 revue-g2"><td>Conception P1 à P3 (analyse, specs, UX, prototype, conception technique) et revues des gates G1, G2</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="conception"><td><b>Total conception</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">MVP</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="S" data-front="40" data-rel="mvp"><td><a href="20-specs/stories/US-001-xxx.html">US-001</a> <span class="todo">titre court</span></td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="60" data-rel="mvp"><td><a href="20-specs/stories/US-002-xxx.html">US-002</a> <span class="todo">titre court</span></td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="total" data-rel="mvp" data-only="stories"><td><b>Stories du MVP</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="mvp" data-items="socle"><td>Socle de stack, outillage, squelette des applications</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="mvp" data-items="qa-mvp recette-mvp"><td>Campagne QA automatisée et recette du MVP</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="mvp"><td><b>Total MVP</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">R2</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="M" data-front="50" data-rel="r2"><td><a href="20-specs/stories/US-003-xxx.html">US-003</a> <span class="todo">titre court</span></td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="work" data-rel="r2" data-items="qa-r2 recette-r2"><td>Campagne QA automatisée et recette R2</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="r2"><td><b>Total R2</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">Total projet</h4>
+        <table class="est-sum">
+          <colgroup><col><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Lot</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Conception</td><td class="num grp grp-start"><span data-est="conception:h"></span></td><td class="num grp"><span data-est="conception:a"></span></td><td class="num grp grp-end"><span data-est="conception:ag"></span></td><td class="num"><span data-est="conception:hu"></span></td></tr>
+            <tr><td>MVP</td><td class="num grp grp-start"><span data-est="mvp:h"></span></td><td class="num grp"><span data-est="mvp:a"></span></td><td class="num grp grp-end"><span data-est="mvp:ag"></span></td><td class="num"><span data-est="mvp:hu"></span></td></tr>
+            <tr><td>R2</td><td class="num grp grp-start"><span data-est="r2:h"></span></td><td class="num grp"><span data-est="r2:a"></span></td><td class="num grp grp-end"><span data-est="r2:ag"></span></td><td class="num"><span data-est="r2:hu"></span></td></tr>
+            <tr class="total"><td><b>Total projet</b></td><td class="num grp grp-start"><span data-est="*:h"></span></td><td class="num grp"><span data-est="*:a"></span></td><td class="num grp grp-end"><span data-est="*:ag"></span></td><td class="num"><span data-est="*:hu"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout hypothese">
+        <b>Hypothèse</b>
+        <span class="todo">ce qui fragilise l'estimation d'une story (question ouverte, option retenue), ou supprimer</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Composition de l'équipe</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Ce que c'est</dt><dd>Qui réalise le travail, avec son temps de présence en <b>équivalents temps plein</b> : 1,5 = une personne à plein temps et une à mi-temps.</dd>
+          <dt>Selon le mode</dt><dd>L'équipe de dev sert aux modes Humain et Humain assisté par IA. Le PO et l'aide à la recette servent à tous les modes. Le nombre d'agents se règle dans les paramètres du <a href="#calendrier-de-realisation">calendrier</a>.</dd>
+          <dt>Un de plus, un de moins</dt><dd>L'effet d'un temps plein de plus ou de moins sur la date de la dernière release, dans chaque mode. En IA en autonomie, seuls le PO et l'aide à la recette comptent : les développeurs n'y sont pas.</dd>
+          <dt>Tes essais</dt><dd>Tes changements restent dans ton navigateur.</dd>
+        </dl>
+      </div>
+      <div class="capa-team"></div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Calendrier de réalisation</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Le calcul</dt><dd>Un ordonnancement sous contrainte de capacité. Dans l'ordre de priorité, chaque story part dès que ses dépendances sont finies, vers les personnes libres qui ont la compétence.</dd>
+          <dt>Les dates</dt><dd>Chaque estimation (stories, travaux, durées de conception et de campagne QA) est tirée au hasard dans sa fourchette (au mieux, probable, au pire), sur plusieurs centaines de simulations ; les livraisons des autres équipes restent à leur date. Chaque release a une <b>date probable</b> (50 % de chances d'être prête avant) et une <b>date prudente</b> (85 %).</dd>
+          <dt>Les réglages</dt><dd>Un onglet par mode. L'équipe vient de la section <a href="#composition-de-l-equipe">Composition de l'équipe</a> ; le bloc Paramètres fixe les dates, les autres équipes et les règles de calcul.</dd>
+          <dt>Tes essais</dt><dd>Ils restent dans ton navigateur. La configuration de référence est dans la page.</dd>
+          <dt>Lecture</dt><dd>Cliquer sur une ligne de groupe du planning pour voir le détail.</dd>
+        </dl>
+      </div>
+      <div class="callout warn">
+        <b>Une aide à l'estimation, pas un engagement</b>
+        Ce calendrier simule un planning à partir d'estimations, de capacités et de dépendances posées à l'estime. Il sert à comparer des scénarios d'équipe et à repérer les goulots ; ses dates ne sont pas fiables pour s'engager auprès du métier.
+      </div>
+      <div class="callout hypothese">
+        <b>Hypothèses</b>
+        <ul>
+          <li>L'équipe, ses capacités et les dépendances entre stories sont posées à l'estime.</li>
+          <li><span class="todo">dates de livraison des équipes externes à confirmer avec elles</span></li>
+          <li>La conception (P1 à P3) est une durée : le BA, l'UX et l'architecte la mènent hors de l'équipe de dev, qui ne la raccourcit pas. En IA en autonomie, ce sont les agents.</li>
+        </ul>
+      </div>
+      <div class="legend">
+        <span><i class="lg-done"></i>Fait</span><span><i class="lg-plan"></i>À faire</span><span><i class="lg-late"></i>En retard</span><span><i class="lg-hatch"></i>Temps de l'humain</span><span><i class="lg-gate"></i>Gate</span><span><i class="lg-crit"></i>Chemin critique</span>
+      </div>
+      <div class="capa">
+<script type="application/json">
+{
+  "start": "AAAA-MM-JJ",
+  "holidays": [],
+  "modes": [
+    { "id": "humain", "label": "Humain", "note": "Développeurs sans assistance, tests compris ; la validation métier de chaque story et la recette reviennent au PO et à l'aide à la recette." },
+    { "id": "assiste", "label": "Humain assisté par IA", "default": true, "note": "Développeurs avec un assistant de code, tests compris ; une campagne QA automatisée par IA précède chaque recette ; validation métier et recette par le PO et l'aide à la recette." },
+    { "id": "ia", "label": "IA en autonomie", "note": "Team d'agents, tests et campagne QA compris ; le PO tient les gates, la validation métier et la recette, avec l'aide à la recette." }
+  ],
+  "profiles": [
+    { "id": "front", "label": "Dev front", "skills": ["front"], "count": 0, "team": "dev", "modes": ["humain", "assiste"] },
+    { "id": "back", "label": "Dev back", "skills": ["back"], "count": 0, "team": "dev", "modes": ["humain", "assiste"] },
+    { "id": "full", "label": "Dev full stack", "skills": ["front", "back"], "count": 1, "team": "dev", "modes": ["humain", "assiste"] },
+    { "id": "aide", "label": "Aide à la recette", "hint": "BA, gens du métier, testeurs", "skills": ["recette", "validation"], "count": 0 },
+    { "id": "agent", "label": "Agents", "skills": ["agent"], "count": 5, "unit": "h", "hoursPerDay": 8, "maxPerItem": 1, "modes": ["ia"] },
+    { "id": "po", "label": "PO", "skills": ["gate", "recette", "validation"], "count": 1, "maxPerItem": 1, "fixed": true, "note": "Seul à tenir les gates. Fait la validation métier et la recette, ou les délègue à l'aide à la recette." },
+    { "id": "ux", "label": "UX", "skills": ["uxreview"], "count": 1, "fixed": true, "calc": false, "note": "Équipe transverse, toujours disponible. Vérifie au fil de l'eau ou en bout de chaîne que l'UX et l'UI respectent les maquettes, l'accessibilité et le design system. Ne bloque jamais : hors calcul." }
+  ],
+  "rules": { "loss": 10, "maxPerStory": 2, "optimistic": 70, "pessimistic": 160, "runs": 300, "calibration": { "factor": 1, "sprints": [] } },
+  "releases": [
+    { "id": "mvp", "label": "MVP", "gate": "g3" },
+    { "id": "r2", "label": "R2", "gate": "g3-r2" }
+  ],
+  "groups": ["P0 Cadrage", "Conception", "Autres équipes", "Réalisation du MVP", "Recette du MVP", "Réalisation R2", "Recette R2"],
+  "storyGroup": { "mvp": "Réalisation du MVP", "r2": "Réalisation R2" },
+  "storyAfter": ["socle"],
+  "storyDeps": { "US-002": ["US-001"], "US-001": ["ext"] },
+  "items": [
+    { "id": "cadrage", "label": "Cadrage et vision", "group": "P0 Cadrage", "start": "AAAA-MM-JJ", "end": "AAAA-MM-JJ" },
+    { "id": "g0", "label": "G0", "group": "P0 Cadrage", "gate": true, "at": "AAAA-MM-JJT18:00", "who": "validé" },
+    { "id": "p1", "label": "P1 Analyse", "group": "Conception", "after": ["g0"], "d": { "assiste": 2, "humain": 4 }, "work": { "ia": [["agent", 8]] }, "kind": "phase" },
+    { "id": "p2", "label": "P2 Specs, UX, prototype", "group": "Conception", "after": ["p1"], "d": { "assiste": 2, "humain": 5 }, "work": { "ia": [["agent", 16]] }, "kind": "phase" },
+    { "id": "revue-g1", "label": "Revue G1", "group": "Conception", "after": ["p2"], "work": { "all": [["gate", 0.5]] }, "kind": "human" },
+    { "id": "g1", "label": "G1", "group": "Conception", "after": ["revue-g1"], "gate": true },
+    { "id": "p3", "label": "P3 Conception technique", "group": "Conception", "after": ["g1"], "d": { "assiste": 2, "humain": 3 }, "work": { "ia": [["agent", 8]] }, "kind": "phase" },
+    { "id": "revue-g2", "label": "Revue G2, accord outillage", "group": "Conception", "after": ["p3"], "work": { "all": [["gate", 0.5]] }, "kind": "human" },
+    { "id": "g2", "label": "G2", "group": "Conception", "after": ["revue-g2"], "gate": true },
+    { "id": "ext", "label": "Livraison d'une autre équipe", "group": "Autres équipes", "team": "Équipe externe", "deliver": "AAAA-MM-JJ", "duration": 3 },
+    { "id": "socle", "label": "Socle, outillage", "group": "Réalisation du MVP", "after": ["g2"], "work": { "humain": [["back", 3]], "assiste": [["back", 1.5]], "ia": [["agent", 1]] } },
+    { "id": "qa-mvp", "label": "Campagne QA automatisée MVP", "group": "Recette du MVP", "after": ["rel:mvp"], "d": { "assiste": 1 }, "work": { "ia": [["agent", 2]] }, "kind": "qa" },
+    { "id": "recette-mvp", "label": "Recette MVP", "group": "Recette du MVP", "after": ["qa-mvp"], "work": { "all": [["recette", 1]] }, "kind": "human" },
+    { "id": "g3", "label": "G3 MVP", "group": "Recette du MVP", "after": ["recette-mvp"], "gate": true },
+    { "id": "qa-r2", "label": "Campagne QA automatisée R2", "group": "Recette R2", "after": ["rel:r2", "g3"], "d": { "assiste": 0.5 }, "work": { "ia": [["agent", 1]] }, "kind": "qa" },
+    { "id": "recette-r2", "label": "Recette R2", "group": "Recette R2", "after": ["qa-r2"], "work": { "all": [["recette", 0.5]] }, "kind": "human" },
+    { "id": "g3-r2", "label": "G3 R2", "group": "Recette R2", "after": ["recette-r2"], "gate": true }
+  ]
+}
+</script>
+      </div>
+      <div class="callout hypothese">
+        <b>Hypothèse</b>
+        Ces dates ne tiennent que si les gates sont tranchés dans la journée (<a href="#risques">risque</a> « gate humain en attente »). Elles seront recalées sur les sprints mesurés (<a href="#calibrage">calibrage</a>).
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Dépendances et risques</h2>
+      <p class="hint">Ce qui peut faire glisser le calendrier. Chaque risque a une parade ou une question. Aucun : l'écrire.</p>
+      <h3>Dépendances</h3>
+      <table>
+        <thead><tr><th>Élément</th><th>Dépend de</th><th>Type</th><th>État</th></tr></thead>
+        <tbody>
+          <tr><td>Début de la réalisation</td><td>G2 : socle de stack validé par l'humain, outillage installé</td><td><span class="tag">humain</span></td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><span class="todo">story ou epic</span></td><td><span class="todo">story, équipe externe, décision</span></td><td><span class="tag">interne</span></td><td><span class="tag ok">au calendrier</span></td></tr>
+        </tbody>
+      </table>
+      <h3>Risques</h3>
+      <table>
+        <thead><tr><th>Risque</th><th>Impact sur le calendrier</th><th>Probabilité</th><th>Parade</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">risque</span></td><td><span class="todo">ce qui glisse, de combien</span></td><td><span class="tag warn">moyenne</span></td><td><span class="todo">parade ou Q-xxx</span></td></tr>
+          <tr><td>Gate humain en attente plusieurs jours</td><td>tout le calendrier glisse d'autant : la team ne passe pas un gate seule</td><td><span class="tag">faible</span></td><td>gates annoncés à l'avance, livrables prêts et vérifiés avant de solliciter l'humain</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Changelog</h2>
+      <p class="hint">Une ligne par mise à jour, la plus récente en tête. On n'efface pas les lignes précédentes.</p>
+      <table>
+        <thead><tr><th>Version</th><th>Date</th><th>Ce qui a bougé</th><th>Pourquoi</th><th>Décidé par</th></tr></thead>
+        <tbody>
+          <tr><td>v0.1</td><td>JJ.MM.AAAA</td><td>Première version</td><td>sortie de la story map</td><td>PO</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="facultatif">
+      <h2>Calibrage</h2>
+      <p class="hint">Après chaque sprint, le SM ajoute le temps estimé et le temps réel des stories finies, en heures d'agents, dans la configuration du calendrier (<code>rules.calibration.sprints</code>). Le rapport réel sur estimé corrige toutes les estimations des stories ; il se force dans les paramètres du calendrier pour un essai.</p>
+      <div class="capa-calib"></div>
+    </section>
+  </main>
+</div>
+<script src="_assets/doc.js"></script>
+<script src="_assets/plan.js"></script>
+</body>
+</html>

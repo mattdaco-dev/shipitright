@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conception technique détaillée · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Conception technique détaillée</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../macro.html">← Conception technique macro</a><br><a href="../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique</div>
+      <h1><span class="doc-kind">Conception technique détaillée</span> : Réservation de salles</h1>
+      <p class="lede">Cette conception dit aux devs, humains ou IA, quoi développer et comment, objet par objet, assez précisément pour prendre un ticket à froid sans reposer de question. On y entre par la <a href="../macro.html">conception technique macro</a>, et le contrat d'API <a href="../api/openapi.yaml">openapi.yaml</a> fait foi en cas d'écart.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Contributeurs</b> Dev backend, Dev frontend</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+      <div class="meta">
+        <span><b>Sources</b> <a href="../macro.html">conception macro</a> v0.2 du 07.10.2026, <!-- gen:api-version -->
+<a href="../api/openapi.yaml">openapi.yaml</a> v1.1.4 du 09.10.2026<!-- /gen -->, <a href="../../20-specs/conception-fonctionnelle.html">conception fonctionnelle</a> v0.1 du 02.10.2026, <a href="../../20-ux/spec-ux-ui.html">spec UX/UI</a> v0.1 du 05.10.2026, <a href="../../adr/index.html">ADR-0001 à ADR-0004</a></span>
+      </div>
+      <div class="meta">
+        <span><b>Points ouverts</b> <!-- gen:open-summary -->
+<a href="points-ouverts.html">31 points</a> : 7 <span class="impact fort" data-tip="fort : la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code">fort</span>, 14 <span class="impact moyen" data-tip="moyen : la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran">moyen</span>, 10 <span class="impact faible" data-tip="faible : la réponse ne change qu'un libellé, un message, une valeur ou un cas limite">faible</span><!-- /gen --></span>
+      </div>
+    </header>
+
+    <section class="section" id="plan-du-site" data-level="obligatoire">
+      <h2>Plan du site</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Voir comment la conception détaillée est organisée et aller droit à une page.</dd>
+          <dt>Contenu</dt><dd>L'arbre des pages, de la conception macro (point d'entrée) au sommaire, puis aux familles de pages. Un bloc par page, son titre en lien ; une famille (endpoints, schémas, entités, traitements) tient en un bloc de cards empilées dont le titre ouvre la liste de ses pages.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>L'arbre est la forme standard d'un plan de site. Les sections d'une page n'y figurent pas : elles sont dans sa table des matières.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="st-badge on-light">gen</span> page générée : elle ne s'édite pas, on modifie <code>openapi.yaml</code> et on régénère.</li><li><span class="tag ok">contrat figé</span> l'opération ne perd et ne change rien : le front part sur un mock.</li><li><span class="tag warn">contrat provisoire</span> l'opération attend une réponse métier.</li><li>La release est indicative.</li><li>Conventions d'API : <a href="../../adr/0004-conventions-api-json.html">ADR-0004</a> ; session : <a href="../../adr/0003-authentification-par-session.html">ADR-0003</a>.</li></ul></dd>
+          <dt>Source</dt><dd>Les pages réelles du dossier, lues par le générateur : le plan ne ment jamais.</dd>
+          <dt>Coder un endpoint</dt><dd><ol><li>Sa page : requête, réponses, comportement, séquence.</li><li>Ses traitements : signature, algorithme, cas limites.</li><li>Ses entités : DDL.</li><li>L'<a href="transverse/organisation-du-code.html">organisation du code</a> : où le ranger.</li><li>Le <a href="transverse/conformite.html">contrat de conformité</a> : les invariants.</li><li>Les <a href="transverse/tests.html">tests imposés</a>.</li></ol></dd>
+          <dt>Coder un écran</dt><dd><ol><li>La <a href="transverse/ecrans.html#par-ecran">vue par écran</a>.</li><li>Les pages de ses endpoints.</li><li>La <a href="transverse/erreurs.html">gestion des erreurs</a>.</li></ol></dd>
+        </dl>
+      </div>
+      <!-- gen:sitemap -->
+      <nav class="sitemap-tree-wrap" aria-label="Plan de la conception détaillée">
+        <ul class="sitemap-tree">
+          <li class="st-item"><div class="st-node st-entry">
+              <div class="st-head"><a class="st-title" href="../macro.html">Conception technique macro</a></div>
+            </div>
+            <ul class="st-sub">
+              <li class="st-item"><div class="st-node">
+                  <div class="st-head"><span class="st-title" aria-current="page">Sommaire</span></div>
+                </div>
+                <ul class="st-sub">
+                  <li class="st-item st-b1"><span class="st-group">Endpoints</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node gen st-stack">
+                          <div class="st-head"><a class="st-title" href="endpoints/EP-01.html" aria-haspopup="dialog" data-tip="21 pages : ouvrir la liste">Page d'endpoint EP-xx</a><span class="st-badge" role="img" aria-label="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer" data-tip="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer">gen</span></div>
+                          <div class="st-pages" hidden data-title="Page d'endpoint EP-xx"><ul><li><a href="endpoints/EP-01.html"><b>EP-01</b> <code>POST /session</code> Se connecter</a></li><li><a href="endpoints/EP-02.html"><b>EP-02</b> <code>GET /session</code> Connaître l'utilisateur et son rôle</a></li><li><a href="endpoints/EP-03.html"><b>EP-03</b> <code>DELETE /session</code> Se déconnecter</a></li><li><a href="endpoints/EP-04.html"><b>EP-04</b> <code>GET /salles</code> Lister les salles</a></li><li><a href="endpoints/EP-05.html"><b>EP-05</b> <code>GET /equipements</code> Lister les équipements</a></li><li><a href="endpoints/EP-06.html"><b>EP-06</b> <code>GET /reservations</code> Occupation d'une journée</a></li><li><a href="endpoints/EP-07.html"><b>EP-07</b> <code>GET /salles/disponibles</code> Chercher les salles libres sur un créneau</a></li><li><a href="endpoints/EP-08.html"><b>EP-08</b> <code>POST /reservations</code> Réserver un créneau ponctuel</a></li><li><a href="endpoints/EP-09.html"><b>EP-09</b> <code>POST /series/apercu</code> Calculer les occurrences d'une série et leurs conflits</a></li><li><a href="endpoints/EP-10.html"><b>EP-10</b> <code>POST /series</code> Créer une série</a></li><li><a href="endpoints/EP-11.html"><b>EP-11</b> <code>GET /moi/reservations</code> Lister mes réservations</a></li><li><a href="endpoints/EP-12.html"><b>EP-12</b> <code>POST /reservations/{id}/annulation</code> Annuler une réservation ou une occurrence</a></li><li><a href="endpoints/EP-13.html"><b>EP-13</b> <code>POST /series/{id}/annulation</code> Annuler les occurrences à venir d'une série</a></li><li><a href="endpoints/EP-14.html"><b>EP-14</b> <code>GET /salles/{id}</code> Lire une salle et ses réservations futures</a></li><li><a href="endpoints/EP-15.html"><b>EP-15</b> <code>POST /salles</code> Déclarer une salle</a></li><li><a href="endpoints/EP-16.html"><b>EP-16</b> <code>PUT /salles/{id}</code> Modifier une salle</a></li><li><a href="endpoints/EP-17.html"><b>EP-17</b> <code>POST /salles/{id}/desactivation</code> Désactiver une salle</a></li><li><a href="endpoints/EP-18.html"><b>EP-18</b> <code>GET /creneaux/plus-proche</code> Proposer le créneau libre le plus proche</a></li><li><a href="endpoints/EP-19.html"><b>EP-19</b> <code>PUT /reservations/{id}</code> Modifier l'horaire ou la salle d'une réservation</a></li><li><a href="endpoints/EP-20.html"><b>EP-20</b> <code>POST /reservations/{id}/presence</code> Confirmer ma présence</a></li><li><a href="endpoints/EP-21.html"><b>EP-21</b> <code>GET /statistiques/occupation</code> Calculer les statistiques d'occupation</a></li></ul></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node gen">
+                          <div class="st-head"><a class="st-title" href="swagger.html">Vue Swagger UI</a><span class="st-badge" role="img" aria-label="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer" data-tip="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer">gen</span></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                  <li class="st-item st-b2"><span class="st-group">Schémas</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node gen">
+                          <div class="st-head"><a class="st-title" href="schemas/index.html">Liste des schémas</a><span class="st-badge" role="img" aria-label="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer" data-tip="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer">gen</span></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node gen st-stack">
+                          <div class="st-head"><a class="st-title" href="schemas/AnnulationDemande.html" aria-haspopup="dialog" data-tip="19 pages : ouvrir la liste">Page de schéma</a><span class="st-badge" role="img" aria-label="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer" data-tip="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer">gen</span></div>
+                          <div class="st-pages" hidden data-title="Page de schéma"><ul><li><a href="schemas/AnnulationDemande.html"><code>AnnulationDemande</code></a></li><li><a href="schemas/ConnexionDemande.html"><code>ConnexionDemande</code></a></li><li><a href="schemas/CreneauPropose.html"><code>CreneauPropose</code></a></li><li><a href="schemas/Equipement.html"><code>Equipement</code></a></li><li><a href="schemas/MaReservation.html"><code>MaReservation</code></a></li><li><a href="schemas/Probleme.html"><code>Probleme</code></a></li><li><a href="schemas/Reservation.html"><code>Reservation</code></a></li><li><a href="schemas/ReservationDemande.html"><code>ReservationDemande</code></a></li><li><a href="schemas/Salle.html"><code>Salle</code></a></li><li><a href="schemas/SalleDemande.html"><code>SalleDemande</code></a></li><li><a href="schemas/SalleDesactivee.html"><code>SalleDesactivee</code></a></li><li><a href="schemas/SalleDetail.html"><code>SalleDetail</code></a></li><li><a href="schemas/SerieAnnulee.html"><code>SerieAnnulee</code></a></li><li><a href="schemas/SerieApercu.html"><code>SerieApercu</code></a></li><li><a href="schemas/SerieConfirmation.html"><code>SerieConfirmation</code></a></li><li><a href="schemas/SerieCreee.html"><code>SerieCreee</code></a></li><li><a href="schemas/SerieDemande.html"><code>SerieDemande</code></a></li><li><a href="schemas/StatistiquesOccupation.html"><code>StatistiquesOccupation</code></a></li><li><a href="schemas/Utilisateur.html"><code>Utilisateur</code></a></li></ul></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                  <li class="st-item st-b3 st-single"><span class="st-group">Entités</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node st-stack">
+                          <div class="st-head"><a class="st-title" href="entites/EN-01.html" aria-haspopup="dialog" data-tip="6 pages : ouvrir la liste">Page d'entité EN-xx</a></div>
+                          <div class="st-pages" hidden data-title="Page d'entité EN-xx"><ul><li><a href="entites/EN-01.html"><b>EN-01</b> Employé</a></li><li><a href="entites/EN-02.html"><b>EN-02</b> Session</a></li><li><a href="entites/EN-03.html"><b>EN-03</b> Salle</a></li><li><a href="entites/EN-04.html"><b>EN-04</b> Équipement</a></li><li><a href="entites/EN-05.html"><b>EN-05</b> Réservation</a></li><li><a href="entites/EN-06.html"><b>EN-06</b> Série</a></li></ul></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                  <li class="st-item st-b4 st-single"><span class="st-group">Traitements</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node st-stack">
+                          <div class="st-head"><a class="st-title" href="traitements/TR-01.html" aria-haspopup="dialog" data-tip="6 pages : ouvrir la liste">Page de traitement TR-xx</a></div>
+                          <div class="st-pages" hidden data-title="Page de traitement TR-xx"><ul><li><a href="traitements/TR-01.html"><b>TR-01</b> Calculer les occurrences et leurs conflits</a></li><li><a href="traitements/TR-02.html"><b>TR-02</b> Contrôler et enregistrer un créneau</a></li><li><a href="traitements/TR-03.html"><b>TR-03</b> Annuler les réservations futures d'une salle</a></li><li><a href="traitements/TR-04.html"><b>TR-04</b> Chercher le créneau libre le plus proche</a></li><li><a href="traitements/TR-05.html"><b>TR-05</b> Calculer les taux d'occupation</a></li><li><a href="traitements/TR-06.html"><b>TR-06</b> Annuler une réservation</a></li></ul></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                  <li class="st-item st-b5"><span class="st-group">Transverse</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="transverse/organisation-du-code.html">Organisation du code</a></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="transverse/erreurs.html">Gestion des erreurs</a></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="transverse/ecrans.html">Écrans</a></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="transverse/securite.html">Sécurité et droits</a></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="transverse/tests.html">Stratégie de test technique</a></div>
+                        </div></li>
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="transverse/conformite.html">Contrat de conformité</a></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                  <li class="st-item st-b7 st-single"><span class="st-group">Points ouverts</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node gen">
+                          <div class="st-head"><a class="st-title" href="points-ouverts.html">Points ouverts</a><span class="st-badge" role="img" aria-label="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer" data-tip="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer">gen</span></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                  <li class="st-item st-b6 st-single"><span class="st-group">API</span>
+                    <ul class="st-sub">
+                      <li class="st-item st-leaf"><div class="st-node">
+                          <div class="st-head"><a class="st-title" href="../api/openapi.yaml">openapi.yaml</a></div>
+                        </div></li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+        <p class="st-legend"><span><i class="st-entry"></i>point d'entrée</span><span><i class="st-grp"></i>groupe de pages</span><span><i></i>une page</span><span><i class="st-stack"></i>une famille de pages du même modèle : son titre ouvre la liste de ses pages</span><span><span class="st-badge on-light" role="img" aria-label="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer" data-tip="Page générée depuis openapi.yaml et les pages écrites : ne pas éditer, modifier la source et régénérer">gen</span><span>page générée, ne s'édite pas</span></span></p>
+      </nav><!-- /gen -->
+    </section>
+
+    <section class="section" id="endpoints" data-level="obligatoire">
+      <h2>Endpoints</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Trouver une opération du contrat d'API par son chemin, ses droits ou son statut.</dd>
+          <dt>Contenu</dt><dd>Une ligne par opération : identifiant, verbe et chemin, résumé, rôles admis, statut figé ou provisoire. La release, indicative, est sur la page de l'endpoint.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La liste des opérations d'OpenAPI en tableau triable, réduite à ce qui sert à trouver une opération.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code>.</dd>
+        </dl>
+      </div>
+      <!-- gen:summary-endpoints -->
+      <table data-sortable>
+        <thead><tr><th>Id</th><th>Verbe et chemin</th><th>Résumé</th><th>Droits</th><th data-sort-order="fige|provisoire">Statut</th></tr></thead>
+        <tbody>
+          <tr><td><a href="endpoints/EP-01.html">EP-01</a></td><td data-sort-value="/session 1"><span class="verb post">POST</span> <code>/session</code></td><td>Se connecter</td><td>public</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-02.html">EP-02</a></td><td data-sort-value="/session 0"><span class="verb get">GET</span> <code>/session</code></td><td>Connaître l'utilisateur et son rôle</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-03.html">EP-03</a></td><td data-sort-value="/session 4"><span class="verb delete">DELETE</span> <code>/session</code></td><td>Se déconnecter</td><td>public</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-04.html">EP-04</a></td><td data-sort-value="/salles 0"><span class="verb get">GET</span> <code>/salles</code></td><td>Lister les salles</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-05.html">EP-05</a></td><td data-sort-value="/equipements 0"><span class="verb get">GET</span> <code>/equipements</code></td><td>Lister les équipements</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-06.html">EP-06</a></td><td data-sort-value="/reservations 0"><span class="verb get">GET</span> <code>/reservations</code></td><td>Occupation d'une journée</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-07.html">EP-07</a></td><td data-sort-value="/salles/disponibles 0"><span class="verb get">GET</span> <code>/salles/disponibles</code></td><td>Chercher les salles libres sur un créneau</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-08.html">EP-08</a></td><td data-sort-value="/reservations 1"><span class="verb post">POST</span> <code>/reservations</code></td><td>Réserver un créneau ponctuel</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-09.html">EP-09</a></td><td data-sort-value="/series/apercu 1"><span class="verb post">POST</span> <code>/series/apercu</code></td><td>Calculer les occurrences d'une série et leurs conflits</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-10.html">EP-10</a></td><td data-sort-value="/series 1"><span class="verb post">POST</span> <code>/series</code></td><td>Créer une série</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-11.html">EP-11</a></td><td data-sort-value="/moi/reservations 0"><span class="verb get">GET</span> <code>/moi/reservations</code></td><td>Lister mes réservations</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-12.html">EP-12</a></td><td data-sort-value="/reservations/{id}/annulation 1"><span class="verb post">POST</span> <code>/reservations/{id}/annulation</code></td><td>Annuler une réservation ou une occurrence</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-13.html">EP-13</a></td><td data-sort-value="/series/{id}/annulation 1"><span class="verb post">POST</span> <code>/series/{id}/annulation</code></td><td>Annuler les occurrences à venir d'une série</td><td>employe, gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-14.html">EP-14</a></td><td data-sort-value="/salles/{id} 0"><span class="verb get">GET</span> <code>/salles/{id}</code></td><td>Lire une salle et ses réservations futures</td><td>gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-15.html">EP-15</a></td><td data-sort-value="/salles 1"><span class="verb post">POST</span> <code>/salles</code></td><td>Déclarer une salle</td><td>gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-16.html">EP-16</a></td><td data-sort-value="/salles/{id} 2"><span class="verb put">PUT</span> <code>/salles/{id}</code></td><td>Modifier une salle</td><td>gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-17.html">EP-17</a></td><td data-sort-value="/salles/{id}/desactivation 1"><span class="verb post">POST</span> <code>/salles/{id}/desactivation</code></td><td>Désactiver une salle</td><td>gestionnaire</td><td data-sort-value="fige"><span class="tag ok">contrat figé</span></td></tr>
+          <tr><td><a href="endpoints/EP-18.html">EP-18</a></td><td data-sort-value="/creneaux/plus-proche 0"><span class="verb get">GET</span> <code>/creneaux/plus-proche</code></td><td>Proposer le créneau libre le plus proche</td><td>employe, gestionnaire</td><td data-sort-value="provisoire"><span class="tag warn">contrat provisoire</span></td></tr>
+          <tr><td><a href="endpoints/EP-19.html">EP-19</a></td><td data-sort-value="/reservations/{id} 2"><span class="verb put">PUT</span> <code>/reservations/{id}</code></td><td>Modifier l'horaire ou la salle d'une réservation</td><td>employe, gestionnaire</td><td data-sort-value="provisoire"><span class="tag warn">contrat provisoire</span></td></tr>
+          <tr><td><a href="endpoints/EP-20.html">EP-20</a></td><td data-sort-value="/reservations/{id}/presence 1"><span class="verb post">POST</span> <code>/reservations/{id}/presence</code></td><td>Confirmer ma présence</td><td>employe, gestionnaire</td><td data-sort-value="provisoire"><span class="tag warn">contrat provisoire</span></td></tr>
+          <tr><td><a href="endpoints/EP-21.html">EP-21</a></td><td data-sort-value="/statistiques/occupation 0"><span class="verb get">GET</span> <code>/statistiques/occupation</code></td><td>Calculer les statistiques d'occupation</td><td>gestionnaire</td><td data-sort-value="provisoire"><span class="tag warn">contrat provisoire</span></td></tr>
+        </tbody>
+      </table><!-- /gen -->
+    </section>
+
+    <section class="section" id="matrice-crud" data-level="obligatoire">
+      <h2>Matrice CRUD</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime quelle entité ; c'est aussi l'index des entités et des traitements.</dd>
+          <dt>Contenu</dt><dd>En lignes les endpoints puis les traitements, en colonnes les entités ; la dernière colonne dit les traitements appelés.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, artefact standard du croisement données × traitements.</dd>
+          <dt>Lire</dt><dd>C création, R lecture, U mise à jour, D suppression. Pour un endpoint, une cellule compte aussi l'accès qu'il obtient par un traitement, tel qu'il le déclare (un traitement qui crée ou modifie ne donne que C à qui crée) ; le survol dit par quel traitement.</dd>
+          <dt>Source</dt><dd><code>x-entities</code> d'<code>openapi.yaml</code> (accès direct, ou obtenu <code>via</code> un traitement) et <code>x-processes</code> ; balises <code>meta</code> des traitements pour leurs lignes.</dd>
+        </dl>
+      </div>
+      <!-- gen:crud-matrix -->
+      <table class="crud-matrix">
+        <thead><tr><th>Endpoint ou traitement</th><th><a href="entites/EN-01.html">EN-01</a><small>Employé</small></th><th><a href="entites/EN-02.html">EN-02</a><small>Session</small></th><th><a href="entites/EN-03.html">EN-03</a><small>Salle</small></th><th><a href="entites/EN-04.html">EN-04</a><small>Équipement</small></th><th><a href="entites/EN-05.html">EN-05</a><small>Réservation</small></th><th><a href="entites/EN-06.html">EN-06</a><small>Série</small></th><th>Appelle</th></tr></thead>
+        <tbody>
+          <tr><td><a href="endpoints/EP-01.html">EP-01</a> <code>POST /session</code></td><td><span class="crud" data-tip="lecture">R</span></td><td><span class="crud" data-tip="création, suppression">CD</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-02.html">EP-02</a> <code>GET /session</code></td><td><span class="crud" data-tip="lecture">R</span></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-03.html">EP-03</a> <code>DELETE /session</code></td><td></td><td><span class="crud" data-tip="suppression">D</span></td><td></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-04.html">EP-04</a> <code>GET /salles</code></td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-05.html">EP-05</a> <code>GET /equipements</code></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-06.html">EP-06</a> <code>GET /reservations</code></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-07.html">EP-07</a> <code>GET /salles/disponibles</code></td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-08.html">EP-08</a> <code>POST /reservations</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, par TR-02">R</span></td><td></td><td><span class="crud" data-tip="création, lecture, par TR-02">CR</span></td><td></td><td><a href="traitements/TR-02.html">TR-02</a></td></tr>
+          <tr><td><a href="endpoints/EP-09.html">EP-09</a> <code>POST /series/apercu</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, par TR-01">R</span></td><td></td><td><span class="crud" data-tip="lecture, par TR-01">R</span></td><td></td><td><a href="traitements/TR-01.html">TR-01</a></td></tr>
+          <tr><td><a href="endpoints/EP-10.html">EP-10</a> <code>POST /series</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, par TR-01 ; par TR-02">R</span></td><td></td><td><span class="crud" data-tip="lecture par TR-01 ; création, lecture par TR-02">CR</span></td><td><span class="crud" data-tip="création">C</span></td><td><a href="traitements/TR-01.html">TR-01</a>, <a href="traitements/TR-02.html">TR-02</a></td></tr>
+          <tr><td><a href="endpoints/EP-11.html">EP-11</a> <code>GET /moi/reservations</code></td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-12.html">EP-12</a> <code>POST /reservations/{id}/annulation</code></td><td></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture directement ; lecture, mise à jour par TR-06">RU</span></td><td></td><td><a href="traitements/TR-06.html">TR-06</a></td></tr>
+          <tr><td><a href="endpoints/EP-13.html">EP-13</a> <code>POST /series/{id}/annulation</code></td><td></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture directement ; lecture, mise à jour par TR-06">RU</span></td><td><span class="crud" data-tip="lecture">R</span></td><td><a href="traitements/TR-06.html">TR-06</a></td></tr>
+          <tr><td><a href="endpoints/EP-14.html">EP-14</a> <code>GET /salles/{id}</code></td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-15.html">EP-15</a> <code>POST /salles</code></td><td></td><td></td><td><span class="crud" data-tip="création, lecture">CR</span></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-16.html">EP-16</a> <code>PUT /salles/{id}</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-17.html">EP-17</a> <code>POST /salles/{id}/desactivation</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td></td><td><span class="crud" data-tip="lecture par TR-03 ; lecture, mise à jour par TR-03 → TR-06">RU</span></td><td></td><td><a href="traitements/TR-03.html">TR-03</a></td></tr>
+          <tr><td><a href="endpoints/EP-18.html">EP-18</a> <code>GET /creneaux/plus-proche</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, par TR-04">R</span></td><td></td><td><span class="crud" data-tip="lecture, par TR-04">R</span></td><td></td><td><a href="traitements/TR-04.html">TR-04</a></td></tr>
+          <tr><td><a href="endpoints/EP-19.html">EP-19</a> <code>PUT /reservations/{id}</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, par TR-02">R</span></td><td></td><td><span class="crud" data-tip="lecture, mise à jour, par TR-02">RU</span></td><td></td><td><a href="traitements/TR-02.html">TR-02</a></td></tr>
+          <tr><td><a href="endpoints/EP-20.html">EP-20</a> <code>POST /reservations/{id}/presence</code></td><td></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td></td><td></td></tr>
+          <tr><td><a href="endpoints/EP-21.html">EP-21</a> <code>GET /statistiques/occupation</code></td><td></td><td></td><td><span class="crud" data-tip="lecture, par TR-05">R</span></td><td></td><td><span class="crud" data-tip="lecture, par TR-05">R</span></td><td></td><td><a href="traitements/TR-05.html">TR-05</a></td></tr>
+          <tr><td><a href="traitements/TR-01.html">TR-01</a> Calculer les occurrences et leurs conflits</td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="traitements/TR-02.html">TR-02</a> Contrôler et enregistrer un créneau</td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="création, lecture, mise à jour">CRU</span></td><td></td><td></td></tr>
+          <tr><td><a href="traitements/TR-03.html">TR-03</a> Annuler les réservations futures d'une salle</td><td></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture directement ; lecture, mise à jour par TR-06">RU</span></td><td></td><td><a href="traitements/TR-06.html">TR-06</a></td></tr>
+          <tr><td><a href="traitements/TR-04.html">TR-04</a> Chercher le créneau libre le plus proche</td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="traitements/TR-05.html">TR-05</a> Calculer les taux d'occupation</td><td></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td><span class="crud" data-tip="lecture">R</span></td><td></td><td></td></tr>
+          <tr><td><a href="traitements/TR-06.html">TR-06</a> Annuler une réservation</td><td></td><td></td><td></td><td></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td></td><td></td></tr>
+        </tbody>
+      </table><!-- /gen -->
+    </section>
+  </main>
+</div>
+<script src="../../_assets/doc.js"></script>
+</body>
+</html>

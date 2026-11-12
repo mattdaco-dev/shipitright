@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Gestion des erreurs · Conception technique détaillée · NOM_PROJET</title>
+  <!-- Copy to docs/30-conception/detaillee/transverse/erreurs.html. Its gen: block is filled by team/scripts/detaillee-pages.mjs. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Gestion des erreurs</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#plan-du-site">Transverse</a></div>
+      <h1><span class="doc-kind">Gestion des erreurs</span> : codes, statuts, écrans</h1>
+      <p class="lede">Chaque erreur de l'API porte un code métier stable que le front traduit en message. Le catalogue ci-dessous est tiré du contrat d'API : il dit pour chaque code le statut HTTP, le cas, ce que voit l'utilisateur et les endpoints qui le renvoient.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Principes</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire comment une erreur circule de l'API à l'écran.</dd>
+          <dt>Contenu</dt><dd>Le format des erreurs, le choix du statut HTTP, la traduction par le front, le traitement d'un code inconnu.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste courte, chaque principe avec l'invariant qui le rend vérifiable ; le détail code par code est dans le catalogue.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li>Format <code>application/problem+json</code> (RFC 9457), schéma <a href="../schemas/Probleme.html"><code>Probleme</code></a>. Le champ <code>code</code> prend une valeur de <a href="../schemas/index.html#CodeErreur"><code>CodeErreur</code></a>.</li>
+        <li>Requête hors schéma en <code>400</code>, session absente en <code>401</code>, rôle insuffisant en <code>403</code>, ressource inconnue en <code>404</code>, conflit d'état en <code>409</code>, règle de saisie en <code>422</code>.</li>
+        <li>Le front traduit le <code>code</code>, jamais <code>title</code> ni <code>detail</code>, depuis un catalogue unique de libellés.</li>
+        <li>Un <code>code</code> que le front ne connaît pas (valeur ajoutée par une release suivante) s'affiche comme l'erreur technique de l'écran, sans planter (<a href="conformite.html#CF-59">CF-59</a>). Les codes annoncés portent leur release dans le catalogue.</li>
+        <li>Un code qui met en cause un objet (colonne Entité) n'est renvoyé que par un endpoint ou un traitement qui déclare cette entité ; le générateur le vérifie. La traduction écran par écran est dans la <a href="ecrans.html">vue écrans</a>.</li>
+        <li>Aucune réponse ne porte de détail technique (pile, requête, nom de table). Une erreur imprévue annule la transaction et répond <a href="erreurs.html#ERREUR_INTERNE"><code>ERREUR_INTERNE</code></a>.</li>
+        <li><span class="todo">règles propres au projet, ou retirer cette ligne</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Catalogue des codes</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Tout savoir d'un code d'erreur métier.</dd>
+          <dt>Contenu</dt><dd>Une ligne par valeur de <a href="../schemas/index.html#CodeErreur"><code>CodeErreur</code></a> : statut HTTP, cas, ce que voit l'utilisateur (écran et message), entité mise en cause, endpoints qui le renvoient.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le registre des types de problème de RFC 9457, en tableau.</dd>
+          <dt>Source</dt><dd><code>x-error-catalog</code> et <code>x-codes</code> d'<code>openapi.yaml</code> : le catalogue ne peut pas diverger du contrat d'API.</dd>
+        </dl>
+      </div>
+      <!-- gen:error-catalog --><!-- /gen -->
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

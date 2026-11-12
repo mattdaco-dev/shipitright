@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Écrans · Conception technique détaillée · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Écrans</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#plan-du-site">Transverse</a></div>
+      <h1><span class="doc-kind">Écrans</span> : ce que chaque écran appelle et traduit</h1>
+      <p class="lede">La vue du dev frontend : pour chaque écran de la conception macro, les endpoints qu'il appelle, les codes d'erreur qu'il doit traduire et les messages qu'il affiche, puis son adresse, ce qui lui arrive d'un autre écran et les rôles et noms accessibles que visent les tests e2e. Le comportement de chaque code est dans la <a href="erreurs.html">gestion des erreurs</a>.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" id="plan-des-ecrans" data-level="obligatoire">
+      <h2>Plan des écrans</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Voir tous les écrans du produit, comment on passe de l'un à l'autre, et aller à leur définition.</dd>
+          <dt>Contenu</dt><dd>Une card par écran de la conception macro, rangée par parcours : aperçu et nom de la spec UX/UI, lien vers sa définition et vers sa ligne « Par écran ». Les flèches portent l'action qui fait passer d'un écran à l'autre.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un wireflow, le pendant du plan du site pour le front, dessiné avec le même moteur que celui de la spec UX/UI.</dd>
+          <dt>Lire</dt><dd><ul><li>Un écran présent dans deux parcours est dessiné une fois.</li><li>Une boîte de dialogue compte pour son écran.</li><li>Les résultats et les retours en arrière ne sont pas dessinés.</li><li>Un écran sans parcours est à la fin, sans flèche.</li></ul></dd>
+          <dt>Source</dt><dd>L'inventaire des écrans et le wireflow de la spec UX/UI, et la conception macro. Le wireflow reste la seule source des enchaînements.</dd>
+        </dl>
+      </div>
+      <!-- gen:screen-map -->
+      <div class="pf screen-flow">
+        <div class="sf-group" style="grid-row: 1; grid-column: 1 / span 4"><span class="st-group">Employé</span></div>
+        <div class="pf-node screen" id="sf-EC-01" data-c="1" data-r="2" data-links="sf-EC-02|Se connecter"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-01">EC-01</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-01-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Connexion</span><span class="sf-next">→ <a href="#sf-EC-02">EC-02</a> Se connecter</span><a class="sf-row" href="#EC-01">endpoints et erreurs</a></div>
+        <div class="pf-node screen" id="sf-EC-02" data-c="2" data-r="2" data-links="sf-EC-04|Clic sur une case libre sf-EC-03|Chercher une salle"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-02-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Occupation du jour</span><span class="sf-next">→ <a href="#sf-EC-04">EC-04</a> Clic sur une case libre</span><span class="sf-next">→ <a href="#sf-EC-03">EC-03</a> Chercher une salle</span><a class="sf-row" href="#EC-02">endpoints et erreurs</a></div>
+        <div class="pf-node screen" id="sf-EC-04" data-c="3" data-r="2" data-links="sf-EC-05|Réserver, Créer les libres"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-04">EC-04</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-04-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Réservation</span><span class="sf-next">→ <a href="#sf-EC-05">EC-05</a> Réserver, Créer les libres</span><a class="sf-row" href="#EC-04">endpoints et erreurs</a></div>
+        <div class="pf-node screen" id="sf-EC-05" data-c="4" data-r="2"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-05">EC-05</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-05-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Mes réservations</span><a class="sf-row" href="#EC-05">endpoints et erreurs</a></div>
+        <div class="pf-node screen" id="sf-EC-03" data-c="2" data-r="3" data-links="sf-EC-04|Réserver"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-03">EC-03</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-03-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Recherche de salle</span><span class="sf-next">→ <a href="#sf-EC-04">EC-04</a> Réserver</span><a class="sf-row" href="#EC-03">endpoints et erreurs</a></div>
+        <div class="sf-group" style="grid-row: 4; grid-column: 1 / span 4"><span class="st-group">Gestionnaire</span></div>
+        <div class="pf-node screen" id="sf-EC-06" data-c="1" data-r="5" data-links="sf-EC-07|Nouvelle salle, Modifier"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-06">EC-06</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-06-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Parc de salles</span><span class="sf-next">→ <a href="#sf-EC-07">EC-07</a> Nouvelle salle, Modifier</span><a class="sf-row" href="#EC-06">endpoints et erreurs</a></div>
+        <div class="pf-node screen" id="sf-EC-07" data-c="2" data-r="5"><a class="ec" href="../../../20-ux/spec-ux-ui.html#EC-07">EC-07</a><span class="sf-thumb"><img src="../../../20-ux/captures/EC-07-nominal.png" alt="" loading="lazy"></span><span class="sf-name">Fiche salle</span><a class="sf-row" href="#EC-07">endpoints et erreurs</a></div>
+        <div class="sf-group" style="grid-row: 6; grid-column: 1 / span 4"><span class="st-group">Hors parcours</span></div>
+        <div class="pf-node screen" id="sf-EC-08" data-c="1" data-r="7"><span class="ec">EC-08</span><span class="sf-thumb"><span class="missing">pas d'aperçu dans la spec UX/UI</span></span><span class="sf-name">Occupation de la semaine <span class="tag accent">R2</span></span><a class="sf-row" href="#EC-08">endpoints et erreurs</a></div>
+        <div class="pf-node screen" id="sf-EC-09" data-c="2" data-r="7"><span class="ec">EC-09</span><span class="sf-thumb"><span class="missing">pas d'aperçu dans la spec UX/UI</span></span><span class="sf-name">Statistiques d'occupation <span class="tag accent">R3</span></span><a class="sf-row" href="#EC-09">endpoints et erreurs</a></div>
+      </div><!-- /gen -->
+    </section>
+
+    <section class="section" id="par-ecran" data-level="obligatoire">
+      <h2>Par écran</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Servir de point d'entrée au dev frontend, écran par écran.</dd>
+          <dt>Contenu</dt><dd>Pour chaque écran de la conception macro : les endpoints qu'il appelle, les codes d'erreur qu'il traduit, les messages qu'il affiche, et le lien vers sa ligne « Adresse, arrivée et structure ».</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, une ligne par écran : le dev lit d'un coup tout ce que son écran touche.</dd>
+          <dt>Lire</dt><dd>Un écran d'une release suivante, pas encore dans la spec UX/UI, reste sans lien.</dd>
+          <dt>Source</dt><dd>La chaîne écran, fonctionnalité, endpoint de la macro, les <code>x-codes</code> d'<code>openapi.yaml</code>, le catalogue des erreurs et les séquences.</dd>
+        </dl>
+      </div>
+      <!-- gen:screens -->
+      <p>Codes communs à tous les écrans, traités par le service de traduction : <a href="erreurs.html#VALIDATION"><code>VALIDATION</code></a>, <a href="erreurs.html#NON_AUTHENTIFIE"><code>NON_AUTHENTIFIE</code></a>, <a href="erreurs.html#ERREUR_INTERNE"><code>ERREUR_INTERNE</code></a>.</p>
+      <table>
+        <thead><tr><th>Écran</th><th>Endpoints</th><th>Codes à traduire</th><th>Messages</th></tr></thead>
+        <tbody>
+          <tr id="EC-01"><td><a href="../../../20-ux/spec-ux-ui.html#EC-01">EC-01</a> Connexion <span class="tag accent">MVP</span><br><a href="#structure-EC-01">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-01.html">EP-01</a></td><td><a href="erreurs.html#IDENTIFIANTS_REFUSES"><code>IDENTIFIANTS_REFUSES</code></a>, <a href="erreurs.html#TROP_DE_TENTATIVES"><code>TROP_DE_TENTATIVES</code></a></td><td><a href="../../../20-ux/spec-ux-ui.html#MSG-U01">MSG-U01</a></td></tr>
+          <tr id="EC-02"><td><a href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a> Occupation du jour <span class="tag accent">MVP</span><br><a href="#structure-EC-02">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-04.html">EP-04</a>, <a href="../endpoints/EP-06.html">EP-06</a>, <a href="../endpoints/EP-12.html">EP-12</a></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#RESERVATION_INTROUVABLE"><code>RESERVATION_INTROUVABLE</code></a>, <a href="erreurs.html#DEJA_COMMENCEE"><code>DEJA_COMMENCEE</code></a>, <a href="erreurs.html#MOTIF_OBLIGATOIRE"><code>MOTIF_OBLIGATOIRE</code></a>, <a href="erreurs.html#PERIODE_INVALIDE"><code>PERIODE_INVALIDE</code></a> <span class="tag accent">R2</span></td><td><a href="../../../20-ux/spec-ux-ui.html#MSG-U02">MSG-U02</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U03">MSG-U03</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U10">MSG-U10</a></td></tr>
+          <tr id="EC-03"><td><a href="../../../20-ux/spec-ux-ui.html#EC-03">EC-03</a> Recherche de salle <span class="tag accent">MVP</span><br><a href="#structure-EC-03">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-05.html">EP-05</a>, <a href="../endpoints/EP-07.html">EP-07</a>, <a href="../endpoints/EP-18.html">EP-18</a> <span class="tag accent">R2</span></td><td><a href="erreurs.html#CRENEAU_HORS_REGLES"><code>CRENEAU_HORS_REGLES</code></a></td><td><a href="../../../20-specs/conception-fonctionnelle.html#MSG-03">MSG-03</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U04">MSG-U04</a></td></tr>
+          <tr id="EC-04"><td><a href="../../../20-ux/spec-ux-ui.html#EC-04">EC-04</a> Réservation <span class="tag accent">MVP</span><br><a href="#structure-EC-04">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-04.html">EP-04</a>, <a href="../endpoints/EP-08.html">EP-08</a>, <a href="../endpoints/EP-09.html">EP-09</a>, <a href="../endpoints/EP-10.html">EP-10</a></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#SALLE_INTROUVABLE"><code>SALLE_INTROUVABLE</code></a>, <a href="erreurs.html#SALLE_DESACTIVEE"><code>SALLE_DESACTIVEE</code></a>, <a href="erreurs.html#CRENEAU_HORS_REGLES"><code>CRENEAU_HORS_REGLES</code></a>, <a href="erreurs.html#CRENEAU_PRIS"><code>CRENEAU_PRIS</code></a>, <a href="erreurs.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a>, <a href="erreurs.html#SERIE_CONFLITS_CHANGES"><code>SERIE_CONFLITS_CHANGES</code></a>, <a href="erreurs.html#JOURS_CONFIRMES_INVALIDES"><code>JOURS_CONFIRMES_INVALIDES</code></a></td><td><a href="../../../20-specs/conception-fonctionnelle.html#MSG-01">MSG-01</a>, <a href="../../../20-specs/conception-fonctionnelle.html#MSG-02">MSG-02</a>, <a href="../../../20-specs/conception-fonctionnelle.html#MSG-03">MSG-03</a>, <a href="../../../20-specs/conception-fonctionnelle.html#MSG-04">MSG-04</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U06">MSG-U06</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U13">MSG-U13</a></td></tr>
+          <tr id="EC-05"><td><a href="../../../20-ux/spec-ux-ui.html#EC-05">EC-05</a> Mes réservations <span class="tag accent">MVP</span><br><a href="#structure-EC-05">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-11.html">EP-11</a>, <a href="../endpoints/EP-12.html">EP-12</a>, <a href="../endpoints/EP-13.html">EP-13</a>, <a href="../endpoints/EP-19.html">EP-19</a> <span class="tag accent">R2</span>, <a href="../endpoints/EP-20.html">EP-20</a> <span class="tag accent">R3</span></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#SALLE_INTROUVABLE"><code>SALLE_INTROUVABLE</code></a>, <a href="erreurs.html#RESERVATION_INTROUVABLE"><code>RESERVATION_INTROUVABLE</code></a>, <a href="erreurs.html#SERIE_INTROUVABLE"><code>SERIE_INTROUVABLE</code></a>, <a href="erreurs.html#SALLE_DESACTIVEE"><code>SALLE_DESACTIVEE</code></a>, <a href="erreurs.html#CRENEAU_HORS_REGLES"><code>CRENEAU_HORS_REGLES</code></a>, <a href="erreurs.html#CRENEAU_PRIS"><code>CRENEAU_PRIS</code></a>, <a href="erreurs.html#DEJA_COMMENCEE"><code>DEJA_COMMENCEE</code></a>, <a href="erreurs.html#MOTIF_OBLIGATOIRE"><code>MOTIF_OBLIGATOIRE</code></a>, <a href="erreurs.html#HORS_FENETRE_PRESENCE"><code>HORS_FENETRE_PRESENCE</code></a> <span class="tag accent">R3</span></td><td><a href="../../../20-specs/conception-fonctionnelle.html#MSG-05">MSG-05</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U07">MSG-U07</a></td></tr>
+          <tr id="EC-06"><td><a href="../../../20-ux/spec-ux-ui.html#EC-06">EC-06</a> Parc de salles <span class="tag accent">MVP</span><br><a href="#structure-EC-06">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-04.html">EP-04</a>, <a href="../endpoints/EP-14.html">EP-14</a>, <a href="../endpoints/EP-17.html">EP-17</a></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#SALLE_INTROUVABLE"><code>SALLE_INTROUVABLE</code></a></td><td><a href="../../../20-specs/conception-fonctionnelle.html#MSG-06">MSG-06</a>, <a href="../../../20-specs/conception-fonctionnelle.html#MSG-08">MSG-08</a></td></tr>
+          <tr id="EC-07"><td><a href="../../../20-ux/spec-ux-ui.html#EC-07">EC-07</a> Fiche salle <span class="tag accent">MVP</span><br><a href="#structure-EC-07">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-05.html">EP-05</a>, <a href="../endpoints/EP-14.html">EP-14</a>, <a href="../endpoints/EP-15.html">EP-15</a>, <a href="../endpoints/EP-16.html">EP-16</a></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#SALLE_INTROUVABLE"><code>SALLE_INTROUVABLE</code></a>, <a href="erreurs.html#NOM_SALLE_PRIS"><code>NOM_SALLE_PRIS</code></a>, <a href="erreurs.html#EQUIPEMENT_INCONNU"><code>EQUIPEMENT_INCONNU</code></a></td><td><a href="../../../20-specs/conception-fonctionnelle.html#MSG-07">MSG-07</a>, <a href="../../../20-specs/conception-fonctionnelle.html#MSG-08">MSG-08</a>, <a href="../../../20-ux/spec-ux-ui.html#MSG-U11">MSG-U11</a></td></tr>
+          <tr id="EC-08"><td>EC-08 Occupation de la semaine <span class="tag accent">R2</span><br><a href="#structure-EC-08">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-04.html">EP-04</a>, <a href="../endpoints/EP-06.html">EP-06</a></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#PERIODE_INVALIDE"><code>PERIODE_INVALIDE</code></a></td><td>aucun</td></tr>
+          <tr id="EC-09"><td>EC-09 Statistiques d'occupation <span class="tag accent">R3</span><br><a href="#structure-EC-09">adresse, arrivée, structure</a></td><td><a href="../endpoints/EP-21.html">EP-21</a></td><td><a href="erreurs.html#INTERDIT"><code>INTERDIT</code></a>, <a href="erreurs.html#PERIODE_INVALIDE"><code>PERIODE_INVALIDE</code></a></td><td>aucun</td></tr>
+        </tbody>
+      </table>
+      <!-- /gen -->
+    </section>
+
+    <section class="section" id="adresse-arrivee-structure" data-level="obligatoire">
+      <h2>Adresse, arrivée et structure</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire, avant le dev, comment on arrive sur chaque écran et ce que les tests e2e y visent, pour que ni le dev frontend ni le QA ne le devinent.</dd>
+          <dt>Contenu</dt><dd>Une ligne par écran de la conception macro : adresse et paramètres (chemin, paramètres de chemin et de requête), ce qui arrive d'un autre écran (écran d'origine, message porté et mécanisme : paramètre d'adresse, état de navigation), rôles et noms accessibles des éléments que visent les e2e.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les objets de page des tests e2e et les écrans se construisent en parallèle : ils s'accordent sur cette table, écrite une fois, plutôt que sur des hypothèses de chaque ticket.</dd>
+          <dt>Lire</dt><dd>Un nom accessible est le libellé exact de la spec UX/UI. Un écran d'une release suivante garde sa ligne, avec ce qui est déjà connu.</dd>
+          <dt>Source</dt><dd>Écrite à la main par l'architecte, relue par l'UX et le QA, à partir de la spec UX/UI (contenu, actions, wireflow) et de l'<a href="organisation-du-code.html">organisation du code</a> (routes du frontend). Le générateur signale un écran de la macro sans ligne.</dd>
+        </dl>
+      </div>
+      <table class="screen-details">
+        <thead><tr><th>Écran</th><th>Adresse et paramètres</th><th>Arrive de</th><th>Rôles et noms accessibles</th></tr></thead>
+        <tbody>
+          <tr id="structure-EC-01"><td><a href="../../../20-ux/spec-ux-ui.html#EC-01">EC-01</a> Connexion</td><td><code>/connexion</code></td><td>toute page ouverte sans session : son adresse dans l'état de navigation, rouverte après « Se connecter »</td><td><code>heading</code> « Réservation de salles » ; <code>textbox</code> « Email », « Mot de passe » ; <code>button</code> « Afficher le mot de passe », « Se connecter » ; <code>alert</code> pour <a href="../../../20-ux/spec-ux-ui.html#MSG-U01">MSG-U01</a></td></tr>
+          <tr id="structure-EC-02"><td><a href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a> Occupation du jour</td><td><code>/occupation</code>, <code>?jour=AAAA-MM-JJ</code> (aujourd'hui par défaut), <code>?salle=</code> (id de salle, toutes par défaut)</td><td><a href="../../../20-ux/spec-ux-ui.html#EC-01">EC-01</a> : rien, jour du poste ; <a href="../../../20-ux/spec-ux-ui.html#EC-06">EC-06</a> refusé : <a href="../../../20-ux/spec-ux-ui.html#MSG-U10">MSG-U10</a> par l'état de navigation</td><td><code>heading</code> « Occupation du jour » ; <code>button</code> « Jour précédent », « Jour suivant », « Aujourd'hui » ; <code>combobox</code> « Salle » ; <code>grid</code> « Occupation », une <code>row</code> par salle ; <code>button</code> « Chercher une salle »</td></tr>
+          <tr id="structure-EC-03"><td><a href="../../../20-ux/spec-ux-ui.html#EC-03">EC-03</a> Recherche de salle</td><td><code>/recherche</code>, sans paramètre (critères en signal)</td><td><a href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a> (« Chercher une salle ») : rien, critères vides</td><td><code>heading</code> « Recherche de salle » ; <code>spinbutton</code> « Participants » ; <code>checkbox</code> par équipement ; <code>button</code> « Chercher » ; <code>list</code> « Résultats », <code>button</code> « Réserver » par salle ; <code>status</code> pour <a href="../../../20-ux/spec-ux-ui.html#MSG-U04">MSG-U04</a></td></tr>
+          <tr id="structure-EC-04"><td><a href="../../../20-ux/spec-ux-ui.html#EC-04">EC-04</a> Réservation</td><td><code>/reservation/nouvelle</code>, <code>?salle=&amp;jour=&amp;debut=</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a> (case libre) et <a href="../../../20-ux/spec-ux-ui.html#EC-03">EC-03</a> (« Réserver ») : salle, jour et début en paramètres d'adresse, l'écran d'origine dans l'état de navigation pour « Retour »</td><td><code>heading</code> « Réservation » ; <code>combobox</code> « Salle », « Début », « Fin », « Répéter » ; <code>textbox</code> « Jour », « Jusqu'au » ; <code>status</code> « &lt;n&gt; occurrences » ; <code>button</code> « Réserver », « Retour »</td></tr>
+          <tr id="structure-EC-05"><td><a href="../../../20-ux/spec-ux-ui.html#EC-05">EC-05</a> Mes réservations</td><td><code>/mes-reservations</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-04">EC-04</a> après « Réserver » : <a href="../../../20-specs/conception-fonctionnelle.html#MSG-02">MSG-02</a> dans l'état de navigation, affiché une fois en bandeau</td><td><code>heading</code> « Mes réservations » ; <code>status</code> du bandeau <a href="../../../20-specs/conception-fonctionnelle.html#MSG-02">MSG-02</a>, <code>button</code> « Fermer » ; <code>list</code> par jour ; <code>button</code> « Annuler » par réservation à venir ; <code>dialog</code> « Annuler la réservation »</td></tr>
+          <tr id="structure-EC-06"><td><a href="../../../20-ux/spec-ux-ui.html#EC-06">EC-06</a> Parc de salles</td><td><code>/parc</code>, garde de rôle gestionnaire</td><td><a href="../../../20-ux/spec-ux-ui.html#EC-07">EC-07</a> après « Enregistrer » : l'id de la salle à jour dans l'état de navigation, pour la mettre en évidence</td><td><code>heading</code> « Parc de salles » ; <code>table</code> « Salles » ; <code>button</code> « Nouvelle salle », « Modifier », « Désactiver » ; <code>dialog</code> « Désactiver la salle » avec <a href="../../../20-specs/conception-fonctionnelle.html#MSG-08">MSG-08</a></td></tr>
+          <tr id="structure-EC-07"><td><a href="../../../20-ux/spec-ux-ui.html#EC-07">EC-07</a> Fiche salle</td><td><code>/parc/salle/nouvelle</code> ; <code>/parc/salle/:id</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-06">EC-06</a> : l'id de la salle en paramètre de chemin pour « Modifier », rien pour « Nouvelle salle »</td><td><code>heading</code> « Nouvelle salle » ou « Modifier la salle » ; <code>textbox</code> « Nom » ; <code>spinbutton</code> « Capacité » ; <code>checkbox</code> par équipement ; <code>button</code> « Enregistrer », « Retour »</td></tr>
+          <tr id="structure-EC-08"><td>EC-08 Occupation de la semaine</td><td><code>/occupation/semaine</code>, <code>?semaine=AAAA-Wss</code></td><td>à définir avec la spec UX/UI de la release R2</td><td>à définir avec la spec UX/UI de la release R2</td></tr>
+          <tr id="structure-EC-09"><td>EC-09 Statistiques d'occupation</td><td><code>/parc/statistiques</code>, <code>?du=&amp;au=</code>, garde de rôle gestionnaire</td><td>à définir avec la spec UX/UI de la release R3</td><td>à définir avec la spec UX/UI de la release R3</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

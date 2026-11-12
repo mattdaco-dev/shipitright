@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADR-0002 Non-chevauchement des réservations garanti en base · Réservation de salles</title>
+  <!-- ADR metadata, read by team/scripts/adr-pages.mjs (header and register docs/adr/index.html) -->
+  <meta name="id" content="ADR-0002">           <!-- ADR- + the 4 digits of the file name -->
+  <meta name="titre" content="Non-chevauchement des réservations garanti en base">   <!-- same text as the h1 after "ADR-0002 :" -->
+  <meta name="statut" content="accepte">        <!-- propose | accepte | remplace | abandonne -->
+  <meta name="date" content="2026-10-06">       <!-- date of the last status change -->
+  <meta name="remplace" content="">             <!-- ADR-xxxx this decision replaces, separated by spaces -->
+  <meta name="repond_a" content="Q-001">             <!-- Q-xxx this decision answers, separated by spaces -->
+  <meta name="ecart_socle" content="non">       <!-- oui | non : the decision deviates from the stack socle -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Décision ADR-0002</div>
+    <nav></nav>
+    <div class="toc-back"><a href="index.html">← Registre des ADR</a><br><a href="../30-conception/macro.html">← Conception technique macro</a><br><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Architecte · Décisions d'architecture · <a href="index.html">Registre</a></div>
+      <h1><span class="doc-kind">ADR-0002</span> : Non-chevauchement des réservations garanti en base</h1>
+      <!-- gen:adr-meta -->
+      <div class="meta">
+        <span><b>Statut</b> <span class="tag ok">accepté</span></span>
+        <span><b>Date</b> 06.10.2026</span>
+        <span><b>Remplace</b> <span class="none">aucun</span></span>
+        <span><b>Remplacé par</b> <span class="none">aucun</span></span>
+        <span><b>Répond à</b> <a class="qmark" href="../questions.html#Q-001">Q-001</a></span>
+        <span><b>Écart au socle</b> <span class="tag ok">non</span></span>
+      </div>
+      <!-- /gen -->
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Écart au socle</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire si la décision s'écarte du socle de stack du projet. Un écart passe par un ADR au statut proposé, que le PO remonte à l'humain.</dd>
+          <dt>Contenu</dt><dd>Non : ce que le socle dit sur le sujet et pourquoi la décision le respecte. Oui : la règle ou l'invariant du socle écarté, et la portée de l'écart.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une ou deux phrases : c'est un fait vérifié à G2, pas un débat ; le débat est dans « Raison ».</dd>
+          <dt>Lire</dt><dd>Le oui ou non de l'en-tête vient de la balise <code>meta ecart_socle</code>.</dd>
+        </dl>
+      </div>
+      <p>Non. Le socle cite « accès sérialisé ou contrainte d'unicité » ; la décision combine les deux idées. Validée avec le socle complété par l'humain à G2.</p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Contexte</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce qui force un choix, pour qu'un lecteur le comprenne sans autre source dans trois mois.</dd>
+          <dt>Contenu</dt><dd>Le problème, les contraintes du cadrage, du socle et des règles de gestion, et le volet de la question à laquelle l'ADR répond.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Quelques phrases de prose, comme dans le format ADR de Michael Nygard : le contexte se raconte, il ne se tabule pas.</dd>
+        </dl>
+      </div>
+      <p><a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a> : une salle ne porte jamais deux réservations actives qui se chevauchent ; une réservation qui finit à 10:00 et une qui commence à 10:00 ne se chevauchent pas. Le cadrage en fait le premier objectif (zéro double réservation) et son risque le plus fort : deux demandes simultanées du même créneau. Un contrôle « lire puis écrire » dans le code ne suffit pas s'il peut s'entrelacer avec un autre. Un chevauchement d'intervalles ne s'exprime pas par une contrainte <code>UNIQUE</code> simple.</p>
+      <p>Cet ADR répond à <a class="qmark" href="../questions.html#Q-001">Q-001</a>, volet concurrence (<a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a>).</p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Décision</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce qui est décidé, applicable tel quel par un dev.</dd>
+          <dt>Contenu</dt><dd>Une affirmation par choix, à l'affirmatif, sans condition ni alternative.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste : chaque choix se cite seul en revue ou dans un invariant ; l'affirmatif ne laisse aucune lecture hésiter.</dd>
+        </dl>
+      </div>
+      <ol>
+        <li><b>Invariant en base</b> : un déclencheur <code>BEFORE INSERT</code> et un <code>BEFORE UPDATE</code> sur la table des réservations lèvent <code>RAISE(ABORT)</code> si une réservation active de la même salle, le même jour, vérifie <code>nouveau.debut &lt; fin AND nouveau.fin &gt; debut</code> (bornes strictes : 10:00-10:00 passe). Début et fin sont stockés en minutes depuis minuit.</li>
+        <li><b>Écritures sérialisées</b> : toute écriture qui pose ou remplace une réservation (ponctuelle, série, modification future) s'exécute dans une transaction <code>BEGIN IMMEDIATE</code> (variante <code>immediate</code> de better-sqlite3), qui prend le verrou d'écriture avant de lire. Base en mode WAL, <code>busy_timeout</code> de 5 secondes.</li>
+        <li><b>Contrôle applicatif d'abord</b> : dans la même transaction, le domaine cherche les conflits pour renvoyer un refus métier lisible (<a href="../20-specs/conception-fonctionnelle.html#MSG-01">MSG-01</a>, ou la liste des occurrences prises pour une série). Le déclencheur reste le filet : s'il se déclenche, l'API répond le même <code>409</code>.</li>
+        <li><b>Série</b> : les occurrences libres sont créées dans une seule transaction ; un conflit apparu depuis l'aperçu est recalculé dans cette transaction.</li>
+      </ol>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Raison</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire pourquoi cette option, et pourquoi pas les autres.</dd>
+          <dt>Contenu</dt><dd>Les arguments de la décision, puis une ligne par option écartée avec la raison de l'écarter.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le tableau des options considérées du format MADR : une option écartée et sa raison restent visibles, et le débat ne se rouvre pas sans fait nouveau.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li>SQLite n'a qu'un écrivain à la fois ; <code>BEGIN IMMEDIATE</code> fait de chaque contrôle-puis-écriture une section critique, même avec plusieurs processus. better-sqlite3 étant synchrone, aucune autre requête du processus ne s'intercale (<a href="0001-framework-node-et-acces-sqlite.html">ADR-0001</a>).</li>
+        <li>Le déclencheur rend l'invariant indépendant du code : une écriture qui oublierait le contrôle (script, futur endpoint de modification US-011) est refusée quand même.</li>
+      </ul>
+      <table class="options">
+        <thead><tr><th style="width:240px">Option écartée</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td>Table des quarts d'heure occupés avec <code>UNIQUE(salle, jour, quart)</code></td><td>vraie contrainte d'unicité, exacte grâce au pas de 15 minutes de <a href="../20-specs/conception-fonctionnelle.html#RG-02">RG-02</a>, mais table dénormalisée à tenir synchrone à chaque annulation, jusqu'à 16 lignes par réservation</td></tr>
+          <tr><td>Verrou applicatif en mémoire</td><td>faux dès qu'il y a deux processus, et rien en base</td></tr>
+          <tr><td>Contrôle sans transaction</td><td>la course reste possible</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Conséquences</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que la décision implique, en bien et en mal, et ce qu'elle oblige à faire.</dd>
+          <dt>Contenu</dt><dd><ul><li>Positif : ce qu'elle apporte.</li><li>Négatif : ce qu'elle coûte, la dette acceptée.</li><li>Suites : les actions à prévoir, avec le livrable ou le rôle qui les porte.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Trois termes fixes : un ADR sans négatif cache un coût, un ADR sans suite n'a rien changé.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Positif</dt><dd><a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a> tient même en cas d'erreur de code ; test de concurrence simple à écrire (N demandes simultanées, une seule réussit).</dd>
+        <dt>Négatif</dt><dd>les écritures de réservation sont sérialisées (sans effet à cette volumétrie) ; la règle de chevauchement existe en deux endroits (requête du domaine et déclencheur), à garder identiques, ce que le test de concurrence et un test unitaire du déclencheur vérifient.</dd>
+        <dt>Suites</dt><dd>le QA écrit le test de concurrence dès le premier ticket qui crée une réservation ; invariant <a href="../30-conception/detaillee/transverse/conformite.html#CF-60">CF-60</a> du contrat de conformité du projet : « toute écriture de réservation passe par une transaction immédiate ».</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

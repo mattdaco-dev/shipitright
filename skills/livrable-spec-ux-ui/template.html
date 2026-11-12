@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Spécifications UX/UI · NOM_PROJET</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Spécifications UX/UI</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">Spec UX/UI</span> : NOM_PROJET</h1>
+      <p class="lede"><span class="todo">une phrase sur l'expérience visée, pour qui</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> UX</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Sources</b> <a href="../00-cadrage/cadrage.html">cadrage</a>, <a href="../20-specs/story-map.html">story map</a> v?, <a href="../20-specs/conception-fonctionnelle.html">conception fonctionnelle</a> v?, <span class="todo">DS &lt;nom&gt; v?</span>, prototype v?</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Principes UX</h2>
+      <p class="hint">Trois à six principes propres au produit. Chacun dit ce qu'il change concrètement sur les écrans, en citant l'écran ou la règle concernés.</p>
+      <div class="grid c3">
+        <div class="card">
+          <h4><span class="todo">principe</span></h4>
+          <p><span class="todo">conséquence sur les écrans</span></p>
+        </div>
+        <div class="card">
+          <h4><span class="todo">principe</span></h4>
+          <p><span class="todo">conséquence sur les écrans</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Design system appliqué</h2>
+      <p class="hint">Le design system du projet, déclaré dans .team/socle.md. La spec ne recopie ni ses tokens, ni ses composants, ni sa grille : elle dit lesquels elle utilise, et décrit seulement ce que le produit ajoute ou change.</p>
+      <dl class="defs">
+        <dt>Socle</dt><dd><a href="../../.team/socles/design-systems/NOM_DS/socle.md"><span class="todo">nom du socle</span></a></dd>
+        <dt>Version</dt><dd><span class="todo">version du DS</span></dd>
+        <dt>Statut</dt><dd><span class="todo">imposé au projet, ou créé pour le projet (à valider à G1)</span></dd>
+      </dl>
+      <h3>Composants utilisés</h3>
+      <table>
+        <thead><tr><th>Composant du DS</th><th>Variante</th><th>Écrans</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">nom exact dans le DS</span></td><td></td><td><a href="#EC-01">EC-01</a></td></tr>
+        </tbody>
+      </table>
+      <h3>Compléments et écarts</h3>
+      <p class="hint">Complément : ce que le DS ne prévoit pas (composant propre au produit, comportement responsive d'un écran). Écart : ce qui s'éloigne du DS, avec sa raison. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Élément</th><th>Nature</th><th>Écrans</th><th>Ce qui est décidé</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">élément</span></td><td><span class="tag info">complément</span></td><td><a href="#EC-01">EC-01</a></td><td><span class="todo">décision, tokens du DS utilisés</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Parcours utilisateurs</h2>
+      <p class="hint">Wireflow : un schéma par persona, les écrans EC-xx enchaînés par l'action qui fait passer de l'un à l'autre. Une boîte de dialogue appartient à son écran et y revient quand on la ferme : pas de flèche de retour. Un refus qui laisse sur l'écran est un état de l'écran : il figure en pastille, pas en étape. Le titre cite les parcours fonctionnels couverts.</p>
+      <div class="legend">
+        <span><i class="pf-screen"></i>Écran</span>
+        <span><i class="pf-dialog"></i>Boîte de dialogue</span>
+        <span><i class="pf-end"></i>Résultat affiché</span>
+      </div>
+      <h3><span class="todo">Persona</span> : <a href="../20-specs/conception-fonctionnelle.html#PF-01">PF-01</a></h3>
+      <!-- data-c / data-r: grid column and row. data-links="<id>|<action label>". -->
+      <div class="pf">
+        <div class="pf-node screen" id="wf-01" data-c="1" data-r="1" data-links="wf-02|Action"><a class="ec" href="#EC-01">EC-01</a>Nom de l'écran</div>
+        <div class="pf-node screen" id="wf-02" data-c="2" data-r="1" data-links="wf-02d|Action"><a class="ec" href="#EC-02">EC-02</a>Nom de l'écran<span class="refs"><a href="../20-specs/conception-fonctionnelle.html#MSG-01">MSG-01</a></span></div>
+        <div class="pf-node screen dialog" id="wf-02d" data-c="2" data-r="2" data-links="wf-02r|Confirmer"><a class="ec" href="#EC-02-dialogue">EC-02</a>Nom du dialogue</div>
+        <div class="pf-node end" id="wf-02r" data-c="3" data-r="2">Résultat affiché</div>
+      </div>
+      <p><span class="todo">Navigation permanente : entrées du bandeau et rôles qui les voient.</span></p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Inventaire des écrans</h2>
+      <p class="hint">Une carte par écran, qui mène à son détail. Vignette : capture du prototype (captures/EC-xx-nominal.png), hachurée tant qu'elle n'est pas prise. Les tags listent les états décrits ; un état barré (classe na) est sans objet pour l'écran.</p>
+      <div class="screens">
+        <a class="screen-card" href="#EC-01">
+          <div class="thumb"><img src="captures/EC-01-nominal.png" alt="EC-01, état nominal"></div>
+          <div class="body">
+            <b>EC-01 · <span class="todo">nom de l'écran</span></b>
+            <span class="who"><span class="todo">rôles</span> · US-001</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag na">droits</span></div>
+          </div>
+        </a>
+      </div>
+      <h3>Couverture des stories</h3>
+      <p class="hint">Chaque story front a un écran, chaque écran a une story. Une ligne par story de la release.</p>
+      <table>
+        <thead><tr><th>Story</th><th>Écrans</th><th>États propres à la story</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a> <span class="todo">titre court</span></td><td><a href="#EC-01">EC-01</a></td><td><span class="todo">états</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Détail des écrans</h2>
+      <p class="hint">Un bloc par écran, à dupliquer. Les messages fonctionnels citent leur MSG-xx et sont repris au mot près, parties variables entre chevrons ; les messages d'interface (états vide, erreur technique) sont définis ici en MSG-Uxx, avec une ancre. Un état sans objet le dit. Une boîte de dialogue se décrit sous son écran, ancre EC-xx-&lt;nom&gt;.</p>
+
+      <h3 id="EC-01">EC-01 · <span class="todo">nom de l'écran</span></h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd><span class="todo">ce que l'utilisateur vient y faire, en une phrase</span></dd>
+        <dt>Accès</dt><dd><span class="todo">d'où on arrive, rôles autorisés</span></dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-001-slug.html">US-001</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#EC-01">prototype/#EC-01</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol><li><span class="todo">blocs et champs affichés, dans l'ordre, avec leur composant du DS si besoin</span></li></ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li><span class="todo">« libellé exact » : ce qu'elle déclenche, écran d'arrivée</span></li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Règle d'affichage</th><th>Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">ex. le bouton « Valider » est désactivé tant qu'un champ obligatoire est vide</span></td><td><a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td><span class="todo">description</span></td><td></td></tr>
+          <tr><td><span class="tag">vide</span></td><td><span class="todo">description</span></td><td id="MSG-U01"><b>MSG-U01</b> « <span class="todo">texte exact</span> »</td></tr>
+          <tr><td><span class="tag">chargement</span></td><td><span class="todo">squelette du DS à la place des blocs</span></td><td></td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td><span class="todo">ce qui tombe, ce qui reste affiché</span></td><td id="MSG-U02"><b>MSG-U02</b> « <span class="todo">cause et issue</span> » + « Réessayer »</td></tr>
+          <tr><td><span class="tag na">droits insuffisants</span></td><td><span class="todo">masqué, désactivé, message, ou sans objet et pourquoi</span></td><td></td></tr>
+        </tbody>
+      </table>
+      <h4 id="EC-01-dialogue">Dialogue « <span class="todo">titre</span> »</h4>
+      <p><span class="todo">ce qu'il rappelle, ses champs, ses boutons (le bouton par défaut), ce qui se passe à la validation et à « Échap ». Supprimer si l'écran n'a pas de dialogue.</span></p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Formats de données</h2>
+      <p class="hint">Les formats du design system s'appliquent (dates, heures, nombres, montants). Ne figurent ici que les données propres au produit, avec leur affichage et leur saisie.</p>
+      <table>
+        <thead><tr><th>Donnée</th><th>Affichage</th><th>Saisie</th><th>Exemple fictif</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">donnée propre au produit</span></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Accessibilité</h2>
+      <p class="hint">Le niveau et les règles générales viennent du design system. Ici, ce que le produit ajoute, vérifiable à la recette.</p>
+      <dl class="defs">
+        <dt>Niveau visé</dt><dd><span class="todo">celui du DS, ou plus exigeant avec la raison</span></dd>
+        <dt>Navigation clavier</dt><dd><span class="todo">ce que le DS ne couvre pas : composants propres au produit</span></dd>
+        <dt>Contrastes</dt><dd><span class="todo">ceux du DS ; information jamais portée par la seule couleur</span></dd>
+        <dt>Lecteurs d'écran</dt><dd><span class="todo">annonces propres au produit</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Lien vers le prototype</h2>
+      <p class="hint">Le prototype est la version cliquable de cette spec, aux tokens du design system. Il doit couvrir les mêmes écrans et les mêmes états.</p>
+      <dl class="defs">
+        <dt>Chemin</dt><dd><a href="../../prototype/index.html">prototype/index.html</a></dd>
+        <dt>Version</dt><dd><span class="todo">vN du JJ.MM.AAAA</span></dd>
+        <dt>Écrans couverts</dt><dd><span class="todo">EC-01 à EC-xx</span></dd>
+        <dt>Écarts connus</dt><dd><span class="todo">ce que le proto ne montre pas encore</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="facultatif">
+      <h2>Micro-interactions</h2>
+      <p class="hint">Transitions, retours visuels, temps de réponse perçus, quand le DS ne les fixe pas.</p>
+      <table>
+        <thead><tr><th>Interaction</th><th>Déclencheur</th><th>Effet</th><th>Durée</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">interaction</span></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

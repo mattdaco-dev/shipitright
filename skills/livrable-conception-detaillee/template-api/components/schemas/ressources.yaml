@@ -1,0 +1,33 @@
+# Domaine « Ressources » : schémas nommés dans openapi.yaml sous components/schemas
+# Un fichier par domaine fonctionnel, A REMPLACER. Un schéma échangé (envoyé ou reçu directement par
+# un endpoint) a sa page ; un type utilisé seulement à l'intérieur d'autres schémas est un type
+# partagé, sans page. Schémas à plat : un allOf d'un schéma en additionalProperties: false refuse
+# les champs ajoutés.
+
+StatutRessource:
+  type: string
+  enum: [active, archivee]
+  description: cycle de vie de la ressource (EN-01)
+Ressource:
+  type: object
+  additionalProperties: false
+  x-entity: EN-01
+  description: une ressource, telle que le front l'affiche
+  required: [id, nom, jour, statut]
+  properties:
+    id: {type: integer, minimum: 1}
+    nom: {type: string, minLength: 1, maxLength: 60}
+    jour: {$ref: 'commun.yaml#/Jour'}
+    statut: {$ref: '#/StatutRessource'}
+  examples:
+    - {id: 1, nom: Première ressource, jour: '2026-01-05', statut: active}
+RessourceDemande:
+  type: object
+  additionalProperties: false
+  description: création d'une ressource ; le statut ne se choisit pas
+  required: [nom, jour]
+  properties:
+    nom: {type: string, minLength: 1, maxLength: 60, description: 'espaces de bord retirés'}
+    jour: {$ref: 'commun.yaml#/Jour'}
+  examples:
+    - {nom: Première ressource, jour: '2026-01-05'}

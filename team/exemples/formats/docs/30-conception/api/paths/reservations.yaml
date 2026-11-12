@@ -1,0 +1,182 @@
+# Path item /reservations, referenced by openapi.yaml
+
+get:
+  tags: [reservations]
+  operationId: listerReservations
+  x-endpoint-id: EP-06
+  x-module: domain/reservation
+  x-release: MVP
+  x-contract: fige
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - nom du titulaire seulement, jamais son email ni son identifiant
+    - estAMoi calculé depuis la session
+  x-entities:
+    - {id: EN-05, access: R}
+    - {id: EN-01, access: R}
+  x-idempotence: lecture
+  x-sequence: |
+    sequenceDiagram
+      actor U as Employé
+      participant F as Front EC-02
+      participant A as API
+      participant D as SQLite
+      U->>F: ouvre l'application ou change de jour
+      par lignes de la grille
+        F->>A: GET /salles (EP-04)
+        A-->>F: 200 Salle[]
+      and blocs de réservation
+        F->>A: GET /reservations?jour=...
+        A->>D: réservations actives du jour, nom du titulaire
+        A-->>F: 200 Reservation[]
+      end
+      alt aucune salle active
+        F-->>U: MSG-U02
+      else un des deux appels échoue
+        F-->>U: MSG-U03 et Réessayer
+      else
+        F-->>U: grille, ses réservations en couleur d'accent (estAMoi)
+      end
+  x-open:
+    - impact: fort
+      sujet: "Droits sur l'occupation de la semaine (paramètres du et au, release R2) : une restriction changerait une opération figée (point d'attention de la conception macro)."
+      hypothese: "ouverte à tous les rôles, comme EC-02."
+  summary: Occupation d'une journée
+  description: >-
+    Réservations actives d'une journée, toutes salles ou une salle, triées par salle puis par début.
+    Les réservations annulées n'apparaissent pas. Un samedi ou un dimanche renvoie une liste vide.
+    La réservation en cours d'une salle désactivée reste listée, mais EC-02 n'affiche que les lignes
+    de EP-04.
+  parameters:
+    - name: jour
+      in: query
+      required: false
+      description: obligatoire sauf si du et au sont fournis (release R2)
+      schema: {$ref: '../components/schemas/commun.yaml#/Jour'}
+    - name: salle
+      in: query
+      required: false
+      description: identifiant de salle
+      schema: {type: integer, minimum: 1}
+    - name: du
+      in: query
+      required: false
+      x-release: R2
+      description: premier jour de la période, avec au ; exclusif de jour
+      schema: {$ref: '../components/schemas/commun.yaml#/Jour'}
+    - name: au
+      in: query
+      required: false
+      x-release: R2
+      description: dernier jour de la période, au plus 6 jours après du
+      schema: {$ref: '../components/schemas/commun.yaml#/Jour'}
+  responses:
+    '200':
+      description: réservations actives de la journée ou de la période
+      content:
+        application/json:
+          schema:
+            type: array
+            items: {$ref: '../components/schemas/reservations.yaml#/Reservation'}
+          example:
+            - id: 41
+              salleId: 1
+              jour: '2026-10-06'
+              debut: '10:00'
+              fin: '11:00'
+              titulaire: {nom: Léa Martin}
+              estAMoi: true
+              serieId: 7
+              annulable: true
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '422':
+      description: période de plus de 7 jours, ou au avant du (release R2)
+      x-codes: [PERIODE_INVALIDE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}
+post:
+  tags: [reservations]
+  operationId: reserverCreneau
+  x-endpoint-id: EP-08
+  x-module: domain/reservation
+  x-release: MVP
+  x-contract: fige
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - le titulaire est l'employé de la session ; le corps n'a pas de champ titulaire (CF-63)
+  x-processes: [TR-02]
+  x-entities:
+    - {id: EN-05, access: CR, via: TR-02}
+    - {id: EN-03, access: R, via: TR-02}
+  x-rules: [RG-01, RG-02, RG-03, RG-08]
+  x-idempotence: >-
+    Non idempotent : un second envoi identique répond 409 CRENEAU_PRIS. Le front désactive «
+    Réserver » pendant l'appel ; pas d'en-tête Idempotency-Key.
+  x-sequence: |
+    sequenceDiagram
+      actor U as Employé
+      participant F as Front EC-04
+      participant A as API
+      participant T as TR-02
+      participant D as SQLite
+      U->>F: Réserver
+      F->>F: bouton et champs inactifs
+      F->>A: POST /reservations
+      A->>D: BEGIN IMMEDIATE (UnitOfWork)
+      A->>T: poser le créneau (titulaire = session)
+      T->>D: salle active ?
+      T->>T: Creneau valide (RG-02, RG-03, horloge)
+      alt créneau hors règles ou salle désactivée
+        T-->>A: refus CRENEAU_HORS_REGLES ou SALLE_DESACTIVEE
+        A->>D: ROLLBACK
+        A-->>F: 422 CRENEAU_HORS_REGLES ou SALLE_DESACTIVEE
+        F-->>U: MSG-03 ou MSG-U06, saisie conservée
+      else
+        T->>D: réservation active qui chevauche ? (RG-01)
+        alt conflit trouvé par le domaine, ou refus du déclencheur (filet)
+          T-->>A: refus CRENEAU_PRIS + conflit
+          A->>D: ROLLBACK
+          A-->>F: 409 CRENEAU_PRIS + conflit
+          F-->>U: MSG-01, saisie conservée
+        else libre
+          T->>D: INSERT reservations
+          T-->>A: réservation
+          A->>D: COMMIT
+          A-->>F: 201 Reservation
+          F-->>U: EC-05 avec MSG-02
+        end
+      end
+  x-open:
+    - impact: faible
+      sujet: "Message affiché quand la salle est désactivée entre l'affichage et l'envoi."
+      hypothese: "422 SALLE_DESACTIVEE, affiché avec MSG-U06 faute de message dédié."
+  summary: Réserver un créneau ponctuel
+  description: >-
+    Pose une réservation active au nom de l'employé de la session, par TR-02 : contrôles RG-08,
+    RG-02, RG-03 puis RG-01 dans une transaction immédiate (ADR-0002).
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema: {$ref: '../components/schemas/reservations.yaml#/ReservationDemande'}
+        example: {salleId: 1, jour: '2026-10-06', debut: '10:00', fin: '11:00'}
+  responses:
+    '201':
+      description: réservation créée
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/reservations.yaml#/Reservation'}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '404': {$ref: '../components/responses.yaml#/SalleIntrouvable'}
+    '409': {$ref: '../components/responses.yaml#/CreneauPris'}
+    '422':
+      description: créneau hors règles (RG-02, RG-03) ou salle désactivée (RG-08)
+      x-codes: [CRENEAU_HORS_REGLES, SALLE_DESACTIVEE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

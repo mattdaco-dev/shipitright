@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Big picture · NOM_PROJET</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Big picture</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P1 · Analyse et exploration</div>
+      <h1><span class="doc-kind">Big picture</span> : NOM_PROJET</h1>
+      <p class="lede"><span class="todo">une phrase qui dit quel parcours la frise couvre, du premier au dernier événement</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> BA</span>
+        <span><b>Contributeurs</b> PO, UX, Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Sources</b> <a href="../00-cadrage/cadrage.html">cadrage</a> (vision, personas, glossaire), questions Q-xxx</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Objectifs et périmètre</h2>
+      <p class="hint">Ce que cette big picture doit permettre, et ce qu'elle regarde. La vision et les personas sont dans le cadrage : on ne les recopie pas.</p>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Objectifs</h4>
+          <ul>
+            <li>Raconter le fonctionnement cible de bout en bout, flux par flux.</li>
+            <li>Identifier les événements, les acteurs et les systèmes.</li>
+            <li>Faire apparaître ce qui doit encore être tranché avant la conception fonctionnelle.</li>
+            <li><span class="todo">objectif propre au projet, si besoin</span></li>
+          </ul>
+        </div>
+        <div class="card soft">
+          <h4>Périmètre</h4>
+          <p><b>On regarde</b> : <span class="todo">ce que la frise couvre, MVP et au-delà</span></p>
+          <p><b>On ne regarde pas</b> : <span class="todo">ce qui est laissé de côté, et pourquoi</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Légende</h2>
+      <p class="hint">La légende de l'event storming big picture (Brandolini). La garder telle quelle : tous les projets lisent la même.</p>
+      <div class="legend">
+        <span><i style="background:var(--es-event)"></i>Événement métier (« J'ai … », vécu par l'acteur)</span>
+        <span><i class="pivot"></i>Événement pivot (clôt une phase)</span>
+        <span><i style="background:var(--es-actor)"></i>Acteur</span>
+        <span><i style="background:var(--es-system)"></i>Système externe</span>
+        <span><i style="background:var(--es-hotspot)"></i>Hotspot (question, conflit, risque)</span>
+        <span><i style="background:var(--es-opportunity)"></i>Opportunité</span>
+        <span><i class="lane"></i>Couloir : un flux</span>
+        <span><i class="out"></i>Hors périmètre</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Frise des événements</h2>
+      <p class="hint">Les phases se suivent de gauche à droite et passent à la ligne. Dans une phase, un couloir par flux, une colonne par moment : l'événement en tête (« J'ai … », du point de vue de son acteur), puis l'acteur, le système, le hotspot ou l'opportunité. Les flèches suivent le flux dans une phase ; un renvoi « → 3 » indique où le couloir continue.</p>
+      <!-- data-lanes : les couloirs, dans l'ordre d'affichage. Un couloir dont le nom commence par "Hors" est grisé et sans flèches.
+           Chaque .bp-col : data-lane (son couloir) et data-t (son moment dans la phase, les colonnes s'alignent d'un couloir à l'autre).
+           Flèches : automatiques d'un événement au suivant de son couloir. data-flow="end" sur une colonne coupe la chaîne
+           (alternatives). Flèche entre couloirs : id="ev-xxx" sur la cible, data-links="ev-xxx" sur l'événement source. -->
+      <div class="bp-frise" data-lanes="Flux A ; Flux B ; Hors périmètre">
+
+        <div class="bp-phase" data-phase="1. Phase">
+          <div class="bp-col" data-lane="Flux A" data-t="1">
+            <div class="sticky event"><span class="todo">J'ai …</span></div>
+            <div class="sticky actor"><span class="todo">acteur</span></div>
+          </div>
+          <div class="bp-col" data-lane="Flux A" data-t="2">
+            <div class="sticky event"><span class="todo">J'ai …</span></div>
+            <div class="sticky actor"><span class="todo">acteur</span></div>
+            <div class="sticky system"><span class="todo">système externe</span></div>
+          </div>
+          <div class="bp-col" data-lane="Flux A" data-t="3">
+            <div class="sticky event pivot"><span class="todo">J'ai … (pivot)</span></div>
+            <div class="sticky actor"><span class="todo">acteur</span></div>
+          </div>
+          <div class="bp-col" data-lane="Flux B" data-t="2">
+            <div class="sticky event"><span class="todo">J'ai …</span></div>
+            <div class="sticky actor"><span class="todo">acteur</span></div>
+            <div class="sticky hotspot"><a href="../questions.html#Q-001">Q-001</a> · <span class="todo">question</span></div>
+          </div>
+        </div>
+
+        <div class="bp-phase" data-phase="2. Phase">
+          <div class="bp-col" data-lane="Flux A" data-t="1">
+            <div class="sticky event"><span class="todo">J'ai …</span></div>
+            <div class="sticky actor"><span class="todo">acteur</span></div>
+            <div class="sticky opportunity"><span class="todo">opportunité</span></div>
+          </div>
+          <div class="bp-col" data-lane="Hors périmètre" data-t="1">
+            <div class="sticky event"><span class="todo">J'ai … (vu mais exclu)</span></div>
+            <div class="sticky actor"><span class="todo">acteur</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="bp-time">Temps</div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Événements pivots</h2>
+      <p class="hint">Les 3 à 6 événements après lesquels le domaine ne revient pas en arrière, ou qui passent la main à un autre acteur. Chacun clôt une phase.</p>
+      <table>
+        <thead><tr><th>Événement</th><th>Phase</th><th>Ce qui change après</th><th>Qui prend la main</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">J'ai … (pivot)</span></td><td>1</td><td><span class="todo">nouvel état, engagement pris, irréversibilité</span></td><td>rôle</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Acteurs et systèmes externes</h2>
+      <p class="hint">Chaque acteur renvoie à un persona du cadrage (« Application » pour les réactions automatiques). Chaque système externe dit ce qu'il apporte au parcours.</p>
+      <div class="grid c2">
+        <div>
+          <h4>Acteurs</h4>
+          <table>
+            <thead><tr><th>Acteur</th><th>Persona</th><th>Événements déclenchés</th></tr></thead>
+            <tbody>
+              <tr><td><span class="todo">rôle</span></td><td><a href="../00-cadrage/cadrage.html#PER-01">PER-01</a></td><td><span class="todo">événements</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h4>Systèmes externes</h4>
+          <table>
+            <thead><tr><th>Système</th><th>Rôle dans le parcours</th><th>Événements</th></tr></thead>
+            <tbody>
+              <tr><td><span class="todo">système</span></td><td><span class="todo">ce qu'il fournit ou reçoit</span></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hotspots" data-level="obligatoire">
+      <h2>Hotspots</h2>
+      <p class="hint">Questions, conflits entre règles, risques. Un hotspot qui attend une réponse métier cite sa question Q-xxx, en lien vers son fichier. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Hotspot</th><th>Phase</th><th>Question</th><th>Bloquant</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag accent">question</span></td><td><span class="todo">ce qu'on ne sait pas</span></td><td>1</td><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="tag danger">oui</span></td></tr>
+          <tr><td><span class="tag danger">conflit</span></td><td><span class="todo">deux règles ou deux acteurs qui s'opposent</span></td><td></td><td></td><td><span class="tag">non</span></td></tr>
+          <tr><td><span class="tag warn">risque</span></td><td><span class="todo">point structurant ou difficulté connue</span></td><td></td><td>sans objet</td><td><span class="tag">non</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section opportunities" data-level="recommande">
+      <h2>Opportunités</h2>
+      <p class="hint">Les idées d'amélioration repérées en route. Elles nourrissent la story map, sans engagement.</p>
+      <table>
+        <thead><tr><th>Opportunité</th><th>Phase</th><th>Valeur attendue</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">idée</span></td><td>1</td><td><span class="todo">ce qu'elle apporterait</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

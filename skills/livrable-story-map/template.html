@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Story map · NOM_PROJET</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Story map</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P1 → P2 · Spécifications</div>
+      <h1><span class="doc-kind">Story map</span> : NOM_PROJET</h1>
+      <p class="lede"><span class="todo">une phrase : quels parcours, pour quels personas, et ce que livre le MVP</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> BA</span>
+        <span><b>Contributeurs</b> PO, UX</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Sources</b> <a href="../00-cadrage/cadrage.html">cadrage</a>, <a href="../10-analyse/big-picture.html">big picture</a>, <span class="todo">analyses de chantier, en liens</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Personas et objectifs des parcours</h2>
+      <p class="hint">Le persona du cadrage qui porte chaque parcours, et ce qu'il doit avoir accompli à la fin.</p>
+      <div class="grid c2">
+        <div class="card">
+          <div class="persona"><div class="avatar">A</div><div>
+            <h3 style="margin:0"><a href="../00-cadrage/cadrage.html#PER-01">PER-01 · <span class="todo">persona du cadrage</span></a></h3>
+            <dl class="defs">
+              <dt>Objectif</dt><dd><span class="todo">ce que le persona veut avoir accompli</span></dd>
+              <dt>Début</dt><dd><span class="todo">ce qui déclenche le parcours</span></dd>
+              <dt>Fin</dt><dd><span class="todo">ce qui marque sa réussite</span></dd>
+            </dl>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Carte</h2>
+      <p class="hint">De gauche à droite, le parcours. De haut en bas, de l'indispensable au confort. Une rangée de cellules par release, une cellule par tâche, vide comprise.</p>
+      <div class="legend">
+        <span><i style="background:#23324d"></i>Activité</span>
+        <span><i style="background:var(--c-feature)"></i>Tâche utilisateur</span>
+        <span class="sigle"><i style="background:#fff;border-left:4px solid var(--accent)"></i>Story MVP</span>
+        <span class="sigle"><i style="background:#fff;border-left:4px solid var(--warn)"></i>Story R2</span>
+        <span class="sigle"><i style="background:#fff;border-left:4px solid var(--ink-3)"></i>Story R3</span>
+        <span><span class="moscow must">Must</span><span class="moscow should">Should</span><span class="moscow could">Could</span><span class="moscow wont">Won't</span>priorité MoSCoW</span>
+      </div>
+
+      <!-- One h3 + .storymap per journey (persona). A rule separates the journeys automatically. -->
+      <h3>Parcours de <span class="todo">persona</span></h3>
+      <div class="storymap">
+        <div class="sm-grid sm-rows" style="--tasks: 4">
+          <!-- Backbone: activities span their tasks; the spans add up to --tasks. MoSCoW badge first. -->
+          <div class="sm-activity" style="grid-column: span 2"><span class="moscow must">Must</span><span class="todo">activité A</span></div>
+          <div class="sm-activity" style="grid-column: span 2"><span class="moscow should">Should</span><span class="todo">activité B</span></div>
+
+          <!-- Tasks, in journey order: one grid column each. A Won't task also gets the class wont. -->
+          <div class="sm-task"><span class="moscow must">Must</span><span class="todo">tâche 1 (verbe)</span></div>
+          <div class="sm-task"><span class="moscow must">Must</span><span class="todo">tâche 2</span></div>
+          <div class="sm-task"><span class="moscow should">Should</span><span class="todo">tâche 3</span></div>
+          <div class="sm-task wont"><span class="moscow wont">Won't</span><span class="todo">tâche 4</span></div>
+
+          <!-- MVP: exactly one cell per task. A story card is a link to its file. -->
+          <div class="sm-release">MVP : <span class="todo">objectif de la release</span></div>
+          <div class="sm-cell">
+            <a class="sm-story" href="stories/US-001-slug.html"><span class="id">US-001</span><span class="todo">titre court</span></a>
+            <a class="sm-story" href="stories/US-002-slug.html"><span class="id">US-002</span><span class="todo">titre court</span></a>
+          </div>
+          <div class="sm-cell">
+            <a class="sm-story" href="stories/US-003-slug.html"><span class="id">US-003</span><span class="todo">titre court</span></a>
+          </div>
+          <div class="sm-cell">
+            <a class="sm-story" href="stories/US-004-slug.html"><span class="id">US-004</span><span class="todo">titre court</span></a>
+          </div>
+          <div class="sm-cell sm-empty"></div>
+
+          <!-- R2 -->
+          <div class="sm-release r2">R2 : <span class="todo">objectif de la release</span></div>
+          <div class="sm-cell sm-empty"></div>
+          <div class="sm-cell">
+            <a class="sm-story r2" href="stories/US-005-slug.html"><span class="id">US-005</span><span class="todo">titre court</span></a>
+          </div>
+          <div class="sm-cell sm-empty"></div>
+          <div class="sm-cell sm-empty"></div>
+
+          <!-- R3 -->
+          <div class="sm-release r3">R3 : <span class="todo">objectif de la release</span></div>
+          <div class="sm-cell sm-empty"></div>
+          <div class="sm-cell sm-empty"></div>
+          <div class="sm-cell sm-empty"></div>
+          <div class="sm-cell">
+            <a class="sm-story r3" href="stories/US-006-slug.html"><span class="id">US-006</span><span class="todo">titre court</span></a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Objectifs des releases</h2>
+      <p class="hint">Chaque release a un objectif et vise un indicateur du cadrage. Le PO valide la ligne du MVP.</p>
+      <table>
+        <thead><tr><th>Release</th><th>Objectif</th><th>Indicateur visé</th><th class="num">Stories</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag accent">MVP</span></td><td><span class="todo">ce que le persona peut faire de bout en bout</span></td><td><span class="todo">objectif du cadrage</span></td><td class="num">4</td></tr>
+          <tr><td><span class="tag warn">R2</span></td><td><span class="todo">objectif</span></td><td></td><td class="num">1</td></tr>
+          <tr><td><span class="tag">R3</span></td><td><span class="todo">objectif</span></td><td></td><td class="num">1</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Stories hors MVP</h2>
+      <p class="hint">Les stories qu'on pourrait croire indispensables et qui restent hors du MVP, avec la raison.</p>
+      <table>
+        <thead><tr><th>Story</th><th>Release</th><th>Pourquoi pas au MVP</th><th>Contournement au MVP</th></tr></thead>
+        <tbody>
+          <tr><td><a href="stories/US-005-slug.html">US-005</a></td><td><span class="tag warn">R2</span></td><td><span class="todo">raison</span></td><td><span class="todo">ce que fait l'utilisateur en attendant</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Correspondance avec les epics</h2>
+      <p class="hint">Chaque activité ou grappe de tâches et son epic. Les fichiers sont dans 20-specs/epics/ et 20-specs/stories/.</p>
+      <table>
+        <thead><tr><th>Activité</th><th>Epic</th><th>Stories</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">activité A</span></td><td><a href="epics/EPIC-01-slug.html">EPIC-01</a> <span class="todo">nom</span></td><td>US-001 à US-003</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Questions et hypothèses</h2>
+      <p class="hint">Ce qui reste ouvert dans le découpage. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question</th><th>Impact sur la carte</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="todo">question</span></td><td><span class="todo">story ou release concernée</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

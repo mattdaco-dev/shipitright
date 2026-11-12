@@ -1,0 +1,37 @@
+# Path item /equipements, referenced by openapi.yaml
+
+get:
+  tags: [equipements]
+  operationId: listerEquipements
+  x-endpoint-id: EP-05
+  x-module: domain/equipement
+  x-release: MVP
+  x-contract: fige
+  x-roles: [employe, gestionnaire]
+  x-entities:
+    - {id: EN-04, access: R}
+  x-idempotence: lecture ; réponse stable, le front la garde en mémoire pour la session
+  x-sequence: |
+    sequenceDiagram
+      participant F as Front EC-03, EC-07
+      participant A as API
+      participant D as SQLite
+      F->>A: GET /equipements, si absent du cache de session
+      A->>D: équipements par libellé
+      A-->>F: 200 Equipement[]
+  summary: Lister les équipements
+  description: Référentiel chargé par migration, trié par libellé.
+  responses:
+    '200':
+      description: liste des équipements
+      content:
+        application/json:
+          schema:
+            type: array
+            items: {$ref: '../components/schemas/salles.yaml#/Equipement'}
+          example:
+            - {id: 1, code: ecran, libelle: Écran}
+            - {id: 3, code: tableau_blanc, libelle: Tableau blanc}
+            - {id: 2, code: visio, libelle: Visioconférence}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

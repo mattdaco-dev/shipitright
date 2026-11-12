@@ -1,0 +1,246 @@
+/* Prototype Réservation de salles. No raw value here: colours, fonts and spacing come from the
+   variables of ds/proto-alias.css, which maps them to the tokens of the reservation-salles design
+   system (ds/tokens.css). Both files come from the DS socle, copied as is. Pixel values below are
+   layout dimensions only (widths, heights, borders). Text sizes are relative to the DS body font.
+   Never style .pb-* classes here: they belong to proto-bar.js. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font: var(--font-body); color: var(--ink); background: var(--bg); }
+button, input, select, textarea { font: inherit; color: inherit; }
+a { color: var(--primary); }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+[hidden] { display: none !important; }
+
+/* ---------- App chrome: navigation banner of the DS ---------- */
+.app { min-height: calc(100vh - var(--proto-bar-h)); }
+.app-header { position: sticky; top: var(--proto-bar-h); z-index: 10; display: flex; align-items: center; gap: var(--space-4);
+  min-height: 56px; padding: 0 var(--space-4); background: var(--surface); border-bottom: 1px solid var(--line); }
+.brand { font: var(--font-title); color: var(--ink); text-decoration: none; white-space: nowrap; }
+.app-nav { display: flex; gap: var(--space-1); flex: 1; }
+.app-nav a { padding: var(--space-2) var(--space-3); border-radius: var(--radius); text-decoration: none; color: var(--ink-2); font-weight: 600; white-space: nowrap; }
+.app-nav a:hover { background: var(--bg); color: var(--ink); }
+.app-nav a[aria-current="page"] { background: var(--primary-soft); color: var(--primary-dark); }
+.user { display: flex; align-items: center; gap: var(--space-2); white-space: nowrap; }
+.user-name { color: var(--ink-2); }
+.view { max-width: 1280px; margin: 0 auto; padding: var(--space-4) var(--space-4) calc(var(--space-4) * 2); }
+.view:focus, .view h1:focus { outline: none; }
+
+.page-head { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.page-head h1 { margin: 0; font: var(--font-title); font-size: 1.5em; }
+.head-actions { display: flex; gap: var(--space-2); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: var(--space-4); }
+.panel + .panel { margin-top: var(--space-3); }
+.panel-flush { padding: 0; overflow: hidden; }
+.panel-scroll { overflow-x: auto; }
+
+/* ---------- Components (fallbacks of the kit: the DS ships no implementation) ---------- */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 36px; padding: 0 var(--space-3);
+  border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: var(--ink); text-decoration: none;
+  font-weight: 600; cursor: pointer; white-space: nowrap; }
+.btn:hover { background: var(--bg); }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--surface); }
+.btn.primary:hover { background: var(--primary-dark); }
+.btn-danger { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+.btn-danger:hover { background: var(--danger); filter: brightness(.92); }
+.btn-danger-ghost { color: var(--danger); }
+.btn-ghost { border-color: transparent; background: transparent; color: var(--primary); }
+.btn-sm { min-height: 30px; padding: 0 var(--space-2); font-size: .93em; }
+.btn-icon { min-width: 36px; padding: 0 var(--space-2); }
+.btn:disabled { opacity: .45; cursor: not-allowed; filter: none; }
+.actions { display: flex; gap: var(--space-2); justify-content: flex-end; margin-top: var(--space-4); }
+.spin { width: 14px; height: 14px; border: 2px solid currentColor; border-right-color: transparent; border-radius: 50%; animation: spin .8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { text-align: left; padding: var(--space-2) var(--space-3); border-bottom: 1px solid var(--line); vertical-align: middle; }
+.table th { font-size: .86em; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-2); font-weight: 600; }
+.table tbody tr:hover { background: var(--primary-soft); }
+.table tr.is-muted td { color: var(--ink-2); }
+.table .cell-action { text-align: right; white-space: nowrap; }
+.cell-action .btn + .btn { margin-left: var(--space-1); }
+
+.tag { display: inline-block; padding: 0 var(--space-2); border-radius: 99px; font-size: .86em; font-weight: 600; line-height: 1.6; background: var(--bg); color: var(--ink-2); }
+.tag-ok { background: var(--ok-soft); color: var(--ok); }
+.tag-muted { background: var(--bg); color: var(--ink-2); }
+.tag-series { background: var(--primary-soft); color: var(--primary-dark); }
+
+.fields { display: grid; grid-template-columns: max-content 1fr; gap: var(--space-1) var(--space-3); margin: 0 0 var(--space-3); }
+.fields dt { color: var(--ink-2); }
+.fields dd { margin: 0; font-weight: 600; }
+
+.form fieldset { border: 0; margin: 0; padding: 0; min-width: 0; }
+.form { max-width: 560px; }
+.field { display: grid; gap: var(--space-1); margin-bottom: var(--space-3); }
+.field label, .checks legend { font-weight: 600; }
+.field input, .field select, .field textarea { min-height: 40px; padding: var(--space-2) var(--space-3); border: 1px solid var(--line);
+  border-radius: var(--radius); background: var(--surface); width: 100%; }
+.field textarea { resize: vertical; }
+.field [aria-invalid="true"] { border-color: var(--danger); box-shadow: inset 0 0 0 1px var(--danger); }
+.field-error { margin: 0; color: var(--danger); }
+.field-inline { grid-auto-flow: column; align-items: center; gap: var(--space-2); margin: 0; }
+.field-inline select { width: auto; min-width: 200px; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.input-with-btn { display: flex; gap: var(--space-1); }
+.checks { border: 0; margin: 0 0 var(--space-3); padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2) var(--space-4); }
+.checks legend { margin-bottom: var(--space-2); padding: 0; }
+.checks label { display: inline-flex; align-items: center; gap: var(--space-2); cursor: pointer; }
+.checks-col { flex-direction: column; }
+.recap { margin: calc(var(--space-1) * -1) 0 var(--space-3); font-weight: 600; color: var(--primary-dark); }
+
+/* Date picker of the DS (days that the rules forbid are disabled) */
+.dp { position: relative; display: flex; gap: var(--space-1); }
+.cal { position: absolute; top: calc(100% + var(--space-1)); left: 0; z-index: 30; width: 280px; padding: var(--space-3);
+  background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 16%, transparent); }
+.cal-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: var(--space-2); text-transform: capitalize; }
+.cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; text-align: center; }
+.cal-dow { font-size: .86em; color: var(--ink-2); padding: var(--space-1) 0; }
+.cal-day { height: 32px; border: 1px solid transparent; border-radius: var(--radius); background: transparent; cursor: pointer; }
+.cal-day:hover:not(:disabled) { background: var(--primary-soft); }
+.cal-day.is-today { border-color: var(--primary); }
+.cal-day.is-selected { background: var(--primary); color: var(--surface); }
+.cal-day:disabled { color: var(--ink-2); opacity: .45; cursor: not-allowed; text-decoration: line-through; }
+
+/* Message banner of the DS */
+.banner { display: flex; align-items: center; gap: var(--space-3); margin-bottom: var(--space-3); padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius); border-left: 4px solid; }
+.banner p { margin: 0; flex: 1; font-weight: 600; }
+.banner-ok { background: var(--ok-soft); border-color: var(--ok); color: var(--ok); }
+.banner-error { background: var(--danger-soft); border-color: var(--danger); color: var(--danger); }
+.banner-close { border: 0; background: transparent; color: inherit; font-size: 1.4em; line-height: 1; cursor: pointer; padding: 0 var(--space-1); }
+
+/* ---------- EC-01 Connexion ---------- */
+.login { max-width: 400px; margin: calc(var(--space-4) * 3) auto 0; padding: var(--space-4); background: var(--surface);
+  border: 1px solid var(--line); border-radius: var(--radius); }
+.login h1 { margin: 0 0 var(--space-4); font: var(--font-title); font-size: 1.5em; }
+.login .form { max-width: none; }
+.login .actions .btn { width: 100%; }
+.demo-note { margin: var(--space-4) 0 0; padding: var(--space-2) var(--space-3); border: 1px dashed var(--line); border-radius: var(--radius); color: var(--ink-2); font-size: .93em; }
+
+/* ---------- EC-02 Occupation du jour ---------- */
+.toolbar { display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); flex-wrap: wrap; margin-bottom: var(--space-3); }
+.day-nav { display: flex; align-items: center; gap: var(--space-1); }
+.day-label { min-width: 210px; text-transform: none; }
+.day-label::first-letter { text-transform: uppercase; }
+.weekend-note { margin: 0; padding: var(--space-2) var(--space-4); background: var(--bg); border-bottom: 1px solid var(--line); color: var(--ink-2); font-weight: 600; }
+
+/* Occupancy grid: complement of the DS (UX spec). 44 quarters from 08:00 to 19:00. */
+.occ-scroll { overflow-x: auto; }
+.occ { min-width: 960px; }
+.occ-row { display: grid; grid-template-columns: 168px repeat(44, minmax(16px, 1fr)); grid-auto-rows: 44px; border-bottom: 1px solid var(--line); }
+.occ-head { grid-auto-rows: 32px; background: var(--bg); }
+.occ-hour { padding: var(--space-1) var(--space-1); border-left: 1px solid var(--line); font-size: .86em; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.occ-room { position: sticky; left: 0; z-index: 2; display: flex; flex-direction: column; justify-content: center; padding: 0 var(--space-3);
+  background: var(--surface); border-right: 1px solid var(--line); line-height: 1.2; }
+.occ-head .occ-room { background: var(--bg); font-size: .86em; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-2); font-weight: 600; }
+.occ-room span { color: var(--ink-2); font-size: .86em; }
+.cell { min-width: 0; margin: 0; padding: 0; border: 0; border-left: 1px solid color-mix(in srgb, var(--line) 55%, transparent); background: var(--surface); }
+.cell.h { border-left-color: var(--line); }
+.cell.free { cursor: pointer; }
+.cell.free:hover, .cell.is-hover { background: var(--primary-soft); box-shadow: inset 0 2px 0 var(--primary), inset 0 -2px 0 var(--primary); }
+.cell.is-off { background: var(--bg); cursor: default; }
+.cell:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; position: relative; z-index: 3; }
+.booking { display: flex; flex-direction: column; justify-content: center; align-items: flex-start; gap: 0; margin: var(--space-1) 1px;
+  padding: 0 var(--space-2); border-radius: var(--radius); overflow: hidden; text-align: left; cursor: pointer; line-height: 1.2; }
+.booking span { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bk-who { font-weight: 600; font-size: .93em; }
+.bk-when { font-size: .8em; font-variant-numeric: tabular-nums; }
+/* never by colour alone: own = solid accent, others = hatched; the holder's name is always written */
+.booking.own { background: var(--primary); color: var(--surface); border: 1px solid var(--primary-dark); }
+.booking.other { color: var(--ink); border: 1px solid color-mix(in srgb, var(--ink-2) 35%, transparent);
+  background: repeating-linear-gradient(135deg, var(--busy) 0 6px, color-mix(in srgb, var(--busy) 55%, var(--surface)) 6px 10px); }
+.booking.is-past { opacity: .55; }
+.booking.is-open { outline: 2px solid var(--ink); outline-offset: 1px; }
+.occ-legend { display: flex; flex-wrap: wrap; gap: var(--space-4); margin: 0; padding: var(--space-3) var(--space-4); list-style: none; color: var(--ink-2); font-size: .93em; }
+.occ-legend li { display: flex; align-items: center; gap: var(--space-2); }
+.swatch { width: 18px; height: 12px; border-radius: 3px; }
+.swatch.own { background: var(--primary); }
+.swatch.other { background: repeating-linear-gradient(135deg, var(--busy) 0 3px, color-mix(in srgb, var(--busy) 55%, var(--surface)) 3px 5px); border: 1px solid color-mix(in srgb, var(--ink-2) 35%, transparent); }
+.swatch.off { background: var(--bg); border: 1px solid var(--line); }
+.occ-list { display: none; margin: 0; padding: 0; list-style: none; }
+.occ-list li { padding: var(--space-3); border-bottom: 1px solid var(--line); }
+.occ-list .occ-room { position: static; padding: 0 0 var(--space-2); border: 0; background: transparent; flex-direction: row; justify-content: flex-start; gap: var(--space-2); align-items: baseline; }
+.chips { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.chip { min-height: 36px; padding: 0 var(--space-3); border: 1px solid var(--primary); border-radius: 99px; background: var(--surface); color: var(--primary-dark); font-weight: 600; cursor: pointer; }
+
+.popover { position: fixed; z-index: 40; width: 272px; padding: var(--space-3); background: var(--surface); border: 1px solid var(--line);
+  border-radius: var(--radius); box-shadow: 0 8px 24px color-mix(in srgb, var(--ink) 18%, transparent); }
+.popover p { margin: 0 0 var(--space-1); }
+.pop-who { font-weight: 600; }
+.pop-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-3); }
+
+/* ---------- EC-03 Recherche de salle ---------- */
+.criteria { margin-bottom: var(--space-3); }
+.criteria-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: var(--space-3); }
+.criteria .actions { margin-top: 0; }
+
+/* ---------- EC-05 Mes réservations ---------- */
+.day-group h2 { margin: 0 0 var(--space-2); font: var(--font-title); font-size: 1em; }
+.day-group h2::first-letter { text-transform: uppercase; }
+.booking-list { margin: 0; padding: 0; list-style: none; }
+.booking-item { display: grid; grid-template-columns: 140px 1fr auto; align-items: center; gap: var(--space-1) var(--space-3);
+  padding: var(--space-2) 0; border-top: 1px solid var(--line); min-height: 48px; }
+.bi-when { font-weight: 600; font-variant-numeric: tabular-nums; }
+.bi-note { grid-column: 2 / 4; color: var(--danger); }
+.is-cancelled .bi-when, .is-cancelled .bi-room { text-decoration: line-through; color: var(--ink-2); }
+.booking-item.flash { animation: flash 1s ease-out 1; }
+@keyframes flash { from { background: var(--primary-soft); } to { background: transparent; } }
+
+/* ---------- Dialogs: start under the proto bar ---------- */
+.overlay { position: fixed; inset: var(--proto-bar-h) 0 0 0; z-index: 50; display: grid; place-items: center; padding: var(--space-3);
+  background: color-mix(in srgb, var(--ink) 45%, transparent); }
+.dialog { width: min(480px, 100%); max-height: calc(100vh - var(--proto-bar-h) - 32px); overflow: auto; padding: var(--space-4);
+  background: var(--surface); border-radius: var(--radius); box-shadow: 0 12px 32px color-mix(in srgb, var(--ink) 25%, transparent); }
+.dialog h2 { margin: 0 0 var(--space-3); font: var(--font-title); }
+.dialog p { margin: 0 0 var(--space-3); }
+.dialog .field { margin-bottom: 0; }
+.dialog-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: var(--space-2); margin-top: var(--space-4); }
+.date-list { margin: 0; padding-left: var(--space-4); font-variant-numeric: tabular-nums; font-weight: 600; }
+
+/* ---------- The three states imposed by the proto bar, plus the empty state ---------- */
+.skeleton { display: grid; gap: var(--space-3); padding: var(--space-1) 0; }
+.panel-flush .skeleton { padding: var(--space-4); }
+.sk { border-radius: var(--radius); background: linear-gradient(90deg, var(--line) 25%, var(--bg) 50%, var(--line) 75%); background-size: 200% 100%; animation: sk 1.2s infinite linear; }
+.sk-row { height: 36px; }
+.sk-field { height: 56px; max-width: 560px; }
+.sk-grid { height: 480px; }
+@keyframes sk { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .sk, .spin, .booking-item.flash { animation: none; } }
+.state-error { padding: var(--space-3) var(--space-4); border-radius: var(--radius); background: var(--danger-soft); color: var(--danger); }
+.panel-flush .state-error { margin: var(--space-4); }
+.state-error p { margin: 0 0 var(--space-3); font-weight: 600; }
+.state-empty { padding: calc(var(--space-4) * 2) var(--space-4); text-align: center; color: var(--ink-2); }
+.state-empty p { margin: 0 0 var(--space-3); }
+.state-empty p:last-child { margin: 0; }
+
+/* ---------- Grid of the DS: 768 to 1279 px reduced margins, < 768 px one column ---------- */
+@media (max-width: 1279px) {
+  .view { padding-left: var(--space-3); padding-right: var(--space-3); }
+}
+/* The header holds up to three entries plus the user block: below 1024 px the nav goes to its own line */
+@media (max-width: 1023px) {
+  .app-header { flex-wrap: wrap; height: auto; gap: 0 var(--space-2); padding: var(--space-1) var(--space-3); }
+  .app-nav { order: 3; flex-basis: 100%; overflow-x: auto; }
+  .user { margin-left: auto; }
+}
+@media (max-width: 767px) {
+  .user-name { display: none; }
+  .view { padding: var(--space-3) var(--space-3) calc(var(--space-4) * 2); }
+  .occ-scroll, .occ-legend { display: none; }
+  .occ-list { display: block; }
+  .toolbar, .day-nav { flex-wrap: wrap; }
+  .day-label { min-width: 0; flex: 1; }
+  .field-inline { grid-auto-flow: row; width: 100%; }
+  .field-inline select { width: 100%; }
+  .criteria-grid, .row-2 { grid-template-columns: 1fr; gap: 0; }
+  .actions, .dialog-actions { flex-direction: column-reverse; }
+  .actions .btn, .dialog-actions .btn { width: 100%; }
+  .booking-item { grid-template-columns: 1fr auto; }
+  .bi-room { grid-column: 1; }
+  .bi-action { grid-column: 2; grid-row: 1 / 3; }
+  .bi-note { grid-column: 1 / 3; }
+  .table th:nth-child(3), .table td:nth-child(3) { display: none; }
+  .login { margin-top: var(--space-4); }
+}

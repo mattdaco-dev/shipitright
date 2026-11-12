@@ -1,0 +1,143 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contrat de conformité · Conception technique détaillée · NOM_PROJET</title>
+  <!-- Copy to docs/30-conception/detaillee/transverse/conformite.html. One row per invariant,
+       <tr id="CF-xx"> with a self link in the first cell: every CF-xx cited elsewhere links to its row
+       (conformite.html#CF-xx), and the generator reports a CF-xx cited and absent from this page. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Contrat de conformité</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#plan-du-site">Transverse</a></div>
+      <h1><span class="doc-kind">Contrat de conformité</span> : les invariants du code</h1>
+      <p class="lede">Ce que le code respecte, quel que soit le ticket. Le dev s'auto-revoit dessus avant de rendre, le Relecteur vérifie chaque invariant et le cite par son identifiant. Un invariant non respecté est bloquant, sauf écart accepté avec son ADR.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+      </div>
+    </header>
+
+    <section class="section" id="framework" data-level="obligatoire">
+      <h2>Invariants du framework</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Poser les invariants que tout projet de la team respecte, quel que soit le socle.</dd>
+          <dt>Contenu</dt><dd><code>CF-50</code> à <code>CF-59</code>, recopiés du gabarit sans changement, chacun avec la façon de le vérifier.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, un invariant vérifiable par ligne. Chaque ligne a une ancre, cible du lien d'un <code>CF-xx</code> ; la colonne Vérification dit au Relecteur comment conclure.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant</th><th>Vérification</th></tr></thead>
+        <tbody>
+          <tr id="CF-50"><td><a href="#CF-50">CF-50</a></td><td>Aucun secret, mot de passe ou jeton dans le dépôt. Configuration par variables d'environnement.</td><td>recherche, <code>gitleaks</code> si disponible</td></tr>
+          <tr id="CF-51"><td><a href="#CF-51">CF-51</a></td><td>Aucune donnée réelle dans les jeux de test, les fixtures ou les seeds.</td><td>relecture des données</td></tr>
+          <tr id="CF-52"><td><a href="#CF-52">CF-52</a></td><td>Les logs sont structurés et ne contiennent pas de données personnelles en clair.</td><td>relecture des appels de log</td></tr>
+          <tr id="CF-53"><td><a href="#CF-53">CF-53</a></td><td>Les identifiants techniques et le code sont en anglais ; les termes métier du glossaire peuvent rester en français dans les noms du domaine, au mot près.</td><td>relecture des noms</td></tr>
+          <tr id="CF-54"><td><a href="#CF-54">CF-54</a></td><td>Commits en Conventional Commits avec l'id du ticket en scope : <code>feat(t-012): ...</code>.</td><td><code>git log</code> de la branche</td></tr>
+          <tr id="CF-55"><td><a href="#CF-55">CF-55</a></td><td>Chaque endpoint est déclaré dans le contrat d'API (<a href="../../api/openapi.yaml">openapi.yaml</a> et ses fichiers liés) et le respecte : chemin, verbe, statuts, schémas. Un dev ne modifie pas le contrat d'API seul.</td><td>comparaison route, adaptateur entrant, YAML</td></tr>
+          <tr id="CF-56"><td><a href="#CF-56">CF-56</a></td><td>Chaque règle de gestion portée par le domaine a un test unitaire qui la nomme (<code>RG-xx</code> dans le nom ou la description du test).</td><td>recherche des <code>RG-xx</code> du ticket dans les tests</td></tr>
+          <tr id="CF-57"><td><a href="#CF-57">CF-57</a></td><td>Chaque écran gère ses états nominal, vide, chargement et erreur, tels que décrits dans la <a href="../../../20-ux/spec-ux-ui.html">spec UX/UI</a>.</td><td>test de composant par état</td></tr>
+          <tr id="CF-58"><td><a href="#CF-58">CF-58</a></td><td>Une opération figée ne perd rien et ne change rien : seuls des ajouts rétrocompatibles y entrent (paramètre ou propriété de requête facultatifs, propriété de réponse, valeur d'enum annoncée d'avance avec sa release dans <code>x-enum-releases</code>). Avant sa release, un élément annoncé n'est ni envoyé ni accepté par le serveur. Chaque changement du contrat d'API a son entrée dans le <a href="../schemas/index.html#journal">journal des changements</a> et fait monter <code>info.version</code> : mineure pour un ajout figé, correctif sans effet sur le figé, majeure seulement avec un ADR accepté.</td><td>diff de <code>api/</code> contre la version précédente ; <code>detaillee-pages.mjs --check</code></td></tr>
+          <tr id="CF-59"><td><a href="#CF-59">CF-59</a></td><td>Le front lit les réponses de façon tolérante : il ignore une propriété qu'il ne connaît pas, et traite une valeur d'enum inconnue (code d'erreur, statut) comme le cas générique de l'écran, sans planter.</td><td>test de composant avec une valeur et une propriété inconnues</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="socle-de-stack" data-level="obligatoire">
+      <h2>Invariants du socle de stack</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire quels invariants de la stack s'appliquent au projet.</dd>
+          <dt>Contenu</dt><dd>Le socle déclaré, les invariants repris par référence, ceux qui ne s'appliquent pas avec leur raison, et, tant que le socle est « à compléter », les invariants provisoires qu'il aura.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les invariants d'un socle servent à plusieurs projets et vivent dans son <code>conformite.md</code> : les reprendre par référence évite deux versions d'un même invariant. Un invariant provisoire porte déjà l'identifiant qu'il aura dans le socle : ni le code ni les revues n'auront à changer.</dd>
+          <dt>Lire</dt><dd>Un invariant repris par référence n'a pas de ligne ici : une page qui le cite lie cette section (<code>conformite.html#socle-de-stack</code>), le générateur le fait seul.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Socle déclaré</dt><dd><span class="todo">nom et version du socle de <code>.team/socle.md</code></span> ; invariants <code>CF-01</code> à <code>CF-49</code> de <code>.team/socles/stacks/&lt;nom&gt;/conformite.md</code> (ou de la source qu'il désigne), repris par référence, tels quels</dd>
+        <dt>Non applicables</dt><dd><span class="todo">« aucun », ou chaque invariant écarté avec sa raison, repris dans les écarts acceptés</span></dd>
+      </dl>
+      <h3 id="invariants-provisoires">Invariants provisoires du socle</h3>
+      <p><span class="todo">Seulement si le socle est « à compléter » (pas de <code>conformite.md</code>, ou une partie de la stack sans invariant) ; sinon retirer ce sous-titre et le tableau.</span> Ils s'appliquent à tous les tickets de la partie concernée jusqu'au socle complété, où ils seront reportés puis retirés d'ici ; l'humain les valide avec le socle à G2 (<a href="organisation-du-code.html#points-ouverts">point ouvert de l'organisation du code</a>, impact fort). Ils traduisent les ADR de la macro et l'organisation du code.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant provisoire (<span class="todo">partie de la stack</span>)</th><th>Vérification</th></tr></thead>
+        <tbody>
+          <tr id="CF-01"><td><a href="#CF-01">CF-01</a></td><td><span class="todo">organisation du code : packaging par cas d'usage, dans le module que déclare l'objet (<a href="organisation-du-code.html#modules">modules</a>) ; dépendances interdites du domaine…</span></td><td><span class="todo">comment le vérifier en lisant le code</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="design-system" data-level="obligatoire">
+      <h2>Invariants du design system</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Poser les invariants du front qui tiennent au design system.</dd>
+          <dt>Contenu</dt><dd>Le socle de design system déclaré et ses invariants <code>CF-70</code> à <code>CF-79</code> : repris par référence s'il en a, sinon posés ici avec l'UX, vérifiables dans le code front (tokens, composants du catalogue, accessibilité).</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La même règle que pour la stack : un invariant a une seule source.</dd>
+          <dt>Lire</dt><dd>Un invariant repris par référence se lie à cette section (<code>conformite.html#design-system</code>).</dd>
+        </dl>
+      </div>
+      <p>Socle de design system déclaré : <span class="todo">nom et version ; « invariants repris par référence » s'il a un <code>conformite.md</code>, sinon le tableau ci-dessous</span>.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant</th><th>Vérification</th></tr></thead>
+        <tbody>
+          <tr id="CF-70"><td><a href="#CF-70">CF-70</a></td><td><span class="todo">couleurs, typographie, espacements tirés des tokens du design system…</span></td><td><span class="todo">recherche de valeurs en dur dans les styles</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="projet" data-level="obligatoire">
+      <h2>Invariants du projet</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Poser ce que la conception détaillée impose au code de ce projet, de façon vérifiable par le Relecteur.</dd>
+          <dt>Contenu</dt><dd><code>CF-60</code> à <code>CF-69</code>, chacun avec en lien les objets qu'il protège.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une page d'objet dit comment le construire ; un invariant dit ce qui ne doit jamais arriver, d'un objet à l'autre, et se vérifie en lisant le code.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant</th><th>Vérification</th></tr></thead>
+        <tbody>
+          <tr id="CF-60"><td><a href="#CF-60">CF-60</a></td><td><span class="todo">invariant vérifiable, avec les EP-xx, TR-xx, EN-xx, RG-xx et ADR-xxxx qu'il protège, en liens</span></td><td><span class="todo">comment le vérifier en lisant le code</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="ecarts" data-level="obligatoire">
+      <h2>Écarts acceptés</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister les seuls écarts permis aux invariants ci-dessus ou à ceux des socles.</dd>
+          <dt>Contenu</dt><dd>Un écart par ligne : l'invariant en lien, ce qui s'en écarte, l'ADR qui l'accepte, sa portée. Sans écart : « Aucun écart accepté. »</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau adossé aux ADR : un écart non listé ici est bloquant en revue, un écart au socle de stack remonte à l'humain par son ADR au statut « proposé ».</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Invariant</th><th>Écart</th><th>ADR</th><th>Portée</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">CF-xx en lien</span></td><td><span class="todo">ce qui s'en écarte</span></td><td><span class="todo">ADR-xxxx en lien</span></td><td><span class="todo">modules ou objets concernés</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

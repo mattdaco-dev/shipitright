@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conception technique détaillée · NOM_PROJET</title>
+  <!-- Copy to docs/30-conception/detaillee/index.html. The gen: blocks are filled by
+       node team/scripts/detaillee-pages.mjs docs/30-conception: never edit between the markers. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Conception technique détaillée</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../macro.html">← Conception technique macro</a><br><a href="../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique</div>
+      <h1><span class="doc-kind">Conception technique détaillée</span> : NOM_PROJET</h1>
+      <p class="lede">Cette conception dit aux devs, humains ou IA, quoi développer et comment, objet par objet, assez précisément pour prendre un ticket à froid sans reposer de question. On y entre par la <a href="../macro.html">conception technique macro</a>, et le contrat d'API <a href="../api/openapi.yaml">openapi.yaml</a> fait foi en cas d'écart.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> Architecte</span>
+        <span><b>Contributeurs</b> Dev backend, Dev frontend</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+      </div>
+      <div class="meta">
+        <span><b>Sources</b> <a href="../macro.html">conception macro</a> <span class="todo">vX.Y du JJ.MM.AAAA</span>, <!-- gen:api-version --><!-- /gen -->, <a href="../../20-specs/conception-fonctionnelle.html">conception fonctionnelle</a> <span class="todo">vX.Y</span>, <a href="../../20-ux/spec-ux-ui.html">spec UX/UI</a> <span class="todo">vX.Y</span>, <a href="../../adr/index.html">ADR</a></span>
+      </div>
+      <div class="meta">
+        <span><b>Points ouverts</b> <!-- gen:open-summary --><!-- /gen --></span>
+      </div>
+    </header>
+
+    <section class="section" id="plan-du-site" data-level="obligatoire">
+      <h2>Plan du site</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Voir comment la conception détaillée est organisée et aller droit à une page.</dd>
+          <dt>Contenu</dt><dd>L'arbre des pages, de la conception macro (point d'entrée) au sommaire, puis aux familles de pages. Un bloc par page, son titre en lien ; une famille (endpoints, schémas, entités, traitements) tient en un bloc de cards empilées dont le titre ouvre la liste de ses pages.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>L'arbre est la forme standard d'un plan de site. Les sections d'une page n'y figurent pas : elles sont dans sa table des matières.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="st-badge on-light">gen</span> page générée : elle ne s'édite pas, on modifie <code>openapi.yaml</code> et on régénère.</li><li><span class="tag ok">contrat figé</span> l'opération ne perd et ne change rien : le front part sur un mock.</li><li><span class="tag warn">contrat provisoire</span> l'opération attend une réponse métier.</li><li>La release est indicative.</li><li><span class="todo">Conventions d'API du projet : l'ADR qui les fixe, en lien.</span></li></ul></dd>
+          <dt>Source</dt><dd>Les pages réelles du dossier, lues par le générateur : le plan ne ment jamais.</dd>
+          <dt>Coder un endpoint</dt><dd><ol><li>Sa page : requête, réponses, comportement, séquence.</li><li>Ses traitements : signature, algorithme, cas limites.</li><li>Ses entités : DDL.</li><li>L'<a href="transverse/organisation-du-code.html">organisation du code</a> : où le ranger.</li><li>Le <a href="transverse/conformite.html">contrat de conformité</a> : les invariants.</li><li>Les <a href="transverse/tests.html">tests imposés</a>.</li></ol></dd>
+          <dt>Coder un écran</dt><dd><ol><li>La <a href="transverse/ecrans.html#par-ecran">vue par écran</a>.</li><li>Les pages de ses endpoints.</li><li>La <a href="transverse/erreurs.html">gestion des erreurs</a>.</li></ol></dd>
+        </dl>
+      </div>
+      <!-- gen:sitemap --><!-- /gen -->
+    </section>
+
+    <section class="section" id="endpoints" data-level="obligatoire">
+      <h2>Endpoints</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Trouver une opération du contrat d'API par son chemin, ses droits ou son statut.</dd>
+          <dt>Contenu</dt><dd>Une ligne par opération : identifiant, verbe et chemin, résumé, rôles admis, statut figé ou provisoire. La release, indicative, est sur la page de l'endpoint.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La liste des opérations d'OpenAPI en tableau triable, réduite à ce qui sert à trouver une opération.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code>.</dd>
+        </dl>
+      </div>
+      <!-- gen:summary-endpoints --><!-- /gen -->
+    </section>
+
+    <section class="section" id="matrice-crud" data-level="obligatoire">
+      <h2>Matrice CRUD</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime quelle entité ; c'est aussi l'index des entités et des traitements.</dd>
+          <dt>Contenu</dt><dd>En lignes les endpoints puis les traitements, en colonnes les entités ; la dernière colonne dit les traitements appelés.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, artefact standard du croisement données × traitements.</dd>
+          <dt>Lire</dt><dd>C création, R lecture, U mise à jour, D suppression. Pour un endpoint, une cellule compte aussi l'accès qu'il obtient par un traitement, tel qu'il le déclare (un traitement qui crée ou modifie ne donne que C à qui crée) ; le survol dit par quel traitement.</dd>
+          <dt>Source</dt><dd><code>x-entities</code> d'<code>openapi.yaml</code> (accès direct, ou obtenu <code>via</code> un traitement) et <code>x-processes</code> ; balises <code>meta</code> des traitements pour leurs lignes.</dd>
+        </dl>
+      </div>
+      <!-- gen:crud-matrix --><!-- /gen -->
+    </section>
+  </main>
+</div>
+<script src="../../_assets/doc.js"></script>
+</body>
+</html>

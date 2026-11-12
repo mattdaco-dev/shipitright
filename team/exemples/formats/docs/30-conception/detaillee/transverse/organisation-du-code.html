@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Organisation du code · Conception technique détaillée · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Organisation du code</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#plan-du-site">Transverse</a></div>
+      <h1><span class="doc-kind">Organisation du code</span> : backend, frontend, persistance</h1>
+      <p class="lede">Où vit chaque endpoint, chaque traitement et chaque écran dans le code, et les conventions de la base. Celle du socle de stack, appliquée au produit.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Contributeurs</b> Dev backend, Dev frontend</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2 id="modules">Backend</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir où vit chaque endpoint, chaque traitement et chaque entité dans le code backend.</dd>
+          <dt>Contenu</dt><dd>La table des modules (module, contenu), écrite à la main ; puis les objets de chaque module ; enfin les principes de câblage et la règle des transactions.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La vue composants du modèle C4, en tableau. Le module est déclaré une fois par l'objet : la liste des objets par module ne s'écrit pas à la main et ne diverge pas.</dd>
+          <dt>Lire</dt><dd>Chaque page d'objet renvoie à la ligne de son module. Aucun brief de ticket ne donne de chemin : le dev trouve les fichiers depuis les modules.</dd>
+          <dt>Source</dt><dd>Objets par module : <code>x-module</code> d'une opération, balise <code>meta module</code> d'une entité ou d'un traitement.</dd>
+        </dl>
+      </div>
+      <table class="modules">
+        <thead><tr><th>Module</th><th>Contenu</th></tr></thead>
+        <tbody>
+          <tr><td><code>domain/shared</code></td><td>port <code>Horloge</code> au fuseau Europe/Luxembourg (<a href="conformite.html#CF-62">CF-62</a>) ; type résultat sans exception (<a href="conformite.html#CF-05">CF-05</a>) ; port <code>UnitOfWork</code> : exécuter une fonction en transaction immédiate</td></tr>
+          <tr><td><code>domain/session</code></td><td>agrégat Session ; vérification d'empreinte scrypt, création et lecture de session, limite de débit de la connexion ; cas <code>command/ouvrir</code>, <code>query/lire</code>, <code>command/fermer</code></td></tr>
+          <tr><td><code>domain/salle</code></td><td>agrégat Salle (nom, capacité, équipements, statut) ; <a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-10">RG-10</a> ; port <code>SalleRepository</code> ; cas <code>query/lister</code>, <code>query/disponibles</code>, <code>query/lire</code>, <code>command/declarer</code>, <code>command/modifier</code>, <code>command/desactiver</code></td></tr>
+          <tr><td><code>domain/equipement</code></td><td>lecture du référentiel ; cas <code>query/lister</code></td></tr>
+          <tr><td><code>domain/reservation</code></td><td>agrégat Réservation ; objet de valeur <code>Creneau</code> (<a href="../../../20-specs/conception-fonctionnelle.html#RG-02">RG-02</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a> avec l'horloge) ; <code>poser-creneau</code> ; <code>annulation</code>, transition unique d'annulation (<a href="../traitements/TR-06.html">TR-06</a>, <a href="conformite.html#CF-68">CF-68</a>) ; port <code>ReservationRepository</code> ; cas <code>query/occupation</code>, <code>query/mes-reservations</code>, <code>command/reserver</code>, <code>command/annuler</code>, <code>command/modifier</code> (release R2), <code>query/creneau-plus-proche</code> (release R2), <code>command/confirmer-presence</code> (release R3)</td></tr>
+          <tr><td><code>domain/serie</code></td><td>agrégat Série ; <code>occurrences</code>, fonction pure (<a href="../../../20-specs/conception-fonctionnelle.html#CALC-01">CALC-01</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-04">RG-04</a>) ; port <code>SerieRepository</code> ; cas <code>query/apercu</code>, <code>command/creer</code>, <code>command/annuler</code></td></tr>
+          <tr><td><code>domain/statistiques</code></td><td>agrégation de l'occupation (release R3) ; cas <code>query/occupation</code></td></tr>
+          <tr><td><code>infra/sqlite</code></td><td>une connexion par processus (WAL, <code>busy_timeout</code> 5 s, <code>foreign_keys</code>) ; <code>UnitOfWork</code> par <code>db.transaction(fn).immediate()</code>, qui traduit le <code>ABORT</code> du déclencheur en <a href="erreurs.html#CRENEAU_PRIS"><code>CRENEAU_PRIS</code></a> ; dépôts en SQL écrit à la main (<a href="conformite.html#CF-06">CF-06</a>) ; migrations numérotées (<a href="conformite.html#CF-07">CF-07</a>) ; dossier <code>migrations/</code></td></tr>
+          <tr><td><code>http</code></td><td>gestionnaire d'erreurs vers <a href="../schemas/Probleme.html"><code>Probleme</code></a> (<a href="conformite.html#CF-09">CF-09</a>) ; contrôle de session et de rôle déclaré par route (<a href="conformite.html#CF-08">CF-08</a>) ; racine de composition</td></tr>
+        </tbody>
+      </table>
+      <h3 id="objets-par-module">Objets par module</h3>
+      <!-- gen:code-modules -->
+      <table>
+        <thead><tr><th>Module</th><th>Endpoints</th><th>Traitements</th><th>Entités</th></tr></thead>
+        <tbody>
+          <tr id="module-domain-session"><td><code>domain/session</code></td><td><a href="../endpoints/EP-01.html">EP-01</a>, <a href="../endpoints/EP-02.html">EP-02</a>, <a href="../endpoints/EP-03.html">EP-03</a></td><td><span class="none">aucun</span></td><td><a href="../entites/EN-01.html">EN-01</a>, <a href="../entites/EN-02.html">EN-02</a></td></tr>
+          <tr id="module-domain-salle"><td><code>domain/salle</code></td><td><a href="../endpoints/EP-04.html">EP-04</a>, <a href="../endpoints/EP-07.html">EP-07</a>, <a href="../endpoints/EP-14.html">EP-14</a>, <a href="../endpoints/EP-15.html">EP-15</a>, <a href="../endpoints/EP-16.html">EP-16</a>, <a href="../endpoints/EP-17.html">EP-17</a></td><td><span class="none">aucun</span></td><td><a href="../entites/EN-03.html">EN-03</a></td></tr>
+          <tr id="module-domain-equipement"><td><code>domain/equipement</code></td><td><a href="../endpoints/EP-05.html">EP-05</a></td><td><span class="none">aucun</span></td><td><a href="../entites/EN-04.html">EN-04</a></td></tr>
+          <tr id="module-domain-reservation"><td><code>domain/reservation</code></td><td><a href="../endpoints/EP-06.html">EP-06</a>, <a href="../endpoints/EP-08.html">EP-08</a>, <a href="../endpoints/EP-11.html">EP-11</a>, <a href="../endpoints/EP-12.html">EP-12</a>, <a href="../endpoints/EP-18.html">EP-18</a>, <a href="../endpoints/EP-19.html">EP-19</a>, <a href="../endpoints/EP-20.html">EP-20</a></td><td><a href="../traitements/TR-02.html">TR-02</a>, <a href="../traitements/TR-03.html">TR-03</a>, <a href="../traitements/TR-04.html">TR-04</a>, <a href="../traitements/TR-06.html">TR-06</a></td><td><a href="../entites/EN-05.html">EN-05</a></td></tr>
+          <tr id="module-domain-serie"><td><code>domain/serie</code></td><td><a href="../endpoints/EP-09.html">EP-09</a>, <a href="../endpoints/EP-10.html">EP-10</a>, <a href="../endpoints/EP-13.html">EP-13</a></td><td><a href="../traitements/TR-01.html">TR-01</a></td><td><a href="../entites/EN-06.html">EN-06</a></td></tr>
+          <tr id="module-domain-statistiques"><td><code>domain/statistiques</code></td><td><a href="../endpoints/EP-21.html">EP-21</a></td><td><a href="../traitements/TR-05.html">TR-05</a></td><td><span class="none">aucune</span></td></tr>
+        </tbody>
+      </table><!-- /gen -->
+      <ul>
+        <li><b>Un cas d'usage, un dossier</b> : route, schéma JSON aligné sur <code>openapi.yaml</code>, handler et commande ou requête vivent ensemble (<a href="conformite.html#CF-01">CF-01</a>). La route décode et encode, le handler orchestre, les règles vivent dans le domaine (<a href="conformite.html#CF-04">CF-04</a>).</li>
+        <li><b>Transactions</b> : voir la règle ci-dessous. better-sqlite3 étant synchrone, le corps de la transaction l'est aussi, sans <code>await</code> ; la variante <code>.immediate()</code> donne <code>BEGIN IMMEDIATE</code> (documentation better-sqlite3 vérifiée).</li>
+        <li><b>Câblage</b> : la racine de composition crée la connexion, les dépôts et l'horloge système, puis les passe aux handlers. Les tests unitaires et d'intégration passent une horloge fixe et une base <code>:memory:</code> migrée.</li>
+        <li><b>Événements</b> : aucun. Un seul contexte, aucun bus (<a href="../../macro.html#flux-asynchrones">conception macro</a>) : une série crée ses occurrences et une désactivation annule ses réservations dans la même transaction.</li>
+      </ul>
+      <h3 id="transactions">Transactions et traitements</h3>
+      <div class="callout decision"><b>L'endpoint ouvre et ferme la transaction</b>Le handler d'un endpoint qui écrit ouvre la transaction immédiate par le port <code>UnitOfWork</code>, appelle les traitements, puis valide, ou annule sur le premier refus. Un traitement <code>TR-xx</code> s'exécute toujours dans la transaction de son appelant : il n'ouvre, ne valide ni n'annule jamais rien, il rend un résultat ou un refus. Les séquences de chaque endpoint le montrent (<code>BEGIN IMMEDIATE (UnitOfWork)</code> côté API) ; <a href="../traitements/TR-02.html">TR-02</a>, <a href="../traitements/TR-03.html">TR-03</a> et <a href="../traitements/TR-06.html">TR-06</a> le citent.</div>
+      <div class="callout decision"><b>Quand un traitement existe</b>Un traitement <code>TR-xx</code> existe quand une logique du domaine sert à deux appelants ou plus (endpoints ou traitements), quand c'est un calcul ou un algorithme du domaine qui mérite d'être testé seul, quand c'est un effet en cascade (une action qui en entraîne d'autres sur d'autres objets), ou quand rien ne l'appelle (tâche planifiée, consommation d'un message). Sinon, la logique reste dans l'endpoint, dans son cas d'usage. Exemples : l'annulation sert <a href="../endpoints/EP-12.html">EP-12</a>, <a href="../endpoints/EP-13.html">EP-13</a> et <a href="../traitements/TR-03.html">TR-03</a>, d'où <a href="../traitements/TR-06.html">TR-06</a> ; <a href="../traitements/TR-04.html">TR-04</a> et <a href="../traitements/TR-05.html">TR-05</a> sont des calculs testés seuls ; <a href="../traitements/TR-03.html">TR-03</a> est l'effet en cascade de la désactivation d'une salle.</div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Frontend</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir où vit chaque écran dans le code frontend.</dd>
+          <dt>Contenu</dt><dd>Une ligne par route : écran, composants, état. Puis les services d'accès API et ce qui est commun aux écrans.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>L'organisation front du socle appliquée au produit, en tableau (vue composants C4) : un dossier par écran de premier niveau chargé à la demande, un service d'accès API par ressource, seul à injecter <code>HttpClient</code>, état en signals (<a href="conformite.html#socle-de-stack">CF-30 à CF-40</a> du socle).</dd>
+          <dt>Lire</dt><dd>Les endpoints que chaque écran appelle sont dans la <a href="ecrans.html">vue par écran</a>, pas ici.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Route</th><th>Écran</th><th>Composants</th><th>État</th></tr></thead>
+        <tbody>
+          <tr><td><code>/connexion</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-01">EC-01</a></td><td><code>ConnexionPage</code></td><td>formulaire réactif, envoi en cours, erreur par <code>code</code></td></tr>
+          <tr><td>toutes</td><td>bandeau de navigation</td><td><code>AppShell</code>, <code>NavBar</code></td><td>utilisateur courant en signal, chargé au démarrage (<a href="../endpoints/EP-02.html">EP-02</a>), déconnexion (<a href="../endpoints/EP-03.html">EP-03</a>)</td></tr>
+          <tr><td><code>/occupation</code>, <code>?jour=</code>, <code>?salle=</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a></td><td><code>OccupationPage</code>, <code>DaySelector</code>, <code>RoomFilter</code>, <code>OccupationGrid</code>, <code>OccupationList</code> (sous 768 px), <code>CancelWithReasonDialog</code></td><td>jour et salle dans l'URL ; salles et réservations en ressources signal ; cases passées calculées à l'heure du poste, pour l'affichage seulement</td></tr>
+          <tr><td><code>/recherche</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-03">EC-03</a></td><td><code>RechercheSallePage</code>, <code>SearchCriteria</code>, <code>SearchResults</code></td><td>critères en signal, lancés au clic ; résultats ; proposition du créneau le plus proche (release R2)</td></tr>
+          <tr><td><code>/reservation/nouvelle</code>, <code>?salle=&amp;jour=&amp;debut=</code> ; <code>/reservation/:id</code> (release R2)</td><td><a href="../../../20-ux/spec-ux-ui.html#EC-04">EC-04</a></td><td><code>ReservationPage</code>, <code>ReservationForm</code>, <code>SeriesFields</code>, <code>SeriesConflictsDialog</code></td><td>formulaire réactif typé ; aperçu de série recalculé 300 ms après la dernière saisie, appel précédent annulé ; envoi en cours</td></tr>
+          <tr><td><code>/mes-reservations</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-05">EC-05</a></td><td><code>MesReservationsPage</code>, <code>CancelDialog</code></td><td>liste en ressource signal ; bandeau <a href="../../../20-specs/conception-fonctionnelle.html#MSG-02">MSG-02</a> reçu par l'état de navigation</td></tr>
+          <tr><td><code>/parc</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-06">EC-06</a></td><td><code>ParcPage</code>, <code>DeactivateRoomDialog</code></td><td>garde de rôle gestionnaire (<a href="../../../20-ux/spec-ux-ui.html#MSG-U10">MSG-U10</a> et retour à <a href="../../../20-ux/spec-ux-ui.html#EC-02">EC-02</a> sinon)</td></tr>
+          <tr><td><code>/parc/salle/nouvelle</code>, <code>/parc/salle/:id</code></td><td><a href="../../../20-ux/spec-ux-ui.html#EC-07">EC-07</a></td><td><code>FicheSallePage</code></td><td>formulaire réactif, <a href="../../../20-specs/conception-fonctionnelle.html#MSG-07">MSG-07</a> sous Nom sur <a href="erreurs.html#NOM_SALLE_PRIS"><code>NOM_SALLE_PRIS</code></a></td></tr>
+          <tr data-release="R2"><td><code>/occupation/semaine</code></td><td>EC-08 (release R2, pas encore dans la spec UX/UI)</td><td><code>OccupationSemainePage</code></td><td>semaine dans l'URL</td></tr>
+          <tr data-release="R3"><td><code>/parc/statistiques</code></td><td>EC-09 (release R3, pas encore dans la spec UX/UI)</td><td><code>StatistiquesPage</code></td><td>période dans l'URL, garde de rôle</td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><b>Services d'accès API</b> : <code>SessionApi</code>, <code>SalleApi</code>, <code>EquipementApi</code> (mis en cache pour la session), <code>ReservationApi</code>, <code>SerieApi</code>, <code>StatistiquesApi</code>. Types d'échange générés ou écrits depuis les <a href="../schemas/index.html">schémas</a>, sans <code>any</code>.</li>
+        <li><b>Transverse</b> : <code>ErrorMessages</code> traduit un <code>code</code> en texte <code>MSG-xx</code> ou <code>MSG-Uxx</code> depuis le catalogue unique de libellés (<a href="conformite.html#CF-64">CF-64</a>, <a href="conformite.html#CF-65">CF-65</a>) ; un intercepteur renvoie vers <a href="../../../20-ux/spec-ux-ui.html#EC-01">EC-01</a> sur <code>401</code> ; une garde de rôle protège les routes du gestionnaire (confort : le backend reste juge).</li>
+        <li><b>Lecture tolérante</b> : le front ignore une propriété de réponse qu'il ne connaît pas, et traduit une valeur d'enum inconnue (code d'erreur, statut, fréquence) comme le cas générique de l'écran, sans planter (<a href="conformite.html#CF-59">CF-59</a>). C'est ce qui permet à une opération figée de grandir par ajouts annoncés (<a href="../schemas/index.html#journal">journal du contrat d'API</a>).</li>
+        <li><b>Lectures</b> : en ressources signal. <code>httpResource</code> n'est stable qu'à partir d'Angular 22 (documentation Angular vérifiée) : avec une version antérieure, <code>rxResource</code> ou <code>toSignal</code> dans le service.</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Persistance</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Poser les conventions communes à toutes les tables et l'ordre des migrations.</dd>
+          <dt>Contenu</dt><dd><ul><li>Types des identifiants, jours, heures et horodatages.</li><li>Réglages de connexion.</li><li>Migrations numérotées et ce qu'elles posent.</li><li>Jeu de données fictif.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Ce qui vaut pour toutes les tables s'écrit une fois ici ; la liste des migrations fixe l'ordre de création (<a href="conformite.html#CF-07">CF-07</a>).</dd>
+          <dt>Lire</dt><dd>Le DDL de chaque table est dans la page de son entité.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Identifiants</dt><dd><code>INTEGER PRIMARY KEY</code></dd>
+        <dt>Jour</dt><dd><code>TEXT</code> <code>AAAA-MM-JJ</code>, contrôlé par <code>CHECK (x = date(x))</code></dd>
+        <dt>Heure</dt><dd>minutes depuis minuit, <code>INTEGER</code> ; <code>HH:MM</code> dans l'API seulement (<a href="../../../adr/0004-conventions-api-json.html">ADR-0004</a>)</dd>
+        <dt>Horodatage</dt><dd><code>TEXT</code> ISO 8601 UTC</dd>
+        <dt>Connexion</dt><dd><code>PRAGMA foreign_keys = ON</code>, <code>journal_mode = WAL</code>, <code>busy_timeout = 5000</code> à l'ouverture</dd>
+      </dl>
+      <table>
+        <thead><tr><th>Migration</th><th>Contenu</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><code>0001_employes_sessions.sql</code></td><td>tables de <a href="../entites/EN-01.html">EN-01</a> et <a href="../entites/EN-02.html">EN-02</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><code>0002_salles_equipements.sql</code></td><td>tables de <a href="../entites/EN-03.html">EN-03</a> et <a href="../entites/EN-04.html">EN-04</a>, index unique partiel du nom, 3 équipements</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><code>0003_reservations_series.sql</code></td><td>tables de <a href="../entites/EN-05.html">EN-05</a> et <a href="../entites/EN-06.html">EN-06</a>, <code>CHECK</code>, index, déclencheurs</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr data-release="R3"><td><code>0004_presence_serie_mensuelle.sql</code></td><td>colonne <code>presence_le</code> de <a href="../entites/EN-05.html">EN-05</a> ; reconstruction de <code>series</code> pour <code>mensuelle</code> (<a href="../entites/EN-06.html">EN-06</a>)</td><td><span class="tag accent">R3</span></td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><b>Jeu fictif</b> : <code>npm run seed</code> charge les 8 salles du cadrage avec leurs équipements, une dizaine de comptes dont un gestionnaire, et quelques réservations sur la semaine courante, dont une série. Aucune donnée réelle (<a href="conformite.html#CF-51">CF-51</a>). Les mots de passe des comptes viennent de variables d'environnement, lues aussi par les tests e2e ; sans elles, le <code>seed</code> s'arrête en erreur. Aucun mot de passe dans le dépôt, README compris (<a href="conformite.html#CF-50">CF-50</a>).</li>
+        <li><b>Réversibilité</b> : pas de migration descendante au pilote ; les bases locale et de démo se recréent par migration puis <code>seed</code>.</li>
+      </ul>
+    </section>
+
+    <section class="section" id="points-ouverts" data-level="recommande">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur l'organisation du code.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact fort">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact moyen">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact faible">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../points-ouverts.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td><span class="impact fort">fort</span></td><td>Organisation du code backend : le socle <code>node-sqlite-angular</code> est « à compléter » et n'en décrit pas.</td><td>le découpage par cas d'usage du socle de référence <code>play-scala-angular</code>, transposé en TypeScript avec les choix de <a href="../../../adr/0001-framework-node-et-acces-sqlite.html">ADR-0001</a>, posé en invariants provisoires <a href="conformite.html#CF-01">CF-01</a> à <a href="conformite.html#CF-09">CF-09</a> ; à reporter dans le socle, validé par l'humain à G2.</td><td></td></tr>
+          <tr><td><span class="impact moyen">moyen</span></td><td>Version d'Angular : <code>httpResource</code> n'est stable qu'à partir d'Angular 22 (documentation Angular vérifiée).</td><td>lectures en ressources signal ; avec une version antérieure, <code>rxResource</code> ou <code>toSignal</code> dans le service. Version à fixer dans le socle.</td><td></td></tr>
+          <tr><td><span class="impact faible">faible</span></td><td>Réversibilité des migrations.</td><td>pas de migration descendante au pilote ; à reporter dans le socle.</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

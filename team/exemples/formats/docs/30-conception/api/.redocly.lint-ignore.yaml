@@ -1,0 +1,8 @@
+# This file instructs Redocly's linter to ignore the rules contained for specific parts of your API.
+# See https://redocly.com/docs/cli/ for more information.
+openapi.yaml:
+  no-server-example.com:
+    - '#/servers/0/url'
+paths/session.yaml:
+  operation-4xx-response:
+    - '#/delete/responses'

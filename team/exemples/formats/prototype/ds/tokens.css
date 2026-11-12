@@ -1,0 +1,21 @@
+/* Design tokens of the reservation-salles design system. Imported as is by the prototype and the front. */
+:root {
+  --color-primary: #2957c8;   /* main actions, links, own reservations */
+  --color-busy: #d9dee8;      /* other people's reservations */
+  --color-danger: #c62828;    /* errors, destructive actions */
+  --color-ok: #2e7d32;        /* confirmations */
+  --color-ink: #1d2433;
+  --color-ink-2: #5b6474;
+  --color-line: #dfe3ea;
+  --color-surface: #ffffff;
+  --color-surface-2: #f4f6f9;
+  --font-body: 400 14px/1.4 Inter, system-ui, sans-serif;
+  --font-title: 600 18px/1.3 Inter, system-ui, sans-serif;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --radius: 6px;
+  --bp-tablet: 768px;
+  --bp-desktop: 1280px;
+}

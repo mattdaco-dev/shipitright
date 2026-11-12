@@ -1,0 +1,8 @@
+HANDOVER.md
+.claude/agent-memory-local/
+.claude/settings.local.json
+.DS_Store
+
+# npm dependencies of the plugin scripts, installed by Claude Code in the plugin cache
+node_modules/
+.claude/agent-memory/

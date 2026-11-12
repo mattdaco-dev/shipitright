@@ -1,0 +1,27 @@
+# Domaine « Session » : schémas nommés dans openapi.yaml sous components/schemas
+
+Role:
+  type: string
+  enum: [employe, gestionnaire]
+  description: rôle de l'employé (conception fonctionnelle, rôles et droits)
+ConnexionDemande:
+  type: object
+  additionalProperties: false
+  description: identifiants de connexion ; le mot de passe n'est jamais journalisé
+  required: [email, motDePasse]
+  properties:
+    email: {type: string, format: email, maxLength: 254}
+    motDePasse: {type: string, minLength: 1, maxLength: 128}
+Utilisateur:
+  type: object
+  additionalProperties: false
+  x-entity: EN-01
+  description: l'employé de la session, seul cas où l'email est renvoyé
+  required: [id, nom, email, role]
+  properties:
+    id: {type: integer, minimum: 1}
+    nom: {type: string, description: 'Prénom Nom'}
+    email: {type: string, format: email}
+    role: {$ref: '#/Role'}
+  examples:
+    - {id: 3, nom: Léa Martin, email: lea.martin@exemple.test, role: employe}

@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Stratégie de test · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Stratégie de test</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../30-conception/detaillee/transverse/tests.html">→ Stratégie de test technique (devs)</a><br><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique</div>
+      <h1><span class="doc-kind">Stratégie de test</span> : Réservation de salles</h1>
+      <p class="lede">Chaque scénario Gherkin a un test au vert : un e2e qui porte son identifiant, ou, si la matrice le marque sans e2e, le test du niveau complémentaire. Les tests des devs prouvent les règles en dessous. Cette page fixe les règles du QA une fois pour le projet ; chaque campagne de sprint les applique. Ce que testent les devs est dans la <a href="../30-conception/detaillee/transverse/tests.html">stratégie de test technique</a>.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> 09.10.2026</span>
+        <span><b>Auteur</b> QA (exemple de format)</span>
+        <span><b>Relecture</b> Architecte, Dev backend, Dev frontend</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+        <span><b>Sources</b> stories de la <a href="../20-specs/story-map.html">story map</a>, <a href="../20-ux/spec-ux-ui.html">spec UX/UI</a> v0.1, <a href="../30-conception/macro.html">conception technique macro</a> v0.2, <a href="../30-conception/detaillee/index.html">conception technique détaillée</a> v0.3, socles <code>node-sqlite-angular</code> et <code>reservation-salles</code></span>
+      </div>
+    </header>
+
+
+    <section class="section" data-level="obligatoire">
+      <h2>Périmètre et objectifs</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que le QA prouve, ce qu'il laisse aux autres, et où il met l'effort.</dd>
+          <dt>Contenu</dt><dd>Ce qui est testé, pas testé ou reporté ; puis les risques produit, du plus fort au plus faible, avec l'effort de test que chacun reçoit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le périmètre en trois colonnes, comme le cadrage ; les risques en tableau risque, impact, effort, la forme d'une stratégie fondée sur les risques (ISO/IEC/IEEE 29119-3).</dd>
+          <dt>Lire</dt><dd>Les risques techniques et leur parade de conception sont dans la <a href="../30-conception/macro.html#risques-techniques">conception macro</a> : ici, seulement ce que le test en fait.</dd>
+        </dl>
+      </div>
+      <div class="scope">
+        <div class="in"><h4>Testé</h4><ul>
+          <li>chaque scénario Gherkin des stories de la release en cours a un test au vert : un e2e qui porte son identifiant, sur l'application assemblée, ou, si la <a href="#matrice-de-couverture">matrice</a> le marque sans e2e, le test du niveau complémentaire ;</li>
+          <li>la non-régression des sprints précédents ;</li>
+          <li>les exigences non fonctionnelles que la <a href="../30-conception/macro.html#exigences-non-fonctionnelles">conception macro</a> confie au QA : intégrité, performance, disponibilité, sécurité, accessibilité ; et le RGPD (<a href="../30-conception/detaillee/transverse/conformite.html#CF-67">CF-67</a>).</li>
+        </ul></div>
+        <div class="out"><h4>Non testé par le QA</h4><ul>
+          <li>règles aux bornes, dépôts, routes, composants : tests des devs, <a href="../30-conception/detaillee/transverse/tests.html#cas-imposes">cas imposés</a> ;</li>
+          <li>observabilité et heure de référence : la conception macro les confie au Relecteur et au niveau unitaire domaine ;</li>
+          <li>temps de l'utilisateur (« disponibilité lisible en moins de 30 s », « réserver en moins de 1 min ») : mesurés à la recette avec l'humain ;</li>
+          <li>navigateurs autres que Chromium : pilote sur un poste interne.</li>
+        </ul></div>
+        <div class="later"><h4>Plus tard</h4><ul>
+          <li>stories des releases R2 et R3, à leur sprint ;</li>
+          <li>tests de charge au-delà de la concurrence d'un créneau : aucune cible de volume au pilote ;</li>
+          <li><code>eco-audit</code> : non demandé au cadrage.</li>
+        </ul></div>
+      </div>
+      <h3>Risques produit prioritaires</h3>
+      <table>
+        <thead><tr><th>Risque</th><th>Impact</th><th>Effort de test</th></tr></thead>
+        <tbody>
+          <tr><td>Deux réservations actives se chevauchent sur une salle (<a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a>, objectif « zéro double réservation »)</td><td><span class="tag danger">fort</span></td><td>test de concurrence à chaque campagne, en plus des devs (ligne Intégrité des <a href="#tests-non-fonctionnels">tests non fonctionnels</a>) ; chaque e2e qui crée une réservation vérifie le résultat par une lecture</td></tr>
+          <tr><td>Une série crée une occurrence en conflit, ou en oublie une libre (<a href="../20-specs/conception-fonctionnelle.html#RG-04">RG-04</a>, <a href="../20-specs/conception-fonctionnelle.html#RG-05">RG-05</a>)</td><td><span class="tag danger">fort</span></td><td>les 7 scénarios de <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> en e2e, chacun vérifié par la liste des réservations créées, pas seulement par le message</td></tr>
+          <tr><td>Un employé annule la réservation d'autrui ou voit son email (<a href="../20-specs/conception-fonctionnelle.html#RG-11">RG-11</a>, <a href="../30-conception/detaillee/transverse/conformite.html#CF-67">CF-67</a>)</td><td><span class="tag danger">fort</span></td><td>e2e à deux comptes sur les annulations ; sondage de la <a href="../30-conception/detaillee/transverse/securite.html#matrice-des-droits">matrice des droits</a> par rôle</td></tr>
+          <tr><td>L'écran affiche un message faux ou générique sur un refus métier (<a href="../20-specs/conception-fonctionnelle.html#MSG-01">MSG-01</a>, <a href="../20-specs/conception-fonctionnelle.html#MSG-03">MSG-03</a>, <a href="../20-specs/conception-fonctionnelle.html#MSG-04">MSG-04</a>)</td><td><span class="tag warn">moyen</span></td><td>les e2e comparent le texte au mot près, avec les valeurs du jeu de données</td></tr>
+          <tr><td>La grille d'occupation n'est pas utilisable au clavier ni au lecteur d'écran (<a href="../20-ux/spec-ux-ui.html#accessibilite">spec UX/UI</a>)</td><td><span class="tag warn">moyen</span></td><td>parcours clavier en e2e sur <a href="../20-ux/spec-ux-ui.html#EC-02">EC-02</a> et le dialogue des conflits ; annonce vérifiée à la main à chaque campagne</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Niveaux de test et pyramide</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Répartir la preuve : chaque niveau prouve ce que les autres ne prouvent pas, au coût le plus bas.</dd>
+          <dt>Contenu</dt><dd>Une ligne par niveau, de la base au sommet : qui l'écrit, ce qu'il prouve, l'ordre de grandeur attendu au MVP en nombre de tests.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La pyramide des tests : beaucoup de tests rapides en bas, peu d'e2e en haut. Un nombre se relève en fin de sprint ; « assez de tests » ne se vérifie pas.</dd>
+          <dt>Lire</dt><dd>Ordres de grandeur, pas des quotas : ils viennent du nombre d'objets de la conception (21 endpoints, 6 traitements, 9 écrans) et d'environ 80 scénarios au MVP. Relevé en fin de sprint : le nombre de tests que chaque runner rapporte, noté dans la campagne. Un e2e qui teste une borne de règle, ou un niveau qui s'écarte de 50 % de son ordre de grandeur, se discute en rétro. Outils et cas imposés des quatre premiers niveaux (unitaire domaine, intégration du dépôt, route, composant) : <a href="../30-conception/detaillee/transverse/tests.html">stratégie de test technique</a>, écrite par l'architecte ; cette page ne les recopie pas.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Niveau</th><th>Écrit par</th><th>Ce qu'il prouve</th><th>Ordre de grandeur au MVP</th></tr></thead>
+        <tbody>
+          <tr><td>Unitaire domaine (back)</td><td>Dev backend</td><td>règles de gestion aux bornes (<a href="../30-conception/detaillee/transverse/conformite.html#CF-56">CF-56</a>), traitements</td><td>environ 180</td></tr>
+          <tr><td>Intégration du dépôt (back)</td><td>Dev backend</td><td>persistance sur une base SQLite réelle : déclencheurs, transactions, rien créé après un échec d'écriture</td><td>environ 70</td></tr>
+          <tr><td>Route (back), requête simulée</td><td>Dev backend</td><td>contrat d'API : statuts, corps, <code>problem+json</code> avec son <code>code</code>, droits par rôle</td><td>environ 150, 5 à 10 par endpoint</td></tr>
+          <tr><td>Composant (front)</td><td>Dev frontend</td><td>états d'écran (<a href="../30-conception/detaillee/transverse/conformite.html#CF-57">CF-57</a>), clavier, lecture tolérante du contrat (<a href="../30-conception/detaillee/transverse/conformite.html#CF-59">CF-59</a>)</td><td>environ 100</td></tr>
+          <tr><td>e2e</td><td>QA</td><td>chaque scénario Gherkin sur l'application assemblée, base réelle : un e2e qui porte son identifiant, ou, si la <a href="#matrice-de-couverture">matrice</a> le marque sans e2e, le test du niveau complémentaire ; concurrence et parcours clavier</td><td>environ 80 : un par scénario prévu en e2e, plus les tests non fonctionnels et d'anomalies</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Outillage</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire avec quoi le QA teste, la commande qui lance chaque suite et où vivent les tests.</dd>
+          <dt>Contenu</dt><dd>Les outils du QA, leur commande et l'emplacement des tests ; une ligne de renvoi pour l'outillage des devs.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau outil, commande, emplacement : une ligne se copie dans un terminal. Playwright pour l'e2e, quel que soit le socle ; les outils des devs viennent du socle de stack.</dd>
+          <dt>Lire</dt><dd><code>retries: 0</code> : un test qui passe au deuxième essai automatique cache une instabilité. Un test instable suit la règle de la <a href="#non-regression">non-régression</a>, visible dans la campagne.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Usage</th><th>Outil</th><th>Commande</th><th>Emplacement</th></tr></thead>
+        <tbody>
+          <tr><td>Tests des devs</td><td>ceux de la <a href="../30-conception/detaillee/transverse/tests.html#outillage">stratégie de test technique</a></td><td>celles du socle de stack complété (<a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a>)</td><td>à côté du code</td></tr>
+          <tr><td>e2e, suite complète</td><td>Playwright, projet Chromium</td><td><code>npx playwright test</code></td><td><code>e2e/</code> à la racine du dépôt, un fichier par story : <code>e2e/us-006-reserver-une-serie.spec.ts</code></td></tr>
+          <tr><td>e2e, une story ou un scénario</td><td>Playwright</td><td><code>npx playwright test -g "US-006/"</code>, <code>-g "US-006/S1 "</code></td><td>l'espace après <code>S1</code> écarte <code>S10</code> à <code>S19</code></td></tr>
+          <tr><td>Configuration</td><td>Playwright</td><td></td><td><code>playwright.config.ts</code> : projet <code>setup</code> (une connexion par compte, session enregistrée en <code>storageState</code>), projet Chromium qui en dépend, projet <code>limitation</code> lancé seul en fin de suite, <code>retries: 0</code>, <code>baseURL</code> de l'environnement visé</td></tr>
+          <tr><td>Versionnement</td><td>git</td><td></td><td>un ticket <code>T-xxx</code> de type <code>e2e</code> par lot de stories, prévu par le scrum-master au sprint planning dans la liste des tickets, créé par le PO et confié à une instance QA : sa branche et son worktree, revue par un Relecteur frais (3 tours au plus), merge dans <code>sprint/N</code> par le PO ; scope de commit le ticket, ex. <code>test(t-031): cover US-006/S4</code> (<code>team/conventions/git.md</code>)</td></tr>
+          <tr><td>Preuves</td><td>rapport HTML et traces Playwright</td><td><code>npx playwright show-report</code></td><td><code>playwright-report/</code>, hors git ; la campagne cite le test, pas le fichier</td></tr>
+          <tr><td>Exploration, anomalies</td><td>MCP chrome-devtools, <code>agent-skills:browser-testing-with-devtools</code></td><td></td><td>captures jointes à l'anomalie</td></tr>
+          <tr><td>Non fonctionnel</td><td><code>performance-audit</code>, <code>security-audit</code>, <code>gdpr-audit</code>, Lighthouse du MCP chrome-devtools</td><td>voir <a href="#tests-non-fonctionnels">tests non fonctionnels</a></td><td>conclusions reportées dans la campagne</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Environnements</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir où tourne chaque suite du QA et comment l'application est lancée pour l'e2e.</dd>
+          <dt>Contenu</dt><dd>Une ligne par environnement de la conception macro : ce que le QA y fait, le lancement de l'application, les données.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, une ligne par environnement, qui cite les <a href="../30-conception/macro.html#environnements">environnements de la conception macro</a> sans en ajouter : un environnement de plus serait une décision d'architecture.</dd>
+          <dt>Lire</dt><dd>La campagne fait foi et tourne sur « Démo et recette » : le front construit, servi par le backend, ce que l'humain recette. En local, l'e2e sert à écrire et à mettre au point les tests ; une cible de performance que la macro donne « en local » se mesure aussi en local, les autres mesures sur « Démo et recette ».</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Environnement de la macro</th><th>Ce que le QA y fait</th><th>Lancement de l'application</th><th>Données</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../30-conception/macro.html#environnements">Local</a></td><td>écriture et mise au point des e2e, dans le worktree du ticket <code>e2e</code> ; mesures de performance dont la cible est donnée « en local » (<a href="#tests-non-fonctionnels">tests non fonctionnels</a>)</td><td>comme la macro le prévoit (<code>ng serve</code> et <code>npm run dev</code>), lancés par le <code>webServer</code> de la configuration Playwright</td><td>base locale, jeu fictif puis seed de test (<a href="#donnees-de-test">données de test</a>)</td></tr>
+          <tr><td><a href="../30-conception/macro.html#environnements">Démo et recette</a></td><td>campagne de sprint, non-régression, rejeu des corrections, tests non fonctionnels sauf les mesures « en local »</td><td>démarrée par le QA sur la machine de démo, branche <code>sprint/N</code> au commit noté dans la campagne, qui contient les tickets <code>e2e</code> mergés, et relancée par lui après chaque merge d'une correction ; commande en hypothèse (ci-dessous) ; Playwright la vise par sa <code>baseURL</code></td><td>jeu fictif rechargé avant la campagne, seed de test ; remise à zéro par le QA après son dernier passage, avant la pré-recette</td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothese"><b>Hypothèse</b>Le socle <code>node-sqlite-angular</code> ne fixe encore aucune commande (<a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a>). Les commandes de cette section sont celles que cite la conception macro ; celle qui démarre le backend servant le front construit sur « Démo et recette » n'est écrite nulle part : <code>npm run build</code> puis <code>npm start</code>, jusqu'à ce que le socle complété la donne. Playwright tourne sur la machine de démo, pour que le seed de test atteigne la base.</div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Données de test</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Qu'un test parte toujours d'un état connu, avec des données fictives, sans dépendre d'un autre test ni d'une autre story.</dd>
+          <dt>Contenu</dt><dd>Le jeu de base, les données propres à chaque test, les jeux des stories, les dates, les sessions, la remise à zéro, les cas limites ; puis les comptes par rôle et leurs mots de passe.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, un sujet par terme ; les comptes en tableau, une ligne par rôle.</dd>
+          <dt>Lire</dt><dd>Les jeux d'une story (<code>D1</code>, <code>D2</code>…, ancrés <code>#Dn</code>) sont dans sa section « Données d'exemple » ; hors de la story, on les cite <code>US-xxx/Dn</code> en lien : le test les reprend, cette page ne les recopie pas.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Jeu de base</dt><dd>le jeu fictif de la conception, chargé par <code>npm run seed</code> ; son contenu est décrit dans la <a href="../30-conception/detaillee/transverse/organisation-du-code.html#persistance">persistance</a>. Les tests lisent ses comptes, jamais ses réservations, et ne l'écrivent pas.</dd>
+        <dt>Données d'un test</dt><dd>Chaque test prépare la situation qu'il modifie par un seed de test (fixture Playwright, <code>e2e/support/seed.ts</code>) qui écrit en base par le module de persistance du backend : sa propre salle, puis les réservations qui créent la situation. Le seed ne passe par aucun endpoint d'une story (ni <a href="../30-conception/detaillee/endpoints/EP-15.html">EP-15</a> ni <a href="../30-conception/detaillee/endpoints/EP-08.html">EP-08</a>) : un test ne dépend pas d'une story livrée ou cassée ailleurs. Chaque nom porte le scénario et l'identifiant du run (« e2e US-006 S4 r7k2 ») : deux tests, ou deux exécutions sur la même base, ne partagent aucune salle. Les tests tournent en parallèle et dans n'importe quel ordre.</dd>
+        <dt>Jeux des stories</dt><dd>Repris de la story, dates transposées : le <code>D3</code> de <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> devient « série hebdomadaire sur 13 semaines à partir du prochain mardi ouvré, troisième mardi déjà réservé ».</dd>
+        <dt>Dates</dt><dd>Toujours calculées depuis le jour du test, jamais écrites en dur : une date fixe passe dans le passé et tombe sous <a href="../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a>. Une aide unique, <code>e2e/support/dates.ts</code>, donne « prochain mardi ouvré », « dans 3 mois ». Aucune horloge réglable pour l'instant (<a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a>).</dd>
+        <dt>Sessions</dt><dd>Un projet Playwright <code>setup</code> se connecte une fois par compte et par exécution, par <a href="../30-conception/detaillee/endpoints/EP-01.html">EP-01</a>, et enregistre la session en <code>storageState</code> ; les tests réutilisent cette session et ne se connectent pas. Seuls les tests de <a href="../20-specs/stories/US-001-se-connecter.html">US-001</a> passent par l'écran de connexion. Ainsi la suite reste sous la limitation d'<a href="../30-conception/detaillee/endpoints/EP-01.html">EP-01</a> (5 tentatives par minute et par adresse) : 3 connexions en setup, 2 dans <a href="../20-specs/stories/US-001-se-connecter.html">US-001</a>. Un compte ou un scénario de connexion de plus se recompte ici.</dd>
+        <dt>Test de limitation</dt><dd>Le test qui provoque cette limitation se lance seul, en fin de suite, dans son propre projet Playwright (<code>limitation</code>, qui dépend des autres), après une minute sans connexion : il ne bloque aucune connexion d'un autre test et ne compte pas les leurs. Le second passage de la suite, qu'exige le critère « chaque e2e rejoué deux fois », se lance sans ce projet : la limitation, encore active, refuserait les connexions du projet <code>setup</code>.</dd>
+        <dt>Remise à zéro</dt><dd>Avant la campagne : base recréée par les migrations, puis <code>npm run seed</code>. Après le dernier passage du QA, rejeux des corrections compris, et avant la pré-recette : même remise à zéro, faite par le QA, pour que l'humain ne voie que le jeu fictif, sans salle « e2e ». Entre deux tests : rien, grâce aux noms uniques.</dd>
+        <dt>Cas limites</dt><dd>En e2e, seulement les bornes visibles à l'écran (série de 3 mois exactement acceptée, un jour de plus refusée). Les autres bornes des règles sont dans les <a href="../30-conception/detaillee/transverse/tests.html#cas-imposes">cas imposés</a> des devs.</dd>
+      </dl>
+      <table>
+        <thead><tr><th>Compte fictif</th><th>Rôle</th><th>Sert à</th></tr></thead>
+        <tbody>
+          <tr><td><code>lea.martin@exemple.test</code></td><td>employé</td><td>parcours de l'employé, titulaire des réservations</td></tr>
+          <tr><td><code>tom.hoffmann@exemple.test</code></td><td>employé</td><td>« autrui » : réservation d'un autre, droits refusés (<a href="../20-specs/conception-fonctionnelle.html#RG-11">RG-11</a>)</td></tr>
+          <tr><td><code>paul.schmit@exemple.test</code></td><td>gestionnaire</td><td>parc de salles, annulation avec motif</td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothese"><b>Hypothèse</b>Ces trois comptes ne sont pas nommés dans le <a href="../30-conception/macro.html#environnements">jeu fictif</a> : ils sont à y ajouter, avec ces rôles. Sinon le test lit les comptes du jeu fictif par rôle et cette table ne garde que les rôles.</div>
+      <p>Mots de passe : fournis au seed et à Playwright par des variables d'environnement, jamais écrits dans un test ni dans le dépôt, comme la <a href="../30-conception/macro.html#secrets">conception macro</a> le prévoit (<a href="../30-conception/detaillee/transverse/conformite.html#CF-50">CF-50</a>).</p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Critères d'entrée et de sortie de campagne</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Rendre le verdict d'une campagne mécanique : il découle de ces critères, il ne se négocie pas.</dd>
+          <dt>Contenu</dt><dd>Les conditions pour démarrer une campagne, puis celles d'un verdict favorable.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Critères d'entrée et de sortie d'un plan de test (ISO/IEC/IEEE 29119-3), en listes : chaque critère est vrai ou faux.</dd>
+          <dt>Lire</dt><dd>Favorable sans réserves : tous les critères de sortie tenus, aucune anomalie ouverte. Favorable avec réserves : les autres critères tenus, et seules restent ouvertes des anomalies mineures ou une majeure acceptée par écrit par le PO, acceptation notée dans la campagne. Défavorable : une anomalie bloquante ouverte, une majeure ouverte non acceptée, ou un autre critère de sortie manqué.</dd>
+        </dl>
+      </div>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Entrée</h4>
+          <ul>
+            <li>tous les tickets du sprint sont revus sans bloquant et mergés dans <code>sprint/N</code>, tickets <code>e2e</code> compris : la campagne tourne au commit qui les contient ;</li>
+            <li>build vert, tests des devs verts sur <code>sprint/N</code> ;</li>
+            <li>le QA a démarré l'application assemblée sur « Démo et recette », au commit noté dans la campagne, et elle répond sur <a href="../30-conception/detaillee/endpoints/EP-02.html">EP-02</a> avec un compte du jeu fictif ;</li>
+            <li>chaque story du sprint a ses notes techniques remplies (tableau scénario, élément, écran).</li>
+          </ul>
+        </div>
+        <div class="card soft">
+          <h4>Sortie (verdict favorable, avec ou sans réserves)</h4>
+          <ul>
+            <li>chaque scénario des stories du sprint a un test au vert (un e2e qui porte son identifiant, ou, si la <a href="#matrice-de-couverture">matrice</a> le marque sans e2e, le test du niveau complémentaire), sauf ceux qu'une anomalie ouverte admise au verdict rend rouges (mineure, ou majeure acceptée par écrit par le PO), cités dans la campagne ;</li>
+            <li>chaque e2e rejoué deux fois, même résultat ; le second passage se lance sans le projet <code>limitation</code> ;</li>
+            <li>aucune anomalie bloquante ouverte ; aucune majeure ouverte sans acceptation écrite du PO ;</li>
+            <li>non-régression au vert, sauf les tests qu'une anomalie ouverte admise au verdict rend rouges (mineure, ou majeure acceptée par écrit par le PO), cités dans la campagne ;</li>
+            <li>contrôles non fonctionnels du sprint dans leurs seuils, dont le test de concurrence.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Matrice de couverture</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Prouver qu'aucun scénario n'est oublié, et retrouver le test d'un scénario en une recherche.</dd>
+          <dt>Contenu</dt><dd>Une ligne par scénario Gherkin : comment l'e2e le joue quand ce n'est pas par l'interface seule, et le test du niveau inférieur qui prouve la même règle.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice de traçabilité exigence, test (RTM), avec un identifiant commun : <code>US-xxx/Sn</code>, la notation du glossaire de la team pour le scénario n d'une story (ancre <code>#Sn</code> de la story), dans le nom du test et dans la campagne.</dd>
+          <dt>Lire</dt><dd>Complète à G2 : tous les scénarios des stories validées à G1. Une story ajoutée ou modifiée après G2 met la matrice à jour au sprint planning qui la prend. Moyen e2e vide : l'interface, par défaut. Seules les exceptions s'écrivent : API, interception réseau, deux comptes, saisie particulière. <span class="tag warn">sans e2e</span> : la raison est écrite, et le test du niveau complémentaire est celui que le critère de sortie exige. L'avancement d'un test et son résultat (passé, échoué, bloqué) sont dans la campagne, pas ici.</dd>
+          <dt>Source</dt><dd>Les scénarios viennent des stories de la <a href="../20-specs/story-map.html">story map</a> ; « servi par » et l'écran sont dans leurs notes techniques, pas recopiés ici.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Fichier</dt><dd><code>e2e/us-xxx-&lt;slug&gt;.spec.ts</code>, le nom du fichier de la story, un <code>test.describe('US-xxx')</code> par fichier : la matrice ne le répète pas</dd>
+        <dt>Test</dt><dd><code>test('US-006/S4 des occurrences sont en conflit', …)</code> : identifiant, puis le titre du scénario au mot près ; la matrice ne le répète pas</dd>
+        <dt>Étapes</dt><dd>une <code>test.step</code> par ligne Étant donné, Quand, Alors, pour que le rapport se lise comme le scénario</dd>
+      </dl>
+      <table>
+        <thead><tr><th>Scénario</th><th>Moyen e2e, si autre que l'interface</th><th>Niveau complémentaire</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S1">US-006/S1</a> réserver une série sans conflit</td><td></td><td>route <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a> la série quotidienne saute le week-end</td><td></td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-01.html">TR-01</a>, ses cas limites</td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S3">US-006/S3</a> la date de fin dépasse 3 mois</td><td>le calendrier de « Jusqu'au » est borné, la saisie au clavier ne l'est pas : le test tape une date un jour après la borne, puis vérifie <a href="../20-ux/spec-ux-ui.html#MSG-U13">MSG-U13</a>, « Réserver » désactivé et aucune série dans <a href="../30-conception/detaillee/endpoints/EP-11.html">EP-11</a></td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-01.html">TR-01</a> ; route <a href="../30-conception/detaillee/endpoints/EP-09.html">EP-09</a>, <a href="../30-conception/detaillee/transverse/erreurs.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> des occurrences sont en conflit</td><td></td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-01.html">TR-01</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S5">US-006/S5</a> confirmer malgré les conflits</td><td></td><td>route <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> sur le jeu <code>D3</code></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S6">US-006/S6</a> renoncer à la série</td><td>une étape « Annuler », une étape « Échap »</td><td>composant <code>SeriesConflictsDialog</code> (<a href="../30-conception/detaillee/transverse/conformite.html#CF-72">CF-72</a>)</td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S7">US-006/S7</a> l'enregistrement échoue</td><td>réponse <a href="../30-conception/detaillee/transverse/erreurs.html#ERREUR_INTERNE"><code>ERREUR_INTERNE</code></a> simulée par interception réseau</td><td>intégration du dépôt, écriture de la série d'<a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> : échec en cours d'écriture, rien créé (<a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a>)</td></tr>
+          <tr><td><a href="../20-specs/stories/US-001-se-connecter.html#S1">US-001/S1</a> se connecter</td><td></td><td>route <a href="../30-conception/detaillee/endpoints/EP-01.html">EP-01</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-001-se-connecter.html#S2">US-001/S2</a> identifiants refusés</td><td></td><td>route <a href="../30-conception/detaillee/endpoints/EP-01.html">EP-01</a>, <a href="../30-conception/detaillee/transverse/erreurs.html#IDENTIFIANTS_REFUSES"><code>IDENTIFIANTS_REFUSES</code></a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S1">US-005/S1</a> réserver un créneau libre</td><td></td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-02.html">TR-02</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S2">US-005/S2</a> le créneau est déjà pris</td><td></td><td>intégration du dépôt, déclencheurs (<a href="../30-conception/detaillee/transverse/conformite.html#CF-61">CF-61</a>)</td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S1">US-008/S1</a> annuler une réservation à venir</td><td></td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-06.html">TR-06</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S2">US-008/S2</a> une réservation commencée ne s'annule plus</td><td><span class="tag warn">sans e2e</span> l'e2e ne peut pas créer une réservation déjà commencée (<a href="../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a>) sans horloge réglable (<a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a>)</td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-06.html">TR-06</a>, horloge fixe : « commencée refusée »</td></tr>
+          <tr><td><a href="../20-specs/stories/US-017-annuler-avec-motif.html#S1">US-017/S1</a> le gestionnaire annule avec un motif</td><td>deux comptes : le titulaire voit <a href="../20-specs/conception-fonctionnelle.html#MSG-05">MSG-05</a></td><td>unitaire domaine <a href="../30-conception/detaillee/traitements/TR-06.html">TR-06</a> (<a href="../20-specs/conception-fonctionnelle.html#RG-07">RG-07</a>)</td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothese"><b>Hypothèse</b>Dans cet exemple, seule <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> est rédigée. Les lignes des autres stories montrent la forme : sur un projet, la matrice est complète à G2, une ligne par scénario des stories validées à G1, avec leurs numéros et titres.</div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Gestion des anomalies</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Qu'une anomalie se reproduise sans le QA et que sa sévérité ne dépende pas de l'humeur.</dd>
+          <dt>Contenu</dt><dd>La grille des sévérités et leur effet sur le verdict, le contenu d'une anomalie, son circuit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une grille de sévérité à trois niveaux, chacun défini par son effet sur l'utilisateur ; le circuit en liste ordonnée, calée sur les statuts du board (<code>team/conventions/ticket.md</code>).</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Sévérité</th><th>Définition</th><th>Exemple sur ce projet</th><th>Effet sur le verdict</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag danger">bloquante</span></td><td>un parcours principal est impossible, perte ou corruption de données, faille de sécurité</td><td>deux réservations actives se chevauchent ; un employé annule la réservation d'autrui</td><td>ouverte : défavorable</td></tr>
+          <tr><td><span class="tag warn">majeure</span></td><td>une règle de gestion ou un critère n'est pas tenu, contournement possible</td><td>la série crée une occurrence un samedi ; le message de conflit ne donne pas les heures</td><td>ouverte : défavorable, sauf acceptation écrite du PO notée dans la campagne, alors favorable avec réserves</td></tr>
+          <tr><td><span class="tag info">mineure</span></td><td>écart sans effet sur le résultat : libellé, mise en page, format</td><td>date affichée en <code>2026-10-20</code> au lieu de <code>20.10.2026</code></td><td>ouverte : favorable avec réserves</td></tr>
+        </tbody>
+      </table>
+      <dl class="defs">
+        <dt>Fichier</dt><dd><code>.team/board/BUG-xxx-&lt;slug&gt;.md</code>, une anomalie par fichier, format ticket avec <code>severite</code>, <code>trouve_par</code>, <code>scenario</code></dd>
+        <dt>Contenu</dt><dd>étapes depuis le jeu de base, attendu (au mot près si c'est un message), obtenu, commit de <code>sprint/N</code>, preuve (capture, console, requête et réponse), scénario <code>US-xxx/Sn</code></dd>
+        <dt>Test</dt><dd>toute anomalie reçoit un test qui la reproduit, nommé <code>BUG-xxx</code> ; il porte aussi <code>US-xxx/Sn</code> si elle touche un scénario. À l'ouverture, le QA crée la branche <code>bug-xxx-&lt;slug&gt;</code> depuis <code>sprint/N</code> dans son worktree, y commite le test rouge, puis supprime son worktree ; le dev rouvre la même branche, sans la recréer (<code>team/conventions/git.md</code>)</dd>
+      </dl>
+      <ol>
+        <li>Le QA ouvre l'anomalie et commite son test rouge sur sa branche <code>bug-xxx-&lt;slug&gt;</code> ; le PO la priorise et l'affecte à un dev dans le sprint.</li>
+        <li>Le dev rouvre la même branche et corrige, jusqu'au test vert ; un Relecteur frais la revoit comme un ticket (3 tours au plus), puis le PO la merge dans <code>sprint/N</code>.</li>
+        <li>Après le merge, le PO la passe en test ; le QA rejoue son test et le scénario lié sur « Démo et recette ».</li>
+        <li>Vert : le PO la ferme et le test entre en non-régression. Rouge : retour au dev, avec la nouvelle preuve.</li>
+      </ol>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Non-régression</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Qu'un sprint ne casse pas ce qu'un sprint précédent a livré.</dd>
+          <dt>Contenu</dt><dd>La suite rejouée, la règle d'entrée d'un test, le traitement d'un test instable, l'effet d'une nouvelle version du contrat d'API.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, une règle par terme : la campagne les applique sans les reformuler.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Suite rejouée</dt><dd>toute la suite e2e des sprints précédents, à chaque campagne ; elle reste sous 10 minutes, sinon le QA propose de la découper par story touchée</dd>
+        <dt>Entrée dans la suite</dt><dd>un test de scénario après sa première campagne favorable ; un test d'anomalie à la fermeture de l'anomalie</dd>
+        <dt>Test instable</dt><dd>un test qui change de résultat sans changement de code est rejoué deux fois à la main (<code>retries: 0</code>) ; s'il reste instable, il est noté dans la campagne et corrigé dans le sprint, jamais désactivé en silence</dd>
+        <dt>Contrat d'API</dt><dd>une nouvelle version du contrat qui touche une opération déjà testée fait rejouer les stories qui l'appellent, même hors du sprint</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Tests non fonctionnels</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Vérifier les exigences que la conception macro confie au QA.</dd>
+          <dt>Contenu</dt><dd>Une ligne par contrôle : domaine, contrôle (avec l'outil, le nombre de mesures et l'environnement), seuil, fréquence.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un seuil mesurable par ligne : un contrôle sans seuil ne donne pas de verdict. Le seuil est la cible de la conception macro, citée telle qu'elle est écrite ; un seuil que le QA ajoute est marqué « propre au QA », avec sa raison.</dd>
+          <dt>Source</dt><dd>Les cibles sont celles des <a href="../30-conception/macro.html#exigences-non-fonctionnelles">exigences non fonctionnelles</a> ; seule leur vérification s'écrit ici. Le RGPD vient du contrat de conformité (<a href="../30-conception/detaillee/transverse/conformite.html#CF-67">CF-67</a>).</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Domaine</th><th>Contrôle</th><th>Outil</th><th>Seuil</th><th>Fréquence</th></tr></thead>
+        <tbody>
+          <tr id="test-de-concurrence"><td><span class="tag">Intégrité</span></td><td>test de concurrence : 20 demandes simultanées du même créneau par l'API (<a href="../30-conception/detaillee/endpoints/EP-08.html">EP-08</a>), puis requête de chevauchement en base (<a href="../adr/0002-concurrence-des-reservations-sqlite.html">ADR-0002</a>) ; 5 répétitions, contrôle en base après chacune</td><td>Playwright, contexte de requêtes API, <code>e2e/concurrence.spec.ts</code></td><td>« 0 couple de réservations actives qui se chevauchent, après 20 demandes simultanées du même créneau : 1 succès, 19 refus <code>409</code> » (<a href="../30-conception/detaillee/transverse/erreurs.html#CRENEAU_PRIS"><code>CRENEAU_PRIS</code></a>), à chaque répétition</td><td>chaque campagne</td></tr>
+          <tr><td><span class="tag">Performance</span></td><td><a href="../30-conception/detaillee/endpoints/EP-06.html">EP-06</a> et <a href="../30-conception/detaillee/endpoints/EP-04.html">EP-04</a>, environnement Local, jeu fictif : 5 requêtes de chauffe, puis 100 requêtes successives par endpoint, p95 calculé par le test</td><td>Playwright, contexte de requêtes API, <code>e2e/performance.spec.ts</code></td><td>« p95 &lt; 200 ms en local, jeu fictif »</td><td>fin de release, et au sprint qui touche l'endpoint</td></tr>
+          <tr><td><span class="tag">Performance</span></td><td><a href="../30-conception/detaillee/endpoints/EP-07.html">EP-07</a> : même protocole, 100 requêtes, sur « Démo et recette »</td><td>Playwright, <code>e2e/performance.spec.ts</code></td><td>« p95 &lt; 300 ms »</td><td>fin de release, et au sprint qui touche l'endpoint</td></tr>
+          <tr><td><span class="tag">Performance</span></td><td>création d'une série de 65 occurrences (<a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a>) : 10 créations, chacune sur sa salle, durée de chacune, sur « Démo et recette »</td><td>Playwright, <code>e2e/performance.spec.ts</code></td><td>« &lt; 1 s », pour chacune des 10</td><td>fin de release, et au sprint qui touche l'endpoint</td></tr>
+          <tr><td><span class="tag">Performance</span></td><td>premier affichage de <a href="../20-ux/spec-ux-ui.html#EC-02">EC-02</a> après connexion : 3 traces ; bundle initial ; sur « Démo et recette », front construit</td><td><code>performance-audit</code>, trace du MCP chrome-devtools</td><td>« &lt; 2 s, bundle initial &lt; 500 ko compressé », pour chacune des 3 traces</td><td>fin de release</td></tr>
+          <tr><td><span class="tag">Disponibilité</span></td><td>une session ouverte et une réservation créée, puis backend arrêté et relancé : la session et la réservation sont relues (<a href="../30-conception/detaillee/endpoints/EP-02.html">EP-02</a>, <a href="../30-conception/detaillee/endpoints/EP-11.html">EP-11</a>)</td><td>vérification manuelle sur « Démo et recette », notée avec sa preuve</td><td>« redémarrage sans perte de données ni de session »</td><td>fin de release, et au sprint qui touche la persistance ou les sessions</td></tr>
+          <tr><td><span class="tag">Sécurité</span></td><td>sondage de la matrice des droits par rôle : un endpoint par ligne de rôle, dont <a href="../20-ux/spec-ux-ui.html#EC-06">EC-06</a> ouvert par un employé (<a href="../20-ux/spec-ux-ui.html#MSG-U10">MSG-U10</a>) ; audit</td><td>Playwright ; <code>security-audit</code></td><td>« 100 % des endpoints sauf <a href="../30-conception/detaillee/endpoints/EP-01.html">EP-01</a> et <a href="../30-conception/detaillee/endpoints/EP-03.html">EP-03</a> refusent sans session (<code>401</code>) ; endpoints du parc refusent l'employé (<code>403</code>) »</td><td>sondage chaque campagne ; audit fin de release</td></tr>
+          <tr><td><span class="tag">Sécurité</span></td><td>6 tentatives de connexion en une minute depuis la même adresse sur <a href="../30-conception/detaillee/endpoints/EP-01.html">EP-01</a> : la 6<sup>e</sup> est refusée par <a href="../30-conception/detaillee/transverse/erreurs.html#TROP_DE_TENTATIVES"><code>TROP_DE_TENTATIVES</code></a></td><td>Playwright, contexte de requêtes API, projet <code>limitation</code> lancé seul en fin de suite (<a href="#donnees-de-test">données de test</a>)</td><td>« au plus 5 essais par minute et par adresse »</td><td>chaque campagne</td></tr>
+          <tr><td><span class="tag">Accessibilité</span></td><td>parcours clavier de la grille de <a href="../20-ux/spec-ux-ui.html#EC-02">EC-02</a> et du dialogue des conflits de <a href="../20-ux/spec-ux-ui.html#EC-04">EC-04</a> ; audit des écrans du sprint ; annonce au lecteur d'écran</td><td>Playwright au clavier ; Lighthouse du MCP chrome-devtools ; vérification manuelle</td><td>« WCAG 2.1 AA, plus les règles propres de la <a href="../20-ux/spec-ux-ui.html#accessibilite">spec UX/UI</a> (grille au clavier) » ; Lighthouse accessibilité ≥ 95, propre au QA : un signal automatique à chaque campagne entre deux vérifications manuelles, pas une preuve de conformité WCAG</td><td>chaque campagne, écrans du sprint</td></tr>
+          <tr><td><span class="tag">RGPD</span></td><td>aucune réponse ne donne l'email ni l'identifiant d'un autre employé ; données limitées au nom, à l'email et aux réservations</td><td>Playwright à deux comptes sur <a href="../30-conception/detaillee/endpoints/EP-06.html">EP-06</a> ; <code>gdpr-audit</code></td><td>0 email ni identifiant d'autrui (<a href="../30-conception/detaillee/transverse/conformite.html#CF-67">CF-67</a>) ; aucune donnée hors cadrage</td><td>sondage chaque campagne ; audit fin de MVP</td></tr>
+          <tr><td><span class="tag">Éco-conception</span></td><td>sans objet : non demandé au cadrage</td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="facultatif">
+      <h2>Risques de test</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Voir ce qui est difficile à tester avant que ça bloque une campagne.</dd>
+          <dt>Contenu</dt><dd>Une ligne par difficulté : ce qu'elle empêche, la parade retenue, qui doit agir.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau difficulté, effet, parade : la même forme que les risques techniques de la conception macro, plus le rôle qui agit, pour qu'une parade ne reste pas sans responsable.</dd>
+          <dt>Lire</dt><dd>Une parade qui demande quelque chose à l'architecte (un cas à ajouter aux cas imposés, une horloge réglable) passe par un post de forum qui lui est adressé ; il l'inscrit en point ouvert de la page cible, ici la <a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">stratégie de test technique</a>, et la stratégie le cite par lien.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Difficulté</th><th>Effet</th><th>Parade</th><th>Qui agit</th></tr></thead>
+        <tbody>
+          <tr><td>Le serveur juge le passé à son heure (<a href="../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a>) et l'e2e ne règle pas l'horloge</td><td>pas d'e2e d'une réservation commencée ; un test lancé à 18:50 manque de créneaux le jour même</td><td>dates relatives, jamais le jour même ; les cas « commencée » restent au niveau unitaire domaine ; horloge réglable en <a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a></td><td>Architecte</td></tr>
+          <tr><td>Un échec d'enregistrement ne se provoque pas sur l'application réelle (<a href="../20-specs/stories/US-006-reserver-une-serie.html#S7">US-006/S7</a>)</td><td>l'e2e prouve le message, pas l'annulation de la transaction</td><td>réponse simulée par interception réseau pour l'écran ; test d'intégration du dépôt d'<a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> pour « rien n'est créé » (<a href="../30-conception/detaillee/transverse/tests.html#points-ouverts">point ouvert</a>)</td><td>Architecte, puis Dev backend</td></tr>
+          <tr><td>Concurrence non déterministe</td><td>un test vert par chance</td><td>répétitions et contrôle en base : <a href="#test-de-concurrence">test de concurrence</a></td><td>QA</td></tr>
+          <tr><td>Annonce au lecteur d'écran non automatisable</td><td>exigence transverse de <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> sans test automatique</td><td>vérification manuelle à chaque campagne qui touche l'écran, notée avec sa preuve</td><td>QA</td></tr>
+          <tr><td>Jours fériés non tranchés (<a class="qmark" href="../questions.html#Q-005">Q-005</a>)</td><td>une série qui traverse un jour férié n'a pas de résultat attendu sûr</td><td>le jeu de données évite les jours fériés tant que l'hypothèse tient ; un scénario s'ajoute à la réponse</td><td>PO</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

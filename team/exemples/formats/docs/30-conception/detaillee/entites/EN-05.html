@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-05 Réservation · Conception technique détaillée · Réservation de salles</title>
+  <!-- Entity metadata, read by team/scripts/detaillee-pages.mjs -->
+  <meta name="id" content="EN-05">
+  <meta name="nom" content="Réservation">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/reservation">
+  <meta name="tables" content="reservations">
+  <meta name="regles" content="RG-01 RG-02 RG-03 RG-06 RG-07 RG-08 RG-11">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Entité EN-05</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#matrice-crud">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">EN-05</span> : Réservation</h1>
+      <p class="lede">L'occupation d'une salle sur un créneau par un titulaire. Point de convergence de <a href="../../../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a> : la table refuse elle-même tout chevauchement entre réservations actives d'une salle.</p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info">SQLite</span> table <code>reservations</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Modèle physique</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
+          <dt>Contenu</dt><dd>Le DDL SQL dans le dialecte du store, chaque contrainte commentée par la règle qu'elle tient, puis les règles que la base ne peut pas tenir et l'endroit où elles vivent.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le DDL est ce que contient la migration : le dev le reprend sans traduction.</dd>
+          <dt>Lire</dt><dd>Un index porte en commentaire la requête qu'il sert ; une colonne d'une release suivante porte sa release, à titre indicatif. Les conventions communes sont dans la <a href="../transverse/organisation-du-code.html#persistance">persistance</a>.</dd>
+        </dl>
+      </div>
+      <pre class="ddl"><code>CREATE TABLE reservations (
+  id                INTEGER PRIMARY KEY,
+  salle_id          INTEGER NOT NULL REFERENCES salles(id),             -- <a href="EN-03.html">EN-03</a>
+  titulaire_id      INTEGER NOT NULL REFERENCES employes(id),           -- <a href="EN-01.html">EN-01</a>
+  serie_id          INTEGER NULL REFERENCES series(id),                 -- <a href="EN-06.html">EN-06</a> ; nul : réservation
+                                                                        -- ponctuelle (<a href="../../../20-specs/conception-fonctionnelle.html#RG-06">RG-06</a>)
+  jour              TEXT NOT NULL CHECK (jour = date(jour))
+                    CHECK (strftime('%w', jour) NOT IN ('0','6')),       -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-02">RG-02</a> jours ouvrés
+  debut_min         INTEGER NOT NULL
+                    CHECK (debut_min % 15 = 0 AND debut_min &gt;= 480),      -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-02">RG-02</a>
+  fin_min           INTEGER NOT NULL
+                    CHECK (fin_min % 15 = 0 AND fin_min &lt;= 1140
+                           AND fin_min &gt; debut_min AND fin_min - debut_min &lt;= 240),  -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-02">RG-02</a>
+  statut            TEXT NOT NULL DEFAULT 'active'
+                    CHECK (statut IN ('active','annulee')),      -- « passée » n'est pas stockée
+  motif_annulation  TEXT NULL CHECK (length(motif_annulation) &lt;= 200),  -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-07">RG-07</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a>
+  annulee_le        TEXT NULL,                                          -- ISO 8601 UTC
+  annulee_par       INTEGER NULL REFERENCES employes(id),               -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-07">RG-07</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-11">RG-11</a> ; autre que le
+                                                                        -- titulaire : <a href="../endpoints/EP-11.html">EP-11</a> montre le motif
+  presence_le       TEXT NULL,                                          -- release R3, <a href="../endpoints/EP-20.html">EP-20</a> ; ISO 8601 UTC
+  cree_le           TEXT NOT NULL,                                      -- ISO 8601 UTC
+  CHECK ((statut = 'annulee') = (annulee_le IS NOT NULL))
+);
+-- contrôle de conflit (<a href="../traitements/TR-02.html">TR-02</a>, déclencheurs), occupation d'une salle (<a href="../endpoints/EP-06.html">EP-06</a>), recherche (<a href="../endpoints/EP-07.html">EP-07</a>)
+CREATE INDEX reservations_salle_jour ON reservations(salle_id, jour, statut);
+-- occupation toutes salles (<a href="../endpoints/EP-06.html">EP-06</a>), statistiques (<a href="../traitements/TR-05.html">TR-05</a>)
+CREATE INDEX reservations_jour ON reservations(jour, statut);
+-- annulation d'une série (<a href="../endpoints/EP-13.html">EP-13</a>)
+CREATE INDEX reservations_serie ON reservations(serie_id);
+-- mes réservations (<a href="../endpoints/EP-11.html">EP-11</a>)
+CREATE INDEX reservations_titulaire ON reservations(titulaire_id, jour);
+
+-- <a href="../../../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a> : aucun chevauchement entre réservations actives d'une salle, bornes strictes (<a href="../../../adr/0002-concurrence-des-reservations-sqlite.html">ADR-0002</a>,
+-- <a href="../transverse/conformite.html#CF-61">CF-61</a>) ; 09:00-10:00 puis 10:00-11:00 passe, 09:30-10:30 est refusé. Filet du contrôle de <a href="../traitements/TR-02.html">TR-02</a>.
+CREATE TRIGGER reservations_no_overlap_insert BEFORE INSERT ON reservations
+WHEN NEW.statut = 'active' AND EXISTS (
+  SELECT 1 FROM reservations r
+  WHERE r.salle_id = NEW.salle_id AND r.jour = NEW.jour AND r.statut = 'active'
+    AND NEW.debut_min &lt; r.fin_min AND NEW.fin_min &gt; r.debut_min)
+BEGIN SELECT RAISE(ABORT, 'CRENEAU_PRIS'); END;
+-- même contrôle à la mise à jour, hors la ligne elle-même : sert la modification (<a href="../endpoints/EP-19.html">EP-19</a>, release R2) ; une
+-- annulation rend la ligne inactive et ne déclenche rien
+CREATE TRIGGER reservations_no_overlap_update
+BEFORE UPDATE OF salle_id, jour, debut_min, fin_min, statut ON reservations
+WHEN NEW.statut = 'active' AND EXISTS (
+  SELECT 1 FROM reservations r
+  WHERE r.id &lt;&gt; NEW.id AND r.salle_id = NEW.salle_id AND r.jour = NEW.jour AND r.statut = 'active'
+    AND NEW.debut_min &lt; r.fin_min AND NEW.fin_min &gt; r.debut_min)
+BEGIN SELECT RAISE(ABORT, 'CRENEAU_PRIS'); END;</code></pre>
+      <h3>Règles hors de la base</h3>
+      <ul>
+        <li><a href="../../../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a> (pas dans le passé, pas d'annulation d'une réservation commencée) dépend de l'heure courante : elle ne peut pas être une contrainte. Elle vit dans l'objet de valeur <code>Creneau</code> et dans la transition d'annulation (<a href="../traitements/TR-06.html">TR-06</a>), avec l'horloge injectée (<a href="../transverse/conformite.html#CF-62">CF-62</a>).</li>
+        <li><a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a> (pas de réservation sur une salle désactivée) et <a href="../../../20-specs/conception-fonctionnelle.html#RG-11">RG-11</a> (annulation par le titulaire ou le gestionnaire) portent sur d'autres lignes ou sur la session : contrôlées par <a href="../traitements/TR-02.html">TR-02</a> et <a href="../traitements/TR-06.html">TR-06</a>.</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Machine à états</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
+          <dt>Contenu</dt><dd>Une ligne par transition (de, vers, événement, garde, action), puis le diagramme d'états tiré de ce tableau. Sans cycle de vie, une phrase le dit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La notation UML <i>événement [garde] / action</i>, en deux vues d'une seule source : le tableau porte les liens et se relit ligne à ligne, le diagramme montre le cycle d'un coup d'œil.</dd>
+        </dl>
+      </div>
+      <table class="transitions">
+        <thead><tr><th>De</th><th>Vers</th><th>Événement</th><th>Garde</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>[*]</td><td>Active</td><td><a href="../endpoints/EP-08.html">EP-08</a>, <a href="../endpoints/EP-10.html">EP-10</a> par <a href="../traitements/TR-02.html">TR-02</a></td><td><a href="../../../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-02">RG-02</a>, <a href="../../../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a>, salle active (<a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a>)</td><td>INSERT, statut <code>active</code></td></tr>
+          <tr><td>Active</td><td>Active</td><td><a href="../endpoints/EP-19.html">EP-19</a> par <a href="../traitements/TR-02.html">TR-02</a> (release R2)</td><td>titulaire, pas commencée, mêmes règles que la création</td><td>UPDATE du créneau ou de la salle</td></tr>
+          <tr><td>Active</td><td>Annulée</td><td><a href="../endpoints/EP-12.html">EP-12</a>, <a href="../endpoints/EP-13.html">EP-13</a> par <a href="../traitements/TR-06.html">TR-06</a></td><td>pas commencée (<a href="../../../20-specs/conception-fonctionnelle.html#RG-03">RG-03</a>), titulaire ou gestionnaire (<a href="../../../20-specs/conception-fonctionnelle.html#RG-11">RG-11</a>), motif si le gestionnaire annule pour autrui (<a href="../../../20-specs/conception-fonctionnelle.html#RG-07">RG-07</a>)</td><td><code>statut</code>, <code>annulee_le</code>, <code>annulee_par</code>, <code>motif_annulation</code> (<a href="../transverse/conformite.html#CF-68">CF-68</a>)</td></tr>
+          <tr><td>Active</td><td>Annulée</td><td><a href="../endpoints/EP-17.html">EP-17</a> par <a href="../traitements/TR-03.html">TR-03</a> puis <a href="../traitements/TR-06.html">TR-06</a></td><td>réservation future de la salle désactivée (<a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a>)</td><td>même écriture, motif « salle désactivée »</td></tr>
+          <tr><td>Active</td><td>Passée</td><td>fin du créneau (horloge)</td><td>aucune</td><td>rien : « passée » se déduit, <code>statut = 'active'</code> et fin dépassée à l'horloge du serveur</td></tr>
+        </tbody>
+      </table>
+      <!-- gen:state-diagram -->
+<pre class="mermaid">
+stateDiagram-v2
+  state "Active" as Active
+  state "Annulée" as Annulee
+  state "Passée" as Passee
+  [*] --> Active: EP-08 , EP-10 par TR-02
+  Active --> Active: EP-19 par TR-02 (release R2)
+  Active --> Annulee: EP-12 , EP-13 par TR-06
+  Active --> Annulee: EP-17 par TR-03 puis TR-06
+  Active --> Passee: fin du créneau (horloge)
+  Annulee --> [*]
+  Passee --> [*]
+</pre><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Qui agit dessus</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
+          <dt>Contenu</dt><dd>Sa colonne de la matrice CRUD, endpoint par endpoint et traitement par traitement, puis les schémas qui en sont la projection.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, standard de ce croisement ; la même que celle du <a href="../index.html#matrice-crud">sommaire</a>, lue depuis l'entité.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les pages des traitements : rien à écrire.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage -->
+      <table>
+        <thead><tr><th>Id</th><th>Endpoint ou traitement</th><th>CRUD</th><th>Comment</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../endpoints/EP-06.html">EP-06</a></td><td><code>GET /reservations</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-07.html">EP-07</a></td><td><code>GET /salles/disponibles</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-08.html">EP-08</a></td><td><code>POST /reservations</code></td><td><span class="crud" data-tip="création, lecture">CR</span></td><td>par <a href="../traitements/TR-02.html">TR-02</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-09.html">EP-09</a></td><td><code>POST /series/apercu</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-01.html">TR-01</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-10.html">EP-10</a></td><td><code>POST /series</code></td><td><span class="crud" data-tip="création, lecture">CR</span></td><td>R par <a href="../traitements/TR-01.html">TR-01</a> ; CR par <a href="../traitements/TR-02.html">TR-02</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-11.html">EP-11</a></td><td><code>GET /moi/reservations</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-12.html">EP-12</a></td><td><code>POST /reservations/{id}/annulation</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>R directement ; RU par <a href="../traitements/TR-06.html">TR-06</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-13.html">EP-13</a></td><td><code>POST /series/{id}/annulation</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>R directement ; RU par <a href="../traitements/TR-06.html">TR-06</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-14.html">EP-14</a></td><td><code>GET /salles/{id}</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-17.html">EP-17</a></td><td><code>POST /salles/{id}/desactivation</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>R par <a href="../traitements/TR-03.html">TR-03</a> ; RU par <a href="../traitements/TR-03.html">TR-03</a> → <a href="../traitements/TR-06.html">TR-06</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-18.html">EP-18</a></td><td><code>GET /creneaux/plus-proche</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-04.html">TR-04</a></td><td><span class="tag accent">R2</span></td></tr>
+          <tr><td><a href="../endpoints/EP-19.html">EP-19</a></td><td><code>PUT /reservations/{id}</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>par <a href="../traitements/TR-02.html">TR-02</a></td><td><span class="tag accent">R2</span></td></tr>
+          <tr><td><a href="../endpoints/EP-20.html">EP-20</a></td><td><code>POST /reservations/{id}/presence</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>directement</td><td><span class="tag accent">R3</span></td></tr>
+          <tr><td><a href="../endpoints/EP-21.html">EP-21</a></td><td><code>GET /statistiques/occupation</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-05.html">TR-05</a></td><td><span class="tag accent">R3</span></td></tr>
+          <tr><td><a href="../traitements/TR-01.html">TR-01</a></td><td>Calculer les occurrences et leurs conflits</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../traitements/TR-02.html">TR-02</a></td><td>Contrôler et enregistrer un créneau</td><td><span class="crud" data-tip="création, lecture, mise à jour">CRU</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../traitements/TR-03.html">TR-03</a></td><td>Annuler les réservations futures d'une salle</td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>R directement ; RU par <a href="../traitements/TR-06.html">TR-06</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../traitements/TR-04.html">TR-04</a></td><td>Chercher le créneau libre le plus proche</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">R2</span></td></tr>
+          <tr><td><a href="../traitements/TR-05.html">TR-05</a></td><td>Calculer les taux d'occupation</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">R3</span></td></tr>
+          <tr><td><a href="../traitements/TR-06.html">TR-06</a></td><td>Annuler une réservation</td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+        </tbody>
+      </table>
+      <p><b>Schémas qui l'exposent</b> : <a href="../schemas/Reservation.html"><code>Reservation</code></a>, <a href="../schemas/MaReservation.html"><code>MaReservation</code></a>. <b>Module</b> : <a href="../transverse/organisation-du-code.html#module-domain-reservation"><code>domain/reservation</code></a>.</p><!-- /gen -->
+    </section>
+
+    <section class="section" id="points-ouverts" data-level="recommande">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur cette entité.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact fort">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact moyen">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact faible">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../points-ouverts.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td><span class="impact moyen">moyen</span></td><td>Conservation des réservations passées et annulées : la conception fonctionnelle la dit « sans objet », or les statistiques (<a href="../traitements/TR-05.html">TR-05</a>, release R3) les lisent.</td><td>conservées pendant tout le pilote, aucune purge ; si une durée est posée, une tâche planifiée de purge (un traitement de plus).</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,12 @@
+/* Prototype kit aliases -> tokens of the reservation-salles design system.
+   Copied as is into prototype/ds/ (see socle.md, section "Prototype"). */
+:root {
+  --primary: var(--color-primary); --primary-dark: #20439d; --primary-soft: #eaeefa;
+  --ink: var(--color-ink); --ink-2: var(--color-ink-2); --ink-3: var(--color-ink-2);
+  --line: var(--color-line); --bg: var(--color-surface-2); --surface: var(--color-surface);
+  --busy: var(--color-busy);
+  --ok: var(--color-ok); --ok-soft: #e0f5f3;
+  --danger: var(--color-danger); --danger-soft: #fff0f0;
+  --space: var(--space-2); /* --radius: same name in the DS, nothing to map */
+  --font: Inter, system-ui, sans-serif;
+}

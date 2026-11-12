@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Sécurité et droits · Conception technique détaillée · NOM_PROJET</title>
+  <!-- Copy to docs/30-conception/detaillee/transverse/securite.html. Its gen: block is filled by team/scripts/detaillee-pages.mjs. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Sécurité et droits</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#plan-du-site">Transverse</a></div>
+      <h1><span class="doc-kind">Sécurité et droits</span> : qui appelle quoi</h1>
+      <p class="lede">Session, rôles, contrôles sur les données. Le backend contrôle, le front ne fait que masquer. Les principes sont dans la <a href="../../macro.html#securite-et-authentification">conception macro</a> ; ici, leur application endpoint par endpoint.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Session et contrôle d'accès</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire comment une requête est authentifiée, puis autorisée.</dd>
+          <dt>Contenu</dt><dd><ul><li>Le mécanisme de session.</li><li>Le contrôle commun avant chaque route.</li><li>La déclaration des rôles par route.</li><li>La place des contrôles sur les données.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les principes de la conception macro appliqués au code, en liste courte, chacun avec l'invariant qui le rend vérifiable.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><span class="todo">session ou jeton, cookie, durée, ADR en lien</span></li>
+        <li><span class="todo">contrôle commun avant chaque route ; endpoints publics en liens ; sans session : <code>401</code></span></li>
+        <li><span class="todo">rôles déclarés par route ; rôle insuffisant : <code>403</code></span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Matrice des droits</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui peut appeler quoi.</dd>
+          <dt>Contenu</dt><dd>En lignes les endpoints, en colonnes les rôles (oui ou non), puis les contrôles sur les données au-delà du rôle.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice d'accès rôles × opérations, forme standard d'un contrôle d'accès par rôle (RBAC).</dd>
+          <dt>Lire</dt><dd>Un endpoint public est aussi ouvert aux rôles.</dd>
+          <dt>Source</dt><dd><code>x-roles</code> et <code>x-data-control</code> d'<code>openapi.yaml</code>.</dd>
+        </dl>
+      </div>
+      <!-- gen:rights-matrix --><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Données et protections</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer ce qui protège les données.</dd>
+          <dt>Contenu</dt><dd><ul><li>Les données personnelles et qui les voit.</li><li>Les mots de passe.</li><li>Les jetons.</li><li>L'injection.</li><li>Les journaux.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une ligne par sujet, avec l'invariant ou l'entité qui la porte : la revue de sécurité la suit telle quelle.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><b>Données personnelles</b> : <span class="todo">lesquelles, qui les voit, ce qui ne sort jamais</span></li>
+        <li><b>Secrets et mots de passe</b> : <span class="todo">empreinte, rotation, ou « aucun »</span></li>
+        <li><b>Injection</b> : <span class="todo">requêtes préparées, schémas stricts</span></li>
+        <li><b>Journaux</b> : <span class="todo">ce qui est journalisé, sans donnée personnelle en clair</span> (<a href="conformite.html#CF-52">CF-52</a>)</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

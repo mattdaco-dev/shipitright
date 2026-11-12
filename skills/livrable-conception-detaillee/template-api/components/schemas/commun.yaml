@@ -1,0 +1,7 @@
+# Domaine « Commun » : schémas nommés dans openapi.yaml sous components/schemas
+
+Jour:
+  type: string
+  format: date
+  description: date AAAA-MM-JJ
+  examples: ['2026-01-05']

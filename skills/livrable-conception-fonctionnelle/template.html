@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Conception fonctionnelle · NOM_PROJET</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Conception fonctionnelle</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">Conception fonctionnelle</span> : NOM_PROJET</h1>
+      <p class="lede"><span class="todo">une phrase qui dit ce que couvre cette conception (release, epics)</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> BA</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Sources</b> <a href="../00-cadrage/cadrage.html">cadrage</a>, <a href="story-map.html">story map</a>, <span class="todo">analyses, en liens</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Périmètre et références</h2>
+      <p class="hint">Ce que cette conception couvre, et les livrables dont elle découle.</p>
+      <dl class="defs">
+        <dt>Release couverte</dt><dd><span class="todo">ex. MVP</span></dd>
+        <dt>Epics</dt><dd><a href="epics/EPIC-01-slug.html">EPIC-01</a> <span class="todo">nom</span></dd>
+        <dt>Hors de cette conception</dt><dd><span class="todo">ce qui est traité plus tard, avec la raison</span></dd>
+      </dl>
+      <h3>Livrables liés</h3>
+      <ul>
+        <li><a href="../00-cadrage/cadrage.html">Cadrage et vision</a></li>
+        <li><a href="../10-analyse/big-picture.html">Big picture</a></li>
+        <li><a href="story-map.html">Story map</a></li>
+        <li><a href="../20-ux/spec-ux-ui.html">Spécifications UX/UI</a></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Parcours fonctionnels</h2>
+      <p class="hint">Un parcours par activité de la story map, dans le même formalisme pour tous : une couleur par type d'étape, les règles et messages en pastilles. Le parcours décrit ce qui se passe, pas les écrans.</p>
+      <div class="legend">
+        <span><i class="pf-start"></i>Déclencheur</span>
+        <span><i class="pf-user"></i>Action de l'acteur</span>
+        <span><i class="pf-system"></i>Traitement de l'application</span>
+        <span><i class="pf-decision"></i>Décision</span>
+        <span><i class="pf-end"></i>Résultat</span>
+        <span><i class="pf-error"></i>Refus ou erreur</span>
+        <span><i class="pf-stop"></i>Abandon</span>
+      </div>
+
+      <h3 id="PF-01">PF-01 · <span class="todo">nom du parcours</span></h3>
+      <dl class="defs"><dt>Acteur</dt><dd><a href="../00-cadrage/cadrage.html#PER-01">PER-01</a> <span class="todo">rôle</span></dd><dt>Résultat</dt><dd><span class="todo">état final observable</span></dd></dl>
+      <!-- Each step: class (start, user, system, decision, end, error, stop), data-c column, data-r row, data-links "id|label".
+           A decision's main branch goes right, its alternative goes straight below it. 6 columns at most. -->
+      <div class="pf">
+        <div class="pf-node start" id="pf-01-a" data-c="1" data-r="1" data-links="pf-01-b"><span class="todo">déclencheur</span></div>
+        <div class="pf-node user" id="pf-01-b" data-c="2" data-r="1" data-links="pf-01-c"><small>Acteur</small><span class="todo">action</span><span class="refs"><a href="#RG-01">RG-01</a></span></div>
+        <div class="pf-node decision" id="pf-01-c" data-c="3" data-r="1" data-links="pf-01-d|oui pf-01-e|non"><span class="todo">Question ?</span></div>
+        <div class="pf-node end" id="pf-01-d" data-c="4" data-r="1"><span class="todo">résultat</span><span class="refs"><a href="#MSG-01">MSG-01</a></span></div>
+        <div class="pf-node error" id="pf-01-e" data-c="3" data-r="2"><span class="todo">refus</span></div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Règles de gestion</h2>
+      <p class="hint">Une règle par ligne, phrase déclarative, numéro stable. Les règles du cadrage gardent leur numéro. Une règle abandonnée reste, barrée, avec la raison. Les colonnes Stories et Écrans font la traçabilité : chaque règle a au moins une story.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Règle</th><th>Portée</th><th>Source</th><th>Stories</th><th>Écrans</th></tr></thead>
+          <tbody>
+            <tr id="RG-01"><td>RG-01</td><td><span class="todo">énoncé déclaratif et testable</span></td><td>objet, parcours ou écran concerné</td><td><a href="../00-cadrage/cadrage.html#RG-01">cadrage</a></td><td><a href="stories/US-001-slug.html">US-001</a></td><td><a href="../20-ux/spec-ux-ui.html#EC-01">EC-01</a></td></tr>
+            <tr id="RG-02"><td>RG-02</td><td><span class="todo">énoncé</span></td><td></td><td><a href="../questions.html#Q-001">Q-001</a></td><td></td><td></td></tr>
+            <tr class="abandoned" id="RG-03"><td>RG-03</td><td>exemple de règle abandonnée</td><td></td><td></td><td>abandonnée : raison</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout hypothese">
+        <b>Hypothèse</b>
+        <span class="todo">règle supposée en attendant la réponse à une question, avec son Q-xxx</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Modèle conceptuel des données métier</h2>
+      <p class="hint">Les objets que le métier manipule, leurs attributs clés au format nom [type métier] et leurs relations. Aux deux bouts de chaque relation, la cardinalité côté objet : combien de cet objet pour un de l'autre (0:1, 1:1, 0:n, 1:n). Pas de clés techniques ni de types SQL : le modèle physique revient à l'architecte.</p>
+      <!-- One card per object: name in <b>, one attribute per line "name <i>[business type]</i>".
+           Relations: data-links="target|label|card near the source|card near the target" (0:1, 1:1, 0:n, 1:n).
+           Place the objects so that each relation is a straight line, one relation per side when possible. -->
+      <div class="mcd">
+        <div class="mcd-entity" id="o-a" data-c="1" data-r="1" data-links="o-b|verbe|1:1|0:n"><b><span class="todo">Objet A</span></b><ul><li>attribut <i>[texte]</i></li><li>statut <i>[valeur 1 | valeur 2]</i></li></ul></div>
+        <div class="mcd-entity" id="o-b" data-c="2" data-r="1"><b><span class="todo">Objet B</span></b><ul><li>attribut <i>[date]</i></li></ul></div>
+      </div>
+      <div class="grid c2">
+        <div class="card">
+          <h4><span class="todo">Objet métier</span></h4>
+          <dl class="defs">
+            <dt>Définition</dt><dd>reprise du glossaire</dd>
+            <dt>Attributs clés</dt><dd><span class="todo">ceux que les règles ou les écrans utilisent</span></dd>
+            <dt>Identifié par</dt><dd><span class="todo">ce qui le distingue pour le métier</span></dd>
+            <dt>Règles</dt><dd>RG-01</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Cycles de vie des objets métier</h2>
+      <p class="hint">Un diagramme par objet qui a un statut. Chaque transition dit son événement ; le tableau précise l'acteur et la condition.</p>
+      <h3><span class="todo">Objet métier</span></h3>
+      <!-- States: pf-node state (state final for an end state), start: pf-node dot. Each transition carries its event. -->
+      <div class="pf lifecycle">
+        <div class="pf-node dot" id="cv-a0" data-c="1" data-r="1" data-links="cv-a1|création"></div>
+        <div class="pf-node state" id="cv-a1" data-c="2" data-r="1" data-links="cv-a2|validation"><span class="todo">Brouillon</span></div>
+        <div class="pf-node state final" id="cv-a2" data-c="3" data-r="1"><span class="todo">Actif</span></div>
+      </div>
+      <table>
+        <thead><tr><th>Transition</th><th>Événement</th><th>Acteur</th><th>Condition</th><th>Règles</th></tr></thead>
+        <tbody>
+          <tr><td>Brouillon → Actif</td><td><span class="todo">événement</span></td><td>rôle</td><td></td><td>RG-02</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Rôles et droits</h2>
+      <p class="hint">Qui peut faire quoi, et sur quelle portée. Une colonne par rôle du cadrage.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th>Rôle A</th><th>Rôle B</th><th>Règles</th></tr></thead>
+          <tbody>
+            <tr><td><span class="todo">action métier</span></td><td><span class="tag ok">oui</span></td><td><span class="tag danger">non</span></td><td></td></tr>
+            <tr><td><span class="todo">action métier</span></td><td><span class="tag warn">sa portée</span> ses dossiers</td><td><span class="tag ok">oui</span></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Questions et hypothèses</h2>
+      <p class="hint">Ce qui n'est pas tranché. Chaque question est aussi posée dans .team/questions/. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question ou hypothèse</th><th>Bloquante</th><th>Impacte</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="todo">question posée au PO</span></td><td><span class="tag danger">oui</span></td><td>RG-02, US-004</td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><span class="tag violet">Hypothèse</span></td><td><span class="todo">ce qu'on suppose vrai</span></td><td><span class="tag">non</span></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Notifications et messages</h2>
+      <p class="hint">Messages vus par l'utilisateur, e-mails, notifications. Libellé au mot près, parties variables entre chevrons.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Déclencheur</th><th>Canal</th><th>Destinataire</th><th>Libellé</th><th>Règles</th></tr></thead>
+          <tbody>
+            <tr id="MSG-01"><td>MSG-01</td><td><span class="todo">événement</span></td><td>écran / e-mail</td><td>rôle</td><td>« <span class="todo">texte exact avec &lt;variable&gt;</span> »</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Calculs et algorithmes métier</h2>
+      <p class="hint">Formule, entrées, règles d'arrondi, cas limites, et un exemple chiffré fictif.</p>
+      <div class="card" id="CALC-01">
+        <h4>CALC-01 · <span class="todo">nom du calcul</span></h4>
+        <dl class="defs">
+          <dt>Formule</dt><dd><code>résultat = entrée_a × taux</code></dd>
+          <dt>Entrées</dt><dd><span class="todo">d'où vient chaque entrée</span></dd>
+          <dt>Arrondi</dt><dd><span class="todo">ex. au centime supérieur</span></dd>
+          <dt>Exemple</dt><dd><span class="todo">valeurs fictives et résultat attendu</span></dd>
+          <dt>Règles</dt><dd>RG-01</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Exigences non fonctionnelles métier</h2>
+      <p class="hint">Ce que le métier attend en délais, volumes, disponibilité, conservation. Chaque exigence est mesurable.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Exigence</th><th>Cible</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Volume</span></td><td><span class="todo">ex. nombre de dossiers traités par jour</span></td><td></td><td></td></tr>
+          <tr><td><span class="tag">Conservation</span></td><td><span class="todo">durée de conservation des données</span></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="facultatif">
+      <h2>Glossaire complémentaire</h2>
+      <p class="hint">Termes apparus depuis le cadrage. À reporter ensuite dans le glossaire du cadrage.</p>
+      <dl class="defs">
+        <dt><span class="todo">terme</span></dt><dd>définition</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

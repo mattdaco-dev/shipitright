@@ -1,0 +1,123 @@
+# Path item /ressources, referenced by openapi.yaml
+
+get:
+  tags: [ressources]
+  operationId: listerRessources
+  x-endpoint-id: EP-01
+  x-module: domain/ressource
+  x-release: MVP
+  x-contract: fige
+  x-roles: [utilisateur, administrateur]
+  x-entities:
+    - {id: EN-01, access: R}
+  x-idempotence: lecture
+  x-sequence: |
+    sequenceDiagram
+      actor U as Utilisateur
+      participant F as Front EC-01
+      participant A as API
+      participant D as Base
+      U->>F: ouvre la liste
+      F->>A: GET /ressources?jour=...
+      A->>D: ressources actives du jour
+      A-->>F: 200 Ressource[]
+      alt liste vide
+        F-->>U: état vide de l'écran
+      else erreur
+        F-->>U: erreur technique de l'écran et Réessayer
+      else
+        F-->>U: la liste
+      end
+  summary: Lister les ressources d'un jour
+  description: >-
+    A REMPLACER. Ce que fait l'opération, ses tris et ce qu'elle exclut, en phrases ; les règles
+    citées par leur RG-xx.
+  parameters:
+    - {$ref: '../components/parameters.yaml#/Jour'}
+  responses:
+    '200':
+      description: ressources actives du jour, triées par nom
+      content:
+        application/json:
+          schema:
+            type: array
+            items: {$ref: '../components/schemas/ressources.yaml#/Ressource'}
+          example:
+            - {id: 1, nom: Première ressource, jour: '2026-01-05', statut: active}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}
+post:
+  tags: [ressources]
+  operationId: creerRessource
+  x-endpoint-id: EP-02
+  x-module: domain/ressource
+  x-release: R2
+  x-contract: provisoire
+  x-roles: [administrateur]
+  x-entities:
+    - {id: EN-01, access: C}
+    - {id: EN-02, access: R}
+    # accès obtenu par un traitement de x-processes, inclus dans sa meta entites :
+    # - {id: EN-01, access: C, via: TR-01}
+  x-idempotence: >-
+    Non idempotent : un second envoi identique répond 409 NOM_PRIS. Le front désactive le bouton
+    pendant l'appel.
+  x-sequence: |
+    sequenceDiagram
+      actor U as Administrateur
+      participant F as Front EC-01
+      participant A as API
+      participant X as Système externe X
+      participant D as Base
+      U->>F: Créer
+      F->>A: POST /ressources
+      A->>X: contrôler l'éligibilité
+      A->>D: début de transaction
+      A->>D: nom déjà pris ?
+      alt nom pris
+        A->>D: annulation de la transaction
+        A-->>F: 409 NOM_PRIS
+        F-->>U: message sous le champ, saisie conservée
+      else libre
+        A->>D: insertion, références lues
+        A->>D: validation de la transaction
+        A-->>F: 201 Ressource
+        F-->>U: retour à la liste
+      end
+  x-open:
+    - impact: moyen
+      sujet: "A REMPLACER : réponse quand le système externe X refuse la ressource ; à trancher avant de figer l'opération."
+      hypothese: "422 avec un code métier dédié."
+  summary: Créer une ressource
+  description: >-
+    Opération provisoire, au niveau réduit : summary, rôles, entités ou traitements, points ouverts.
+    Séquence, exemples et cas d'erreur fins sont facultatifs jusqu'au sprint planning qui la fige.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema: {$ref: '../components/schemas/ressources.yaml#/RessourceDemande'}
+        example: {nom: Première ressource, jour: '2026-01-05'}
+  responses:
+    '201':
+      description: ressource créée
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/ressources.yaml#/Ressource'}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403': {$ref: '../components/responses.yaml#/Forbidden'}
+    '409':
+      description: une ressource active porte déjà ce nom
+      x-codes: [NOM_PRIS]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+          example:
+            type: about:blank
+            title: Nom déjà pris
+            status: 409
+            code: NOM_PRIS
+            champ: nom
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

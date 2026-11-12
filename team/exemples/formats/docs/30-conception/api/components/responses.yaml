@@ -1,0 +1,64 @@
+# components/responses, each entry referenced by openapi.yaml
+
+BadRequest:
+  description: requête mal formée, paramètre ou corps hors schéma
+  x-codes: [VALIDATION]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+      example:
+        type: about:blank
+        title: Requête invalide
+        status: 400
+        code: VALIDATION
+        erreurs: [{champ: jour, message: date AAAA-MM-JJ attendue}]
+Unauthorized:
+  description: session absente ou expirée
+  x-codes: [NON_AUTHENTIFIE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+Forbidden:
+  description: rôle insuffisant, ou ni titulaire ni gestionnaire
+  x-codes: [INTERDIT]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+SalleIntrouvable:
+  description: aucune salle avec cet identifiant
+  x-codes: [SALLE_INTROUVABLE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+ReservationIntrouvable:
+  description: aucune réservation avec cet identifiant
+  x-codes: [RESERVATION_INTROUVABLE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+CreneauPris:
+  description: >-
+    une réservation active de la salle chevauche le créneau (RG-01) ; conflit porte l'horaire de la
+    réservation existante, pour MSG-01
+  x-codes: [CRENEAU_PRIS]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+      example:
+        type: about:blank
+        title: Créneau déjà réservé
+        status: 409
+        code: CRENEAU_PRIS
+        conflit: {salleNom: Atlas, debut: '09:30', fin: '10:30'}
+DejaCommencee:
+  description: la réservation a commencé (RG-03)
+  x-codes: [DEJA_COMMENCEE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+InternalError:
+  description: erreur inattendue, aucun détail technique exposé
+  x-codes: [ERREUR_INTERNE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}

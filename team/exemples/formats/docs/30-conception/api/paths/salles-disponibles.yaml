@@ -1,0 +1,68 @@
+# Path item /salles/disponibles, referenced by openapi.yaml
+
+get:
+  tags: [salles]
+  operationId: chercherSallesDisponibles
+  x-endpoint-id: EP-07
+  x-module: domain/salle
+  x-release: MVP
+  x-contract: fige
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - ne révèle pas qui occupe une salle
+  x-entities:
+    - {id: EN-03, access: R}
+    - {id: EN-05, access: R}
+  x-rules: [RG-09, RG-02, RG-03, RG-01]
+  x-idempotence: lecture
+  x-sequence: |
+    sequenceDiagram
+      actor U as Employé
+      participant F as Front EC-03
+      participant A as API
+      participant D as SQLite
+      F->>A: GET /equipements (EP-05), une fois par session
+      U->>F: jour, début, fin, participants, équipements, Chercher
+      F->>A: GET /salles/disponibles?...
+      A->>A: Creneau valide (RG-02, RG-03, horloge)
+      alt créneau hors règles
+        A-->>F: 422 CRENEAU_HORS_REGLES
+        F-->>U: MSG-03 en bandeau, critères conservés
+      else
+        A->>D: une requête RG-09 (capacité, équipements, NOT EXISTS chevauchement)
+        A-->>F: 200 Salle[] par capacité puis nom
+        F-->>U: résultats, ou MSG-U04 si vide
+      end
+  x-open:
+    - impact: faible
+      sujet: "Créneau hors règles saisi sur EC-03 : la spec UX/UI ne prévoit pas ce cas."
+      hypothese: "422 CRENEAU_HORS_REGLES, affiché avec MSG-03."
+  summary: Chercher les salles libres sur un créneau
+  description: >-
+    Salles actives, libres sur tout le créneau, de capacité au moins égale au nombre de
+    participants, qui ont tous les équipements demandés (RG-09), en une seule requête SQL : même
+    condition de chevauchement que TR-02 (bornes strictes). Le créneau suit RG-02 et RG-03. Tri par
+    capacité croissante puis par nom.
+  parameters:
+    - {$ref: '../components/parameters.yaml#/Jour'}
+    - {$ref: '../components/parameters.yaml#/Debut'}
+    - {$ref: '../components/parameters.yaml#/Fin'}
+    - {$ref: '../components/parameters.yaml#/Participants'}
+    - {$ref: '../components/parameters.yaml#/Equipements'}
+  responses:
+    '200':
+      description: salles libres qui conviennent, liste vide possible
+      content:
+        application/json:
+          schema:
+            type: array
+            items: {$ref: '../components/schemas/salles.yaml#/Salle'}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '422':
+      description: créneau hors règles (RG-02, RG-03)
+      x-codes: [CRENEAU_HORS_REGLES]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

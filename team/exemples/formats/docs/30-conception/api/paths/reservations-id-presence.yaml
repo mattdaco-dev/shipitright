@@ -1,0 +1,48 @@
+# Path item /reservations/{id}/presence, referenced by openapi.yaml
+
+parameters:
+  - {$ref: '../components/parameters.yaml#/IdReservation'}
+post:
+  tags: [reservations]
+  operationId: confirmerPresence
+  x-endpoint-id: EP-20
+  x-module: domain/reservation
+  x-release: R3
+  x-contract: provisoire
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - titulaire seulement, sinon 403 INTERDIT
+  x-entities:
+    - {id: EN-05, access: RU}
+  x-idempotence: idempotent ; une présence déjà confirmée répond 204, la première heure reste
+  x-open:
+    - impact: moyen
+      sujet: "Fenêtre de confirmation de présence et écran qui la porte (point d'attention de la release R3 de la conception macro)."
+      hypothese: "depuis EC-05, de 15 minutes avant le début jusqu'à la fin du créneau."
+    - impact: moyen
+      sujet: "Libération automatique d'une réservation sans présence confirmée."
+      hypothese: "aucune ; si le métier la retient, une tâche planifiée (un traitement de plus) et un ADR."
+  summary: Confirmer ma présence
+  description: >-
+    Horodate la présence du titulaire sur une réservation active, pendant la fenêtre de présence.
+  requestBody:
+    required: false
+    content: {}
+  responses:
+    '204':
+      description: présence enregistrée, ou déjà enregistrée
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403':
+      description: pas le titulaire de la réservation, gestionnaire compris
+      x-codes: [INTERDIT]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+    '404': {$ref: '../components/responses.yaml#/ReservationIntrouvable'}
+    '409':
+      description: en dehors de la fenêtre de présence, ou réservation annulée
+      x-codes: [HORS_FENETRE_PRESENCE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

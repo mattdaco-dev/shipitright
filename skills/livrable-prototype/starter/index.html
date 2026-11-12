@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>NOM_PROJET, prototype</title>
+  <meta name="description" content="Prototype cliquable de NOM_PROJET, données fictives.">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <!-- ds/: files copied from the design system socle (section "Prototype" of its socle.md), never edited here -->
+  <link rel="stylesheet" href="ds/tokens.css">
+  <link rel="stylesheet" href="ds/proto-alias.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app">
+    <header class="app-header">
+      <a class="brand" href="#EC-01">NOM_PROJET</a>
+      <nav class="app-nav" aria-label="Navigation principale">
+        <a href="#EC-01">Dossiers</a>
+      </nav>
+    </header>
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+  <div id="dialog"></div>
+  <div id="toast" role="status" aria-live="polite"></div>
+
+  <!-- proto-bar.js: copied as is from the proto-bar skill, loaded before the app -->
+  <script src="proto-bar.js"></script>
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

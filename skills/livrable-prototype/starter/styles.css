@@ -1,0 +1,120 @@
+/* Prototype NOM_PROJET. No raw value here: the variables this kit uses (--primary, --ink, --line,
+   --space, --radius, --font...) are defined by ds/proto-alias.css, which maps them to the tokens of
+   the project's design system (ds/tokens.css). Both files come from the DS socle, copied as is.
+   When the DS ships its own components, use them and drop the matching fallback rules of this file.
+   Never style .pb-* classes here: they belong to proto-bar.js. */
+
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { font: 14px/1.45 var(--font); color: var(--ink-2); background: var(--bg); }
+button, input, select { font: inherit; color: inherit; }
+a { color: var(--primary); }
+:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+
+/* ---------- App chrome ---------- */
+.app { min-height: calc(100vh - var(--proto-bar-h)); }
+.app-header { position: sticky; top: var(--proto-bar-h); z-index: 10; display: flex; align-items: center; gap: calc(var(--space) * 4);
+  height: 56px; padding: 0 calc(var(--space) * 4); background: var(--surface); border-bottom: 1px solid var(--line); }
+.brand { font-weight: 700; color: var(--ink); text-decoration: none; }
+.app-nav a { text-decoration: none; color: var(--ink-2); }
+.view { max-width: 1120px; margin: 0 auto; padding: calc(var(--space) * 3) calc(var(--space) * 4) calc(var(--space) * 6); }
+.view:focus { outline: none; }
+
+.page-head { margin-bottom: calc(var(--space) * 2); }
+.page-head h1 { margin: 0; font-size: 24px; color: var(--ink); }
+.page-head h1:focus { outline: none; } /* focused on screen change for screen readers, not a control */
+.back { display: inline-block; margin-bottom: var(--space); text-decoration: none; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: calc(var(--space) * 3); }
+
+/* ---------- Components ---------- */
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { text-align: left; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+.table th { font-size: 12px; text-transform: uppercase; letter-spacing: .03em; color: var(--ink-3); }
+.table .num { text-align: right; font-variant-numeric: tabular-nums; }
+.row-link { cursor: pointer; }
+.row-link:hover, .row-link:focus-visible { background: var(--primary-soft); }
+
+.tag { display: inline-block; padding: 2px 9px; border-radius: 99px; font-size: 12px; font-weight: 600; background: var(--bg); }
+.tag-ok { background: var(--ok-soft); color: var(--ok); }
+.tag-neutral { background: var(--primary-soft); color: var(--primary-dark); }
+.tag-muted { color: var(--ink-3); }
+
+.btn { display: inline-flex; align-items: center; height: 36px; padding: 0 16px; border: 1px solid var(--line); border-radius: var(--radius);
+  background: var(--surface); color: var(--ink); text-decoration: none; font-weight: 600; cursor: pointer; }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: var(--surface); }
+.btn.primary:hover { background: var(--primary-dark); }
+.btn.danger { background: var(--danger); border-color: var(--danger); color: var(--surface); }
+.actions { display: flex; gap: var(--space); margin-top: calc(var(--space) * 3); }
+.note { color: var(--ink-3); margin: 0; }
+
+.fields { display: grid; grid-template-columns: max-content 1fr; gap: var(--space) calc(var(--space) * 3); margin: 0; }
+.fields dt { color: var(--ink-3); }
+.fields dd { margin: 0; color: var(--ink); }
+
+.form { display: grid; gap: 6px; max-width: 480px; }
+.form label { font-weight: 600; color: var(--ink); margin-top: var(--space); }
+.form input, .form select { height: 40px; padding: 0 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); }
+.form input[aria-invalid="true"] { border-color: var(--danger); }
+.field-error { margin: 0; color: var(--danger); font-size: 13px; }
+
+/* ---------- The three states imposed by the proto bar, plus the empty state ---------- */
+.skeleton { display: grid; gap: 12px; }
+.sk { border-radius: 6px; background: linear-gradient(90deg, var(--line) 25%, var(--bg) 50%, var(--line) 75%); background-size: 200% 100%; animation: sk 1.2s infinite linear; }
+.sk-title { height: 20px; width: 40%; }
+.sk-row { height: 36px; }
+@keyframes sk { to { background-position: -200% 0; } }
+@media (prefers-reduced-motion: reduce) { .sk { animation: none; } }
+.state-error { padding: calc(var(--space) * 2); border-radius: var(--radius); background: var(--danger-soft); color: var(--danger); }
+.state-error p { margin: 0 0 12px; font-weight: 600; }
+.state-empty { padding: calc(var(--space) * 4); text-align: center; color: var(--ink-3); }
+.state-empty p { margin: 0; }
+
+/* ---------- Banner: one-shot message on top of a screen (rights redirect, confirmation) ---------- */
+.banner { margin-bottom: calc(var(--space) * 2); padding: calc(var(--space) * 1.5) calc(var(--space) * 2); border-radius: var(--radius); font-weight: 600; }
+.banner-error { background: var(--danger-soft); color: var(--danger); }
+.banner-ok { background: var(--ok-soft); color: var(--ok); }
+
+/* ---------- Dialog: opens under the proto bar, never over it ---------- */
+.overlay { position: fixed; inset: var(--proto-bar-h) 0 0 0; z-index: 50; display: grid; place-items: center; padding: calc(var(--space) * 2);
+  background: color-mix(in srgb, var(--ink) 45%, transparent); }
+.dialog { width: min(480px, 100%); max-height: calc(100vh - var(--proto-bar-h) - calc(var(--space) * 4)); overflow: auto; padding: calc(var(--space) * 3);
+  background: var(--surface); border-radius: var(--radius); box-shadow: 0 12px 32px color-mix(in srgb, var(--ink) 25%, transparent); }
+.dialog h2 { margin: 0 0 calc(var(--space) * 2); font-size: 1.25em; color: var(--ink); }
+.dialog p { margin: 0 0 calc(var(--space) * 2); }
+.dialog-actions { display: flex; flex-wrap: wrap; flex-direction: row-reverse; justify-content: flex-start; gap: var(--space); margin-top: calc(var(--space) * 3); }
+
+/* ---------- Toast ---------- */
+#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 20; }
+.toast { padding: 10px 16px; border-radius: var(--radius); background: var(--ink); color: var(--surface); box-shadow: 0 4px 12px color-mix(in srgb, var(--ink) 15%, transparent); }
+
+/* ---------- Responsive: mandatory, no horizontal page scroll at any width ----------
+   Breakpoints follow the DS grid (see its socle); the defaults below are 1024 and 768 px.
+   Reference layout at >= 1280 px. A wide component (table, planning grid) scrolls inside its own
+   .scroll-x box, never the page. Check at 390, 768, 1024 and 1280 px before delivering. */
+.scroll-x { overflow-x: auto; max-width: 100%; }
+img, svg, video { max-width: 100%; height: auto; }
+
+@media (max-width: 1279px) {
+  .view { padding-left: calc(var(--space) * 3); padding-right: calc(var(--space) * 3); }
+}
+@media (max-width: 1023px) {
+  /* the nav goes to its own line, the user block stays on the right */
+  .app-header { flex-wrap: wrap; height: auto; gap: 0 calc(var(--space) * 2); padding: var(--space) calc(var(--space) * 3); }
+  .app-nav { order: 3; flex-basis: 100%; overflow-x: auto; }
+}
+@media (max-width: 767px) {
+  /* one column */
+  .app-header, .view { padding-left: calc(var(--space) * 2); padding-right: calc(var(--space) * 2); }
+  .page-head h1 { font-size: 1.4em; }
+  .form { max-width: none; }
+  .fields { grid-template-columns: 1fr; gap: 2px; }
+  .fields dd { margin-bottom: var(--space); }
+  .actions, .dialog-actions { flex-direction: column-reverse; align-items: stretch; }
+  .actions .btn, .dialog-actions .btn { justify-content: center; }
+  /* a table marked .stack becomes one card per row; each td carries its column name in data-label */
+  .table.stack thead { display: none; }
+  .table.stack tr { display: block; padding: var(--space) 0; border-bottom: 1px solid var(--line); }
+  .table.stack td { display: flex; justify-content: space-between; gap: calc(var(--space) * 2); padding: 4px 0; border: 0; text-align: right; }
+  .table.stack td::before { content: attr(data-label); color: var(--ink-3); text-align: left; }
+  #toast { left: calc(var(--space) * 2); right: calc(var(--space) * 2); transform: none; }
+}

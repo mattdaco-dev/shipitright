@@ -1,0 +1,51 @@
+# Path item /statistiques/occupation, referenced by openapi.yaml
+
+get:
+  tags: [statistiques]
+  operationId: calculerStatistiquesOccupation
+  x-endpoint-id: EP-21
+  x-module: domain/statistiques
+  x-release: R3
+  x-contract: provisoire
+  x-roles: [gestionnaire]
+  x-data-control:
+    - agrégats par salle seulement, aucun nom d'employé
+  x-processes: [TR-05]
+  x-entities:
+    - {id: EN-03, access: R, via: TR-05}
+    - {id: EN-05, access: R, via: TR-05}
+  x-idempotence: lecture
+  x-open:
+    - impact: moyen
+      sujet: "Indicateurs de statistiques, maille et période : aucune règle posée (point d'attention de la release R3 de la conception macro)."
+      hypothese: "par salle, heures réservées, taux sur les heures ouvrées et annulations, sur 3 mois au plus ; calcul de TR-05."
+  summary: Calculer les statistiques d'occupation
+  description: >-
+    Taux d'occupation par salle sur une période, calculés à la demande par TR-05 (agrégation SQL,
+    aucune table de cumul).
+  parameters:
+    - name: du
+      in: query
+      required: true
+      schema: {$ref: '../components/schemas/commun.yaml#/Jour'}
+    - name: au
+      in: query
+      required: true
+      description: au plus 3 mois après du
+      schema: {$ref: '../components/schemas/commun.yaml#/Jour'}
+  responses:
+    '200':
+      description: statistiques de la période
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/statistiques.yaml#/StatistiquesOccupation'}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403': {$ref: '../components/responses.yaml#/Forbidden'}
+    '422':
+      description: au avant du, ou période de plus de 3 mois
+      x-codes: [PERIODE_INVALIDE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/erreurs.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

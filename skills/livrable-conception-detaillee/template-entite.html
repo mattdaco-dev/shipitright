@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-xx Nom · Conception technique détaillée · NOM_PROJET</title>
+  <!-- Copy to docs/30-conception/detaillee/entites/EN-xx.html (file name = id).
+       Entity metadata, read by team/scripts/detaillee-pages.mjs: -->
+  <meta name="id" content="EN-xx">
+  <meta name="nom" content="Nom de l'entité">
+  <meta name="release" content="MVP">          <!-- first release that needs it, as in the macro (indicative) -->
+  <meta name="module" content="domain/ressource">     <!-- backend module where it lives, a row of table.modules in organisation-du-code.html -->
+  <meta name="tables" content="">              <!-- tables or collections, separated by spaces -->
+  <meta name="regles" content="">              <!-- RG-xx carried by the model, each one cited in the physical model -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">NOM_PROJET</div>
+    <div class="toc-type">Entité EN-xx</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#matrice-crud">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">EN-xx</span> : <span class="todo">Nom de l'entité</span></h1>
+      <p class="lede"><span class="todo">Ce que l'entité représente en une ou deux phrases, et la règle la plus importante qu'elle porte.</span></p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info"><span class="todo">store</span></span> table <code>nom_table</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> JJ.MM.AAAA</span>
+        <span><b>Auteur</b> Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Modèle physique</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
+          <dt>Contenu</dt><dd>Le DDL SQL dans le dialecte du store, chaque contrainte commentée par la règle qu'elle tient, puis les règles que la base ne peut pas tenir et l'endroit où elles vivent.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le DDL est ce que contient la migration : le dev le reprend sans traduction.</dd>
+          <dt>Lire</dt><dd>Un index porte en commentaire la requête qu'il sert ; une colonne d'une release suivante porte sa release, à titre indicatif. Les conventions communes sont dans la <a href="../transverse/organisation-du-code.html#persistance">persistance</a>.</dd>
+        </dl>
+      </div>
+      <!-- DDL in the dialect of the store; < > & escaped; ids cited in comments are links. A document store:
+           the JSON Schema of the document, same rules. -->
+<pre class="ddl"><code>CREATE TABLE <span class="todo">nom_table</span> (
+  id     INTEGER PRIMARY KEY,
+  <span class="todo">champ</span>  <span class="todo">TYPE NOT NULL CHECK (...)</span>,        -- <span class="todo">RG-xx en lien, ce que la contrainte tient</span>
+  <span class="todo">autre_id</span>  INTEGER NOT NULL REFERENCES <span class="todo">autre_table(id)</span>   -- <span class="todo">EN-xx en lien</span>
+);
+-- <span class="todo">la requête que l'index sert, avec l'endpoint ou le traitement en lien</span>
+CREATE INDEX <span class="todo">nom_index</span> ON <span class="todo">nom_table(colonnes)</span>;</code></pre>
+      <h3>Règles hors de la base</h3>
+      <ul>
+        <li><span class="todo">RG-xx en lien : pourquoi elle ne peut pas être une contrainte (heure courante, autre ligne, session), et où elle vit (objet du domaine, TR-xx en lien) ; sans objet, retirer ce titre et la liste</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Machine à états</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
+          <dt>Contenu</dt><dd>Une ligne par transition (de, vers, événement, garde, action), puis le diagramme d'états tiré de ce tableau. Sans cycle de vie, une phrase le dit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La notation UML <i>événement [garde] / action</i>, en deux vues d'une seule source : le tableau porte les liens et se relit ligne à ligne, le diagramme montre le cycle d'un coup d'œil.</dd>
+        </dl>
+      </div>
+      <!-- De: [*] for the creation. A state without an outgoing transition is drawn as final. -->
+      <table class="transitions">
+        <thead><tr><th>De</th><th>Vers</th><th>Événement</th><th>Garde</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>[*]</td><td><span class="todo">Actif</span></td><td><span class="todo">EP-xx, par TR-xx, en liens</span></td><td><span class="todo">RG-xx en lien</span></td><td><span class="todo">ce qui est écrit</span></td></tr>
+        </tbody>
+      </table>
+      <!-- gen:state-diagram --><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Qui agit dessus</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
+          <dt>Contenu</dt><dd>Sa colonne de la matrice CRUD, endpoint par endpoint et traitement par traitement, puis les schémas qui en sont la projection.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, standard de ce croisement ; la même que celle du <a href="../index.html#matrice-crud">sommaire</a>, lue depuis l'entité.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les pages des traitements : rien à écrire.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage --><!-- /gen -->
+    </section>
+
+    <section class="section" id="points-ouverts" data-level="recommande">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur cette entité.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact fort">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact moyen">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact faible">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../points-ouverts.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <!-- One row per point, strongest impact first; impact: fort, moyen or faible; question: Q-xxx link
+           (class qmark) or empty. No point: <p>Aucun point ouvert.</p>, or remove the section. -->
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td><span class="impact moyen">moyen</span></td><td><span class="todo">ce qui reste à trancher, et ce qu'une autre réponse changerait</span></td><td><span class="todo">ce que le code suit en attendant</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

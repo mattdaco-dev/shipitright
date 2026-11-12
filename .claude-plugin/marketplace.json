@@ -1,0 +1,14 @@
+{
+  "name": "shipitright",
+  "description": "Marketplace du plugin ShipItRight (Product Builder)",
+  "owner": {
+    "name": "Matthieu Da Costa"
+  },
+  "plugins": [
+    {
+      "name": "shipitright",
+      "source": "./",
+      "description": "Une équipe d'agents Claude Code, menée par un Product Owner, qui construit un produit du besoin à la recette."
+    }
+  ]
+}

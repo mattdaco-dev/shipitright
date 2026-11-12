@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-03 Salle · Conception technique détaillée · Réservation de salles</title>
+  <!-- Entity metadata, read by team/scripts/detaillee-pages.mjs -->
+  <meta name="id" content="EN-03">
+  <meta name="nom" content="Salle">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/salle">
+  <meta name="tables" content="salles salle_equipements">
+  <meta name="regles" content="RG-08 RG-09 RG-10">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Entité EN-03</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#matrice-crud">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">EN-03</span> : Salle</h1>
+      <p class="lede">Espace réservable du site, avec sa capacité et ses équipements. Jamais supprimée : désactivée, elle n'est plus proposée.</p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info">SQLite</span> tables <code>salles</code>, <code>salle_equipements</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Modèle physique</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
+          <dt>Contenu</dt><dd>Le DDL SQL dans le dialecte du store, chaque contrainte commentée par la règle qu'elle tient, puis les règles que la base ne peut pas tenir et l'endroit où elles vivent.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le DDL est ce que contient la migration : le dev le reprend sans traduction.</dd>
+          <dt>Lire</dt><dd>Un index porte en commentaire la requête qu'il sert ; une colonne d'une release suivante porte sa release, à titre indicatif. Les conventions communes sont dans la <a href="../transverse/organisation-du-code.html#persistance">persistance</a>.</dd>
+        </dl>
+      </div>
+      <pre class="ddl"><code>CREATE TABLE salles (
+  id             INTEGER PRIMARY KEY,
+  nom            TEXT NOT NULL CHECK (length(trim(nom)) BETWEEN 1 AND 60),     -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-10">RG-10</a>
+  capacite       INTEGER NOT NULL CHECK (capacite BETWEEN 1 AND 200),           -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-09">RG-09</a>
+  statut         TEXT NOT NULL DEFAULT 'active' CHECK (statut IN ('active','desactivee')),  -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a>
+  desactivee_le  TEXT NULL,                                                     -- ISO 8601 UTC
+  cree_le        TEXT NOT NULL,                                                 -- ISO 8601 UTC
+  CHECK ((statut = 'desactivee') = (desactivee_le IS NOT NULL))
+);
+CREATE TABLE salle_equipements (                                                -- <a href="../../../20-specs/conception-fonctionnelle.html#RG-09">RG-09</a>, plusieurs à plusieurs
+  salle_id       INTEGER NOT NULL REFERENCES salles(id),
+  equipement_id  INTEGER NOT NULL REFERENCES equipements(id),                   -- <a href="EN-04.html">EN-04</a>
+  PRIMARY KEY (salle_id, equipement_id)          -- sert le filtre d'équipements de <a href="../endpoints/EP-07.html">EP-07</a> et <a href="../traitements/TR-04.html">TR-04</a>
+);
+-- liste des salles (<a href="../endpoints/EP-04.html">EP-04</a>)
+CREATE INDEX salles_statut_nom ON salles(statut, nom);
+-- <a href="../../../20-specs/conception-fonctionnelle.html#RG-10">RG-10</a> : deux salles actives ne portent pas le même nom (<a class="qmark" href="../../../questions.html#Q-003">Q-003</a>) ; le domaine contrôle avant
+-- (<a href="../transverse/erreurs.html#NOM_SALLE_PRIS"><code>NOM_SALLE_PRIS</code></a>), l'index est le filet
+CREATE UNIQUE INDEX salles_nom_actif ON salles(nom COLLATE NOCASE) WHERE statut = 'active';</code></pre>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Machine à états</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
+          <dt>Contenu</dt><dd>Une ligne par transition (de, vers, événement, garde, action), puis le diagramme d'états tiré de ce tableau. Sans cycle de vie, une phrase le dit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La notation UML <i>événement [garde] / action</i>, en deux vues d'une seule source : le tableau porte les liens et se relit ligne à ligne, le diagramme montre le cycle d'un coup d'œil.</dd>
+        </dl>
+      </div>
+      <table class="transitions">
+        <thead><tr><th>De</th><th>Vers</th><th>Événement</th><th>Garde</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>[*]</td><td>Active</td><td><a href="../endpoints/EP-15.html">EP-15</a></td><td>nom libre parmi les salles actives (<a href="../../../20-specs/conception-fonctionnelle.html#RG-10">RG-10</a>)</td><td>INSERT, statut <code>active</code></td></tr>
+          <tr><td>Active</td><td>Désactivée</td><td><a href="../endpoints/EP-17.html">EP-17</a> par <a href="../traitements/TR-03.html">TR-03</a></td><td>salle active</td><td><code>desactivee_le</code> = maintenant ; dans la même transaction, <a href="../traitements/TR-03.html">TR-03</a> annule les réservations futures (<a href="../../../20-specs/conception-fonctionnelle.html#RG-08">RG-08</a>), la réservation en cours reste</td></tr>
+        </tbody>
+      </table>
+      <!-- gen:state-diagram -->
+<pre class="mermaid">
+stateDiagram-v2
+  state "Active" as Active
+  state "Désactivée" as Desactivee
+  [*] --> Active: EP-15
+  Active --> Desactivee: EP-17 par TR-03
+  Desactivee --> [*]
+</pre><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Qui agit dessus</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
+          <dt>Contenu</dt><dd>Sa colonne de la matrice CRUD, endpoint par endpoint et traitement par traitement, puis les schémas qui en sont la projection.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, standard de ce croisement ; la même que celle du <a href="../index.html#matrice-crud">sommaire</a>, lue depuis l'entité.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les pages des traitements : rien à écrire.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage -->
+      <table>
+        <thead><tr><th>Id</th><th>Endpoint ou traitement</th><th>CRUD</th><th>Comment</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../endpoints/EP-04.html">EP-04</a></td><td><code>GET /salles</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-07.html">EP-07</a></td><td><code>GET /salles/disponibles</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-08.html">EP-08</a></td><td><code>POST /reservations</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-02.html">TR-02</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-09.html">EP-09</a></td><td><code>POST /series/apercu</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-01.html">TR-01</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-10.html">EP-10</a></td><td><code>POST /series</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-01.html">TR-01</a> ; par <a href="../traitements/TR-02.html">TR-02</a></td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-11.html">EP-11</a></td><td><code>GET /moi/reservations</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-14.html">EP-14</a></td><td><code>GET /salles/{id}</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-15.html">EP-15</a></td><td><code>POST /salles</code></td><td><span class="crud" data-tip="création, lecture">CR</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-16.html">EP-16</a></td><td><code>PUT /salles/{id}</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-17.html">EP-17</a></td><td><code>POST /salles/{id}/desactivation</code></td><td><span class="crud" data-tip="lecture, mise à jour">RU</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-18.html">EP-18</a></td><td><code>GET /creneaux/plus-proche</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-04.html">TR-04</a></td><td><span class="tag accent">R2</span></td></tr>
+          <tr><td><a href="../endpoints/EP-19.html">EP-19</a></td><td><code>PUT /reservations/{id}</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-02.html">TR-02</a></td><td><span class="tag accent">R2</span></td></tr>
+          <tr><td><a href="../endpoints/EP-21.html">EP-21</a></td><td><code>GET /statistiques/occupation</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>par <a href="../traitements/TR-05.html">TR-05</a></td><td><span class="tag accent">R3</span></td></tr>
+          <tr><td><a href="../traitements/TR-01.html">TR-01</a></td><td>Calculer les occurrences et leurs conflits</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../traitements/TR-02.html">TR-02</a></td><td>Contrôler et enregistrer un créneau</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../traitements/TR-04.html">TR-04</a></td><td>Chercher le créneau libre le plus proche</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">R2</span></td></tr>
+          <tr><td><a href="../traitements/TR-05.html">TR-05</a></td><td>Calculer les taux d'occupation</td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">R3</span></td></tr>
+        </tbody>
+      </table>
+      <p><b>Schémas qui l'exposent</b> : <a href="../schemas/Salle.html"><code>Salle</code></a>, <a href="../schemas/SalleDetail.html"><code>SalleDetail</code></a>. <b>Module</b> : <a href="../transverse/organisation-du-code.html#module-domain-salle"><code>domain/salle</code></a>.</p><!-- /gen -->
+    </section>
+
+    <section class="section" id="points-ouverts" data-level="recommande">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur cette entité.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact fort">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact moyen">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact faible">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../points-ouverts.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td><span class="impact moyen">moyen</span></td><td>Réactivation d'une salle désactivée : avec « oui », une transition Désactivée vers Active et un endpoint sur le modèle de <a href="../endpoints/EP-17.html">EP-17</a>, sans restaurer les réservations annulées.</td><td>pas de réactivation ; si elle vient, l'index unique partiel refuse la réactivation d'une salle dont le nom a été repris, le domaine le dit avant (<a href="../transverse/erreurs.html#NOM_SALLE_PRIS"><code>NOM_SALLE_PRIS</code></a>).</td><td><a class="qmark" href="../../../questions.html#Q-004">Q-004</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+# components/responses, each entry referenced by openapi.yaml
+# Réponses d'erreur communes : réutiliser plutôt que recopier ; une erreur propre à une opération
+# s'écrit dans son fichier de paths/, avec ses x-codes.
+
+BadRequest:
+  description: requête mal formée, paramètre ou corps hors schéma
+  x-codes: [VALIDATION]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+      example:
+        type: about:blank
+        title: Requête invalide
+        status: 400
+        code: VALIDATION
+        erreurs: [{champ: jour, message: date AAAA-MM-JJ attendue}]
+Unauthorized:
+  description: session absente ou expirée
+  x-codes: [NON_AUTHENTIFIE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+Forbidden:
+  description: rôle insuffisant
+  x-codes: [INTERDIT]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}
+InternalError:
+  description: erreur inattendue, aucun détail technique exposé
+  x-codes: [ERREUR_INTERNE]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/erreurs.yaml#/Probleme'}

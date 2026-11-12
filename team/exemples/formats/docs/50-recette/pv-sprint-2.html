@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="verdict" content="accepte-avec-reserves">   <!-- accepte | accepte-avec-reserves | refuse -->
+  <title>PV de recette sprint 2 · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">PV de recette sprint 2</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../sprints/sprint-2.html">→ Sprint 2</a><br><a href="../40-qa/campagne-sprint-2.html">→ Campagne de test</a><br><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Sprint 2 · Recette G3</div>
+      <h1><span class="doc-kind">PV de recette</span> : sprint 2</h1>
+      <p class="lede">Accepté avec réserves par l'humain le 12.11.2026, au commit <code>9b07d3e</code> de <code>sprint/2</code> : <a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> et <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> acceptées, <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> acceptée avec la réserve <a href="#RES-01">RES-01</a>, portée par <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a> pour le sprint 3. L'humain merge <code>sprint/2</code> dans <code>main</code>.</p>
+      <div class="meta">
+        <span><b>Version</b> v1.0</span>
+        <span><b>Date de recette</b> 12.11.2026</span>
+        <span><b>Auteur</b> PO ; décision de l'humain</span>
+        <span><b>Statut</b> <span class="tag ok">signé</span> 12.11.2026</span>
+        <span><b>Sources</b> <a href="../sprints/sprint-2.html">sprint 2</a>, <a href="../40-qa/campagne-sprint-2.html">campagne</a>, stories du sprint</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Périmètre recetté</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que l'humain a recetté, sur quelle version et où, pour que le verdict ne se lise jamais hors de son contexte.</dd>
+          <dt>Contenu</dt><dd>Les stories du sprint, la branche et le commit recetté, l'environnement et son état, la date, les participants, le verdict QA de départ.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, un sujet par terme. Le commit recetté est repris tel quel de la campagne, en lien vers ses passages : l'humain recette le code que la campagne a joué en dernier, pas un autre.</dd>
+          <dt>Lire</dt><dd>Le verdict QA est cité, pas recopié : ses critères et ses anomalies sont dans la campagne. La recette ne démarre que sur un verdict favorable, avec ou sans réserves, et sur un environnement remis à zéro par le QA.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau, <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série, <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</dd>
+        <dt>Version</dt><dd>branche <code>sprint/2</code>, commit recetté <a href="../40-qa/campagne-sprint-2.html#passages"><code>9b07d3e</code></a>, repris des passages de la campagne</dd>
+        <dt>Environnement</dt><dd><a href="../30-conception/macro.html#environnements">Démo et recette</a>, remis à zéro par le QA le 11.11.2026 après son dernier passage (jeu fictif seul) ; adresse <code>https://demo-salles.exemple.test</code></dd>
+        <dt>Participants</dt><dd>humain (décide), PO (consigne), qa-1 (répond sur la campagne)</dd>
+        <dt>Verdict QA</dt><dd><a href="../40-qa/campagne-sprint-2.html#verdict-qa">favorable avec réserves</a> : 10 scénarios sur 11 au vert, <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> rouge par <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, mineure</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Chemin de recette</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner à l'humain un déroulé qu'il suit seul, à l'écran, et garder la trace de ce qu'il a vu.</dd>
+          <dt>Contenu</dt><dd>15 minutes au plus : des étapes numérotées de bout en bout, par parcours, qui visent les décisions prises par délégation (arbitrages PO), les limites acceptées et un parcours complet ; par étape, scénario servi, action avec les données à saisir, résultat attendu, résultat obtenu, statut.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un cas de test d'acceptation : action, attendu, obtenu. L'attendu et les données viennent des scénarios et des jeux <code>US-xxx/Dn</code> des stories, décalés à des dates futures sans changer le jour de la semaine ; l'obtenu se note pendant la recette, avec les mots de l'écran. Trois statuts : <span class="tag ok">ok</span>, <span class="tag warn">réserve</span> (l'écart devient une réserve), <span class="tag danger">ko</span> (l'humain refuse l'étape).</dd>
+          <dt>Lire</dt><dd>Un parcours, pas un scénario par étape : l'humain joue le chemin en entier, les autres scénarios et ceux que l'écran ne permet pas de provoquer (erreur technique, état passé) n'ont pas d'étape, la ligne de fin de parcours dit où la campagne les prouve. L'ordre suit la recommandation du verdict QA : l'humain juge d'abord une réserve sur l'écran.</dd>
+        </dl>
+      </div>
+      <p>Ordre de passage : le verdict QA recommande de commencer par <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> ; il ouvre le parcours 2, juste après l'étape 1, qui crée la réservation du 01.12.2026 servant de conflit à l'étape 3.</p>
+      <p>Avant de commencer : se connecter sur <a href="../20-ux/spec-ux-ui.html#EC-01">EC-01</a> Connexion avec <code>lea.martin@exemple.test</code>, compte employé du jeu fictif (mot de passe remis par le QA). Toutes les réservations portent sur des dates postérieures à la recette. Durée visée : 12 minutes pour les 8 étapes ; les autres scénarios du sprint sont renvoyés à la campagne.</p>
+
+      <h3>Parcours 1 : réserver un créneau</h3>
+      <table>
+        <thead><tr><th class="num">#</th><th>Scénario</th><th>Action et données</th><th>Résultat attendu</th><th>Résultat obtenu</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td class="ref-id"><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S1">US-005/S1</a></td><td>sur <a href="../20-ux/spec-ux-ui.html#EC-04">EC-04</a> Réservation : salle « Atlas », mardi 01.12.2026, 10:00 à 11:00, puis « Réserver »</td><td><a href="../20-specs/conception-fonctionnelle.html#MSG-02">MSG-02</a> « Réservation confirmée : Atlas, le 01.12.2026 de 10:00 à 11:00. »</td><td>message affiché tel quel</td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td class="num">2</td><td class="ref-id"><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S2">US-005/S2</a></td><td>refaire la même réservation</td><td><a href="../20-specs/conception-fonctionnelle.html#MSG-01">MSG-01</a> « La salle Atlas est déjà réservée de 10:00 à 11:00. », rien n'est créé</td><td>message affiché ; <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a> Mes réservations ne montre qu'une réservation le 01.12</td><td><span class="tag ok">ok</span></td></tr>
+        </tbody>
+      </table>
+
+      <h3>Parcours 2 : réserver une série</h3>
+      <table>
+        <thead><tr><th class="num">#</th><th>Scénario</th><th>Action et données</th><th>Résultat attendu</th><th>Résultat obtenu</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num">3</td><td class="ref-id"><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a></td><td>jeu <a href="../20-specs/stories/US-006-reserver-une-serie.html#D3">US-006/D3</a> décalé : sur <a href="../20-ux/spec-ux-ui.html#EC-04">EC-04</a>, salle « Atlas », mardi 17.11.2026, 10:00 à 11:00, Répéter : Chaque semaine, fin 09.02.2027, puis « Réserver »</td><td><a href="../20-specs/conception-fonctionnelle.html#MSG-04">MSG-04</a> « 1 occurrences sur 13 sont déjà prises et ne seront pas créées. », liste des conflits avec la date 01.12.2026, rien n'est encore créé</td><td>message affiché ; la liste montre la date « 2026-12-01 »</td><td><span class="tag warn">réserve</span> <a href="#RES-01">RES-01</a></td></tr>
+          <tr><td class="num">4</td><td class="ref-id"><a href="../20-specs/stories/US-006-reserver-une-serie.html#S5">US-006/S5</a></td><td>dans le dialogue des conflits, « Créer les 12 occurrences libres »</td><td>12 occurrences créées ; <a href="../20-specs/conception-fonctionnelle.html#MSG-02">MSG-02</a> pour la première, le 17.11.2026 de 10:00 à 11:00</td><td>12 occurrences dans <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a>, aucune le 01.12 en double</td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td class="num">5</td><td class="ref-id"><a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a></td><td>jeu <a href="../20-specs/stories/US-006-reserver-une-serie.html#D2">US-006/D2</a> décalé : salle « Atlas », vendredi 20.11.2026, 09:00 à 09:30, Répéter : Chaque jour, fin 27.11.2026, puis « Réserver »</td><td>6 occurrences ; après le vendredi 20.11, la suivante est le lundi 23.11.2026, rien le samedi 21 ni le dimanche 22</td><td>6 occurrences, du 20.11 au 27.11, sans week-end (corrigé par <a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a> pendant la campagne)</td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td class="num">6</td><td class="ref-id"><a href="../20-specs/stories/US-006-reserver-une-serie.html#S3">US-006/S3</a></td><td>salle « Alzette », mardi 17.11.2026, 14:00 à 15:00, Répéter : Chaque semaine, fin 01.03.2027, puis « Réserver »</td><td>la série n'est pas créée, le champ date de fin est signalé invalide</td><td>champ signalé, rien dans <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a></td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td class="num">7</td><td class="ref-id"><a href="../20-specs/stories/US-006-reserver-une-serie.html#S6">US-006/S6</a></td><td>salle « Atlas », jeudi 19.11.2026, 09:00 à 09:30, Répéter : Chaque semaine, fin 03.12.2026, « Réserver », puis « Échap » dans le dialogue des conflits</td><td><a href="../20-specs/conception-fonctionnelle.html#MSG-04">MSG-04</a> « 1 occurrences sur 3 sont déjà prises et ne seront pas créées. » (le 26.11, pris à l'étape 5), puis aucune occurrence créée</td><td>dialogue fermé, <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a> inchangé</td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td colspan="6">Sans étape : <a href="../20-specs/stories/US-006-reserver-une-serie.html#S1">US-006/S1</a>, série sans conflit, couverte par la campagne seule (l'étape 5 joue une série quotidienne) ; <a href="../20-specs/stories/US-006-reserver-une-serie.html#S7">US-006/S7</a>, échec d'enregistrement, que l'écran ne permet pas de provoquer. Les deux sont prouvés par la campagne (<a href="../40-qa/campagne-sprint-2.html#resultats-par-scenario">résultats par scénario</a>).</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Parcours 3 : annuler une réservation</h3>
+      <table>
+        <thead><tr><th class="num">#</th><th>Scénario</th><th>Action et données</th><th>Résultat attendu</th><th>Résultat obtenu</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td class="num">8</td><td class="ref-id"><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S1">US-008/S1</a></td><td>sur <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a> Mes réservations, réservation « Atlas » du 01.12.2026 de 10:00 à 11:00, « Annuler », puis confirmer</td><td>la réservation disparaît de la liste ; le créneau redevient libre sur <a href="../20-ux/spec-ux-ui.html#EC-04">EC-04</a></td><td>disparue ; « Atlas » le 01.12 à 10:00 se réserve de nouveau</td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td colspan="6">Sans étape : <a href="../20-specs/stories/US-008-annuler-une-reservation.html#S2">US-008/S2</a>, réservation commencée, qui demande une réservation passée : prouvé par le test unitaire de <a href="../30-conception/detaillee/traitements/TR-06.html">TR-06</a> (<a href="../40-qa/campagne-sprint-2.html#resultats-par-scenario">campagne</a>).</td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothese"><b>Hypothèse</b>Dans cet exemple, seule <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> est rédigée, avec ses jeux <a href="../20-specs/stories/US-006-reserver-une-serie.html#D1">US-006/D1</a> à <a href="../20-specs/stories/US-006-reserver-une-serie.html#D3">US-006/D3</a> ; les étapes de <a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> et <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> suivent les scénarios de la <a href="../40-qa/strategie.html#matrice-de-couverture">matrice</a>. Les stories non rédigées, le board et le journal sont des cibles pas encore produites.</div>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Résultats</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire, story par story, ce que l'humain accepte.</dd>
+          <dt>Contenu</dt><dd>Une ligne par story du sprint : étapes du chemin, résultat, commentaire de l'humain.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Trois résultats : <span class="tag ok">acceptée</span>, <span class="tag warn">acceptée avec réserves</span>, <span class="tag danger">refusée</span>. Le résultat se déduit des statuts des étapes : une réserve rend la story acceptée avec réserves, un ko la rend refusée, sauf avis contraire de l'humain écrit dans le commentaire.</dd>
+          <dt>Lire</dt><dd>Le commentaire est celui de l'humain, au mot près ; vide s'il n'en a pas fait.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Story</th><th>Étapes</th><th>Résultat</th><th>Commentaire de l'humain</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</td><td>1, 2</td><td><span class="tag ok">acceptée</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</td><td>3 à 7</td><td><span class="tag warn">acceptée avec réserves</span></td><td>« La série fait ce que j'attendais. La date en format anglais dans la liste des conflits, c'est à corriger. »</td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</td><td>8</td><td><span class="tag ok">acceptée</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Réserves</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister les écarts que l'humain accepte de voir corrigés plus tard, chacun avec le ticket qui les corrige.</dd>
+          <dt>Contenu</dt><dd>Une ligne par réserve : identifiant <code>RES-xx</code>, écart constaté, story et étape, ticket, échéance.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une réserve sans ticket se perd : le ticket existe dans le board avant la signature. Une anomalie mineure laissée ouverte au verdict QA devient une réserve, et son ticket est le <code>BUG-xxx</code> existant, resté au statut <code>backlog</code>.</dd>
+          <dt>Lire</dt><dd>Le <code>RES-xx</code> est stable : la page de sprint, la roadmap et le sprint suivant le citent. Une réserve est levée quand l'élément qui lui est lié (l'anomalie <code>BUG-xxx</code> ou le ticket <code>T-xxx</code> créé pour elle) passe au statut <code>fait</code> au board ; le PV signé ne se réécrit pas. Aucune réserve : l'écrire.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Réserve</th><th>Écart constaté</th><th>Story, étape</th><th>Ticket</th><th>Échéance</th></tr></thead>
+        <tbody>
+          <tr id="RES-01"><td>RES-01</td><td>la liste des occurrences en conflit affiche ses dates en <code>AAAA-MM-JJ</code> (« 2026-12-01 ») au lieu de <code>JJ.MM.AAAA</code> (« 01.12.2026 »)</td><td><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a>, étape 3</td><td><a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, mineure, au statut <code>backlog</code></td><td>sprint 3</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Anomalies ouvertes acceptées</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Garder la trace d'une anomalie majeure livrée ouverte, que seul l'humain peut accepter.</dd>
+          <dt>Contenu</dt><dd>Une ligne par majeure ouverte : <code>BUG-xxx</code>, titre, acceptation écrite du PO dans la campagne, raison donnée par l'humain, échéance de correction.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les mineures ouvertes sont des réserves, elles n'ont pas de ligne ici : une anomalie n'est consignée qu'une fois. Une bloquante ouverte n'arrive jamais ici : le verdict QA serait défavorable et la recette n'aurait pas lieu.</dd>
+          <dt>Lire</dt><dd>Aucune majeure ouverte : l'écrire, et nommer les mineures reportées en réserves.</dd>
+        </dl>
+      </div>
+      <p>Aucune : aucune majeure ouverte au verdict QA (<a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a>, majeure, corrigée pendant la campagne). La seule mineure ouverte, <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, est la réserve <a href="#RES-01">RES-01</a>.</p>
+    </section>
+
+    <section class="section" data-level="obligatoire">
+      <h2>Verdict et décision</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Consigner la décision de l'humain et ce qu'elle déclenche.</dd>
+          <dt>Contenu</dt><dd>Le verdict, la formulation de l'humain mot pour mot, la décision de merge, le décideur, la date, la signature.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Trois verdicts : accepté, accepté avec réserves (au moins une réserve), refusé (le PV dit ce qui manque pour accepter). Le verdict est celui de l'humain, ni celui du PO ni celui du QA : sa formulation se cite entre guillemets.</dd>
+          <dt>Lire</dt><dd>Accepté, avec ou sans réserves : l'humain merge <code>sprint/N</code> dans <code>main</code>, au commit recetté. Refusé : le sprint reste ouvert, rien n'est mergé.</dd>
+        </dl>
+      </div>
+      <div class="callout decision">
+        <b>Verdict : accepté avec réserves</b>
+        « J'accepte le sprint 2. Réserver, répéter et annuler marchent comme prévu. Le format de date dans les conflits passe au sprint 3, ce n'est pas bloquant. »
+      </div>
+      <dl class="defs">
+        <dt>Décision</dt><dd>merge de <code>sprint/2</code> dans <code>main</code> au commit <code>9b07d3e</code>, par l'humain</dd>
+        <dt>Décideur</dt><dd>humain</dd>
+        <dt>Date</dt><dd>12.11.2026</dd>
+        <dt>Signature</dt><dd>consignée par le PO dans le <a href="../../.team/journal.md">journal</a>, ligne du 12.11.2026 « G3 · sprint 2 accepté avec réserves (RES-01) »</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="recommande">
+      <h2>Reste au backlog</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner au planning suivant ce que la recette laisse : stories non livrées, réserves, besoins nouveaux.</dd>
+          <dt>Contenu</dt><dd>Une ligne par élément : type, origine, suite prévue.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un besoin nouveau exprimé pendant la recette n'est pas une réserve : il ne bloque pas le verdict, il va au backlog comme candidat de story, que le BA analyse.</dd>
+          <dt>Lire</dt><dd>Une réserve y figure par son <code>RES-xx</code> et son ticket ; une story non livrée, par son identifiant et la raison que donne la page de sprint.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Élément</th><th>Type</th><th>Origine</th><th>Suite</th></tr></thead>
+        <tbody>
+          <tr><td>aucune story</td><td><span class="tag">story non livrée</span></td><td><a href="../sprints/sprint-2.html#review">review du sprint 2</a></td><td>sans objet</td></tr>
+          <tr><td><a href="#RES-01">RES-01</a>, <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a></td><td><span class="tag warn">réserve</span></td><td>étape 3</td><td>planning du sprint 3</td></tr>
+          <tr><td>« Recevoir la série dans mon agenda, pour ne pas la recopier. »</td><td><span class="tag accent">nouveau besoin</span></td><td>recette, étape 4</td><td>candidat de story, à analyser par le BA ; à situer face à la <a href="../roadmap.html">roadmap</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>
