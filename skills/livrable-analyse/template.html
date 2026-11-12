@@ -8,12 +8,14 @@
        auteur: "ia" when a team agent handled the chantier, else the person's name.
        statut: brouillon | en-revue | valide. chantier: en-cours | termine | restitue-partiel.
        pour: the phase or release the chantier prepares (P1, P2, P3, R2...); P1 for a chantier of P1.
-       Keep them in line with the Auteur, Statut, Pour and Chantier fields of the header. -->
+       date: the Date field of the header, in ISO (AAAA-MM-JJ).
+       Keep them in line with the Auteur, Statut, Pour, Chantier and Date fields of the header: codes, never translated. -->
   <meta name="type" content="analyse">
   <meta name="auteur" content="ia">
   <meta name="statut" content="brouillon">
   <meta name="chantier" content="en-cours">
   <meta name="pour" content="P1">
+  <meta name="date" content="AAAA-MM-JJ">
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -128,7 +130,7 @@
       </div>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="recommendation">
       <h2>Recommandation</h2>
       <p class="hint">L'option ou la conclusion retenue, et pourquoi. Le PO tranche ensuite.</p>
       <div class="callout decision">
@@ -142,7 +144,7 @@
       </dl>
     </section>
 
-    <section class="section" data-level="recommande">
+    <section class="section" data-level="recommande" data-section="impacts">
       <h2>Impacts sur les autres livrables</h2>
       <p class="hint">Ce que la recommandation change ailleurs. Le BA ne modifie pas les livrables des autres : il signale.</p>
       <table>
@@ -154,7 +156,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="questions">
       <h2>Questions et hypothèses</h2>
       <p class="hint">Les questions posées au PO dans .team/questions/, et les hypothèses prises pour avancer. Liste vide : l'écrire.</p>
       <table>

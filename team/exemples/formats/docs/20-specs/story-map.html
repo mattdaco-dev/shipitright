@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Story map metadata, read by pilotage-pages.mjs (codes, never translated): statut brouillon | en-revue | valide;
+       date of the header in ISO, AAAA-MM-JJ. -->
+  <meta name="statut" content="brouillon">
+  <meta name="date" content="2026-10-02">
   <title>Story map · Réservation de salles</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -164,16 +168,16 @@
       </table>
     </section>
 
-    <section class="section" data-level="recommande">
-      <h2>Correspondance avec les epics</h2>
+    <section class="section" data-level="recommande" data-section="epic-mapping">
+      <h2 id="correspondance-avec-les-epics">Correspondance avec les epics</h2>
       <p class="hint">Chaque activité ou grappe de tâches et son epic. Les fichiers sont dans 20-specs/epics/ et 20-specs/stories/.</p>
       <table>
         <thead><tr><th>Activité</th><th>Epic</th><th>Stories</th></tr></thead>
         <tbody>
-          <tr><td>Accéder</td><td><a href="epics/EPIC-01-acces.html">EPIC-01</a> Accès</td><td>US-001</td></tr>
-          <tr><td>Trouver une salle, Réserver</td><td><a href="epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a> Recherche et réservation</td><td>US-002 à US-006, US-010, US-012</td></tr>
-          <tr><td>Gérer mes réservations, Utiliser la salle</td><td><a href="epics/EPIC-03-mes-reservations.html">EPIC-03</a> Mes réservations</td><td>US-007 à US-009, US-011, US-013</td></tr>
-          <tr><td>Tenir le parc, Arbitrer</td><td><a href="epics/EPIC-04-parc-de-salles.html">EPIC-04</a> Parc de salles</td><td>US-014 à US-019</td></tr>
+          <tr><td>Accéder</td><td><a href="epics/EPIC-01-acces.html">EPIC-01</a> Accès</td><td data-value="US-001">US-001</td></tr>
+          <tr><td>Trouver une salle, Réserver</td><td><a href="epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a> Recherche et réservation</td><td data-value="US-002..US-006 US-010 US-012">US-002 à US-006, US-010, US-012</td></tr>
+          <tr><td>Gérer mes réservations, Utiliser la salle</td><td><a href="epics/EPIC-03-mes-reservations.html">EPIC-03</a> Mes réservations</td><td data-value="US-007..US-009 US-011 US-013">US-007 à US-009, US-011, US-013</td></tr>
+          <tr><td>Tenir le parc, Arbitrer</td><td><a href="epics/EPIC-04-parc-de-salles.html">EPIC-04</a> Parc de salles</td><td data-value="US-014..US-019">US-014 à US-019</td></tr>
         </tbody>
       </table>
     </section>

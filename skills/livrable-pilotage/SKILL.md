@@ -40,7 +40,20 @@ node ${CLAUDE_PLUGIN_ROOT}/team/scripts/check-livrable.mjs .            # lance 
 ```
 
 `--now "AAAA-MM-JJ HH:MM"` fixe l'heure de génération (tests). En `--check`, l'heure est celle déjà
-écrite dans la page (« Mis à jour le ») : une page ne dérive que si ses sources changent.
+écrite dans la page (`<time datetime>` de la ligne « Mis à jour le ») : une page ne dérive que si ses
+sources changent. Chaque génération écrit aussi `docs/_assets/i18n.js`, les libellés de `doc.js` et
+`plan.js` dans la langue du projet.
+
+## Langue
+
+Les pages sont dans la langue du projet (`.team/projet.json`, `${CLAUDE_PLUGIN_ROOT}/team/conventions/langue.md`) :
+`<html lang>`, texte fixe des gabarits (jetons `{{pilotage.tpl.…}}`) et texte calculé viennent de
+`${CLAUDE_PLUGIN_ROOT}/team/i18n/<langue>/pilotage.json` et `common.json`, surchargés par `.team/libelles.json` ;
+dates en `Intl` (motif `common.date.short` quand la langue en donne un). Une clé absente partout
+s'affiche telle quelle et le script l'avertit. Le script ne lit jamais un libellé visible : métas,
+`data-section`, `data-col`, `data-value` et codes du journal (tableau Sources). Sur un projet antérieur
+à la 0.4.0 (sans `.team/projet.json`), il garde en repli l'ancienne lecture du texte français, colonne
+Repli.
 
 ## Principes
 
@@ -63,23 +76,23 @@ node ${CLAUDE_PLUGIN_ROOT}/team/scripts/check-livrable.mjs .            # lance 
 |---|---|---|
 | Nom du projet, vision (bandeau) | `h1` et `lede` du cadrage | nom : `toc-project` de la page existante, puis nom du dossier ; vision : rien |
 | Lien du board | `.team/notion.md`, ligne « Base » | pas de bouton |
-| Gates G0, G1, G2 franchis, date | dernière ligne `G0`, `G1`, `G2` du journal, verdict « validé » | `data-gate="Gn\|validé\|date"` de la grille de la roadmap |
+| Gates G0, G1, G2 franchis, date | dernière ligne `G0`, `G1`, `G2` du journal, code `validated` (`AAAA-MM-JJ HH:MM · G1 · validated · texte` ; `changes-requested` : non franchi) | `data-gate="Gn\|validated\|AAAA-MM-JJ"` de la grille de la roadmap (section `data-section="roadmap"`) ; projet antérieur : texte « validé » de la ligne, `data-gate="Gn\|validé\|JJ.MM.AAAA"` |
 | Stories, titres, releases, ordre des releases | story map (`.sm-release`, `.sm-story`) | releases : en-têtes G3 de la grille de la roadmap ; sinon une seule release « Release » |
-| Epic d'une story | « Correspondance avec les epics » de la story map (plages `US-a à US-b` comprises) | méta `epic` de la story, puis couloir de la roadmap |
-| Statut, taille, part front, validation | balises `meta` de la story : `statut`, `taille`, `front`, `valide_par`, `valide_le`, `type` | taille et front : `data-size`, `data-front` de l'estimation macro |
+| Epic d'une story | section `data-section="epic-mapping"` de la story map : `data-value` de la cellule des stories (`US-002..US-006 US-010`) ; sans `data-value`, les ids du texte | méta `epic` de la story, puis couloir de la roadmap ; projet antérieur : plages « US-a à US-b » du texte |
+| Statut, taille, part front, validation | balises `meta` de la story : `statut`, `taille`, `front`, `valide_par`, `valide_le` (`AAAA-MM-JJ` ; `JJ.MM.AAAA` accepté), `type` | taille et front : `data-size`, `data-front` de l'estimation macro |
 | Poids de la part front | `data-h` de l'estimation macro de la roadmap | XS 1, S 2, M 4, L 5, XL 8 |
-| Sprint : dates, statut, lot | page `sprints/sprint-N.html` : « Dates du … au … », Statut, tableau « Stories engagées » (et les `RES-xx` cités dans cette section) | |
-| Campagne : verdict, scénarios | méta `verdict` de `40-qa/campagne-sprint-N.html` ; « Résultats par scénario » (dernier passage vert) | verdict : `<b>Verdict : …</b>` |
-| PV : statut, verdict, date, stories acceptées, réserves | méta `verdict` et Statut de `50-recette/pv-sprint-N.html` ; « Date de recette » ; tableaux « Résultats » et « Réserves » | verdict : `<b>Verdict : …</b>` |
+| Sprint : dates, statut, lot | page `sprints/sprint-N.html` : métas `start-date`, `end-date` (ISO) et `statut` (`planifie`, `en-cours`, `clos`), section `data-section="committed-stories"` (et les `RES-xx` qu'elle cite) | projet antérieur : « Dates du … au … », tag Statut, section « Stories engagées » |
+| Campagne : verdict, scénarios | métas `verdict` et `statut` de `40-qa/campagne-sprint-N.html` ; section `data-section="scenario-results"`, `data-value` des passages (`vert`, `rouge`, `bloque` ; dernier passage vert) | projet antérieur : `<b>Verdict : …</b>`, texte des tags |
+| PV : statut, verdict, date, stories acceptées, réserves | métas `verdict`, `statut` (`prepare`, `signe`, `refuse`) et `date_recette` (ISO) de `50-recette/pv-sprint-N.html` ; sections `data-section="results"` (`data-value` de la colonne `data-col="result"`) et `data-section="reserves"` ; gravité d'une réserve : `severite` de son ticket au board | projet antérieur : `<b>Verdict : …</b>`, tag Statut, « Date de recette », texte des résultats et de la gravité |
 | Tickets et anomalies | front matter de `.team/board/T-*.md` et `BUG-*.md` : `statut`, `sprint`, `tours_revue`, `severite`, `instance`, `titre` | |
-| Questions | `.team/questions/Q-*.md` : `statut`, `lie_a`, `bloquant`, sections Question et Hypothèse | `questions.html` |
-| État d'un livrable de phase | méta `statut`, sinon le tag après « Statut » dans son en-tête | |
-| Version de la roadmap, du contrat | « Version » de la roadmap ; `info.version` de `openapi.yaml` | |
+| Questions | `.team/questions/Q-*.md` : `statut`, `lie_a`, `bloquant`, sections Question et Hypothèse | projet antérieur : `questions.html` |
+| État et date d'un livrable de phase | métas `statut` (`brouillon`, `en-revue`, `valide`…) et `date` (ISO) | projet antérieur : tag après « Statut » et champ « Date » de son en-tête |
+| Version de la roadmap, du contrat | méta `version` de la roadmap ; `info.version` de `openapi.yaml` | projet antérieur : champ « Version » |
 | Points ouverts d'impact fort | lignes `impact fort` de `30-conception/detaillee/points-ouverts.html` | |
 | ADR avec écart au socle | `meta statut="propose"` et `ecart_socle="oui"` des pages `adr/` | |
-| Évolutions du process | partie « Évolutions proposées pour le plugin » de la Rétro des pages de sprint (`h3` `id="evolutions-proposees"`), lignes `Sn-Em` dont la décision n'est ni acceptée ni refusée | une page de sprint au format antérieur, sans `Sn-Em` : tableau « Évolutions proposées » |
-| Événements | `.team/journal.md` | |
-| Analyses de chantier | pages de `docs/10-analyse/` à `meta type="analyse"` : méta `auteur` (`ia` ou un nom), `statut` (`brouillon`, `en-revue`, `valide`), `chantier` (`en-cours`, `termine`, `restitue-partiel`), `pour` (`P1`, `P2`, `P3` ou une release : la colonne qu'il prépare) ; `h1`, `lede`, « Date » de l'en-tête ; callout `decision` de la section Recommandation ; `Q-xxx` de la section Questions et hypothèses ; callouts `hypothese` ; première colonne de la section Impacts sur les autres livrables | statut et chantier : tag après « Statut » et « Chantier » dans l'en-tête ; auteur : champ « Auteur » (avertissement) ; `pour` absente : P1 (avertissement) |
+| Évolutions du process | partie `h3 id="evolutions-proposees"` de la Rétro des pages de sprint, lignes `Sn-Em` dont la cellule de la colonne `data-col="decision"` porte `data-value="a-soumettre"` ; fichier : colonne `data-col="file"` | projet antérieur : `h3` « Évolutions proposées », décision lue dans le texte, tableau sans `Sn-Em` |
+| Événements | `.team/journal.md` ; la décision d'un gate (code) s'affiche avec son libellé | |
+| Analyses de chantier | pages de `docs/10-analyse/` à `meta type="analyse"` : méta `auteur` (`ia` ou un nom), `statut` (`brouillon`, `en-revue`, `valide`), `chantier` (`en-cours`, `termine`, `restitue-partiel`), `pour` (`P1`, `P2`, `P3` ou une release : la colonne qu'il prépare) ; `h1`, `lede` ; callout `decision` de la section Recommandation ; `Q-xxx` de la section Questions et hypothèses ; callouts `hypothese` ; première colonne de la section Impacts sur les autres livrables ; méta `date` (ISO) ; sections par `data-section` : `recommendation`, `questions`, `impacts` | `pour` absente : P1 (avertissement) ; projet antérieur : tags « Statut » et « Chantier », champs « Auteur » et « Date » de l'en-tête, sections par leur titre, livrable nommé sans lien dans Impacts |
 
 ## Règles de calcul : page de pilotage
 
@@ -96,7 +109,8 @@ verdict favorable sans PV, faite quand le PV existe), PV (à préparer, à signe
 point non fait est l'étape courante. Hors sprint, le gate de la phase et l'état de ses livrables.
 
 **Overview.** Colonnes P0 à P3, puis une par release dans l'ordre de la story map, une seule «
-Release » tant qu'aucune n'est nommée. Gates en `data-gate="Gn|verdict|date"` avec `data-gate-name`.
+Release » tant qu'aucune n'est nommée. Gates en `data-gate="Gn|décision|date"` (codes : `validated`
+pour G0 à G2, `accepte` pour un G3 ; date ISO) avec `data-gate-name` dans la langue du projet.
 G3 d'une release franchi quand toutes ses stories sont acceptées dans un PV signé, à la date du
 dernier de ces PV. `data-current` sur la colonne en cours (phase, ou release du sprint en cours).
 Une carte « Analyses de chantier » dans chaque colonne, phase ou release, qu'au moins un chantier
@@ -189,8 +203,7 @@ que `check-livrable` ne la lise pas comme une règle de story.
 **Tri** : en cours, puis restitué partiel, puis terminé ; à égalité, date la plus récente d'abord,
 puis titre. **Filtres et tris**, par les mécanismes de `doc.js` du backlog : puces `data-facets`
 dans l'ordre des colonnes (Auteur IA ou personne, Avancement, Statut, Pour : P1 à P3 puis les
-releases ; une valeur absente reste grisée ; unité masculine `data-facet-genre="m"`, d'où « Aucun
-chantier pour ce filtre ») et tableau `data-sortable` : Chantier par titre et Auteur par date
+releases ; une valeur absente reste grisée) et tableau `data-sortable` : Chantier par titre et Auteur par date
 (`data-sort-value`), Avancement, Statut et Pour par leur échelle (`data-sort-order`), Reste ouvert
 par nombre de questions puis d'hypothèses (`data-sort-value` « 002-001 »), sur grand écran seulement
 (en-têtes masqués sur mobile, comme le backlog) ; clé `aria` de la facette Pour (« Filtrer par
@@ -209,7 +222,7 @@ valeurs ; méta `pour` qui n'est ni `P1`, `P2`, `P3` ni une release de la story 
 (la carte n'aurait pas de colonne : on corrige la méta ou la release plutôt que de perdre le
 chantier) ; `verdict` de campagne ou de PV hors de ses valeurs ; `statut` de ticket inconnu ;
 gabarit sans bloc `gen` ; page à régénérer (`--check`). Il avertit sur : story map absente, sprint
-sans dates, story `validee` sans `valide_par`, analyse sans méta `statut`, `chantier`, `auteur` ou
+sans métas `start-date` et `end-date`, story `validee` sans `valide_par`, analyse sans méta `statut`, `chantier`, `auteur` ou
 `pour`, page de `docs/10-analyse/` sans `meta type`, tag Statut ou Chantier ou champ Pour de
-l'en-tête qui contredit la méta, méta `auteur` qui ressemble à une instance d'agent
+l'en-tête qui contredit la méta (projet antérieur seulement), libellé absent des dictionnaires, méta `auteur` qui ressemble à une instance d'agent
 (`dev-frontend-1` : écrire `ia`). En erreur, il n'écrit rien. Il est idempotent.

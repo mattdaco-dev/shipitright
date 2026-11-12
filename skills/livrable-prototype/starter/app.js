@@ -8,6 +8,7 @@ const PROTO = {
   title: 'NOM_PROJET, prototype',
   version: 'v1',
   date: '2026-10-01',
+  lang: 'fr', // project language (.team/projet.json, "langue"): the proto bar labels, and <html lang> in index.html
   prefix: 'nomprojet.', // every localStorage key starts with it, so "Réinitialiser le proto" clears them all
   home: 'EC-01', // screen shown for an unknown hash, and after a rights redirect
 };
@@ -284,6 +285,7 @@ ProtoBar.mount({
   title: PROTO.title,
   version: PROTO.version,
   date: PROTO.date,
+  lang: PROTO.lang,
   storagePrefix: PROTO.prefix,
   onState: (v) => { S.state = v; render(); },
   controls: [

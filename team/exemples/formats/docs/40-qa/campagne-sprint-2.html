@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="verdict" content="favorable-avec-reserves">   <!-- favorable | favorable-avec-reserves | defavorable -->
+  <meta name="statut" content="terminee">                   <!-- en-cours | terminee -->
+  <meta name="date" content="2026-11-11">
   <title>Campagne de test sprint 2 · Réservation de salles</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -78,7 +80,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="scenario-results">
       <h2>Résultats par scénario</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -92,29 +94,29 @@
       <table>
         <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
         <tbody>
-          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S1">US-005/S1</a> réserver un créneau libre</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S2">US-005/S2</a> le créneau est déjà pris</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S1">US-005/S1</a> réserver un créneau libre</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S2">US-005/S2</a> le créneau est déjà pris</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
         </tbody>
       </table>
       <h3><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</h3>
       <table>
         <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
         <tbody>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S1">US-006/S1</a> réserver une série sans conflit</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a> la série quotidienne saute le week-end</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td><a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a>, corrigée au <code>9b07d3e</code></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S3">US-006/S3</a> la date de fin dépasse 3 mois</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> des occurrences sont en conflit</td><td>e2e</td><td><span class="tag danger">rouge</span></td><td><span class="tag danger">rouge</span></td><td><a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, ouverte, admise au <a href="#verdict-qa">verdict</a></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S5">US-006/S5</a> confirmer malgré les conflits</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S6">US-006/S6</a> renoncer à la série</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S7">US-006/S7</a> l'enregistrement échoue</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S1">US-006/S1</a> réserver une série sans conflit</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a> la série quotidienne saute le week-end</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td><a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a>, corrigée au <code>9b07d3e</code></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S3">US-006/S3</a> la date de fin dépasse 3 mois</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> des occurrences sont en conflit</td><td>e2e</td><td data-value="rouge"><span class="tag danger">rouge</span></td><td data-value="rouge"><span class="tag danger">rouge</span></td><td><a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, ouverte, admise au <a href="#verdict-qa">verdict</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S5">US-006/S5</a> confirmer malgré les conflits</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S6">US-006/S6</a> renoncer à la série</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S7">US-006/S7</a> l'enregistrement échoue</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
         </tbody>
       </table>
       <h3><a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</h3>
       <table>
         <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
         <tbody>
-          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S1">US-008/S1</a> annuler une réservation à venir</td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S2">US-008/S2</a> une réservation commencée ne s'annule plus</td><td><span class="tag warn">sans e2e</span> unitaire domaine <a href="../30-conception/detaillee/traitements/TR-06.html">TR-06</a>, « commencée refusée »</td><td><span class="tag ok">vert</span></td><td>sans objet</td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S1">US-008/S1</a> annuler une réservation à venir</td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S2">US-008/S2</a> une réservation commencée ne s'annule plus</td><td><span class="tag warn">sans e2e</span> unitaire domaine <a href="../30-conception/detaillee/traitements/TR-06.html">TR-06</a>, « commencée refusée »</td><td data-value="vert"><span class="tag ok">vert</span></td><td>sans objet</td><td></td></tr>
         </tbody>
       </table>
       <div class="callout hypothese"><b>Hypothèse</b>Dans cet exemple, seule <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> est rédigée. Les scénarios de <a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> et <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> sont ceux de la <a href="strategie.html#matrice-de-couverture">matrice</a>, qui ne montre que leur forme ; sur un projet, chaque story du sprint a ici tous ses scénarios.</div>
@@ -152,11 +154,11 @@
       <table>
         <thead><tr><th>Suite du sprint 1</th><th class="num">Tests e2e</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Régression ou instabilité</th></tr></thead>
         <tbody>
-          <tr><td><a href="../20-specs/stories/US-001-se-connecter.html">US-001</a> Se connecter</td><td class="num">2</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td>aucune</td></tr>
-          <tr><td><a href="../20-specs/stories/US-014-declarer-une-salle.html">US-014</a> Déclarer une salle</td><td class="num">4</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td>aucune</td></tr>
-          <tr><td><a href="../20-specs/stories/US-002-voir-occupation-salle.html">US-002</a> Occupation d'une salle</td><td class="num">3</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td>aucune</td></tr>
-          <tr><td><a href="../20-specs/stories/US-003-voir-occupation-journee.html">US-003</a> Occupation de la journée</td><td class="num">3</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td>aucune</td></tr>
-          <tr><td>Tests non fonctionnels des sprints précédents : <a href="#tests-non-fonctionnels">sondage des droits et du RGPD (un test), limitation d'EP-01 (un test)</a></td><td class="num">2</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span> sondage ; limitation hors 2<sup>e</sup> passage</td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-001-se-connecter.html">US-001</a> Se connecter</td><td class="num">2</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-014-declarer-une-salle.html">US-014</a> Déclarer une salle</td><td class="num">4</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-002-voir-occupation-salle.html">US-002</a> Occupation d'une salle</td><td class="num">3</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-003-voir-occupation-journee.html">US-003</a> Occupation de la journée</td><td class="num">3</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td>Tests non fonctionnels des sprints précédents : <a href="#tests-non-fonctionnels">sondage des droits et du RGPD (un test), limitation d'EP-01 (un test)</a></td><td class="num">2</td><td data-value="vert"><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span> sondage ; limitation hors 2<sup>e</sup> passage</td><td>aucune</td></tr>
           <tr><td>Tests d'anomalies fermées</td><td class="num">0</td><td colspan="2">sans objet : aucune anomalie au sprint 1</td><td></td></tr>
           <tr><td>Contrat d'API</td><td></td><td colspan="2"><a href="../30-conception/detaillee/schemas/index.html#v1.1.4">v1.1.4</a>, la même qu'au sprint 1 : rien à rejouer hors du sprint</td><td></td></tr>
         </tbody>

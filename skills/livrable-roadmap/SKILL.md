@@ -99,8 +99,11 @@ Un seul bloc `.est` (réglage de l'échelle par la roue dentée, dans le navigat
 
 Les gates se posent sur l'en-tête de colonne qu'ils closent : `<div class="rm-head" data-gate="G1"
 data-gate-name="Validation de la conception fonctionnelle">`. Tant que le gate n'est pas franchi,
-`data-gate` porte son seul nom (`G1`) ; franchi, il porte le verdict et la date de la décision :
-`data-gate="G1|validé|12.10.2026"`. `data-gate-name` dit le gate en clair, pour l'infobulle. Tous les
+`data-gate` porte son seul nom (`G1`) ; franchi, il porte le code de la décision et sa date en ISO :
+`data-gate="G1|validated|2026-10-12"` (`accepte` pour un G3). Ces codes ne se traduisent jamais ;
+`data-gate-name` dit le gate en clair, dans la langue du projet, pour l'infobulle. La section porte
+`data-section="roadmap"`, et l'en-tête de la page les métas `statut` (`brouillon`, `en-revue`, `valide`),
+`date` (ISO) et `version`, alignées sur ses champs : la page de pilotage les lit, jamais le texte visible. Tous les
 gates sont humains : la grille ne porte pas de décideur. Une colonne de release porte le G3 qui la
 clôt, franchi quand toutes ses stories sont acceptées dans un PV signé, avec ou sans réserve.
 

@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Sprint metadata, read by pilotage-pages.mjs (codes, never translated): statut planifie | en-cours | clos;
+       dates of the sprint in ISO, AAAA-MM-JJ, the same as the Dates field of the header. -->
+  <meta name="statut" content="clos">
+  <meta name="start-date" content="2026-11-03">
+  <meta name="end-date" content="2026-11-12">
   <title>Sprint 2 · Réservation de salles</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,8 +53,8 @@
       </div>
     </section>
 
-    <section class="section" data-level="obligatoire">
-      <h2>Stories engagées</h2>
+    <section class="section" data-level="obligatoire" data-section="committed-stories">
+      <h2 id="stories-engagees">Stories engagées</h2>
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>À quoi sert</dt><dd>Fixer le lot que le PO a choisi et prouver que chaque story peut partir.</dd>
@@ -240,20 +245,20 @@
       </table>
       <h3>Actions</h3>
       <table>
-        <thead><tr><th>Action</th><th>Ce qui change</th><th>Problème</th><th>Nature</th><th>Propriétaire</th><th>Critère de fait</th><th>Échéance</th></tr></thead>
+        <thead><tr><th>Action</th><th>Ce qui change</th><th>Problème</th><th data-col="nature">Nature</th><th>Propriétaire</th><th>Critère de fait</th><th>Échéance</th></tr></thead>
         <tbody>
-          <tr id="S2-A1"><td>S2-A1</td><td>Chaque brief de ticket cite les scénarios <code>US-xxx/Sn</code> qu'il sert et les jeux de données d'exemple de la story qui les illustrent.</td><td><a href="#S2-P1">S2-P1</a></td><td>changement durable</td><td>PO, qui écrit les briefs ; SM à la DoR</td><td>au planning du sprint 3, le SM trouve dans chaque brief ses scénarios et ses jeux <code>US-xxx/Dn</code> ; un brief sans eux ne part pas</td><td>planning du sprint 3</td></tr>
-          <tr id="S2-A2"><td>S2-A2</td><td>Un seul formatage des dates et heures côté front, nommé dans l'<a href="../30-conception/detaillee/transverse/organisation-du-code.html">organisation du code</a> ; la correction de <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a> le crée et <a href="../20-ux/spec-ux-ui.html#EC-04">EC-04</a> et <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a> l'utilisent.</td><td><a href="#S2-P2">S2-P2</a></td><td>changement durable</td><td>Architecte (organisation du code), dev-frontend (correction)</td><td>la page le nomme ; <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> au vert à la campagne du sprint 3 ; la passe d'intégration du sprint 3 n'a plus ce constat</td><td>sprint 3</td></tr>
-          <tr id="S2-A3"><td>S2-A3</td><td>Le point ouvert d'une opération figée dont l'hypothèse implique un refus nomme la réponse : statut et code. <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> corrigé en premier.</td><td><a href="#S2-P3">S2-P3</a></td><td>changement durable</td><td>Architecte</td><td>le point ouvert de <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> cite 400 <a href="../30-conception/detaillee/transverse/erreurs.html#VALIDATION">VALIDATION</a>, en version corrective du contrat avec son entrée au journal des changements ; <code>detaillee-pages.mjs --check</code> sans erreur</td><td>planning du sprint 3</td></tr>
-          <tr id="S2-A4"><td>S2-A4</td><td>Un test de contrat valide chaque réponse du backend contre le schéma de son opération dans <code>openapi.yaml</code>, lancé avec les tests du ticket ; la page <a href="../30-conception/detaillee/transverse/tests.html">tests</a> de la conception détaillée le nomme.</td><td><a href="#S2-P4">S2-P4</a></td><td>changement durable</td><td>Architecte (page tests), dev-backend (test)</td><td>la page le nomme ; remettre <code>occurrences</code> à la place de <code>reservations</code> dans la réponse 201 de <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> fait échouer le test de contrat</td><td>sprint 3</td></tr>
-          <tr id="S2-A5"><td>S2-A5</td><td>Placer chaque ticket <code>e2e</code> en vague 1.</td><td><a href="#S2-P1">S2-P1</a></td><td>essai d'un sprint</td><td>SM</td><td>la vague 1 du plan du sprint 3 contient tous ses tickets <code>e2e</code> ; la rétro du sprint 3 dit s'ils ont joué leurs scénarios avant la revue des tickets qu'ils couvrent</td><td>rétro du sprint 3</td></tr>
+          <tr id="S2-A1"><td>S2-A1</td><td>Chaque brief de ticket cite les scénarios <code>US-xxx/Sn</code> qu'il sert et les jeux de données d'exemple de la story qui les illustrent.</td><td><a href="#S2-P1">S2-P1</a></td><td data-value="durable">changement durable</td><td>PO, qui écrit les briefs ; SM à la DoR</td><td>au planning du sprint 3, le SM trouve dans chaque brief ses scénarios et ses jeux <code>US-xxx/Dn</code> ; un brief sans eux ne part pas</td><td>planning du sprint 3</td></tr>
+          <tr id="S2-A2"><td>S2-A2</td><td>Un seul formatage des dates et heures côté front, nommé dans l'<a href="../30-conception/detaillee/transverse/organisation-du-code.html">organisation du code</a> ; la correction de <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a> le crée et <a href="../20-ux/spec-ux-ui.html#EC-04">EC-04</a> et <a href="../20-ux/spec-ux-ui.html#EC-05">EC-05</a> l'utilisent.</td><td><a href="#S2-P2">S2-P2</a></td><td data-value="durable">changement durable</td><td>Architecte (organisation du code), dev-frontend (correction)</td><td>la page le nomme ; <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> au vert à la campagne du sprint 3 ; la passe d'intégration du sprint 3 n'a plus ce constat</td><td>sprint 3</td></tr>
+          <tr id="S2-A3"><td>S2-A3</td><td>Le point ouvert d'une opération figée dont l'hypothèse implique un refus nomme la réponse : statut et code. <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> corrigé en premier.</td><td><a href="#S2-P3">S2-P3</a></td><td data-value="durable">changement durable</td><td>Architecte</td><td>le point ouvert de <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> cite 400 <a href="../30-conception/detaillee/transverse/erreurs.html#VALIDATION">VALIDATION</a>, en version corrective du contrat avec son entrée au journal des changements ; <code>detaillee-pages.mjs --check</code> sans erreur</td><td>planning du sprint 3</td></tr>
+          <tr id="S2-A4"><td>S2-A4</td><td>Un test de contrat valide chaque réponse du backend contre le schéma de son opération dans <code>openapi.yaml</code>, lancé avec les tests du ticket ; la page <a href="../30-conception/detaillee/transverse/tests.html">tests</a> de la conception détaillée le nomme.</td><td><a href="#S2-P4">S2-P4</a></td><td data-value="durable">changement durable</td><td>Architecte (page tests), dev-backend (test)</td><td>la page le nomme ; remettre <code>occurrences</code> à la place de <code>reservations</code> dans la réponse 201 de <a href="../30-conception/detaillee/endpoints/EP-10.html">EP-10</a> fait échouer le test de contrat</td><td>sprint 3</td></tr>
+          <tr id="S2-A5"><td>S2-A5</td><td>Placer chaque ticket <code>e2e</code> en vague 1.</td><td><a href="#S2-P1">S2-P1</a></td><td data-value="essai">essai d'un sprint</td><td>SM</td><td>la vague 1 du plan du sprint 3 contient tous ses tickets <code>e2e</code> ; la rétro du sprint 3 dit s'ils ont joué leurs scénarios avant la revue des tickets qu'ils couvrent</td><td>rétro du sprint 3</td></tr>
         </tbody>
       </table>
       <h3 id="evolutions-proposees">Évolutions proposées pour le plugin</h3>
       <table>
-        <thead><tr><th>Évolution</th><th>Fichier</th><th>Avant</th><th>Après</th><th>Action liée</th><th>Décision</th></tr></thead>
+        <thead><tr><th>Évolution</th><th data-col="file">Fichier</th><th>Avant</th><th>Après</th><th>Action liée</th><th data-col="decision">Décision</th></tr></thead>
         <tbody>
-          <tr id="S2-E1"><td>S2-E1</td><td><code>PROCESS.md</code>, section 7, DoR d'un ticket, deuxième puce</td><td>« le brief décrit le comportement, les signatures et les critères, sans chemins de code ; »</td><td>« le brief décrit le comportement, les signatures et les critères, sans chemins de code ; il cite les scénarios <code>US-xxx/Sn</code> qu'il sert et les jeux de données d'exemple de la story qui les illustrent ; »</td><td><a href="#S2-A1">S2-A1</a></td><td><span class="tag">à soumettre</span></td></tr>
+          <tr id="S2-E1"><td>S2-E1</td><td><code>PROCESS.md</code>, section 7, DoR d'un ticket, deuxième puce</td><td>« le brief décrit le comportement, les signatures et les critères, sans chemins de code ; »</td><td>« le brief décrit le comportement, les signatures et les critères, sans chemins de code ; il cite les scénarios <code>US-xxx/Sn</code> qu'il sert et les jeux de données d'exemple de la story qui les illustrent ; »</td><td><a href="#S2-A1">S2-A1</a></td><td data-value="a-soumettre"><span class="tag">à soumettre</span></td></tr>
         </tbody>
       </table>
     </section>

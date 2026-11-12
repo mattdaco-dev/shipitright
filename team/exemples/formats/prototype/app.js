@@ -9,6 +9,7 @@ const PROTO = {
   app: 'Réservation de salles',
   version: 'v1',
   date: '2026-10-05',
+  lang: 'fr', // project language (.team/projet.json, "langue"): the proto bar labels, and <html lang> in index.html
   prefix: 'resasalles.', // every localStorage key starts with it, so "Réinitialiser le proto" clears them all
 };
 
@@ -975,6 +976,8 @@ ProtoBar.mount({
   title: PROTO.title,
   version: PROTO.version,
   date: PROTO.date,
+  lang: PROTO.lang,
+  dateFormat: 'dd.mm.yyyy',
   storagePrefix: PROTO.prefix,
   onState: (v) => { S.state = v; if (v === 'ok' && S.banner && S.banner.retry) S.banner = null; render(); },
   controls: [

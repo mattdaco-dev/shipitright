@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="verdict" content="accepte-avec-reserves">   <!-- accepte | accepte-avec-reserves | refuse -->
+  <meta name="statut" content="signe">                    <!-- prepare | signe | refuse -->
+  <meta name="date_recette" content="2026-11-12">
   <title>PV de recette sprint 2 · Réservation de salles</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -98,7 +100,7 @@
       <div class="callout hypothese"><b>Hypothèse</b>Dans cet exemple, seule <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> est rédigée, avec ses jeux <a href="../20-specs/stories/US-006-reserver-une-serie.html#D1">US-006/D1</a> à <a href="../20-specs/stories/US-006-reserver-une-serie.html#D3">US-006/D3</a> ; les étapes de <a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> et <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> suivent les scénarios de la <a href="../40-qa/strategie.html#matrice-de-couverture">matrice</a>. Les stories non rédigées, le board et le journal sont des cibles pas encore produites.</div>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="results">
       <h2>Résultats</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -109,16 +111,16 @@
         </dl>
       </div>
       <table>
-        <thead><tr><th>Story</th><th>Étapes</th><th>Résultat</th><th>Commentaire de l'humain</th></tr></thead>
+        <thead><tr><th>Story</th><th>Étapes</th><th data-col="result">Résultat</th><th>Commentaire de l'humain</th></tr></thead>
         <tbody>
-          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</td><td>1, 2</td><td><span class="tag ok">acceptée</span></td><td></td></tr>
-          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</td><td>3 à 7</td><td><span class="tag warn">acceptée avec réserves</span></td><td>« La série fait ce que j'attendais. La date en format anglais dans la liste des conflits, c'est à corriger. »</td></tr>
-          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</td><td>8</td><td><span class="tag ok">acceptée</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</td><td>1, 2</td><td data-value="accepte"><span class="tag ok">acceptée</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</td><td>3 à 7</td><td data-value="accepte-avec-reserves"><span class="tag warn">acceptée avec réserves</span></td><td>« La série fait ce que j'attendais. La date en format anglais dans la liste des conflits, c'est à corriger. »</td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</td><td>8</td><td data-value="accepte"><span class="tag ok">acceptée</span></td><td></td></tr>
         </tbody>
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="reserves">
       <h2>Réserves</h2>
       <div class="info-body" hidden>
         <dl class="defs">

@@ -5,8 +5,9 @@
  *
  * Text of the page: <span data-plan="mvp:p50|p85"> shows that date of the release, default mode, current settings.
  *
- * Config:
- *   start                   ISO date, the wished start; the remaining work never starts before today
+ * Config (its keys and codes stay as they are; its texts, label, note, hint, team, are content written in the
+ * project language; the fixed labels of the planner come from the plan namespace, see doc.js and i18n.js):
+ *   start                  ISO date, the wished start; the remaining work never starts before today
  *   today                   optional ISO date, only to freeze a snapshot (an example); the real date otherwise
  *   holidays                ISO dates that are not worked
  *   modes                   [{ id: "ia"|"assiste"|"humain", label, note, default }]
@@ -49,7 +50,121 @@
 (() => {
   const D = window.Doc;
   if (!D) return;
-  const { $, $$, EST, drawGantt, watch, dmy, lastDay, nextDay, day0, isWe, days, tms } = D;
+  const { $, $$, EST, drawGantt, watch, dmy, dm, lastDay, nextDay, day0, isWe, days, tms, t, esc } = D;
+  const I = D.i18n;
+  // French labels for a project older than 0.4.0, without i18n.js: keep equal to team/i18n/fr/plan.json
+  I.addFallback({
+    "plan.story.validation": "{label} : validation métier",
+    "plan.group.other": "Autres",
+    "plan.mode.humain": "Sans assistance IA",
+    "plan.mode.assiste": "Avec assistance IA",
+    "plan.mode.ia": "IA en autonomie",
+    "plan.modeTag.humain": "sans IA",
+    "plan.modeTag.assiste": "avec IA",
+    "plan.modeTag.ia": "en IA autonome",
+    "plan.h.planning": "Planning",
+    "plan.h.load": "Charge des équipes",
+    "plan.h.loadHint": "Part de la capacité de chaque profil occupée, par semaine. Un profil à 100 % sur la durée est le goulot ; un profil vide attend du travail.",
+    "plan.h.people": "Planning par personne",
+    "plan.h.compare": "Comparaison des modes",
+    "plan.rename.aria": "Nom",
+    "plan.rename.title": "Renommer",
+    "plan.less": "Moins",
+    "plan.more": "Plus",
+    "plan.skill.front": "front",
+    "plan.skill.back": "back",
+    "plan.skill.qa": "campagne de test",
+    "plan.skill.agent": "développement, tests, campagne QA",
+    "plan.skill.validation": "validation métier",
+    "plan.skill.gate": "gates",
+    "plan.skill.recette": "recette",
+    "plan.skill.uxreview": "review UX/UI",
+    "plan.skill.ident": "SSO",
+    "plan.skill.exploit": "exploitation",
+    "plan.team.title": "Composition de l'équipe",
+    "plan.team.hint": "En équivalents temps plein : 1,5 = une personne à plein temps et une à mi-temps. Les colonnes de droite donnent l'effet d'un temps plein de plus ou de moins sur la date de la dernière release, dans chaque mode.",
+    "plan.team.profile": "Profil",
+    "plan.team.fte": "Temps plein",
+    "plan.team.plusOne": "Un de plus",
+    "plan.team.minusOne": "Un de moins",
+    "plan.team.fixed": "fixe",
+    "plan.settings.title": "Paramètres",
+    "plan.settings.hint": "Dates, autres équipes et règles de calcul. Chaque changement recalcule le planning tout de suite.",
+    "plan.dates.title": "Dates",
+    "plan.dates.hint": "Le travail restant commence au démarrage souhaité, jamais avant aujourd'hui. Une MEP souhaitée vient du cadrage ou de l'humain ; vide, pas d'échéance.",
+    "plan.dates.start": "Démarrage souhaité",
+    "plan.dates.due": "MEP souhaitée {release}",
+    "plan.dates.dueHint": "vide : aucune échéance",
+    "plan.ext.title": "Autres équipes",
+    "plan.ext.hint": "Les livraisons attendues d'équipes hors projet, à la date qu'elles s'engagent à tenir. Le planning attend chaque livraison avant de lancer ce qui en dépend. La durée de leur tâche ne sert qu'à dessiner leur barre.",
+    "plan.ext.deliver": "Livre le",
+    "plan.ext.duration": "Durée",
+    "plan.ext.durationUnit": "j",
+    "plan.agents.title": "Team d'agents",
+    "plan.agents.hint": "Pour le mode IA en autonomie : combien d'agents travaillent en parallèle. Le PO et l'aide à la recette viennent de la section Composition de l'équipe.",
+    "plan.agents.hours": "{n} h de travail par jour chacun",
+    "plan.rules.title": "Règles de calcul",
+    "plan.rules.hint": "Comment le planning traduit l'équipe et les estimations en dates. Les mêmes pour les trois modes.",
+    "plan.rules.loss": "Temps perdu en coordination, par collègue",
+    "plan.rules.lossHint": "Chaque développeur perd ce pourcentage de son temps pour chaque collègue (échanges, synchronisation). Au-delà d'une certaine taille, ajouter quelqu'un ralentit l'équipe.",
+    "plan.rules.maxPer": "Personnes au plus sur une même story",
+    "plan.rules.maxPerHint": "Une story ne se partage pas entre plus de personnes que ça : au-delà, elle ne finit pas plus vite.",
+    "plan.rules.opt": "Au mieux",
+    "plan.rules.pess": "Au pire",
+    "plan.rules.range": "Marge d'erreur des estimations",
+    "plan.rules.rangeHint": "Une estimation n'est jamais exacte : une story peut prendre moins (au mieux) ou plus (au pire) que prévu, en % de son estimation. Dans chaque simulation, la moitié de l'écart est commune à toutes les stories : les estimations se trompent souvent dans le même sens.",
+    "plan.rules.runs": "Nombre de simulations",
+    "plan.rules.runsHint": "Le planning est rejoué autant de fois, avec à chaque fois des durées tirées au hasard dans la marge d'erreur. On en déduit la date probable et la date prudente. Plus il y en a, plus elles sont stables et plus le calcul est long.",
+    "plan.rules.calib": "Correction tirée des sprints réels",
+    "plan.rules.calibMeasured": {"one":"Mesurée sur {n} sprint : temps réel divisé par temps estimé. Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage.","other":"Mesurée sur {n} sprints : temps réel divisé par temps estimé. Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage."},
+    "plan.rules.calibNone": "Aucun sprint mesuré pour l'instant : 1, pas de correction. Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage.",
+    "plan.fold.start": "Démarrage {date}",
+    "plan.fold.due": "MEP {release} {date}",
+    "plan.sum.team": "La date est tenue par la disponibilité de {profile}.",
+    "plan.sum.today": "La date est tenue par la date du jour : le travail restant ne commence pas avant aujourd'hui.",
+    "plan.sum.start": "La date est tenue par le démarrage souhaité.",
+    "plan.sum.ext": "La date est tenue par une livraison externe : {item}.",
+    "plan.sum.extTeam": "La date est tenue par une livraison externe : {item} ({team}).",
+    "plan.sum.bottleneck": "Goulot sur le chemin critique : {profile}.",
+    "plan.sum.missing": "Compétence absente : {skills} ; le travail qui la demande reste bloqué.",
+    "plan.note.done": "fait",
+    "plan.note.stuck": "bloqué : compétence absente",
+    "plan.note.deliveredBy": "livré par {team}",
+    "plan.note.delivered": "livré par l'équipe",
+    "plan.delta.stuck": "reste bloqué",
+    "plan.delta.unblocks": "débloque",
+    "plan.delta.blocks": "bloque la livraison",
+    "plan.delta.none": "aucun effet",
+    "plan.warn.title": "Profils en trop",
+    "plan.warn.gain": "{d} {mode}",
+    "plan.warn.slow": "{profile} : un temps plein de moins avancerait la dernière release ({list}).",
+    "plan.warn.slowDev": "Le temps perdu en coordination dépasse ce qu'il apporte.",
+    "plan.warn.idle": "{profile} : le dernier temps plein ne fait rien gagner ({list}) ; un temps plein de moins donne la même date.",
+    "plan.ex.loss": "Avec {n} développeurs (temps plein) dans ce mode, chacun travaille à {share} de son temps.",
+    "plan.ex.lossIa": "Ne s'applique pas aux agents.",
+    "plan.ex.lossOne": "Avec un seul développeur, rien n'est perdu.",
+    "plan.ex.range": "Exemple : une story estimée à {ref} prend entre {lo} et {hi}.",
+    "plan.ex.calib": "Exemple : {factor} veut dire que les stories ont pris {more} de plus que prévu.",
+    "plan.cmp.mode": "Mode",
+    "plan.cmp.team": "Équipe",
+    "plan.cmp.p50": "probable",
+    "plan.cmp.p85": "prudente",
+    "plan.cmp.ref": "{d} de réalisation (référence)",
+    "plan.cmp.same": "même durée que {mode}",
+    "plan.cmp.diff": "{d} par rapport à {mode}",
+    "plan.cmp.blocked": "bloqué",
+    "plan.cmp.computing": "calcul…",
+    "plan.cmp.tip": "Chances de tenir la MEP souhaitée : sur {runs} simulations, {share} livrent la release {release} au plus tard le {date}.",
+    "plan.cmp.mep": "MEP {date} : {share}",
+    "plan.calib.sprint": "Sprint",
+    "plan.calib.estimated": "Estimé",
+    "plan.calib.actual": "Réel",
+    "plan.calib.ratio": "Réel / estimé",
+    "plan.calib.factor": "Facteur mesuré",
+    "plan.calib.none": "Aucun sprint mesuré pour l'instant : facteur 1, les estimations ne sont pas corrigées.",
+  });
+  const n2 = (v) => I.num(v); // 1,5 in fr, 1.5 in en
+  const pct = (v, digits = 0) => I.num(v, { style: 'percent', maximumFractionDigits: digits });
   const STEP = 0.5;
   const MAXSTEPS = 4000;
 
@@ -104,7 +219,7 @@
       if (own.length) {
         own.forEach((t, k) => items.push({ ...base, ...t, type: 'work', prio: base.prio + k / 100, after: [...base.after, ...(t.after || [])] }));
         // the story keeps its id and its business validation, after all its tickets: what waits for it still does
-        items.push({ ...base, id, label: `${label} : validation métier`, type: 'work', story: id, kind: 'human', prio: base.prio + 0.5,
+        items.push({ ...base, id, label: t('plan.story.validation', { label }), type: 'work', story: id, kind: 'human', prio: base.prio + 0.5,
           after: [...base.after, ...own.map((t) => t.id)], phases: [[['validation', r.v.hu]]] });
         return;
       }
@@ -379,23 +494,22 @@
     // the human team is shared by the modes without autonomous agents; agents are set with the other settings
     const humanModes = modes.filter((m) => m.id !== 'ia');
     // the effect of one more or one less full-time is shown for every mode (the helpers count in IA too)
-    const effName = { humain: 'Sans assistance IA', assiste: 'Avec assistance IA', ia: 'IA en autonomie' };
-    const effTag = { humain: 'sans IA', assiste: 'avec IA', ia: 'en IA autonome' };
+    const effName = (m) => (I.has('plan.mode.' + m.id) ? t('plan.mode.' + m.id) : m.label);
+    const effTag = (m) => (I.has('plan.modeTag.' + m.id) ? t('plan.modeTag.' + m.id) : m.label);
     const humanTeam = () => cfg.profiles.filter((p) => !p.external && !p.fixed && humanModes.some((m) => !p.modes || p.modes.includes(m.id)));
     const agentTeam = () => cfg.profiles.filter((p) => !p.external && !p.fixed && !humanTeam().includes(p));
     const legend = box.parentElement.querySelector(':scope > .legend');
     const g = el('div', 'gantt');
     const load = el('div', 'table-wrap'), ppl = el('div', 'gantt'), cmp = el('div', 'table-wrap');
     box.replaceChildren(tabs, sum, settings,
-      el('h3', '', 'Planning'), ...(legend ? [legend] : []), g,
-      el('h3', '', 'Charge des équipes'), el('p', 'hint', 'Part de la capacité de chaque profil occupée, par semaine. Un profil à 100 % sur la durée est le goulot ; un profil vide attend du travail.'), load,
-      el('h3', '', 'Planning par personne'), ppl,
-      el('h3', '', 'Comparaison des modes'), cmp);
+      el('h3', '', esc(t('plan.h.planning'))), ...(legend ? [legend] : []), g,
+      el('h3', '', esc(t('plan.h.load'))), el('p', 'hint', esc(t('plan.h.loadHint'))), load,
+      el('h3', '', esc(t('plan.h.people'))), ppl,
+      el('h3', '', esc(t('plan.h.compare'))), cmp);
     // rename a person in the per-person Gantt: click the name, type, Enter (empty gives back the default name)
-    const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
     const rename = (span) => {
       const id = span.dataset.unit, input = el('input', 'g-rename-input');
-      input.value = (set.names || {})[id] || span.textContent; input.setAttribute('aria-label', 'Nom');
+      input.value = (set.names || {})[id] || span.textContent; input.setAttribute('aria-label', t('plan.rename.aria'));
       span.replaceWith(input); input.focus(); input.select();
       let done = false;
       const finish = (keep) => {
@@ -459,7 +573,7 @@
       const wrap = el('span', 'cap-stepper');
       const minus = el('button', '', '−'), plus = el('button', '', '+');
       minus.type = plus.type = 'button';
-      minus.setAttribute('aria-label', 'Moins'); plus.setAttribute('aria-label', 'Plus');
+      minus.setAttribute('aria-label', t('plan.less')); plus.setAttribute('aria-label', t('plan.more'));
       const i = el('input'); i.type = 'number'; i.min = '0'; i.step = String(step); i.value = value(k); i.dataset.key = k;
       const put = (v) => { v = Math.max(0, Math.round(v / step) * step); i.value = v; assign(k, v); };
       minus.addEventListener('click', () => put(parseFloat(i.value || 0) - step));
@@ -485,16 +599,17 @@
       if (hint) s.appendChild(el('p', 'cap-ghint', hint));
       return s;
     };
-    const skillNames = { front: 'front', back: 'back', qa: 'campagne de test', agent: 'développement, tests, campagne QA', validation: 'validation métier', gate: 'gates', recette: 'recette', uxreview: 'review UX/UI', ident: 'SSO', exploit: 'exploitation' };
+    // a skill code in words (plan.skill.<code>), the code itself when the dictionary has none
+    const skillName = (k) => (I.has('plan.skill.' + k) ? t('plan.skill.' + k) : k);
 
     const buildConfig = () => {
       const mode = set.mode, m = modes.find((x) => x.id === mode);
       // human team, with the effect of one more or one less full-time in each mode
       crew.innerHTML = '';
-      if (!host) crew.appendChild(el('div', 'cap-head', '<div class="cap-title"><b>Composition de l\'équipe</b><span>En équivalents temps plein : 1,5 = une personne à plein temps et une à mi-temps. Les colonnes de droite donnent l\'effet d\'un temps plein de plus ou de moins sur la date de la dernière release, dans chaque mode.</span></div>'));
-      const table = el('table', 'cap-tteam', `<thead><tr><th rowspan="2">Profil</th><th rowspan="2">Temps plein</th>${modes.map((x) => `<th colspan="2" class="cap-relh">${effName[x.id] || x.label}</th>`).join('')}</tr><tr>${modes.map(() => '<th class="num cap-relc">Un de plus</th><th class="num">Un de moins</th>').join('')}</tr></thead><tbody></tbody>`);
+      if (!host) crew.appendChild(el('div', 'cap-head', `<div class="cap-title"><b>${esc(t('plan.team.title'))}</b><span>${esc(t('plan.team.hint'))}</span></div>`));
+      const table = el('table', 'cap-tteam', `<thead><tr><th rowspan="2">${esc(t('plan.team.profile'))}</th><th rowspan="2">${esc(t('plan.team.fte'))}</th>${modes.map((x) => `<th colspan="2" class="cap-relh">${effName(x)}</th>`).join('')}</tr><tr>${modes.map(() => `<th class="num cap-relc">${esc(t('plan.team.plusOne'))}</th><th class="num">${esc(t('plan.team.minusOne'))}</th>`).join('')}</tr></thead><tbody></tbody>`);
       const tb = table.tBodies[0];
-      const name = (p) => `<span class="cap-pname">${p.label}</span>${p.hint ? `<small class="cap-phint">${p.hint}</small>` : ''}<span class="cap-skills">${p.skills.map((k) => `<span class="cap-skill">${skillNames[k] || k}</span>`).join('')}</span>`;
+      const name = (p) => `<span class="cap-pname">${p.label}</span>${p.hint ? `<small class="cap-phint">${p.hint}</small>` : ''}<span class="cap-skills">${p.skills.map((k) => `<span class="cap-skill">${esc(skillName(k))}</span>`).join('')}</span>`;
       // dev team, then the helpers, then the roles one per project
       const section = (list, row) => {
         list.forEach((p) => { const tr = el('tr'); tr.dataset.prof = p.id; tr.appendChild(el('th', '', name(p))); row(p, tr); tb.appendChild(tr); });
@@ -507,7 +622,7 @@
       section(humanTeam().filter((p) => p.team !== 'dev'), editable);
       section(cfg.profiles.filter((p) => p.fixed && !p.external), (p, tr) => {
         tr.classList.add('cap-fixed');
-        tr.appendChild(el('td', 'cap-fixedn', `${p.count}<small>fixe</small>`));
+        tr.appendChild(el('td', 'cap-fixedn', `${n2(p.count)}<small>${esc(t('plan.team.fixed'))}</small>`));
         tr.appendChild(el('td', 'cap-note cap-relc', p.note || '')).colSpan = modes.length * 2;
       });
       const tw = el('div', host ? 'table-wrap' : 'cap-group table-wrap'); tw.appendChild(table);
@@ -517,7 +632,7 @@
       conf.innerHTML = '';
       const head = el('div', 'cap-head');
       const closed = set.confClosed === true;
-      const toggle = el('button', 'cap-toggle', `<b>Paramètres</b><span class="cap-sub">Dates, autres équipes et règles de calcul. Chaque changement recalcule le planning tout de suite.</span>`);
+      const toggle = el('button', 'cap-toggle', `<b>${esc(t('plan.settings.title'))}</b><span class="cap-sub">${esc(t('plan.settings.hint'))}</span>`);
       toggle.type = 'button'; toggle.setAttribute('aria-expanded', String(!closed));
       toggle.addEventListener('click', () => { set.confClosed = !closed; save(); buildConfig(); render(); });
       head.append(toggle);
@@ -526,64 +641,59 @@
       const body = el('div', 'cap-body'); body.hidden = closed; conf.appendChild(body);
 
       const grid = el('div', 'cap-grid');
-      const dates = group('Dates', 'Le travail restant commence au démarrage souhaité, jamais avant aujourd\'hui. Une MEP souhaitée vient du cadrage ou de l\'humain ; vide, pas d\'échéance.');
+      const dates = group(t('plan.dates.title'), t('plan.dates.hint'));
       const df = el('div', 'cap-fields'); dates.appendChild(df);
-      df.appendChild(field('start', 'Démarrage souhaité', dateInput('start')));
-      cfg.releases.forEach((r) => df.appendChild(field('due:' + r.id, `MEP souhaitée ${r.label}`, dateInput('due:' + r.id), 'vide : aucune échéance')));
+      df.appendChild(field('start', t('plan.dates.start'), dateInput('start')));
+      cfg.releases.forEach((r) => df.appendChild(field('due:' + r.id, t('plan.dates.due', { release: r.label }), dateInput('due:' + r.id), t('plan.dates.dueHint'))));
       const col = el('div', 'cap-col'); col.appendChild(dates); grid.appendChild(col);
       const ext = cfg.items.filter((i) => i.deliver);
       if (ext.length) {
-        const eg = group('Autres équipes', 'Les livraisons attendues d\'équipes hors projet, à la date qu\'elles s\'engagent à tenir. Le planning attend chaque livraison avant de lancer ce qui en dépend. La durée de leur tâche ne sert qu\'à dessiner leur barre.');
+        const eg = group(t('plan.ext.title'), t('plan.ext.hint'));
         ext.forEach((i) => {
           const row = el('div', 'cap-ext');
           row.appendChild(el('div', 'cap-ext-name', `<b>${i.team || ''}</b><span>${i.label}</span>`));
-          row.appendChild(field('deliver:' + i.id, 'Livre le', dateInput('deliver:' + i.id)));
-          row.appendChild(field('dur:' + i.id, 'Durée', numberInput('dur:' + i.id, { step: 1, min: 0, max: 60, suffix: 'j' })));
+          row.appendChild(field('deliver:' + i.id, t('plan.ext.deliver'), dateInput('deliver:' + i.id)));
+          row.appendChild(field('dur:' + i.id, t('plan.ext.duration'), numberInput('dur:' + i.id, { step: 1, min: 0, max: 60, suffix: t('plan.ext.durationUnit') })));
           eg.appendChild(row);
         });
         col.appendChild(eg);
       }
       if (agentTeam().length) {
-        const ag = group('Team d\'agents', 'Pour le mode IA en autonomie : combien d\'agents travaillent en parallèle. Le PO et l\'aide à la recette viennent de la section Composition de l\'équipe.');
+        const ag = group(t('plan.agents.title'), t('plan.agents.hint'));
         agentTeam().forEach((p) => {
-          const f = field('count:' + p.id, p.label, stepper('count:' + p.id, 1), `${p.hoursPerDay || 8} h de travail par jour chacun`);
+          const f = field('count:' + p.id, p.label, stepper('count:' + p.id, 1), t('plan.agents.hours', { n: p.hoursPerDay || 8 }));
           ag.appendChild(f);
         });
         col.appendChild(ag);
       }
-      const rules = group('Règles de calcul', 'Comment le planning traduit l\'équipe et les estimations en dates. Les mêmes pour les trois modes.');
+      const rules = group(t('plan.rules.title'), t('plan.rules.hint'));
       const rule = (k, label, input, explain) => {
         const f = field(k, label, input);
         f.appendChild(el('small', 'cap-hint', explain));
         f.appendChild(el('small', 'cap-example')).dataset.ex = k;
         rules.appendChild(f);
       };
-      rule('loss', 'Temps perdu en coordination, par collègue', numberInput('loss', { step: 1, min: 0, max: 50, suffix: '%' }),
-        'Chaque développeur perd ce pourcentage de son temps pour chaque collègue (échanges, synchronisation). Au-delà d\'une certaine taille, ajouter quelqu\'un ralentit l\'équipe.');
-      rule('maxPer', 'Personnes au plus sur une même story', numberInput('maxPer', { step: 1, min: 1, max: 6 }),
-        'Une story ne se partage pas entre plus de personnes que ça : au-delà, elle ne finit pas plus vite.');
+      rule('loss', t('plan.rules.loss'), numberInput('loss', { step: 1, min: 0, max: 50, suffix: '%' }), t('plan.rules.lossHint'));
+      rule('maxPer', t('plan.rules.maxPer'), numberInput('maxPer', { step: 1, min: 1, max: 6 }), t('plan.rules.maxPerHint'));
       const range = el('div', 'cap-range');
-      range.append(field('opt', 'Au mieux', numberInput('opt', { step: 5, min: 10, max: 100, suffix: '%' })), field('pess', 'Au pire', numberInput('pess', { step: 5, min: 100, max: 400, suffix: '%' })));
+      range.append(field('opt', t('plan.rules.opt'), numberInput('opt', { step: 5, min: 10, max: 100, suffix: '%' })), field('pess', t('plan.rules.pess'), numberInput('pess', { step: 5, min: 100, max: 400, suffix: '%' })));
       const rf = el('div', 'cap-field cap-rangef');
-      rf.append(el('span', 'cap-label', 'Marge d\'erreur des estimations'), range,
-        el('small', 'cap-hint', 'Une estimation n\'est jamais exacte : une story peut prendre moins (au mieux) ou plus (au pire) que prévu, en % de son estimation. Dans chaque simulation, la moitié de l\'écart est commune à toutes les stories : les estimations se trompent souvent dans le même sens.'));
+      rf.append(el('span', 'cap-label', esc(t('plan.rules.range'))), range, el('small', 'cap-hint', esc(t('plan.rules.rangeHint'))));
       rf.appendChild(el('small', 'cap-example')).dataset.ex = 'range';
       rules.appendChild(rf);
-      rule('runs', 'Nombre de simulations', numberInput('runs', { step: 100, min: 50, max: 3000 }),
-        'Le planning est rejoué autant de fois, avec à chaque fois des durées tirées au hasard dans la marge d\'erreur. On en déduit la date probable et la date prudente. Plus il y en a, plus elles sont stables et plus le calcul est long.');
+      rule('runs', t('plan.rules.runs'), numberInput('runs', { step: 100, min: 50, max: 3000 }), t('plan.rules.runsHint'));
       const sp = (R.calibration && R.calibration.sprints) || [];
       const ci = numberInput('calib', { step: 0.05, min: 0.1, max: 5 });
       $('input', ci).value = set.calib || calibFactor(); $('input', ci).placeholder = String(calibFactor());
-      rule('calib', 'Correction tirée des sprints réels', ci,
-        (sp.length ? `Mesurée sur ${sp.length} sprint${sp.length > 1 ? 's' : ''} : temps réel divisé par temps estimé. ` : 'Aucun sprint mesuré pour l\'instant : 1, pas de correction. ') + 'Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage.');
+      rule('calib', t('plan.rules.calib'), ci, sp.length ? t('plan.rules.calibMeasured', { n: sp.length }) : t('plan.rules.calibNone'));
       grid.appendChild(rules);
       body.appendChild(grid);
     };
     // folded settings: their main values in the title
     const foldSummary = () => {
       if (set.confClosed) {
-        const dues = cfg.releases.filter((r) => set.due[r.id]).map((r) => `MEP ${r.label} ${dmy(tms(set.due[r.id]))}`);
-        $('.cap-sub', conf).textContent = [`Démarrage ${dmy(tms(set.start))}`, ...dues].join(' · ');
+        const dues = cfg.releases.filter((r) => set.due[r.id]).map((r) => t('plan.fold.due', { release: r.label, date: dmy(tms(set.due[r.id])) }));
+        $('.cap-sub', conf).textContent = [t('plan.fold.start', { date: dmy(tms(set.start)) }), ...dues].join(' · ');
       }
     };
 
@@ -614,12 +724,13 @@
       const last = cfg.releases[cfg.releases.length - 1];
       const ch = chain(out, last.gate);
       // summary
+      const b = (x) => `<b>${x}</b>`;
       const limit = !ch.limit ? '' : ch.limit[0] === 'team'
-        ? ` La date est tenue par la disponibilité de <b>${(cfg.profiles.find((p) => p.id === ch.limit[1]) || {}).label}</b>.`
-        : ch.limit[0] === 'start' ? (today > set.start ? ' La date est tenue par la date du jour : le travail restant ne commence pas avant aujourd\'hui.' : ' La date est tenue par le démarrage souhaité.')
-        : ch.limit[0] === 'ext' ? (() => { const i = cfg.items.find((x) => x.id === ch.limit[1]) || {}; return ` La date est tenue par une livraison externe : <b>${i.label}</b>${i.team ? ` (${i.team})` : ''}.`; })() : '';
-      const neck = ch.bottleneck ? ` Goulot sur le chemin critique : <b>${(cfg.profiles.find((p) => p.id === ch.bottleneck) || {}).label}</b>.` : '';
-      const miss = out.missing.size ? ` <span class="p-late">Compétence absente : ${[...out.missing].map((k) => skillNames[k] || k).join(', ')} ; le travail qui la demande reste bloqué.</span>` : '';
+        ? ' ' + t('plan.sum.team', { profile: b((cfg.profiles.find((p) => p.id === ch.limit[1]) || {}).label) })
+        : ch.limit[0] === 'start' ? ' ' + esc(t(today > set.start ? 'plan.sum.today' : 'plan.sum.start'))
+        : ch.limit[0] === 'ext' ? (() => { const i = cfg.items.find((x) => x.id === ch.limit[1]) || {}; return ' ' + t(i.team ? 'plan.sum.extTeam' : 'plan.sum.ext', { item: b(i.label), team: i.team }); })() : '';
+      const neck = ch.bottleneck ? ' ' + t('plan.sum.bottleneck', { profile: b((cfg.profiles.find((p) => p.id === ch.bottleneck) || {}).label) }) : '';
+      const miss = out.missing.size ? ` <span class="p-late">${esc(t('plan.sum.missing', { skills: [...out.missing].map(skillName).join(', ') }))}</span>` : '';
       sum.innerHTML = `${m.note || ''}${limit}${neck}${miss}`;
       // Monte Carlo for the displayed mode, then the others in the background, for the comparison table
       mcCache.clear();
@@ -651,8 +762,8 @@
         if (!isGate && !(r.b > r.a) && !r.done) return;
         const segsTxt = r.segs ? [...r.segs.keys()].map((k) => out.us[k].prof.label).filter((v, i, a) => a.indexOf(v) === i).join(', ') : '';
         const effort = it.phases ? it.phases.flat().reduce((t, [sk, a]) => t + a, 0) : 0;
-        const note = r.done ? 'fait' : r.stuck ? 'bloqué : compétence absente' : it.type === 'deliver' ? `livré par ${it.team || 'l\'équipe'}${value('dur:' + it.id) ? ` · ${days(value('dur:' + it.id))}` : ''}` : it.type === 'fixed' ? days(r.dur) : isGate ? '' : `${segsTxt}`;
-        groupOf(it.group || 'Autres').items.push({ gate: isGate, a: r.a, b: r.b, kind: r.done ? 'done' : it.kind, who: it.who, label: it.href ? `<a href="${it.href}">${it.label}</a>` : it.label,
+        const note = r.done ? esc(t('plan.note.done')) : r.stuck ? esc(t('plan.note.stuck')) : it.type === 'deliver' ? `${esc(it.team ? t('plan.note.deliveredBy', { team: it.team }) : t('plan.note.delivered'))}${value('dur:' + it.id) ? ` · ${days(value('dur:' + it.id))}` : ''}` : it.type === 'fixed' ? days(r.dur) : isGate ? '' : `${segsTxt}`;
+        groupOf(it.group || t('plan.group.other')).items.push({ gate: isGate, a: r.a, b: r.b, kind: r.done ? 'done' : it.kind, who: it.who, label: it.href ? `<a href="${it.href}">${it.label}</a>` : it.label,
           note, crit: ch.crit.has(it.id) && !r.done, due: dueOf(it.id), state: r.done ? 'done' : '' });
       });
       const all = groups.flatMap((x) => x.items);
@@ -673,12 +784,12 @@
           const it = out.byId.get(x.id) || {}, a = s.cal.ms(x.sw), b = s.cal.ms(x.tw, true);
           const name = String(it.label || x.id).replace(/<[^>]+>/g, '').trim();
           const title = name.startsWith(x.id) ? name : `${x.id} ${name}`;
-          return { a, b, label: x.id.replace(/^(US-\d+).*/, '$1'), kind: it.kind, tip: `${title} · ${dmy(a)} au ${lastDay(b)}` };
+          return { a, b, label: x.id.replace(/^(US-\d+).*/, '$1'), kind: it.kind, tip: `${title} · ${t('doc.gantt.range', { from: dmy(a), to: lastDay(b) })}` };
         });
         if (!segObjs.length) segObjs.push({ a: span.start, b: span.start, label: '' });
         // people of the project can be named (kept in the browser); external teams and agents keep their label
         const named = !u.prof.external && u.prof.unit !== 'h';
-        const label = named ? `<span class="g-rename" data-unit="${u.id}" tabindex="0" role="button" title="Renommer">${esc((set.names || {})[u.id] || u.label)}</span>` : u.label;
+        const label = named ? `<span class="g-rename" data-unit="${u.id}" tabindex="0" role="button" title="${esc(t('plan.rename.title'))}">${esc((set.names || {})[u.id] || u.label)}</span>` : u.label;
         grp.items.push({ a: Math.min(...segObjs.map((x) => x.a)), b: Math.max(...segObjs.map((x) => x.b)), label, segs: segObjs, note: '' });
       });
       const popen = new Set(pgroups.map((x) => x.label).filter((l) => !closedPeople.has(l)));
@@ -699,40 +810,40 @@
         });
         return cap ? used / cap : null;
       };
-      load.innerHTML = `<table class="cap-load"><thead><tr><th>Profil</th>${weeks.map((w) => `<th class="num">${dmy(w).slice(0, 5)}</th>`).join('')}</tr></thead><tbody>${profs.map((p) => `<tr><td>${p.label} <small>× ${String(cnt(p)).replace('.', ',')}</small></td>${weeks.map((w) => {
+      load.innerHTML = `<table class="cap-load"><thead><tr><th>${esc(t('plan.team.profile'))}</th>${weeks.map((w) => `<th class="num">${dm(w)}</th>`).join('')}</tr></thead><tbody>${profs.map((p) => `<tr><td>${p.label} <small>× ${n2(cnt(p))}</small></td>${weeks.map((w) => {
         const v = cell(p, w);
         if (v === null) return '<td class="num muted">·</td>';
         const r = Math.min(1, v), hue = 210 - r * 205;
-        return `<td class="num" style="background:hsl(${hue} 80% ${95 - r * 12}%);color:hsl(${hue} 70% 28%)">${Math.round(v * 100)} %</td>`;
+        return `<td class="num" style="background:hsl(${hue} 80% ${95 - r * 12}%);color:hsl(${hue} 70% 28%)">${pct(v)}</td>`;
       }).join('')}</tr>`).join('')}</tbody></table>`;
       // sensitivity of the human team, on each mode without agents
       const fmtDelta = (ms, ref) => {
-        if (ref === Infinity) return ms === Infinity ? '<span class="muted">reste bloqué</span>' : '<span class="cap-gain">débloque</span>';
-        if (ms === Infinity) return '<span class="cap-loss">bloque la livraison</span>'; const dd = D.workBetween(Math.min(ms, ref), Math.max(ms, ref)); return dd === 0 ? '<span class="muted">aucun effet</span>' : `<span class="${ms < ref ? 'cap-gain' : 'cap-loss'}">${ms < ref ? '−' : '+'}${days(dd)}</span>`; };
+        if (ref === Infinity) return ms === Infinity ? `<span class="muted">${esc(t('plan.delta.stuck'))}</span>` : `<span class="cap-gain">${esc(t('plan.delta.unblocks'))}</span>`;
+        if (ms === Infinity) return `<span class="cap-loss">${esc(t('plan.delta.blocks'))}</span>`; const dd = D.workBetween(Math.min(ms, ref), Math.max(ms, ref)); return dd === 0 ? `<span class="muted">${esc(t('plan.delta.none'))}</span>` : `<span class="${ms < ref ? 'cap-gain' : 'cap-loss'}">${ms < ref ? '−' : '+'}${days(dd)}</span>`; };
       // the table says it all; the only warnings: a profile whose last full-time slows the delivery (one less would
       // be faster) or brings nothing (one less, same date)
       const slow = new Map(), idle = new Map();
       modes.forEach((hm) => {
-        const base = hm.id === mode ? out : run(cfg, hm.id, s, null), ref = base.res.get(last.gate).stuck ? Infinity : relEnd(base, last), tag = effTag[hm.id] || hm.label;
+        const base = hm.id === mode ? out : run(cfg, hm.id, s, null), ref = base.res.get(last.gate).stuck ? Infinity : relEnd(base, last), tag = effTag(hm);
         const shift = (p, d) => { const t2 = { ...s, count: { ...s.count, [p.id]: Math.max(0, (s.count[p.id] ?? p.count) + d) } }; const o = run(cfg, hm.id, t2, null); return o.res.get(last.gate).stuck ? Infinity : relEnd(o, last); };
         humanTeam().forEach((p) => {
           const cells = $$(`tr[data-prof="${p.id}"] td[data-mode="${hm.id}"]`, crew);
           if (p.modes && !p.modes.includes(hm.id)) { cells.forEach((c) => { c.innerHTML = '<span class="muted">·</span>'; }); return; }
           const c = set.count[p.id] ?? p.count, plus = shift(p, 1), minus = c > 0 ? shift(p, -1) : null;
           const gain = ref !== Infinity && minus !== null && minus < ref ? D.workBetween(minus, ref) : 0;
-          if (gain > 0) slow.set(p, [...(slow.get(p) || []), `${days(gain)} ${tag}`]);
+          if (gain > 0) slow.set(p, [...(slow.get(p) || []), t('plan.warn.gain', { d: days(gain), mode: tag })]);
           else if (ref !== Infinity && minus !== null && minus <= ref) idle.set(p, [...(idle.get(p) || []), tag]);
           if (cells.length) { cells[0].innerHTML = fmtDelta(plus, ref); cells[1].innerHTML = minus === null ? '<span class="muted">·</span>' : fmtDelta(minus, ref); }
         });
       });
-      const warns = [...slow.entries()].map(([p, parts]) => `<b>${p.label}</b> : un temps plein de moins avancerait la dernière release (${parts.join(', ')}).${p.team === 'dev' ? ' Le temps perdu en coordination dépasse ce qu\'il apporte.' : ''}`)
-        .concat([...idle.entries()].filter(([p]) => !slow.has(p)).map(([p, tags]) => `<b>${p.label}</b> : le dernier temps plein ne fait rien gagner (${tags.join(', ')}) ; un temps plein de moins donne la même date.`));
-      $('.cap-warn', crew).innerHTML = warns.length ? `<b>Profils en trop</b><ul>${warns.map((w) => `<li>${w}</li>`).join('')}</ul>` : '';
+      const warns = [...slow.entries()].map(([p, parts]) => t('plan.warn.slow', { profile: `<b>${p.label}</b>`, list: esc(parts.join(', ')) }) + (p.team === 'dev' ? ' ' + esc(t('plan.warn.slowDev')) : ''))
+        .concat([...idle.entries()].filter(([p]) => !slow.has(p)).map(([p, tags]) => t('plan.warn.idle', { profile: `<b>${p.label}</b>`, list: esc(tags.join(', ')) })));
+      $('.cap-warn', crew).innerHTML = warns.length ? `<b>${esc(t('plan.warn.title'))}</b><ul>${warns.map((w) => `<li>${w}</li>`).join('')}</ul>` : '';
       const devs = profiles(mode).filter((p) => p.team === 'dev').reduce((t, p) => t + cnt(p), 0);
       const ex = (k, html) => { const e = $(`[data-ex="${k}"]`, conf); if (e) e.innerHTML = html; };
-      ex('loss', devs > 1 ? `Avec ${String(devs).replace('.', ',')} développeurs (temps plein) dans ce mode, chacun travaille à ${Math.round(Math.pow(1 - set.loss / 100, devs - 1) * 100)} % de son temps.` : mode === 'ia' ? 'Ne s\'applique pas aux agents.' : 'Avec un seul développeur, rien n\'est perdu.');
-      ex('range', `Exemple : une story estimée à 10 j prend entre ${String(set.opt / 10).replace('.', ',')} j et ${String(set.pess / 10).replace('.', ',')} j.`);
-      ex('calib', 'Exemple : 1,2 veut dire que les stories ont pris 20 % de plus que prévu.');
+      ex('loss', esc(devs > 1 ? t('plan.ex.loss', { n: devs, share: pct(Math.pow(1 - set.loss / 100, devs - 1)) }) : mode === 'ia' ? t('plan.ex.lossIa') : t('plan.ex.lossOne')));
+      ex('range', esc(t('plan.ex.range', { ref: days(10), lo: days(set.opt / 10), hi: days(set.pess / 10) })));
+      ex('calib', esc(t('plan.ex.calib', { factor: 1.2, more: pct(0.2) })));
       foldSummary();
       renderCmp();
     };
@@ -743,21 +854,22 @@
       // time to the last release (probable date), in working days; the default mode is the reference
       const lastP50 = (id) => { const mc = mcCache.get(id + ':' + last.id); return mc && !outs.get(id).res.get(last.gate).stuck ? Math.round(D.workBetween(tms(s.start), mc[0])) : null; };
       const refMode = modes.find((x) => x.default) || modes[0], ref = lastP50(refMode.id);
-      cmp.innerHTML = `<table class="cap-cmp"><thead><tr><th rowspan="2">Mode</th>${cfg.releases.map((r) => `<th colspan="2" class="cap-relh">${r.label}</th>`).join('')}<th rowspan="2">Équipe</th></tr><tr>${cfg.releases.map(() => '<th>probable</th><th>prudente</th>').join('')}</tr></thead><tbody>${modes.map((m) => {
+      cmp.innerHTML = `<table class="cap-cmp"><thead><tr><th rowspan="2">${esc(t('plan.cmp.mode'))}</th>${cfg.releases.map((r) => `<th colspan="2" class="cap-relh">${r.label}</th>`).join('')}<th rowspan="2">${esc(t('plan.cmp.team'))}</th></tr><tr>${cfg.releases.map(() => `<th>${esc(t('plan.cmp.p50'))}</th><th>${esc(t('plan.cmp.p85'))}</th>`).join('')}</tr></thead><tbody>${modes.map((m) => {
         const out = outs.get(m.id);
-        const team = profiles(m.id).filter((p) => !p.external && p.calc !== false && cnt(p, s.count) > 0).map((p) => `${String(cnt(p, s.count)).replace('.', ',')} ${p.label}`).join(', ');
+        const team = profiles(m.id).filter((p) => !p.external && p.calc !== false && cnt(p, s.count) > 0).map((p) => `${n2(cnt(p, s.count))} ${p.label}`).join(', ');
         const mine = lastP50(m.id);
-        const dur = mine === null ? '' : m.id === refMode.id ? `${days(mine)} de réalisation (référence)`
-          : ref === null ? '' : mine === ref ? `même durée que ${refMode.label}` : `${mine > ref ? '+' : '−'}${days(Math.abs(mine - ref))} par rapport à ${refMode.label}`;
+        const dur = mine === null ? '' : m.id === refMode.id ? t('plan.cmp.ref', { d: days(mine) })
+          : ref === null ? '' : mine === ref ? t('plan.cmp.same', { mode: refMode.label }) : t('plan.cmp.diff', { d: (mine > ref ? '+' : '−') + days(Math.abs(mine - ref)), mode: refMode.label });
         return `<tr class="${m.default ? 'recommended' : ''}"><td>${m.label}${dur ? `<small class="cap-dur">${dur}</small>` : ''}</td>${cfg.releases.map((r) => {
           const mc = mcCache.get(m.id + ':' + r.id);
-          if (out.res.get(r.gate).stuck) return '<td class="cap-relc"><span class="cap-loss">bloqué</span></td><td></td>';
-          if (!mc) return `<td class="cap-relc muted">calcul…</td><td class="muted">calcul…</td>`;
-          const pct = Math.round(mc[2] * 100);
+          if (out.res.get(r.gate).stuck) return `<td class="cap-relc"><span class="cap-loss">${esc(t('plan.cmp.blocked'))}</span></td><td></td>`;
+          if (!mc) return `<td class="cap-relc muted">${esc(t('plan.cmp.computing'))}</td><td class="muted">${esc(t('plan.cmp.computing'))}</td>`;
+          const chance = Math.round(mc[2] * 100);
           // green: the prudent date holds (85 % and more) ; orange: likely but not safe ; red: more likely missed
-          const level = pct >= 85 ? 'ok' : pct >= 50 ? 'mid' : 'bad';
-          const tip = `Chances de tenir la MEP souhaitée : sur ${set.runs} simulations, ${pct} % livrent la release ${r.label} au plus tard le ${lastDay(dueMs(r))}.`;
-          const mep = mc[2] === null ? '' : `<span class="cap-mep ${level}" data-tip="${tip}" tabindex="0">MEP ${lastDay(dueMs(r))} : <b>${pct} %</b></span>`;
+          const level = chance >= 85 ? 'ok' : chance >= 50 ? 'mid' : 'bad';
+          const share = pct(chance / 100);
+          const tip = t('plan.cmp.tip', { runs: Math.round(set.runs), share, release: r.label, date: lastDay(dueMs(r)) });
+          const mep = mc[2] === null ? '' : `<span class="cap-mep ${level}" data-tip="${esc(tip)}" tabindex="0">${t('plan.cmp.mep', { date: lastDay(dueMs(r)), share: `<b>${share}</b>` })}</span>`;
           return `<td class="cap-relc">${lastDay(mc[0])}</td><td>${lastDay(mc[1])}${mep}</td>`;
         }).join('')}<td>${team}</td></tr>`;
       }).join('')}</tbody></table>`;
@@ -766,22 +878,24 @@
         const [rid, q] = e.dataset.plan.split(':'), r = cfg.releases.find((x) => x.id === rid);
         if (!r) return;
         const mc = mcCache.get(refMode.id + ':' + r.id);
-        e.textContent = outs.get(refMode.id).res.get(r.gate).stuck ? 'bloqué' : !mc ? '…' : lastDay(mc[q === 'p85' ? 1 : 0]);
+        e.textContent = outs.get(refMode.id).res.get(r.gate).stuck ? t('plan.cmp.blocked') : !mc ? '…' : lastDay(mc[q === 'p85' ? 1 : 0]);
       });
     };
     // measured sprints (rules.calibration.sprints), shown where the page has a host (.capa-calib)
     const calHost = $$('.capa-calib')[n];
     if (calHost) {
       const sp = (R.calibration && R.calibration.sprints) || [];
-      const f = (v) => String(Math.round(v * 100) / 100).replace('.', ',');
+      const f = (v) => n2(Math.round(v * 100) / 100);
+      const sumOf = (k) => sp.reduce((acc, x) => acc + x[k], 0);
       calHost.innerHTML = sp.length
-        ? `<div class="table-wrap"><table><thead><tr><th>Sprint</th><th class="num">Estimé</th><th class="num">Réel</th><th class="num">Réel / estimé</th></tr></thead><tbody>${sp.map((x) => `<tr><td>${x.sprint}</td><td class="num">${f(x.estimated)} h</td><td class="num">${f(x.actual)} h</td><td class="num">${f(x.actual / x.estimated)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>Facteur mesuré</b></td><td></td><td></td><td class="num"><b>${f(sp.reduce((t, x) => t + x.actual, 0) / sp.reduce((t, x) => t + x.estimated, 0))}</b></td></tr></tfoot></table></div>`
-        : '<p class="note">Aucun sprint mesuré pour l\'instant : facteur 1, les estimations ne sont pas corrigées.</p>';
+        ? `<div class="table-wrap"><table><thead><tr><th>${esc(t('plan.calib.sprint'))}</th><th class="num">${esc(t('plan.calib.estimated'))}</th><th class="num">${esc(t('plan.calib.actual'))}</th><th class="num">${esc(t('plan.calib.ratio'))}</th></tr></thead><tbody>${sp.map((x) => `<tr><td>${x.sprint}</td><td class="num">${D.num(x.estimated, 'h')}</td><td class="num">${D.num(x.actual, 'h')}</td><td class="num">${f(x.actual / x.estimated)}</td></tr>`).join('')}</tbody><tfoot><tr><td><b>${esc(t('plan.calib.factor'))}</b></td><td></td><td></td><td class="num"><b>${f(sumOf('actual') / sumOf('estimated'))}</b></td></tr></tfoot></table></div>`
+        : `<p class="note">${esc(t('plan.calib.none'))}</p>`;
     }
     buildConfig(); render();
     watch(box, render);
     document.addEventListener('estimate-change', render);
   }
 
-  document.addEventListener('DOMContentLoaded', () => $$('.capa').forEach(init));
+  // after doc.js (its init is queued first) and once the labels are there
+  I.ready(() => $$('.capa').forEach(init));
 })();

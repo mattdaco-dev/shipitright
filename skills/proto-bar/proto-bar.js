@@ -1,5 +1,5 @@
 /*!
- * proto-bar 1.2.0
+ * proto-bar 1.3.0
  * Prototype control bar, identical across every HTML prototype.
  * Source of truth: skills/proto-bar/proto-bar.js in the ShipItRight plugin. Copy it, never edit the copy.
  *
@@ -7,8 +7,10 @@
  *   ProtoBar.mount({
  *     title: 'Room booking, target design',
  *     version: 'v1', date: '2026-09-29',
- *     lang: 'fr',                           // 'fr' (default) | 'en': language of the bar's fixed labels
- *     dateFormat: 'dd/mm/yyyy',             // 'dd/mm/yyyy' | 'dd.mm.yyyy' | 'yyyy-mm-dd'; default from lang
+ *     lang: 'fr',                           // BCP 47 code of the project language, 'fr' by default
+ *     labels: { mock: 'Testdaten' },        // fixed labels, given or overridden (required for a language
+ *                                           // other than fr and en, which are built in)
+ *     dateFormat: 'dd.mm.yyyy',             // 'dd/mm/yyyy' | 'dd.mm.yyyy' | 'yyyy-mm-dd'; default from Intl for lang
  *     storagePrefix: 'roombooking.',        // localStorage keys cleared by the reset button
  *     onState: (state) => {},               // 'ok' | 'loading' | 'error'
  *     onReset: () => location.reload(),     // default
@@ -28,7 +30,10 @@
  * made in the meantime are queued and replayed once the bar is mounted.
  * Calling mount() again replaces the bar and its listeners, and resets the state to 'ok' without
  * calling onState. Control values chosen in the bar are kept in the opts (def.value is updated).
- * Unknown lang or dateFormat values are ignored with a console warning, the default is used.
+ * Labels: opts.labels, then the built-in labels of lang (or of its base language, fr for fr-LU), then en.
+ * A language without built-in labels and without a complete opts.labels falls back to en for the missing
+ * labels, with a console warning. Label keys: tag, mock, settings, states, ok, loading, error, reset, region.
+ * An invalid lang or an unknown dateFormat is ignored with a console warning, the default is used.
  */
 (function () {
   'use strict';
@@ -69,12 +74,12 @@
     fr: {
       tag: 'Prototype', mock: 'données fictives', settings: 'Réglages', states: 'États',
       ok: 'Nominal', loading: 'Chargement', error: 'Erreur', reset: 'Réinitialiser le proto',
-      region: 'Commandes du prototype', dateFormat: 'dd/mm/yyyy',
+      region: 'Commandes du prototype',
     },
     en: {
       tag: 'Prototype', mock: 'mock data', settings: 'Settings', states: 'States',
       ok: 'Nominal', loading: 'Loading', error: 'Error', reset: 'Reset prototype',
-      region: 'Prototype controls', dateFormat: 'yyyy-mm-dd',
+      region: 'Prototype controls',
     },
   };
   var DATE_FORMATS = ['dd/mm/yyyy', 'dd.mm.yyyy', 'yyyy-mm-dd'];
@@ -94,12 +99,34 @@
     return n;
   }
 
-  function formatDate(d, format) {
+  // An explicit format, else the short date of the language from Intl (05/10/2026 in fr, 10/5/2026 in en)
+  function formatDate(d, format, lang) {
     var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(d || '');
     if (!m) return d;
     if (format === 'dd.mm.yyyy') return m[3] + '.' + m[2] + '.' + m[1];
     if (format === 'yyyy-mm-dd') return d;
-    return m[3] + '/' + m[2] + '/' + m[1];
+    if (format === 'dd/mm/yyyy') return m[3] + '/' + m[2] + '/' + m[1];
+    try {
+      return new Intl.DateTimeFormat(lang, { day: '2-digit', month: '2-digit', year: 'numeric', timeZone: 'UTC' })
+        .format(new Date(Date.UTC(+m[1], +m[2] - 1, +m[3])));
+    } catch (e) { return m[3] + '/' + m[2] + '/' + m[1]; }
+  }
+
+  // Fixed labels for opts.lang: opts.labels first, then the built-in labels of the language or of its base
+  // language, then en, with a warning when a language has neither built-in labels nor complete opts.labels
+  function labelsFor(opts) {
+    var lang = opts.lang || 'fr';
+    try { lang = Intl.getCanonicalLocales(lang)[0]; } catch (e) { warn('invalid lang "' + opts.lang + '", ignored (fr used)'); lang = 'fr'; }
+    var own = I18N[lang] || I18N[lang.split('-')[0]];
+    var given = opts.labels || {};
+    var t = { lang: lang };
+    var missing = [];
+    Object.keys(I18N.en).forEach(function (k) {
+      t[k] = given[k] != null ? given[k] : own ? own[k] : I18N.en[k];
+      if (!own && given[k] == null) missing.push(k);
+    });
+    if (missing.length) warn('no built-in labels for lang "' + lang + '", en used for: ' + missing.join(', ') + ' (give them in opts.labels)');
+    return t;
   }
 
   function seg(def) {
@@ -181,11 +208,10 @@
     if (teardown) teardown();
     Object.keys(controls).forEach(function (k) { delete controls[k]; });
     api.state = 'ok';
-    if (opts.lang && !I18N[opts.lang]) warn('unknown lang "' + opts.lang + '", ignored (fr used)');
-    var t = I18N[opts.lang] || I18N.fr;
+    var t = labelsFor(opts);
     var dateFormat = opts.dateFormat;
     if (dateFormat && DATE_FORMATS.indexOf(dateFormat) < 0) {
-      warn('unknown dateFormat "' + dateFormat + '", ignored (' + t.dateFormat + ' used)');
+      warn('unknown dateFormat "' + dateFormat + '", ignored (date format of "' + t.lang + '" used)');
       dateFormat = null;
     }
     var states = [['ok', t.ok], ['loading', t.loading], ['error', t.error]];
@@ -193,7 +219,7 @@
     if (!document.getElementById('proto-bar-css')) {
       document.head.appendChild(el('style', { id: 'proto-bar-css', text: CSS }));
     }
-    var meta = [t.mock, opts.version, formatDate(opts.date, dateFormat || t.dateFormat)].filter(Boolean).join(' · ');
+    var meta = [t.mock, opts.version, formatDate(opts.date, dateFormat, t.lang)].filter(Boolean).join(' · ');
     var toggle = el('button', { type: 'button', class: 'pb-btn pb-toggle', 'aria-expanded': 'false', 'aria-controls': 'pb-menu', text: t.settings });
     var box = el('div', { class: 'pb-controls' });
     var menu = el('div', { class: 'pb-menu', id: 'pb-menu' });

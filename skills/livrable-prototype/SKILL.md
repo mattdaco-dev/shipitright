@@ -55,6 +55,13 @@ socle de design system désigne : Read de chaque fichier, puis Write dans `proto
 Copier `proto-bar.js` tel quel, ne jamais le modifier ni surcharger ses classes `.pb-*`. Puis
 remplacer `NOM_PROJET` et le préfixe `nomprojet.` partout, et remplacer les écrans d'exemple (`EC-01` à `EC-03`) par ceux de la spec.
 
+**Langue** : lire la langue du projet dans `.team/projet.json` (`langue`, `fr` sans ce fichier) et la
+reporter dans `PROTO.lang` (`app.js`, passée à `ProtoBar.mount`) et dans `<html lang="…">`
+(`index.html`). Tout le texte visible du proto est rédigé dans cette langue ; les textes d'exemple du
+kit sont en français et se remplacent. Pour une langue autre que `fr` et `en`, passer aussi
+`labels` à la barre (skill `shipitright:proto-bar`). Les formats (`fmtDate`, `fmtMoney`) suivent le
+design system et la langue.
+
 Le kit fournit déjà :
 
 - le chargement de `ds/tokens.css` et `ds/proto-alias.css`, des styles sans valeur en dur, responsive ;
@@ -81,7 +88,7 @@ page demandée). L'exemple `${CLAUDE_PLUGIN_ROOT}/team/exemples/formats/prototyp
 | Élément | Niveau | Ce qu'on y attend |
 |---|---|---|
 | Design system dans `ds/` | obligatoire | les fichiers que la section « Prototype » du socle désigne (`tokens.css`, `proto-alias.css`, composants s'il y en a), copiés tels quels ; aucune valeur de couleur, police ou espacement dans `styles.css` |
-| Barre `proto-bar` | obligatoire | copiée depuis le skill `shipitright:proto-bar`, montée au démarrage avec titre, version, date et préfixe |
+| Barre `proto-bar` | obligatoire | copiée depuis le skill `shipitright:proto-bar`, montée au démarrage avec titre, version, date, langue du projet et préfixe |
 | Parcours principaux | obligatoire | tous les parcours de la release MVP de la story map, navigables de bout en bout |
 | Un écran par `EC-xx` | obligatoire | chaque écran de l'inventaire de la spec UX, avec son id dans le code et dans l'URL ; les dialogues de la spec s'ouvrent depuis leur écran, avec les mêmes actions que le wireflow |
 | Trois états | obligatoire | nominal, chargement (squelettes à la place du contenu), erreur (cause nommée et `Réessayer`) sur chaque écran qui affiche des données |

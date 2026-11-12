@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="verdict" content="">                <!-- accepte | accepte-avec-reserves | refuse ; empty until the human decides -->
+  <meta name="statut" content="prepare">          <!-- prepare | signe | refuse : the Statut field of the header, as a code -->
+  <meta name="date_recette" content="AAAA-MM-JJ"> <!-- day of the acceptance session, ISO -->
   <title>PV de recette sprint N · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -73,7 +75,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="results">
       <h2>Résultats</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -84,14 +86,14 @@
         </dl>
       </div>
       <table>
-        <thead><tr><th>Story</th><th>Étapes</th><th>Résultat</th><th>Commentaire de l'humain</th></tr></thead>
+        <thead><tr><th>Story</th><th>Étapes</th><th data-col="result">Résultat</th><th>Commentaire de l'humain</th></tr></thead>
         <tbody>
-          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td>1, 2</td><td><span class="tag warn">acceptée avec réserves</span></td><td><span class="todo">commentaire</span></td></tr>
+          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td>1, 2</td><td data-value="accepte-avec-reserves"><span class="tag warn">acceptée avec réserves</span></td><td><span class="todo">commentaire</span></td></tr>
         </tbody>
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="reserves">
       <h2>Réserves</h2>
       <div class="info-body" hidden>
         <dl class="defs">

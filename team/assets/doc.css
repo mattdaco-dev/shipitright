@@ -117,9 +117,9 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 24px 0; }
   position: absolute; top: 14px; right: 16px; font-size: 11px; font-weight: 600;
   padding: 2px 8px; border-radius: 99px; display: none;
 }
-.section[data-level="obligatoire"]::after { content: "Obligatoire"; background: var(--danger-soft); color: var(--danger); }
-.section[data-level="recommande"]::after  { content: "Recommandé";  background: var(--warn-soft);   color: var(--warn); }
-.section[data-level="facultatif"]::after  { content: "Facultatif";  background: var(--surface-2);   color: var(--ink-3); }
+.section[data-level="obligatoire"]::after { content: var(--doc-l-mandatory, "Obligatoire"); background: var(--danger-soft); color: var(--danger); }
+.section[data-level="recommande"]::after  { content: var(--doc-l-recommended, "Recommandé");  background: var(--warn-soft);   color: var(--warn); }
+.section[data-level="facultatif"]::after  { content: var(--doc-l-optional, "Facultatif");  background: var(--surface-2);   color: var(--ink-3); }
 .section.has-todo::after, body.show-levels .section[data-level]::after { display: block; }
 
 /* Placeholder left by the template: must disappear before delivery */
@@ -127,7 +127,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 24px 0; }
   border: 1.5px dashed var(--warn); background: var(--warn-soft); color: var(--warn);
   border-radius: var(--radius-sm); padding: 8px 12px; font-size: 13px; margin: 6px 0;
 }
-.todo::before { content: "À compléter : "; font-weight: 700; }
+.todo::before { content: var(--doc-l-todo, "À compléter : "); font-weight: 700; }
 span.todo { display: inline-block; padding: 1px 8px; margin: 0; }
 
 /* Banner shown by doc.js when mandatory sections are still placeholders */

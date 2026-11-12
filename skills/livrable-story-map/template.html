@@ -3,6 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Story map metadata, read by pilotage-pages.mjs (codes, never translated): statut brouillon | en-revue | valide;
+       date of the header in ISO, AAAA-MM-JJ. -->
+  <meta name="statut" content="brouillon">
+  <meta name="date" content="AAAA-MM-JJ">
   <title>Story map · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -135,13 +139,13 @@
       </table>
     </section>
 
-    <section class="section" data-level="recommande">
-      <h2>Correspondance avec les epics</h2>
+    <section class="section" data-level="recommande" data-section="epic-mapping">
+      <h2 id="correspondance-avec-les-epics">Correspondance avec les epics</h2>
       <p class="hint">Chaque activité ou grappe de tâches et son epic. Les fichiers sont dans 20-specs/epics/ et 20-specs/stories/.</p>
       <table>
         <thead><tr><th>Activité</th><th>Epic</th><th>Stories</th></tr></thead>
         <tbody>
-          <tr><td><span class="todo">activité A</span></td><td><a href="epics/EPIC-01-slug.html">EPIC-01</a> <span class="todo">nom</span></td><td>US-001 à US-003</td></tr>
+          <tr><td><span class="todo">activité A</span></td><td><a href="epics/EPIC-01-slug.html">EPIC-01</a> <span class="todo">nom</span></td><td data-value="US-001..US-003">US-001 à US-003</td></tr>
         </tbody>
       </table>
     </section>

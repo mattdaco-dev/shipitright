@@ -83,7 +83,7 @@ voisine aucune.
 | Carte | obligatoire | un parcours par persona ; backbone des activités et tâches avec leur badge MoSCoW, stories `US-xxx` cliquables sous chaque tâche, lignes de release, légende |
 | Objectifs des releases | obligatoire | pour le MVP et les releases R2 et R3 : objectif, indicateur du cadrage visé, nombre de stories |
 | Stories hors MVP | recommandé | stories qu'on pourrait croire indispensables, laissées hors MVP, avec la raison |
-| Correspondance avec les epics | recommandé | chaque activité ou grappe de tâches reliée à son `EPIC-xx` |
+| Correspondance avec les epics | recommandé | chaque activité ou grappe de tâches reliée à son `EPIC-xx` ; la cellule des stories porte leurs ids en `data-value`, plages en `US-a..US-b` séparées par des espaces (`data-value="US-002..US-006 US-010"`), lu par la page de pilotage quelle que soit la langue du texte |
 | Questions et hypothèses | recommandé | `Q-xxx` et hypothèses liées au découpage. Liste vide : l'écrire |
 
 ## Règles de qualité
@@ -110,7 +110,9 @@ voisine aucune.
 ## Livrer
 
 1. Copier le gabarit, remplacer `NOM_PROJET`, remplir chaque section, supprimer les exemples et les
-   sections facultatives sans objet.
+   sections facultatives sans objet. Tenir les métas `statut` (`brouillon`, `en-revue`, `valide`) et
+   `date` (ISO, `AAAA-MM-JJ`) alignées sur les champs Statut et Date de l'en-tête : la page de pilotage
+   lit ces codes, jamais le texte visible (`${CLAUDE_PLUGIN_ROOT}/team/conventions/langue.md`).
 2. Contrôler la correspondance entre les ids de la carte et `docs/20-specs/stories/`.
 3. Vérifier : `node ${CLAUDE_PLUGIN_ROOT}/team/scripts/check-livrable.mjs docs/20-specs/story-map.html`.
 4. Rapport : chemin du fichier, nombre d'activités, de tâches et de stories, contenu du MVP en une

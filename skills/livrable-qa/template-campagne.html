@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="verdict" content="">                <!-- favorable | favorable-avec-reserves | defavorable ; empty until the verdict -->
+  <meta name="statut" content="en-cours">         <!-- en-cours | terminee : the Statut field of the header, as a code -->
+  <meta name="date" content="AAAA-MM-JJ">         <!-- the Date field of the header, ISO -->
   <title>Campagne de test sprint N · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -77,7 +79,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="scenario-results">
       <h2>Résultats par scénario</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -91,10 +93,10 @@
       <table>
         <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
         <tbody>
-          <tr><td><span class="todo">US-xxx/S1 en lien, titre</span></td><td>e2e</td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
-          <tr><td><span class="todo">US-xxx/S2 en lien, titre</span></td><td>e2e</td><td><span class="tag danger">rouge</span></td><td><span class="tag danger">rouge</span></td><td><span class="todo">BUG-xxx en lien, ouverte, admise au verdict ou non</span></td></tr>
-          <tr><td><span class="todo">US-xxx/S3 en lien, titre</span></td><td><span class="tag warn">sans e2e</span> <span class="todo">niveau complémentaire de la matrice, test</span></td><td><span class="tag ok">vert</span></td><td>sans objet</td><td></td></tr>
-          <tr><td><span class="todo">US-xxx/S4 en lien, titre</span></td><td>e2e</td><td><span class="tag warn">bloqué</span></td><td><span class="tag warn">bloqué</span></td><td><span class="todo">cause ; critère de sortie 1 non tenu, verdict défavorable</span></td></tr>
+          <tr><td><span class="todo">US-xxx/S1 en lien, titre</span></td><td>e2e</td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><span class="todo">US-xxx/S2 en lien, titre</span></td><td>e2e</td><td data-value="rouge"><span class="tag danger">rouge</span></td><td data-value="rouge"><span class="tag danger">rouge</span></td><td><span class="todo">BUG-xxx en lien, ouverte, admise au verdict ou non</span></td></tr>
+          <tr><td><span class="todo">US-xxx/S3 en lien, titre</span></td><td><span class="tag warn">sans e2e</span> <span class="todo">niveau complémentaire de la matrice, test</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td>sans objet</td><td></td></tr>
+          <tr><td><span class="todo">US-xxx/S4 en lien, titre</span></td><td>e2e</td><td data-value="bloque"><span class="tag warn">bloqué</span></td><td data-value="bloque"><span class="tag warn">bloqué</span></td><td><span class="todo">cause ; critère de sortie 1 non tenu, verdict défavorable</span></td></tr>
         </tbody>
       </table>
     </section>
@@ -130,9 +132,9 @@
       <table>
         <thead><tr><th>Suite des sprints précédents</th><th class="num">Tests e2e</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Régression ou instabilité</th></tr></thead>
         <tbody>
-          <tr><td><span class="todo">US-xxx en lien, titre</span></td><td class="num"><span class="todo">nb</span></td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td><span class="todo">aucune, ou BUG-xxx en lien</span></td></tr>
-          <tr><td>Tests non fonctionnels des sprints précédents : <span class="todo">contrôles, en lien</span></td><td class="num"><span class="todo">nb</span></td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td><span class="todo">aucune ; limitation hors 2e passage</span></td></tr>
-          <tr><td>Tests d'anomalies fermées</td><td class="num"><span class="todo">nb</span></td><td><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><span class="todo">US-xxx en lien, titre</span></td><td class="num"><span class="todo">nb</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td><span class="todo">aucune, ou BUG-xxx en lien</span></td></tr>
+          <tr><td>Tests non fonctionnels des sprints précédents : <span class="todo">contrôles, en lien</span></td><td class="num"><span class="todo">nb</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td><span class="todo">aucune ; limitation hors 2e passage</span></td></tr>
+          <tr><td>Tests d'anomalies fermées</td><td class="num"><span class="todo">nb</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td data-value="vert"><span class="tag ok">vert</span></td><td></td></tr>
           <tr><td>Contrat d'API</td><td></td><td colspan="2"><span class="todo">version en lien ; opérations déjà testées touchées, et stories rejouées, ou rien à rejouer</span></td><td></td></tr>
         </tbody>
       </table>

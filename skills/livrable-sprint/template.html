@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Sprint metadata, read by pilotage-pages.mjs (codes, never translated): statut planifie | en-cours | clos;
+       dates of the sprint in ISO, AAAA-MM-JJ, the same as the Dates field of the header. -->
+  <meta name="statut" content="planifie">
+  <meta name="start-date" content="AAAA-MM-JJ">
+  <meta name="end-date" content="AAAA-MM-JJ">
   <title>Sprint N · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -48,8 +53,8 @@
       </div>
     </section>
 
-    <section class="section" data-level="obligatoire">
-      <h2>Stories engagées</h2>
+    <section class="section" data-level="obligatoire" data-section="committed-stories">
+      <h2 id="stories-engagees">Stories engagées</h2>
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>À quoi sert</dt><dd>Fixer le lot que le PO a choisi et prouver que chaque story peut partir.</dd>
@@ -209,17 +214,17 @@
       </table>
       <h3>Actions</h3>
       <table>
-        <thead><tr><th>Action</th><th>Ce qui change</th><th>Problème</th><th>Nature</th><th>Propriétaire</th><th>Critère de fait</th><th>Échéance</th></tr></thead>
+        <thead><tr><th>Action</th><th>Ce qui change</th><th>Problème</th><th data-col="nature">Nature</th><th>Propriétaire</th><th>Critère de fait</th><th>Échéance</th></tr></thead>
         <tbody>
-          <tr id="SN-A1"><td>SN-A1</td><td><span class="todo">le changement, sans redire le constat</span></td><td><a href="#SN-P1">SN-P1</a></td><td><span class="todo">changement durable</span></td><td><span class="todo">rôle</span></td><td><span class="todo">comment on sait que c'est fait</span></td><td><span class="todo">planning ou rétro du sprint N+1</span></td></tr>
-          <tr id="SN-A2"><td>SN-A2</td><td><span class="todo">l'essai</span></td><td><a href="#SN-P1">SN-P1</a></td><td><span class="todo">essai d'un sprint</span></td><td><span class="todo">rôle</span></td><td><span class="todo">ce que la rétro suivante constate pour le garder, le rendre durable ou l'abandonner</span></td><td><span class="todo">rétro du sprint N+1</span></td></tr>
+          <tr id="SN-A1"><td>SN-A1</td><td><span class="todo">le changement, sans redire le constat</span></td><td><a href="#SN-P1">SN-P1</a></td><td data-value="durable"><span class="todo">changement durable</span></td><td><span class="todo">rôle</span></td><td><span class="todo">comment on sait que c'est fait</span></td><td><span class="todo">planning ou rétro du sprint N+1</span></td></tr>
+          <tr id="SN-A2"><td>SN-A2</td><td><span class="todo">l'essai</span></td><td><a href="#SN-P1">SN-P1</a></td><td data-value="essai"><span class="todo">essai d'un sprint</span></td><td><span class="todo">rôle</span></td><td><span class="todo">ce que la rétro suivante constate pour le garder, le rendre durable ou l'abandonner</span></td><td><span class="todo">rétro du sprint N+1</span></td></tr>
         </tbody>
       </table>
       <h3 id="evolutions-proposees">Évolutions proposées pour le plugin</h3>
       <table>
-        <thead><tr><th>Évolution</th><th>Fichier</th><th>Avant</th><th>Après</th><th>Action liée</th><th>Décision</th></tr></thead>
+        <thead><tr><th>Évolution</th><th data-col="file">Fichier</th><th>Avant</th><th>Après</th><th>Action liée</th><th data-col="decision">Décision</th></tr></thead>
         <tbody>
-          <tr id="SN-E1"><td>SN-E1</td><td><code>PROCESS.md</code>, <span class="todo">section</span></td><td><span class="todo">texte actuel</span></td><td><span class="todo">texte proposé</span></td><td><a href="#SN-A1">SN-A1</a></td><td><span class="tag">à soumettre</span></td></tr>
+          <tr id="SN-E1"><td>SN-E1</td><td><code>PROCESS.md</code>, <span class="todo">section</span></td><td><span class="todo">texte actuel</span></td><td><span class="todo">texte proposé</span></td><td><a href="#SN-A1">SN-A1</a></td><td data-value="a-soumettre"><span class="tag">à soumettre</span></td></tr>
         </tbody>
       </table>
     </section>

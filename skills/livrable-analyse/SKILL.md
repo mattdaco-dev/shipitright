@@ -78,7 +78,8 @@ terminé peut rester en brouillon ; un chantier restitué partiel peut être val
 de la personne qui l'a fait (meta `auteur` à ce nom). L'instance du BA n'apparaît pas dans la page :
 elle reste tracée par le journal (lignes `dispatch` et `rapport`).
 
-Balises à garder dans le `<head>`, cohérentes avec les champs Auteur, Statut, Pour et Chantier de l'en-tête :
+Balises à garder dans le `<head>`, cohérentes avec les champs Auteur, Statut, Pour, Chantier et Date de
+l'en-tête ; leurs valeurs sont des codes, jamais traduits, et la date est en ISO :
 
 ```html
 <meta name="type" content="analyse">
@@ -86,7 +87,12 @@ Balises à garder dans le `<head>`, cohérentes avec les champs Auteur, Statut, 
 <meta name="statut" content="brouillon">
 <meta name="chantier" content="en-cours">
 <meta name="pour" content="P1">
+<meta name="date" content="2026-10-02">
 ```
+
+Les sections Recommandation, Impacts sur les autres livrables et Questions et hypothèses portent
+`data-section="recommendation"`, `"impacts"` et `"questions"` : l'inventaire des analyses les trouve par
+ce code, quelle que soit la langue de leur titre.
 
 ## Chantier trop flou : s'arrêter et restituer
 

@@ -51,10 +51,15 @@ signé, le sprint n'est pas fini et `sprint/N` n'est pas mergé dans `main`.
 Chaque section porte son bloc (i) `info-body` (À quoi sert, Contenu, Pourquoi ce formalisme, Lire),
 comme les autres livrables ; le gabarit les fournit, on ne les retouche pas.
 
-Statut de la page : `préparé` à la pré-recette, `signé` avec la date après G3 (ou `refusé`). Le
-verdict de l'humain se reporte aussi dans la balise `<meta name="verdict">` de l'en-tête : `accepte`,
-`accepte-avec-reserves` ou `refuse` ; vide tant que la recette n'a pas eu lieu. La page de pilotage la
-lit (Overview, tableau des gates, stories livrées) : elle dit la même chose que le callout du verdict.
+Statut de la page : `préparé` à la pré-recette, `signé` avec la date après G3 (ou `refusé`), repris en
+code dans `<meta name="statut">` : `prepare`, `signe`, `refuse`. La date de recette va aussi dans
+`<meta name="date_recette">`, en ISO (`AAAA-MM-JJ`). Le verdict de l'humain se reporte dans la balise
+`<meta name="verdict">` de l'en-tête : `accepte`, `accepte-avec-reserves` ou `refuse` ; vide tant que la
+recette n'a pas eu lieu. Dans le tableau Résultats, la cellule du résultat porte son code en
+`data-value` (`accepte`, `accepte-avec-reserves`, `refuse`), sous la colonne `data-col="result"` ; les
+sections Résultats et Réserves portent `data-section="results"` et `data-section="reserves"`. La page de
+pilotage lit ces codes, jamais le texte visible (`team/conventions/langue.md`) : elle dit la même chose
+que le callout du verdict.
 
 **Réserve levée** : une réserve `RES-xx` est levée quand l'élément qui lui est lié, l'anomalie `BUG-xxx`
 ou le ticket `T-xxx` créé pour elle, passe au statut `fait` au board. Le PV signé ne se réécrit pas ; la page de pilotage retire la réserve de son Hotspot
@@ -96,6 +101,7 @@ d'après le board.
 2. Recette : compléter résultats, réserves, anomalies acceptées, verdict et décision avec l'humain.
 3. Créer les tickets des réserves, noter les ids dans le PV, mettre à jour `.team/journal.md`.
 4. Vérifier : `node ${CLAUDE_PLUGIN_ROOT}/team/scripts/check-livrable.mjs docs/50-recette`.
-5. Statut `signé` avec la date, méta `verdict`, ligne `G3` dans le journal, page de pilotage
+5. Statut `signé` avec la date, métas `statut`, `date_recette` et `verdict`, ligne `G3` dans le journal
+   (`AAAA-MM-JJ HH:MM · G3 · <code du verdict> · texte`), page de pilotage
    régénérée. Prévenir le Scrum Master pour la review
    et la rétro.

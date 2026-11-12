@@ -162,7 +162,12 @@ verdict avant la recette.
    fichier, test rouge sur sa branche), relancer et rejouer après chaque merge de correction, puis
    remettre l'environnement à zéro et l'écrire en dernière ligne des passages. Les preuves des
    vérifications manuelles vont dans `docs/40-qa/preuves/sprint-N/`, liées depuis la campagne. Statut de la page :
-   « en cours », puis « terminée » au verdict.
+   « en cours », puis « terminée » au verdict, repris en code dans `<meta name="statut">` (`en-cours`,
+   `terminee`) ; la date de l'en-tête va aussi dans `<meta name="date">`, en ISO (`AAAA-MM-JJ`). Dans
+   « Résultats par scénario » (`data-section="scenario-results"`), chaque cellule de passage porte son
+   code en `data-value` : `vert`, `rouge`, `bloque`. La stratégie porte de même `<meta name="statut">`
+   (`brouillon`, `en-revue`, `valide`) et `<meta name="date">`. Ces codes ne se traduisent jamais
+   (`team/conventions/langue.md`).
    Au verdict, renseigner aussi la balise `<meta name="verdict">` de l'en-tête : `favorable` (sans
    réserves), `favorable-avec-reserves` ou `defavorable` ; vide tant que la campagne est en cours. La
    page de pilotage la lit (Overview, tableau des gates) : elle dit la même chose que le callout du

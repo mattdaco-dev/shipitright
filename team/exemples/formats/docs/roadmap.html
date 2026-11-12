@@ -3,6 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Roadmap metadata, read by pilotage-pages.mjs (codes, never translated): statut brouillon | en-revue | valide;
+       date and version, the same as the Date and Version fields of the header (date in ISO, AAAA-MM-JJ). -->
+  <meta name="statut" content="brouillon">
+  <meta name="date" content="2026-10-05">
+  <meta name="version" content="v0.1">
   <title>Roadmap · Réservation de salles</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -47,8 +52,8 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
-      <h2>Roadmap</h2>
+    <section class="section" data-level="obligatoire" data-section="roadmap">
+      <h2 id="roadmap">Roadmap</h2>
       <p class="hint">Une colonne par phase (P0 à P3), puis une par release, dans l'ordre de la story map ; une colonne Later s'ajoute pour les stories sans release. Une ligne Livrables avec une carte par livrable de phase (prévu, produit en attente de son gate, validé), puis les epics en lignes. Les gates sont les barres verticales entre les colonnes, avec leur verdict une fois franchis. Un item par story : identifiant en lien et titre court. Les dates sont dans le calendrier ; le découpage en sprints se fait au sprint planning.</p>
       <div class="legend">
         <span><i style="background:var(--accent-soft)"></i>Prévu</span><span><i style="background:repeating-linear-gradient(135deg,var(--ok-soft),var(--ok-soft) 3px,#fff 3px,#fff 5px);border:1px dashed var(--ok)"></i>Produit, en attente du gate</span>
@@ -59,7 +64,7 @@
       <div class="roadmap">
         <div class="rm-grid" style="--cols: 7">
 <div class="rm-head">Epic</div>
-<div class="rm-head" data-gate="G0|validé|02.10.2026" data-gate-name="Validation du cadrage">P0 Cadrage</div>
+<div class="rm-head" data-gate="G0|validated|2026-10-02" data-gate-name="Validation du cadrage">P0 Cadrage</div>
 <div class="rm-head">P1 Analyse</div>
 <div class="rm-head" data-gate="G1" data-gate-name="Validation de la conception fonctionnelle">P2 Specs, UX</div>
 <div class="rm-head" data-gate="G2" data-gate-name="Validation de la conception technique">P3 Conception</div>
@@ -116,7 +121,7 @@
     </section>
 
     <section class="section" data-level="obligatoire">
-      <h2>Estimation macro</h2>
+      <h2 id="estimation-macro">Estimation macro</h2>
       <div class="callout warn">
         <b>Source des estimations : estimation macro, pas encore celle de l'équipe</b>
         Posée en P2 par l'architecte et le SM, à partir de la taille des stories. Quand l'équipe aura estimé les stories dans l'outil du projet (Jira ou autre, selon la configuration du framework), ses estimations remplaceront celles-ci et le calendrier s'ajustera. Jusque-là, toutes les valeurs sont des hypothèses.
@@ -362,7 +367,7 @@
     </section>
 
     <section class="section" data-level="facultatif">
-      <h2>Calibrage</h2>
+      <h2 id="calibrage">Calibrage</h2>
       <p class="hint">Après chaque sprint, le SM ajoute le temps estimé et le temps réel des stories finies, en heures d'agents, dans la configuration du calendrier (<code>rules.calibration.sprints</code>). Le rapport réel sur estimé corrige toutes les estimations des stories ; il se force dans les paramètres du calendrier pour un essai.</p>
       <div class="capa-calib"></div>
     </section>

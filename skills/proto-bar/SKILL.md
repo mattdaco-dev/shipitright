@@ -1,6 +1,6 @@
 ---
 name: proto-bar
-description: Ajoute à un prototype HTML d'un projet ShipItRight la barre de commande du prototype, toujours identique (fond noir, liseré jaune, étiquette PROTOTYPE, états nominal, chargement et erreur, réinitialisation, libellés en français ou en anglais), plus les réglages propres au proto (layout, profil, variante…). À utiliser quand on crée, modifie ou met à jour un prototype HTML ou une maquette cliquable, sauf si l'utilisateur a refusé la barre pour ce proto, ou quand l'utilisateur dit "prototype", "proto HTML", "proto cliquable", "barre du proto", "proto-bar". Pas pour une page de démo qui n'est pas un prototype de produit.
+description: Ajoute à un prototype HTML d'un projet ShipItRight la barre de commande du prototype, toujours identique (fond noir, liseré jaune, étiquette PROTOTYPE, états nominal, chargement et erreur, réinitialisation, libellés dans la langue du projet), plus les réglages propres au proto (layout, profil, variante…). À utiliser quand on crée, modifie ou met à jour un prototype HTML ou une maquette cliquable, sauf si l'utilisateur a refusé la barre pour ce proto, ou quand l'utilisateur dit "prototype", "proto HTML", "proto cliquable", "barre du proto", "proto-bar". Pas pour une page de démo qui n'est pas un prototype de produit.
 allowed-tools:
   - "Bash(cp ${CLAUDE_PLUGIN_ROOT}/skills/proto-bar/proto-bar.js *)"
   - "Read(/${CLAUDE_PLUGIN_ROOT}/**)"
@@ -52,8 +52,9 @@ ProtoBar.mount({
   title: 'Réservation de salles, vision cible', // nom du proto
   version: 'v1',                          // version du proto, à incrémenter à chaque livraison
   date: '2026-09-29',                     // date de la version, au format AAAA-MM-JJ
-  lang: 'fr',                             // langue des libellés fixes : 'fr' (défaut) ou 'en'
-  dateFormat: 'dd/mm/yyyy',               // facultatif : 'dd/mm/yyyy', 'dd.mm.yyyy' ou 'yyyy-mm-dd'
+  lang: 'fr',                             // langue du projet, code BCP 47 (.team/projet.json) ; 'fr' par défaut
+  labels: { mock: 'données fictives' },   // facultatif : libellés fixes fournis ou surchargés
+  dateFormat: 'dd.mm.yyyy',               // facultatif : 'dd/mm/yyyy', 'dd.mm.yyyy' ou 'yyyy-mm-dd'
   storagePrefix: 'reservation.',          // clés localStorage vidées par la réinitialisation
   onState: (state) => render(),           // 'ok' | 'loading' | 'error'
   onReset: () => location.reload(),       // facultatif, c'est le défaut
@@ -69,12 +70,20 @@ ProtoBar.mount({
 });
 ```
 
-- `lang` bascule tous les libellés fixes de la barre (« données fictives », « Réglages »,
-  « États » et ses trois valeurs, « Réinitialiser le proto », libellé d'accessibilité). Il suit la
-  langue du proto. `dateFormat` vaut par défaut `dd/mm/yyyy` en français et `yyyy-mm-dd` en
-  anglais ; `dd.mm.yyyy` est disponible pour les projets qui l'utilisent. Une valeur inconnue de
-  `lang` ou de `dateFormat` est ignorée avec un avertissement dans la console, et la valeur par
-  défaut s'applique.
+- `lang` est la langue du projet, lue dans `.team/projet.json` (`langue`, `fr` sans ce fichier) :
+  n'importe quel code BCP 47 (`fr`, `en`, `de`, `pt-BR`). Il bascule tous les libellés fixes de la
+  barre (« données fictives », « Réglages », « États » et ses trois valeurs, « Réinitialiser le
+  proto », libellé d'accessibilité).
+- Libellés intégrés : `fr` et `en` (une variante prend ceux de sa langue de base : `fr-LU` prend
+  `fr`). `labels` fournit ou surcharge les libellés, par clé : `tag`, `mock`, `settings`, `states`,
+  `ok`, `loading`, `error`, `reset`, `region`. **Pour une autre langue, `labels` est obligatoire**,
+  traduit depuis `.team/libelles.json` ou par le PO ; sans lui, la barre prend les libellés anglais
+  et l'écrit en avertissement dans la console, avec la liste des clés manquantes.
+- `dateFormat` vaut par défaut le format court de la langue, donné par `Intl.DateTimeFormat`
+  (`05/10/2026` en `fr`, `10/05/2026` en `en`). Le fixer quand le design system impose un format
+  (`dd.mm.yyyy` pour les projets qui l'utilisent). Une valeur inconnue de `dateFormat` ou un code
+  de langue invalide est ignoré avec un avertissement dans la console, et la valeur par défaut
+  s'applique.
 - `ProtoBar.set(id, value)` resynchronise un réglage quand le proto le change lui-même, sans
   appeler son `onChange`. Si `mount()` attend encore `DOMContentLoaded` (script chargé dans le
   `<head>`), les appels à `set` sont mis en file et rejoués, dans l'ordre, dès que la barre est
@@ -102,8 +111,8 @@ de la spec UX/UI (skill `shipitright:livrable-spec-ux-ui`).
 
 ## 3. Ce qui est figé, ce qui est libre
 
-**Figé, présent dans toutes les barres, dans cet ordre** (libellés français ci-dessous, anglais
-avec `lang: 'en'`) :
+**Figé, présent dans toutes les barres, dans cet ordre** (libellés français ci-dessous, dans la
+langue de `lang` sinon) :
 
 1. l'étiquette **PROTOTYPE**, le titre, puis « données fictives · version · date » ;
 2. les **réglages propres** au proto ;

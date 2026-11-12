@@ -78,7 +78,7 @@ Qui valide :
   validation. Si la story change le périmètre ou porte une règle métier forte, le PO la remonte
   d'abord à l'humain : `valide_par` vaut alors `humain`.
 
-Les balises `valide_par` (`humain` ou `po`) et `valide_le` (`JJ.MM.AAAA`) restent vides tant que la
+Les balises `valide_par` (`humain` ou `po`) et `valide_le` (`AAAA-MM-JJ`, date ISO ; `JJ.MM.AAAA` reste lu sur un projet antérieur) restent vides tant que la
 story n'est pas validée. Elles se renseignent quand `statut` passe à `validee`, avec la ligne
 « Validée » du bandeau, et ne changent plus ensuite : une story en sprint ou faite garde qui l'a
 validée et quand.

@@ -7,10 +7,180 @@
    - links the cards of a chain diagram to the detailed design pages (window.DOC_XREF, xrefs())
    - shows on hover what an EP, EN or TR link points to (objTips(), from detaillee/xref.js)
    - sorts a table[data-sortable] on a click on a column head
-   - lazy-loads Mermaid when a .mermaid block is present */
+   - lazy-loads Mermaid when a .mermaid block is present
+   Fixed labels come from i18n.js (team/conventions/langue.md), see SirI18n below. */
+
+/* Labels of the page, in the project language: window.SIR_I18N = { lang, labels } with keys "<namespace>.<key>",
+   generated as i18n.js next to this file by team/scripts/i18n-assets.mjs. When the page does not load it, it is
+   loaded here, from the folder of this script, once (plan.js uses the same loader through Doc). Nothing starts
+   before the labels are there and the DOM is ready: SirI18n.ready(fn) queues the init functions, in order.
+   A project older than 0.4.0 has no i18n.js: its pages are in French, the French labels below are used.
+   FALLBACK must stay equal to team/i18n/fr/{common,doc,gherkin}.json (plan.js carries the plan namespace). */
+(function () {
+  'use strict';
+  if (window.SirI18n) return;
+  const FALLBACK = {
+    "common.gate.G0": "Validation du cadrage",
+    "common.gate.G1": "Validation de la conception fonctionnelle",
+    "common.gate.G2": "Validation de la conception technique",
+    "common.gate.G3": "Recette du sprint",
+    "common.decision.validated": "validé",
+    "common.decision.changes-requested": "retours demandés",
+    "common.date.short": "dd.mm.yyyy",
+    "doc.close": "Fermer",
+    "doc.info.aria": "Explication : {title}",
+    "doc.completeness.missing": {"one":"{n} section obligatoire à compléter : {list}","other":"{n} sections obligatoires à compléter : {list}"},
+    "doc.completeness.rest": {"one":"Sections obligatoires complètes. {n} élément recommandé ou facultatif reste à compléter.","other":"Sections obligatoires complètes. {n} éléments recommandés ou facultatifs restent à compléter."},
+    "doc.completeness.done": "Livrable complet.",
+    "doc.level.mandatory": "Obligatoire",
+    "doc.level.recommended": "Recommandé",
+    "doc.level.optional": "Facultatif",
+    "doc.todo": "À compléter : ",
+    "doc.chain.aria": "Chaîne de {name}",
+    "doc.mode.aria": "Tracé des flèches",
+    "doc.mode.curve": "Courbes",
+    "doc.mode.ortho": "Angles droits",
+    "doc.release.label": "Périmètre",
+    "doc.release.all": "Projet complet",
+    "doc.release.hint": "Une release montre ses cards, et en contexte les cards déjà faites (DONE) ou à adapter (TO UPDATE).",
+    "doc.release.todo": "{n} à créer",
+    "doc.release.update": "{n} à adapter",
+    "doc.release.done": {"one":"{n} déjà fait","other":"{n} déjà faits"},
+    "doc.release.none": "aucun",
+    "doc.schemas.aria": "Schémas de {id} : {list}",
+    "doc.schemas.sends": "envoie {name}",
+    "doc.schemas.receives": "reçoit {name}",
+    "doc.schemas.tip": "Schémas : {list}",
+    "doc.schemas.head": "Schémas de {id}",
+    "doc.schemas.in": "Envoyé (corps de la requête)",
+    "doc.schemas.out": "Reçu (réponse)",
+    "doc.shot.missing": "capture à prendre",
+    "doc.gate.tip": "{gate} · {decision}",
+    "doc.gate.tipDate": "{gate} · {decision} le {date}",
+    "doc.filter.aria": "Filtrer par type",
+    "doc.filter.all": "Tous",
+    "doc.filter.shown": {"one":"{n} affiché sur {total}","other":"{n} affichés sur {total}"},
+    "doc.more.button": "Afficher {n} de plus",
+    "doc.more.all": "Tout est affiché",
+    "doc.more.announce": {"one":"{n} de plus affiché","other":"{n} de plus affichés"},
+    "doc.facets.aria": "Filtrer par {label}",
+    "doc.facets.empty": "Aucun résultat pour ce filtre.",
+    "doc.unit.days": "{n} j",
+    "doc.unit.halfDay": "½ j",
+    "doc.unit.hours": "{n} h",
+    "doc.est.settings": "Régler l'échelle d'estimation",
+    "doc.est.title": "Échelle d'estimation",
+    "doc.est.human": "Humain (j)",
+    "doc.est.validation": "Validation métier (j)",
+    "doc.est.assist": "Assisté par IA, en % du temps humain",
+    "doc.est.agent": "IA en autonomie, heures d'agents par jour humain",
+    "doc.est.reset": "Réinitialiser",
+    "doc.gantt.weekOf": "Semaine du",
+    "doc.gantt.today": "Aujourd'hui",
+    "doc.gantt.late": "MEP souhaitée dépassée de {d}",
+    "doc.gantt.range": "{from} au {to}",
+    "doc.gantt.span": "{label} : {from} au {to}",
+    "doc.gantt.at": "{label} : {date}",
+    "doc.gantt.gate": "Gate {name}",
+    "gherkin.given": ["Étant donné","Etant donné","Étant donnée","Étant donnés","Étant données","Soit"],
+    "gherkin.when": ["Quand","Lorsque","Lorsqu'"],
+    "gherkin.then": ["Alors"],
+    "gherkin.and": ["Et"],
+    "gherkin.but": ["Mais"],
+    "gherkin.scenario": ["Scénario","Exemple"],
+  };
+  const self = document.currentScript;
+  let dom = document.readyState !== 'loading', loaded = !!window.SIR_I18N, file = loaded;
+  const queue = [];
+  const fail = window.reportError || ((e) => setTimeout(() => { throw e; }));
+  // each function runs on its own: one that throws does not stop the next ones
+  const flush = () => {
+    if (!dom || !loaded) return;
+    while (queue.length) { try { queue.shift()(); } catch (e) { fail(e); } }
+  };
+  if (!loaded) {
+    const s = document.createElement('script');
+    s.src = new URL('i18n.js', (self && self.src) || location.href).href;
+    s.onload = () => { file = !!window.SIR_I18N; loaded = true; flush(); };
+    s.onerror = () => { loaded = true; console.warn('[doc.js] i18n.js not found, French labels used:', s.src); flush(); };
+    document.head.appendChild(s);
+  }
+  if (!dom) document.addEventListener('DOMContentLoaded', () => { dom = true; flush(); });
+
+  const conf = () => (file && window.SIR_I18N) || { lang: 'fr', labels: {} };
+  const lang = () => conf().lang || 'fr';
+  const fr = () => lang().split('-')[0] === 'fr';
+  const warned = new Set();
+  // raw label (string, plural object or array of keyword forms); the French fallback when there is no i18n.js,
+  // or for a key missing from an older French i18n.js
+  const raw = (key) => {
+    const v = (conf().labels || {})[key];
+    if (v != null) return v;
+    if (!file || fr()) return FALLBACK[key];
+    return undefined;
+  };
+  const has = (key) => raw(key) != null;
+  let nf = null, pr = null;
+  const num = (n, opts) => (opts ? new Intl.NumberFormat(lang(), opts) : (nf = nf || new Intl.NumberFormat(lang(), { maximumFractionDigits: 2 }))).format(n);
+  // t('doc.more.button', { n: 5 }): {name} parameters, numbers formatted in the project language; a plural label
+  // is an object of CLDR forms chosen on params.n. A key missing everywhere shows as is (and is warned once).
+  const t = (key, params = {}) => {
+    let v = raw(key);
+    if (v == null) {
+      if (!warned.has(key)) { warned.add(key); console.warn('[doc.js] missing label', key); }
+      return key;
+    }
+    if (Array.isArray(v)) v = v[0];
+    else if (typeof v === 'object') {
+      pr = pr || new Intl.PluralRules(lang());
+      v = v[pr.select(Number(params.n ?? 0))] ?? v.other ?? Object.values(v)[0];
+    }
+    return String(v).replace(/\{(\w+)\}/g, (m, k) => (params[k] == null ? m : typeof params[k] === 'number' ? num(params[k]) : String(params[k])));
+  };
+  // dates in the project language: a day (ms or ISO) in short form. The pattern common.date.short (dd.mm.yyyy in
+  // fr) gives the short form when the labels have one, else Intl.DateTimeFormat (10/2/2026 in en). date(d, 'dm')
+  // is the short form without the year (02.10), other options go to Intl (month and year of the Gantt scale).
+  const dateFmt = new Map();
+  const SHORT = { day: '2-digit', month: '2-digit', year: 'numeric' };
+  const p2 = (n) => String(n).padStart(2, '0');
+  const date = (d, opts = SHORT) => {
+    if (typeof d === 'string') {
+      const m = d.match(/^(\d{4})-(\d{2})-(\d{2})/);
+      if (!m) return d;
+      d = new Date(+m[1], +m[2] - 1, +m[3]);
+    }
+    const pattern = raw('common.date.short');
+    if ((opts === SHORT || opts === 'dm') && typeof pattern === 'string' && pattern.includes('yyyy')) {
+      const p = opts === 'dm' ? pattern.replace(/[^dmy]?yyyy[^dmy]?/, '') : pattern;
+      return p.replace('yyyy', d.getFullYear()).replace('dd', p2(d.getDate())).replace('mm', p2(d.getMonth() + 1));
+    }
+    if (opts === 'dm') opts = { day: '2-digit', month: '2-digit' };
+    const k = JSON.stringify(opts);
+    if (!dateFmt.has(k)) dateFmt.set(k, new Intl.DateTimeFormat(lang(), opts));
+    return dateFmt.get(k).format(d);
+  };
+  const addFallback = (dict) => Object.keys(dict).forEach((k) => { if (!(k in FALLBACK)) FALLBACK[k] = dict[k]; });
+  window.SirI18n = { ready: (fn) => { queue.push(fn); flush(); }, t, raw, has, lang, fr, num, date, addFallback };
+})();
+
 (function () {
   'use strict';
 
+  const I = window.SirI18n, { t } = I;
+  const cap = (s) => (s ? s.charAt(0).toLocaleUpperCase(I.lang()) + s.slice(1) : s);
+  // A decision code (validated, changes-requested…) in the project language; the former French values are read
+  // too (validé), an unknown value shows as written
+  const LEGACY_DECISIONS = { 'validé': 'validated', 'validée': 'validated', 'retours demandés': 'changes-requested' };
+  const decision = (v) => {
+    const code = LEGACY_DECISIONS[v] || v;
+    return I.has('common.decision.' + code) ? t('common.decision.' + code) : v;
+  };
+  // A day written ISO (2026-10-02) or, in pages older than 0.4.0, JJ.MM.AAAA, in the project language
+  const day = (s) => {
+    const m = /^(\d{2})\.(\d{2})\.(\d{4})$/.exec(s || '');
+    return m ? I.date(`${m[3]}-${m[2]}-${m[1]}`) : s ? I.date(s) : '';
+  };
+  const esc =(s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
   // A card hidden by the release filter (or any other display: none) takes no part in a diagram
@@ -54,11 +224,11 @@
       if (!h) return;
       const btn = document.createElement('button');
       btn.type = 'button'; btn.className = 'info-btn'; btn.textContent = 'i';
-      btn.setAttribute('aria-label', 'Explication : ' + h.textContent);
+      btn.setAttribute('aria-label', t('doc.info.aria', { title: headText(h) }));
       h.appendChild(btn);
       const dlg = document.createElement('dialog');
       dlg.className = 'info-dialog';
-      dlg.innerHTML = `<div class="info-head"><b></b><button type="button" class="info-close" aria-label="Fermer">×</button></div>`;
+      dlg.innerHTML = `<div class="info-head"><b></b><button type="button" class="info-close" aria-label="${esc(t('doc.close'))}">×</button></div>`;
       $('b', dlg).textContent = headText(h);
       const content = body.cloneNode(true); content.hidden = false; dlg.appendChild(content);
       document.body.appendChild(dlg);
@@ -103,14 +273,20 @@
     const banner = document.createElement('div');
     if (missing.length) {
       banner.className = 'completeness ko';
-      banner.innerHTML = `${missing.length} section(s) obligatoire(s) à compléter : ` +
-        missing.map((s) => { const h = $('h2', s); return `<a href="#${h?.id || ''}">${h ? headText(h) : '?'}</a>`; }).join(', ');
+      // one label for the sentence, the links take the place of {list}
+      const [before, after = ''] = t('doc.completeness.missing', { n: missing.length, list: '\u0000' }).split('\u0000');
+      banner.append(before);
+      missing.forEach((s, i) => {
+        const h = $('h2', s), a = document.createElement('a');
+        a.href = '#' + (h?.id || ''); a.textContent = h ? headText(h) : '?';
+        if (i) banner.append(', ');
+        banner.append(a);
+      });
+      banner.append(after);
     } else {
       const todos = $$('.todo').length;
       banner.className = 'completeness ok';
-      banner.textContent = todos
-        ? `Sections obligatoires complètes. ${todos} élément(s) recommandé(s) ou facultatif(s) restent à compléter.`
-        : 'Livrable complet.';
+      banner.textContent = todos ? t('doc.completeness.rest', { n: todos }) : t('doc.completeness.done');
     }
     const header = $('.doc-header', host);
     header ? header.after(banner) : host.prepend(banner);
@@ -699,7 +875,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
     const trigger = document.activeElement;
     const overlay = document.createElement('div');
     overlay.className = 'focus-overlay' + (cls ? ' ' + cls : '');
-    overlay.innerHTML = '<div class="focus-panel" role="dialog" aria-modal="true"><button type="button" class="focus-close" aria-label="Fermer">×</button></div>';
+    overlay.innerHTML = '<div class="focus-panel" role="dialog" aria-modal="true"><button type="button" class="focus-close" aria-label="' + esc(t('doc.close')) + '">×</button></div>';
     const panel = overlay.firstChild;
     if (label) panel.setAttribute('aria-label', label);
     if (typeof content === 'string') panel.insertAdjacentHTML('beforeend', content); else panel.appendChild(content);
@@ -780,7 +956,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       });
     };
     const { overlay, panel } = focusOverlay((modes ? modes.outerHTML : '') + '<div class="diagram focus"></div>',
-      { onClose, onCloseStart: () => back(), keep: (e) => e.target.closest('.node') || e.target.closest('.diagram-modes'), label: 'Chaîne de ' + (start.textContent || '').trim() });
+      { onClose, onCloseStart: () => back(), keep: (e) => e.target.closest('.node') || e.target.closest('.diagram-modes'), label: t('doc.chain.aria', { name: (start.textContent || '').trim() }) });
     const view = overlay.querySelector('.diagram');
     view.appendChild(chain);
     if (diagram.dataset.mode) view.dataset.mode = diagram.dataset.mode;
@@ -957,7 +1133,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
 
   // Drawing modes of a chain diagram, chosen above it and remembered by the browser: right angles
   // (routed around the cards) or curves (Bézier, from port to port, over the cards if need be).
-  const MODES = [['curve', 'Courbes'], ['ortho', 'Angles droits']];
+  const MODES = [['curve', 'doc.mode.curve'], ['ortho', 'doc.mode.ortho']];
   function modeSwitch(list, redraw) {
     let saved = null;
     try { saved = localStorage.getItem('doc-diagram-mode'); } catch (e) { /* storage unavailable */ }
@@ -966,8 +1142,8 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       const bar = document.createElement('div');
       bar.className = 'diagram-modes';
       bar.setAttribute('role', 'group');
-      bar.setAttribute('aria-label', 'Tracé des flèches');
-      bar.innerHTML = MODES.map(([m, label]) => `<button type="button" data-mode="${m}">${label}</button>`).join('');
+      bar.setAttribute('aria-label', t('doc.mode.aria'));
+      bar.innerHTML = MODES.map(([m, key]) => `<button type="button" data-mode="${m}">${esc(t(key))}</button>`).join('');
       d.before(bar);
     });
     const sync = () => $$('.diagram-modes button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.mode === list[0].dataset.mode)));
@@ -1014,10 +1190,10 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
     const bar = document.querySelector('.release-filter');
     if (!bar) return;
     const rel = (bar.dataset.releases || '').split(/\s+/).filter(Boolean);
-    const options = [['all', 'Projet complet'], ...rel.map((r) => [r, r])];
-    bar.innerHTML = '<span class="rf-label">Périmètre</span>' +
-      options.map(([v, label]) => `<button type="button" data-release="${v}">${label}</button>`).join('') +
-      '<span class="rf-hint">Une release montre ses cards, et en contexte les cards déjà faites (DONE) ou à adapter (TO UPDATE).</span>';
+    const options = [['all', t('doc.release.all')], ...rel.map((r) => [r, r])];
+    bar.innerHTML = `<span class="rf-label">${esc(t('doc.release.label'))}</span>` +
+      options.map(([v, label]) => `<button type="button" data-release="${v}">${esc(label)}</button>`).join('') +
+      `<span class="rf-hint">${esc(t('doc.release.hint'))}</span>`;
     const cards = $$('.chain .node');
     cards.forEach((n) => { if (n.dataset.badge && !n.dataset.badgeOwn) n.dataset.badgeOwn = n.dataset.badge; });
     // Links in both directions, by card
@@ -1060,8 +1236,8 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       let sub;
       if (v === 'all') sub = [...by((n) => n.dataset.release || '').entries()].sort((a, b) => rel.indexOf(a[0]) - rel.indexOf(b[0])).map(([r, c]) => `${r} ${c}`).join(', ');
       else {
-        const m = by((n) => n.dataset.badge), parts = [['todo', 'à créer'], ['update', 'à adapter'], ['done', 'déjà fait']];
-        sub = parts.filter(([b]) => m.get(b)).map(([b, label]) => `${m.get(b)} ${label}${b === 'done' && m.get(b) > 1 ? 's' : ''}`).join(', ') || 'aucun';
+        const m = by((n) => n.dataset.badge);
+        sub = ['todo', 'update', 'done'].filter((b) => m.get(b)).map((b) => t('doc.release.' + b, { n: m.get(b) })).join(', ') || t('doc.release.none');
       }
       k.querySelector('.value').textContent = list.length;
       k.querySelector('.sub').textContent = sub;
@@ -1108,9 +1284,9 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       chip.className = 'schema-link';
       chip.href = x.base + cs[0].href;
       chip.textContent = '{ }';
-      const names = cs.map((c) => (c.dir === 'in' ? 'envoie ' : 'reçoit ') + c.name).join(', ');
-      chip.setAttribute('aria-label', `Schémas de ${n.id} : ${names}`);
-      chip.dataset.tip = `Schémas : ${cs.map((c) => (c.dir === 'in' ? '↑ ' : '↓ ') + c.name).join(', ')}`;
+      const names = cs.map((c) => t(c.dir === 'in' ? 'doc.schemas.sends' : 'doc.schemas.receives', { name: c.name })).join(', ');
+      chip.setAttribute('aria-label', t('doc.schemas.aria', { id: n.id, list: names }));
+      chip.dataset.tip = t('doc.schemas.tip', { list: cs.map((c) => (c.dir === 'in' ? '↑ ' : '↓ ') + c.name).join(', ') });
       if (cs.length > 1) chip.dataset.schemas = n.id;
       n.append(' ', chip);
     });
@@ -1133,8 +1309,9 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
         return list.length ? `<div class="xm-group">${title}</div>` + list.map((c) =>
           `<a role="menuitem" href="${x.base + c.href}"><code>${c.name}</code>${c.status ? ` <small>${c.status}</small>` : ''}</a>`).join('') : '';
       };
-      menu.innerHTML = `<div class="xm-head">Schémas de ${chip.dataset.schemas}</div>` +
-        group('in', '<span class="sc-dir" aria-hidden="true">↑</span> Envoyé (corps de la requête)') + group('out', '<span class="sc-dir" aria-hidden="true">↓</span> Reçu (réponse)');
+      menu.innerHTML = `<div class="xm-head">${esc(t('doc.schemas.head', { id: chip.dataset.schemas }))}</div>` +
+        group('in', `<span class="sc-dir" aria-hidden="true">↑</span> ${esc(t('doc.schemas.in'))}`) +
+        group('out', `<span class="sc-dir" aria-hidden="true">↓</span> ${esc(t('doc.schemas.out'))}`);
       document.body.appendChild(menu);
       const r = chip.getBoundingClientRect();
       menu.style.left = Math.max(8, Math.min(r.left, innerWidth - menu.offsetWidth - 8)) + 'px';
@@ -1184,7 +1361,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // A head with data-sort-order="MVP|R2|R3" ranks the values that start with these, in this order. Empty
   // values stay last. A head with data-sort="none" is not sortable.
   function sortables() {
-    const coll = new Intl.Collator('fr', { numeric: true, sensitivity: 'base' });
+    const coll = new Intl.Collator(I.lang(), { numeric: true, sensitivity: 'base' });
     $$('table[data-sortable]').forEach((table) => {
       const head = table.tHead && table.tHead.rows[0];
       const body = table.tBodies[0];
@@ -1313,38 +1490,52 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   }
 
   // French typography: a no-break space before ? ! ; : and inside « », so the sign never starts a line.
-  // Text nodes only, outside code, pre (Mermaid sources) and scripts.
+  // Text nodes only, outside code, pre (Mermaid sources) and scripts. French pages only.
   function typography() {
     const main = $('.doc-main'), NB = '\u00a0';
     if (!main) return;
+    // An identifier link (RG-01, EC-05, Q-003) never breaks on its hyphen
+    $$('a', main).forEach((a) => { if (/^[A-Z]+-\d+$/.test(a.textContent.trim())) a.classList.add('ref-id'); });
+    if (!window.SirI18n.fr()) return;
     const walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
       acceptNode: (n) => n.parentElement.closest('code, pre, script, style, .mermaid') ? NodeFilter.FILTER_REJECT : NodeFilter.FILTER_ACCEPT,
     });
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
     nodes.forEach((n) => {
-      const t = n.nodeValue.replace(/ ([?!;:»])/g, NB + '$1').replace(/« /g, '«' + NB);
-      if (t !== n.nodeValue) n.nodeValue = t;
+      const s = n.nodeValue.replace(/ ([?!;:»])/g, NB + '$1').replace(/« /g, '«' + NB);
+      if (s !== n.nodeValue) n.nodeValue = s;
     });
-    // An identifier link (RG-01, EC-05, Q-003) never breaks on its hyphen
-    $$('a', main).forEach((a) => { if (/^[A-Z]+-\d+$/.test(a.textContent.trim())) a.classList.add('ref-id'); });
   }
 
   // Gherkin: <pre class="gherkin"> in plain text becomes one card per scenario, anchored #S1, #S2…
   // The card header shows the full scenario identifier, US-006/S4, prefixed by <meta name="id">
   // (plain "S4" when the page has none); the anchor stays #S4. Keywords are highlighted.
+  // Keywords come from the gherkin labels of the project language (every form of each keyword is accepted).
   function gherkin() {
+    const pres = $$('pre.gherkin');
+    if (!pres.length) return;
     const idMeta = document.querySelector('meta[name="id"]');
     const prefix = idMeta && idMeta.content.trim() ? idMeta.content.trim() + '/' : '';
-    const KW = /^(Étant donné|Etant donné|Soit|Quand|Lorsque|Alors|Et|Mais)(?=[\s']|$)/;
-    $$('pre.gherkin').forEach((pre) => {
+    const forms = (k) => [].concat(window.SirI18n.raw('gherkin.' + k) || []).map((w) => String(w).trim()).filter(Boolean);
+    const reEsc = (w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    // a keyword that ends with a letter of a spaced script stops at a space or an apostrophe ("Lorsque",
+    // not "Lorsquelle"); one that ends with an apostrophe ("Lorsqu'") or is in a script without spaces does not
+    const word = (w) => reEsc(w) + (/[\p{Script=Latin}\p{Script=Cyrillic}\p{Script=Greek}\d]$/u.test(w) ? "(?=[\\s'’]|$)" : '');
+    const alt = (list) => list.sort((a, b) => b.length - a.length).map(word).join('|');
+    const steps = ['given', 'when', 'then', 'and', 'but'].flatMap(forms);
+    const joins = new Set(['and', 'but'].flatMap(forms));
+    const KW = steps.length ? new RegExp(`^(${alt(steps)})`, 'u') : null;
+    const scn = forms('scenario');
+    const SCN = new RegExp(`^(?:${scn.length ? scn.sort((a, b) => b.length - a.length).map(reEsc).join('|') : 'Scénario|Scenario'})\\s+(\\d+)\\s*:\\s*(.*)$`, 'u');
+    pres.forEach((pre) => {
       const box = document.createElement('div');
       box.className = 'gherkin';
       let card = null;
       pre.textContent.split('\n').forEach((raw) => {
         const line = raw.trim();
         if (!line) return;
-        const m = line.match(/^Scénario\s+(\d+)\s*:\s*(.*)$/);
+        const m = line.match(SCN);
         if (m) {
           card = document.createElement('div');
           card.className = 'scn'; card.id = 'S' + m[1];
@@ -1357,11 +1548,11 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
         }
         if (!card) return;
         const p = document.createElement('p');
-        const k = line.match(KW);
+        const k = KW && line.match(KW);
         if (k) {
           const kw = document.createElement('span'); kw.className = 'kw'; kw.textContent = k[1];
           p.appendChild(kw); p.appendChild(document.createTextNode(line.slice(k[1].length)));
-          if (k[1] === 'Et' || k[1] === 'Mais') p.className = 'and';
+          if (joins.has(k[1])) p.className = 'and';
         } else p.textContent = line;
         card.appendChild(p);
       });
@@ -1384,7 +1575,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // Prototype captures not taken yet (story shots, screen thumbnails): a hatched placeholder instead of a broken image
   function shots() {
     $$('.shot img, .screen-card .thumb img').forEach((img) => {
-      const miss = () => { const d = document.createElement('div'); d.className = 'missing'; d.textContent = 'capture à prendre'; img.replaceWith(d); };
+      const miss = () => { const d = document.createElement('div'); d.className = 'missing'; d.textContent = t('doc.shot.missing'); img.replaceWith(d); };
       if (img.complete && !img.naturalWidth) miss(); else img.addEventListener('error', miss);
     });
   }
@@ -1403,12 +1594,14 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
 
   // Roadmap gates: data-gate on a .rm-head draws a vertical band on the right edge of that column, over the
   // whole grid, with the gate name on top. Syntax: data-gate="<gate>[|<verdict>[|<date>]]" [data-gate-name="..."]
-  //   data-gate="G1"                     gate not crossed yet: violet band
-  //   data-gate="G1|validé"              gate crossed: green band; the verdict is said by the tooltip, not under the band
-  //   data-gate="G0|validé|02.10.2026"   crossed, with the date of the decision (tooltip)
-  //   data-gate-name="Validation du cadrage"   the gate in plain words, for the tooltip
-  // Hovering the badge or the band (a few pixels around it), or focusing the badge, shows at once a tooltip:
-  // "Validation du cadrage · Validé le 02.10.2026". Every gate is decided by the human: the decider is not written.
+  //   data-gate="G1"                        gate not crossed yet: violet band
+  //   data-gate="G1|validated"              gate crossed: green band; the decision is said by the tooltip, not under the band
+  //   data-gate="G0|validated|2026-10-02"   crossed, with the date of the decision (tooltip)
+  //   data-gate-name="..."                  optional: the gate in plain words, else the label common.gate.<gate>
+  // The decision is a code (common.decision.<code>, team/conventions/langue.md); the former French form
+  // (G0|validé|02.10.2026) is still read. Hovering the badge or the band (a few pixels around it), or focusing the
+  // badge, shows at once a tooltip: "Validation du cadrage · Validé le 02.10.2026". Every gate is decided by the
+  // human: the decider is not written.
   // When the last column has a gate, the grid gets one more 30 px track (.has-end) and the cells of the last
   // column span it (.rm-end): the band of that gate runs at the start of that track, so its badge stays
   // centred on it, inside the grid frame.
@@ -1431,8 +1624,8 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
         const box = host.getBoundingClientRect();
         $$('.rm-head[data-gate]', g).forEach((h) => {
           const [name, verdict, date] = h.dataset.gate.split('|').map((x) => x.trim());
-          const cap = (t) => t.charAt(0).toUpperCase() + t.slice(1);
-          const tip = (h.dataset.gateName || name) + (verdict ? ` · ${cap(verdict)}${date ? ' le ' + date : ''}` : '');
+          const gate = h.dataset.gateName || (I.has('common.gate.' + name) ? t('common.gate.' + name) : name);
+          const tip = !verdict ? gate : t(date ? 'doc.gate.tipDate' : 'doc.gate.tip', { gate, decision: cap(decision(verdict)), date: day(date) });
           const d = document.createElement('div');
           d.className = 'rm-gate' + (verdict ? ' done' : '');
           const end = h.classList.contains('rm-end') ? RM_END : 0;
@@ -1451,21 +1644,20 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
     });
   }
 
-  // Filter by type: <ul data-filter="<what is filtered>" [data-filter-unit="ligne"]> whose items carry
-  // data-type="<key>" [data-type-label="<label>"] (and class t-<key> for the colour). A row of toggle buttons
-  // (aria-pressed) is built before the list: "Tous", then one per type present with its count. Several types add
-  // up; none selected shows everything. The number of shown items is announced. Without JS, no buttons, all
-  // items visible. The choice is not kept between visits, so that a new type is never hidden by an old choice.
+  // Filter by type: <ul data-filter> whose items carry data-type="<key>" [data-type-label="<label>"] (and class
+  // t-<key> for the colour). A row of toggle buttons (aria-pressed) is built before the list: "All", then one per
+  // type present with its count. Several types add up; none selected shows everything. The number of shown items
+  // is announced ("3 shown out of 12"). Without JS, no buttons, all items visible. The choice is not kept between
+  // visits, so that a new type is never hidden by an old choice. The value of data-filter is not read.
   function filterLists() {
     $$('[data-filter]').forEach((list) => {
       const items = Array.from(list.children).filter((li) => li.dataset.type);
       if (!items.length) return;
-      const unit = list.dataset.filterUnit || 'élément';
       const types = [];
-      items.forEach((li) => { if (!types.some((t) => t.key === li.dataset.type)) types.push({ key: li.dataset.type, label: li.dataset.typeLabel || li.dataset.type }); });
+      items.forEach((li) => { if (!types.some((x) => x.key === li.dataset.type)) types.push({ key: li.dataset.type, label: li.dataset.typeLabel || li.dataset.type }); });
       const on = new Set();
       const bar = document.createElement('div');
-      bar.className = 'flt-bar'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', 'Filtrer les ' + list.dataset.filter);
+      bar.className = 'flt-bar'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', t('doc.filter.aria'));
       const live = document.createElement('span'); live.className = 'sr-only'; live.setAttribute('role', 'status');
       const chip = (key, label, n) => {
         const b = document.createElement('button');
@@ -1475,14 +1667,14 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
         bar.appendChild(b);
         return b;
       };
-      const all = chip('', 'Tous', items.length);
-      const chips = types.map((t) => chip(t.key, t.label, items.filter((li) => li.dataset.type === t.key).length));
+      const all = chip('', t('doc.filter.all'), items.length);
+      const chips = types.map((x) => chip(x.key, x.label, items.filter((li) => li.dataset.type === x.key).length));
       const apply = (announce) => {
         items.forEach((li) => { li.hidden = on.size > 0 && !on.has(li.dataset.type); });
         all.setAttribute('aria-pressed', String(on.size === 0));
         chips.forEach((c) => c.setAttribute('aria-pressed', String(on.has(c.dataset.key))));
         const n = items.filter((li) => !li.hidden).length;
-        if (announce) live.textContent = `${n} ${unit}${n > 1 ? 's' : ''} affichée${n > 1 ? 's' : ''}`;
+        if (announce) live.textContent = t('doc.filter.shown', { n, total: items.length });
       };
       bar.addEventListener('click', (e) => {
         const b = e.target.closest('.flt-chip');
@@ -1497,12 +1689,12 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
     });
   }
 
-  // "Show more" list: <ol data-more="5" [data-more-label="événements"]> shows its first 5 items and hides the
-  // others; a button after the list reveals 5 more at each click, moves the focus to the first revealed item and
-  // announces it; when all are shown, the button is disabled and says so. Without JS every item stays visible.
+  // "Show more" list: <ol data-more="5"> shows its first 5 items and hides the others; a button after the list
+  // reveals 5 more at each click, moves the focus to the first revealed item and announces it; when all are
+  // shown, the button is disabled and says so. Without JS every item stays visible.
   function moreLists() {
     $$('[data-more]').forEach((list, n) => {
-      const step = parseInt(list.dataset.more, 10) || 5, what = list.dataset.moreLabel || 'éléments';
+      const step = parseInt(list.dataset.more, 10) || 5;
       const items = Array.from(list.children);
       if (items.length <= step) return;
       items.forEach((li, i) => { if (i >= step) li.hidden = true; });
@@ -1514,14 +1706,14 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       live.className = 'sr-only'; live.setAttribute('role', 'status');
       const label = () => {
         const left = items.filter((li) => li.hidden).length;
-        if (!left) { btn.disabled = true; btn.textContent = `Tous les ${what} sont affichés`; return; }
-        btn.textContent = `Afficher ${Math.min(step, left)} ${what} de plus`;
+        if (!left) { btn.disabled = true; btn.textContent = t('doc.more.all'); return; }
+        btn.textContent = t('doc.more.button', { n: Math.min(step, left) });
       };
       btn.addEventListener('click', () => {
         const next = items.filter((li) => li.hidden).slice(0, step);
         next.forEach((li) => { li.hidden = false; });
         if (next[0]) { next[0].tabIndex = -1; next[0].focus(); }
-        live.textContent = `${next.length} ${what} de plus affichés`;
+        live.textContent = t('doc.more.announce', { n: next.length });
         label();
       });
       label();
@@ -1590,7 +1782,8 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // The box can hold one table per lot (conception, each release): one scale, one colour range for all.
   // The capacity planner (plan.js) reads the computed rows from Doc.EST. The viewer's settings stay in their browser.
   const EST = { boxes: [] };
-  const num = (v, unit) => `${String(Math.round(v * 100) / 100).replace('.', ',')} ${unit}`;
+  // a value with its unit: num(1.5, 'j') is "1,5 j" in fr, "1.5 d" in en (unit 'j' days, 'h' hours)
+  const num = (v, unit) => t(unit === 'h' ? 'doc.unit.hours' : 'doc.unit.days', { n: Math.round(v * 100) / 100 });
   const pairs = (s) => Object.fromEntries((s || '').split(/\s+/).filter(Boolean).map((p) => { const [k, v] = p.split(':'); return [k, parseFloat(v)]; }));
   EST.rows = (pred) => EST.boxes.flatMap((b) => b.rows.filter(pred));
   EST.sum = (rows, k) => rows.reduce((t, r) => t + r.v[k], 0);
@@ -1635,7 +1828,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
           if (tr.classList.contains('work')) { const [h, a, ag, hu] = (tr.dataset.fixed || '0 0 0 0').split(/\s+/).map((x) => parseFloat(x) || 0); v = { h, a, ag, hu }; }
           else { const h = p.h[tr.dataset.size] || 0; v = { h, a: h * p.assist / 100, ag: h * p.agent, hu: p.hpart[tr.dataset.size] || 0 }; }
           const front = tr.dataset.front !== undefined ? parseFloat(tr.dataset.front) : 50;
-          const fc = $('.e-front', tr); if (fc) fc.textContent = front + ' %';
+          const fc = $('.e-front', tr); if (fc) fc.textContent = I.num(front / 100, { style: 'percent', maximumFractionDigits: 1 });
           return { tr, v, front, rel: tr.dataset.rel, work: tr.classList.contains('work') };
         });
         const put = (tr, v, bold) => ['h', 'a', 'ag', 'hu'].forEach((k) => {
@@ -1655,22 +1848,22 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       me.compute = compute;
 
       // settings panel
-      const panel = gearPanel(box.closest('.section') || box, "Régler l'échelle d'estimation");
+      const panel = gearPanel(box.closest('.section') || box, t('doc.est.settings'));
       const sizes = Object.keys(defaults.h);
       const inp = (val, step, on) => { const i = document.createElement('input'); i.type = 'number'; i.min = '0'; i.step = step; i.value = val; i.addEventListener('input', () => { const v = parseFloat(i.value); if (!isNaN(v)) { on(v); save(); compute(); } }); return i; };
       const save = () => { try { localStorage.setItem(key, JSON.stringify(p)); } catch (e) { /* storage unavailable */ } };
       const build = () => {
-        panel.innerHTML = `<p class="gear-title">Échelle d'estimation</p><table class="gear-grid"><thead><tr><th></th>${sizes.map((s) => `<th><span class="size ${s.toLowerCase()}">${s}</span></th>`).join('')}</tr></thead><tbody><tr class="g-h"><th>Humain (j)</th></tr><tr class="g-hp"><th>Validation métier (j)</th></tr></tbody></table><div class="gear-rows"></div>`;
+        panel.innerHTML = `<p class="gear-title">${esc(t('doc.est.title'))}</p><table class="gear-grid"><thead><tr><th></th>${sizes.map((s) => `<th><span class="size ${s.toLowerCase()}">${s}</span></th>`).join('')}</tr></thead><tbody><tr class="g-h"><th>${esc(t('doc.est.human'))}</th></tr><tr class="g-hp"><th>${esc(t('doc.est.validation'))}</th></tr></tbody></table><div class="gear-rows"></div>`;
         sizes.forEach((s) => {
           const c1 = document.createElement('td'); c1.appendChild(inp(p.h[s], '0.5', (v) => { p.h[s] = v; })); $('.g-h', panel).appendChild(c1);
           const c2 = document.createElement('td'); c2.appendChild(inp(p.hpart[s], '0.25', (v) => { p.hpart[s] = v; })); $('.g-hp', panel).appendChild(c2);
         });
         const rows = $('.gear-rows', panel);
-        [['Assisté par IA, en % du temps humain', 'assist', '5'], ["IA en autonomie, heures d'agents par jour humain", 'agent', '0.1']]
-          .forEach(([label, k, step]) => { const l = document.createElement('label'); l.innerHTML = `<span>${label}</span>`; l.appendChild(inp(p[k], step, (v) => { p[k] = v; })); rows.appendChild(l); });
+        [['doc.est.assist', 'assist', '5'], ['doc.est.agent', 'agent', '0.1']]
+          .forEach(([label, k, step]) => { const l = document.createElement('label'); l.innerHTML = `<span>${esc(t(label))}</span>`; l.appendChild(inp(p[k], step, (v) => { p[k] = v; })); rows.appendChild(l); });
         const foot = document.createElement('div'); foot.className = 'gear-foot';
         foot.innerHTML = `<small>${box.dataset.source || ''}</small>`;
-        const reset = document.createElement('button'); reset.type = 'button'; reset.textContent = 'Réinitialiser';
+        const reset = document.createElement('button'); reset.type = 'button'; reset.textContent = t('doc.est.reset');
         reset.addEventListener('click', () => { p = clone(defaults); save(); build(); compute(); });
         foot.appendChild(reset); panel.appendChild(foot);
       };
@@ -1707,7 +1900,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // <div class="gantt" [data-start="2026-10-01" data-end="2026-10-17"] data-today="2026-10-05">
   //   <div class="g-group" data-label="Conception" [data-open]>
   //     <div class="g-task" data-start="2026-10-05" data-end="2026-10-07T12:00" data-kind="phase|sprint|qa|done|risk|human" data-note="2 j">Label</div>
-  //     <div class="g-gate" data-at="2026-10-08" [data-who="validé"] [data-state="done"]>G1</div>
+  //     <div class="g-gate" data-at="2026-10-08" [data-who="validated"] [data-state="done"]>G1</div>
   //   </div>
   // </div>
   // Colours follow the status: done (data-kind="done" or data-state="done") green, to do blue, late orange
@@ -1717,17 +1910,20 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // summary bar and folds its detail (closed unless data-open). Weekends are shaded; below 22 px per day
   // the scale shows weeks (date of the Monday) instead of day numbers.
 
-  const D = 864e5, MONTHS = ['janv.', 'févr.', 'mars', 'avr.', 'mai', 'juin', 'juil.', 'août', 'sept.', 'oct.', 'nov.', 'déc.'];
+  const D = 864e5;
   const tms = (iso) => new Date(iso.length === 10 ? iso + 'T00:00' : iso).getTime();
   const day0 = (ms) => { const d = new Date(ms); return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime(); };
   const nextDay = (ms) => { const d = new Date(day0(ms)); d.setDate(d.getDate() + 1); return d.getTime(); };
   const isWe = (ms) => [0, 6].includes(new Date(ms).getDay());
   const skipWe = (ms) => { while (isWe(ms)) ms = nextDay(ms); return ms; };
   const p2 = (n) => String(n).padStart(2, '0');
-  const dmy = (ms) => { const d = new Date(ms); return `${p2(d.getDate())}.${p2(d.getMonth() + 1)}.${d.getFullYear()}`; };
+  // dates in the project language: day (02.10.2026 in fr), day and month (02.10), month and year (oct. 2026)
+  const dmy = (ms) => I.date(new Date(ms));
+  const dm = (ms) => I.date(new Date(ms), 'dm');
+  const monthYear = (d) => I.date(d, { month: 'short', year: 'numeric' });
   const iso = (ms) => { const d = new Date(ms); return `${d.getFullYear()}-${p2(d.getMonth() + 1)}-${p2(d.getDate())}`; };
   const lastDay = (ms) => dmy(ms - 1); // an exclusive end at midnight belongs to the day before
-  const days = (n) => (n === 0.5 ? '½ j' : String(n).replace('.', ',') + ' j');
+  const days = (n) => (n === 0.5 ? t('doc.unit.halfDay') : t('doc.unit.days', { n }));
   const addWork = (ms, d) => {
     ms = skipWe(ms);
     while (d > 1e-9) {
@@ -1765,13 +1961,13 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
     let months = '', ticks = '', shade = '';
     for (let i = 0; i < nDays; i++) {
       const d = new Date(new Date(t0).getFullYear(), new Date(t0).getMonth(), new Date(t0).getDate() + i), dow = d.getDay();
-      if (i === 0 || d.getDate() === 1) months += `<span style="left:${i * px}px">${MONTHS[d.getMonth()]} ${d.getFullYear()}</span>`;
+      if (i === 0 || d.getDate() === 1) months += `<span style="left:${i * px}px">${monthYear(d)}</span>`;
       if (!weekly) ticks += `<span class="${dow === 0 || dow === 6 ? 'we' : ''}" style="left:${i * px}px;width:${px}px">${d.getDate()}</span>`;
-      else if (dow === 1) ticks += `<span style="left:${i * px}px;width:${7 * px}px">${p2(d.getDate())}.${p2(d.getMonth() + 1)}</span>`;
+      else if (dow === 1) ticks += `<span style="left:${i * px}px;width:${7 * px}px">${dm(d.getTime())}</span>`;
       if (dow === 0 || dow === 6) shade += `<i style="left:${i * px}px;width:${px}px"></i>`;
     }
     const head = document.createElement('div'); head.className = 'g-row g-head';
-    head.innerHTML = `<div class="g-label">${weekly ? 'Semaine du' : ''}</div><div class="g-track" style="width:${W}px"><div class="g-months">${months}</div><div class="g-ticks">${ticks}</div>${model.today ? `<b class="g-now" style="left:${x(model.today) + 1}px" title="${dmy(model.today)}">Aujourd'hui</b>` : ''}</div>`;
+    head.innerHTML = `<div class="g-label">${weekly ? esc(t('doc.gantt.weekOf')) : ''}</div><div class="g-track" style="width:${W}px"><div class="g-months">${months}</div><div class="g-ticks">${ticks}</div>${model.today ? `<b class="g-now" style="left:${x(model.today) + 1}px" title="${dmy(model.today)}">${esc(t('doc.gantt.today'))}</b>` : ''}</div>`;
     wrap.appendChild(head);
     const body = document.createElement('div'); body.className = 'g-body'; body.style.width = (labelW + W) + 'px';
     body.innerHTML = `<div class="g-shade" style="left:${labelW}px">${shade}</div>`;
@@ -1785,10 +1981,10 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
     };
     const status = (it) => (it.kind === 'done' || it.state === 'done' ? 'done'
       : (it.due && it.b > it.due) || (model.today && it.b <= model.today) ? 'late' : 'todo');
-    const late = (it) => (it.due && it.b > it.due ? ` · MEP souhaitée dépassée de ${days(workBetween(it.due, it.b))}` : '');
-    const seg = (it) => it.segs.map((g) => `<div class="g-bar g-seg s-${status(g)}${g.kind === 'human' ? ' human' : ''}" style="left:${x(g.a)}px;width:${Math.max(x(g.b) - x(g.a), 3)}px" ${g.tip ? `data-tip="${g.tip.replace(/"/g, '&quot;')}" tabindex="0"` : `title="${g.label} : ${dmy(g.a)} au ${lastDay(g.b)}"`}>${x(g.b) - x(g.a) > 44 ? `<span>${g.label}</span>` : ''}</div>`).join('');
-    const bar = (it) => it.segs ? seg(it) : `<div class="g-bar s-${status(it)}${it.kind === 'human' ? ' human' : ''}${it.crit ? ' crit' : ''}" style="left:${x(it.a)}px;width:${Math.max(x(it.b) - x(it.a), 4)}px" title="${it.label.replace(/<[^>]+>/g, '')} : ${dmy(it.a)} au ${lastDay(it.b)}"></div><span class="g-text" style="left:${x(it.b) + 6}px">${it.note || ''}${late(it)}</span>`;
-    const gate = (it, text) => `<div class="g-gate s-${status(it)}${it.crit ? ' crit' : ''}" style="left:${x(it.a)}px" title="${it.label} : ${lastDay(it.a + 1)}"><i></i>${text ? `<span>${it.label}${it.who ? ' · ' + it.who : ''}${late(it)}</span>` : ''}</div>`;
+    const late = (it) => (it.due && it.b > it.due ? ' · ' + t('doc.gantt.late', { d: days(workBetween(it.due, it.b)) }) : '');
+    const seg = (it) => it.segs.map((g) => `<div class="g-bar g-seg s-${status(g)}${g.kind === 'human' ? ' human' : ''}" style="left:${x(g.a)}px;width:${Math.max(x(g.b) - x(g.a), 3)}px" ${g.tip ? `data-tip="${g.tip.replace(/"/g, '&quot;')}" tabindex="0"` : `title="${esc(t('doc.gantt.span', { label: g.label, from: dmy(g.a), to: lastDay(g.b) }))}"`}>${x(g.b) - x(g.a) > 44 ? `<span>${g.label}</span>` : ''}</div>`).join('');
+    const bar = (it) => it.segs ? seg(it) : `<div class="g-bar s-${status(it)}${it.kind === 'human' ? ' human' : ''}${it.crit ? ' crit' : ''}" style="left:${x(it.a)}px;width:${Math.max(x(it.b) - x(it.a), 4)}px" title="${esc(t('doc.gantt.span', { label: it.label.replace(/<[^>]+>/g, ''), from: dmy(it.a), to: lastDay(it.b) }))}"></div><span class="g-text" style="left:${x(it.b) + 6}px">${it.note || ''}${late(it)}</span>`;
+    const gate = (it, text) => `<div class="g-gate s-${status(it)}${it.crit ? ' crit' : ''}" style="left:${x(it.a)}px" title="${esc(t('doc.gantt.at', { label: it.label, date: lastDay(it.a + 1) }))}"><i></i>${text ? `<span>${it.label}${it.who ? ' · ' + decision(it.who) : ''}${late(it)}</span>` : ''}</div>`;
     model.groups.forEach((grp, gi) => {
       if (!grp.items.length) return;
       const tone = ' g-c' + (gi % 2), sts = grp.items.map(status);
@@ -1797,9 +1993,9 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       const isOpen = open.has(grp.label);
       const gates = isOpen ? '' : grp.items.filter((i) => i.gate).map((i) => gate(i, false)).join('');
       const r = row('g-grp' + tone + (isOpen ? ' open' : ''), `<button type="button" class="g-fold" aria-expanded="${isOpen}">${grp.label}</button>`,
-        `<div class="g-sum s-${gst}" style="left:${x(a)}px;width:${Math.max(x(b) - x(a), 4)}px"></div>${gates}<span class="g-text" style="left:${x(b) + 16}px">${isOpen ? '' : dmy(a) + ' au ' + lastDay(b)}</span>`);
+        `<div class="g-sum s-${gst}" style="left:${x(a)}px;width:${Math.max(x(b) - x(a), 4)}px"></div>${gates}<span class="g-text" style="left:${x(b) + 16}px">${isOpen ? '' : t('doc.gantt.range', { from: dmy(a), to: lastDay(b) })}</span>`);
       $('.g-fold', r).addEventListener('click', () => { isOpen ? open.delete(grp.label) : open.add(grp.label); onToggle(); });
-      if (isOpen) grp.items.forEach((it) => row((it.gate ? 'g-gate-row' : '') + tone, it.gate ? 'Gate ' + it.label : it.label, it.gate ? gate(it, true) : bar(it)));
+      if (isOpen) grp.items.forEach((it) => row((it.gate ? 'g-gate-row' : '') + tone, it.gate ? t('doc.gantt.gate', { name: it.label }) : it.label, it.gate ? gate(it, true) : bar(it)));
     });
   }
 
@@ -1843,10 +2039,19 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   // ?levels in the URL shows the mandatory / recommended / optional chip on every section
   if (/[?&]levels\b/.test(location.search)) document.body.classList.add('show-levels');
 
-  // shared with plan.js (capacity planner)
-  window.Doc = { $, $$, EST, drawGantt, gearPanel, watch, heat, pairs, num, tms, dmy, day0, nextDay, lastDay, isWe, days, workBetween };
+  // shared with plan.js (capacity planner), with the labels (t, i18n) and their formats (dmy, dm, days, num)
+  window.Doc = { $, $$, EST, drawGantt, gearPanel, watch, heat, pairs, num, tms, dmy, dm, day0, nextDay, lastDay, isWe, days, workBetween, t, i18n: I, esc, decision };
 
-  document.addEventListener('DOMContentLoaded', () => {
+  // Labels shown by doc.css (::before, ::after): custom properties, French by default in the stylesheet
+  function cssLabels() {
+    const st = document.documentElement.style;
+    [['--doc-l-mandatory', 'doc.level.mandatory'], ['--doc-l-recommended', 'doc.level.recommended'],
+      ['--doc-l-optional', 'doc.level.optional'], ['--doc-l-todo', 'doc.todo']]
+      .forEach(([p, k]) => st.setProperty(p, JSON.stringify(t(k))));
+  }
+
+  I.ready(() => {
+    cssLabels();
     gherkin();
     typography();
     buildToc();
@@ -1875,17 +2080,17 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
 })();
 
 /* Filters with several facets (backlog page), appended to the shared behaviour without touching it.
-   <div data-facets='[{"key":"release","label":"Release","options":[["mvp","MVP"],…]},…]' [data-facet-unit="story" data-facet-units="stories"]>
-   (each facet may carry "aria", the label of its row for a screen reader, else "Filtrer par <label>";
-   and "prefix": a chip gets the class t-<prefix>-<value>, which gives its colour --t)
-   [data-facet-genre="m"] for a masculine unit ("Aucun chantier pour ce filtre", "affichés")
+   <div data-facets='[{"key":"release","label":"Release","options":[["mvp","MVP"],…]},…]'>
+   (each facet may carry "aria", the label of its row for a screen reader, else "Filter by <label>" in the project
+   language; and "prefix": a chip gets the class t-<prefix>-<value>, which gives its colour --t)
    holds items [data-facet-item data-f-<key>="<value>"] and, optionally, groups [data-facet-group] around them.
    One row of toggle chips (aria-pressed) per facet, in the order of its options, each with its count; an option
    absent from the items stays visible, disabled, to show the whole scale. Inside a facet the chips add up, the
-   facets combine; "Tous" clears its facet. A group with no item shown is hidden. The number of shown items is
-   announced. Without JS, no chips, everything visible. The choice is not kept between visits, as filterLists(). */
+   facets combine; "All" clears its facet. A group with no item shown is hidden. The number of shown items is
+   announced ("3 shown out of 12"), "No result for this filter" when none is. Without JS, no chips, everything visible. The choice is not kept between visits, as filterLists(). */
 (function () {
   'use strict';
+  const { t } = window.SirI18n;
   function facets() {
     document.querySelectorAll('[data-facets]').forEach((box) => {
       let defs;
@@ -1893,18 +2098,16 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
       const items = Array.from(box.querySelectorAll('[data-facet-item]'));
       if (!items.length || !Array.isArray(defs)) return;
       const groups = Array.from(box.querySelectorAll('[data-facet-group]'));
-      const unit = box.dataset.facetUnit || 'élément', units = box.dataset.facetUnits || unit + 's';
-      const masc = box.dataset.facetGenre === 'm';
       const on = {};
       const wrap = document.createElement('div');
       wrap.className = 'flt-facets';
       const live = document.createElement('span'); live.className = 'sr-only'; live.setAttribute('role', 'status');
       const empty = document.createElement('p'); empty.className = 'flt-empty'; empty.hidden = true;
-      empty.textContent = (masc ? 'Aucun ' : 'Aucune ') + unit + ' pour ce filtre.';
+      empty.textContent = t('doc.facets.empty');
       const rows = defs.map((d) => {
         on[d.key] = new Set();
         const bar = document.createElement('div');
-        bar.className = 'flt-bar'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', d.aria || 'Filtrer par ' + d.label.toLowerCase());
+        bar.className = 'flt-bar'; bar.setAttribute('role', 'group'); bar.setAttribute('aria-label', d.aria || t('doc.facets.aria', { label: d.label }));
         const lab = document.createElement('span'); lab.className = 'flt-label'; lab.textContent = d.label; lab.setAttribute('aria-hidden', 'true');
         bar.appendChild(lab);
         const chip = (key, label, n) => {
@@ -1916,7 +2119,7 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
           bar.appendChild(b);
           return b;
         };
-        const all = chip('', 'Tous', items.length);
+        const all = chip('', t('doc.filter.all'), items.length);
         const chips = (d.options || []).map(([v, l]) => chip(v, l, items.filter((it) => it.getAttribute('data-f-' + d.key) === v).length));
         bar.addEventListener('click', (e) => {
           const b = e.target.closest('.flt-chip');
@@ -1938,12 +2141,12 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
         });
         const n = items.filter((it) => !it.hidden).length;
         empty.hidden = n > 0;
-        if (announce) live.textContent = n + ' ' + (n > 1 ? units : unit) + (masc ? ' affiché' : ' affichée') + (n > 1 ? 's' : '');
+        if (announce) live.textContent = t('doc.filter.shown', { n, total: items.length });
       };
       box.before(wrap, live);
       box.after(empty);
       apply(false);
     });
   }
-  document.addEventListener('DOMContentLoaded', facets);
+  window.SirI18n.ready(facets);
 })();

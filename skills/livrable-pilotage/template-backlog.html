@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Backlog · NOM_PROJET</title>
+  <title>{{pilotage.tpl.bl.title}} · NOM_PROJET</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -18,69 +18,41 @@
 <div class="doc">
   <aside class="doc-toc">
     <div class="toc-project">NOM_PROJET</div>
-    <div class="toc-type">Backlog</div>
+    <div class="toc-type">{{pilotage.tpl.bl.type}}</div>
     <nav></nav>
-    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+    <div class="toc-back"><a href="../index.html">{{pilotage.tpl.bl.back}}</a></div>
   </aside>
 
   <main class="doc-main wide">
     <header class="doc-header">
-      <div class="kicker">Pilotage du projet</div>
-      <h1><span class="doc-kind">Backlog</span> : NOM_PROJET</h1>
+      <div class="kicker">{{pilotage.tpl.bl.kicker}}</div>
+      <h1><span class="doc-kind">{{pilotage.tpl.bl.kind}}</span> : NOM_PROJET</h1>
       <!-- gen:entete -->
       <!-- /gen:entete -->
     </header>
 
     <section class="section">
-      <h2>Synthèse</h2>
+      <h2 id="synthese">{{pilotage.tpl.bl.h.synthese}}</h2>
       <div class="info-body" hidden>
-        <dl class="defs">
-          <dt>À quoi sert</dt><dd>Dire en un coup d'œil combien de stories sont à chaque étape, pour tout le projet et pour chaque release, avant d'entrer dans le détail par epic.</dd>
-          <dt>Ce qu'elle montre</dt><dd>Une carte pour toutes les releases, puis une par release, dans l'ordre de la story map : les stories livrées sur le total, une jauge par statut, le compte de chaque statut présent, la répartition des tailles et la part front de la release.</dd>
-          <dt>Sources</dt><dd>Le total et la release de chaque story viennent de la story map ; le statut, de la règle décrite dans la section <a href="#backlog">Backlog</a> ; la taille et la part front, de la page de chaque story.</dd>
-          <dt>Part front</dt><dd>La moyenne des parts front des stories de la carte, pondérée par leur taille avec l'échelle de la <a href="../roadmap.html#estimation-macro">roadmap</a> (valeurs Humain : XS 1, S 2, M 4, L 5, XL 8), arrondie au pour cent : une story L pèse plus qu'une story S.</dd>
-          <dt>Lire</dt><dd>Le survol ou le focus d'un segment de jauge donne son statut et son nombre. Une story compte comme livrée quand un PV signé l'accepte, avec ou sans réserve : le même compte que la page de pilotage.</dd>
-        </dl>
+        <dl class="defs">{{pilotage.tpl.bl.info.synthese}}</dl>
       </div>
       <!-- gen:synthese -->
       <!-- /gen:synthese -->
     </section>
 
     <section class="section">
-      <h2>Backlog</h2>
+      <h2 id="backlog">{{pilotage.tpl.bl.h.backlog}}</h2>
       <div class="info-body" hidden>
-        <dl class="defs">
-          <dt>À quoi sert</dt><dd>Voir où en est chaque story, rangée sous son epic, avec ce qu'il faut pour arbitrer : sa release, sa taille, sa part front, son statut.</dd>
-          <dt>Ce qu'elle montre</dt><dd>Un en-tête par epic, dans l'ordre de leur identifiant : son identifiant et son titre, sans cumul. Ses stories en dessous, par release (dans l'ordre de la story map) puis par identifiant. Toutes les lignes sont visibles : à cette taille de backlog, les filtres remplacent le pliage, et rien ne cache un statut. Les comptes sont dans la <a href="#synthese">Synthèse</a>.</dd>
-          <dt>Taille et front</dt><dd>Lus dans la page de la story, balises <code>taille</code> (XS à XL) et <code>front</code> (la part du travail côté front, en %, le reste côté back) : la même source que l'<a href="../roadmap.html#estimation-macro">estimation macro</a> de la roadmap. Une story XL se découpe avant d'entrer en sprint, et avant G1 pour une release présentée au G1. La barre montre les deux parts dans deux teintes de même poids ; les nombres font foi.</dd>
-          <dt>Colonne sans titre</dt><dd>Ce qui précise le statut : le PV qui a accepté la story et sa réserve <code>RES-xx</code>, le sprint qui l'a engagée, qui l'a validée et quand, une question ouverte, un écart entre sources (point d'exclamation, qui mène à la section <a href="#ecarts-entre-sources">Écarts entre sources</a>).</dd>
-          <dt>Statut d'une story</dt><dd>Une seule échelle, dans l'ordre du parcours :
-            <ul>
-              <li><b>À rédiger</b> : la story est dans la story map, sa page n'existe pas encore ;</li>
-              <li><b>Rédigée</b> : sa page existe, statut <code>brouillon</code> ;</li>
-              <li><b>Prête</b> : sa Definition of Ready est cochée, statut <code>prete</code> ;</li>
-              <li><b>Validée</b> : statut <code>validee</code> ; validée par l'humain au G1, ou, rédigée après G1, validée par le PO et montrée à l'humain au G3 suivant ;</li>
-              <li><b>En sprint N</b> : engagée dans le sprint N, d'après sa page de sprint, statut <code>en-sprint</code> ;</li>
-              <li><b>Livrée</b> : acceptée dans un PV signé, avec ou sans réserve, statut <code>faite</code>. Le PV fait foi, comme pour la page de pilotage.</li>
-            </ul>
-            Une story abandonnée (statut <code>abandonnee</code>) reste à la fin de son epic, barrée, et sort des comptes.</dd>
-          <dt>Filtrer</dt><dd>Deux rangées de puces, Release et Statut, avec leur nombre de stories ; un statut absent du backlog reste visible, grisé, pour montrer toute l'échelle. Dans une rangée, plusieurs puces se cumulent ; les deux rangées se combinent. Un epic sans story affichée disparaît avec son en-tête. Le filtre n'est pas retenu d'une visite à l'autre.</dd>
-          <dt>Liens</dt><dd>Chaque identifiant mène à sa page. Une page pas encore produite (une story à rédiger) garde son lien, signalé en avertissement par le contrôle des livrables.</dd>
-        </dl>
+        <dl class="defs">{{pilotage.tpl.bl.info.backlog}}</dl>
       </div>
       <!-- gen:backlog -->
       <!-- /gen:backlog -->
     </section>
 
     <section class="section">
-      <h2>Écarts entre sources</h2>
+      <h2 id="ecarts-entre-sources">{{pilotage.tpl.bl.h.ecarts-entre-sources}}</h2>
       <div class="info-body" hidden>
-        <dl class="defs">
-          <dt>À quoi sert</dt><dd>Montrer où deux fichiers du projet disent des choses différentes sur une story, pour que le PO les remette d'accord avant le prochain planning.</dd>
-          <dt>Ce qu'elle montre</dt><dd>Une ligne par écart, avec la source retenue par cette page et celle qui la contredit. Dans le tableau, un point d'exclamation sur la ligne de la story mène ici.</dd>
-          <dt>Règles</dt><dd>La taille et la part front viennent de la page de la story, que la roadmap lit aussi ; la release et l'epic, de la story map ; le statut livré, d'un PV signé. Une valeur qui contredit la source retenue est un écart, pas une correction. Dans le tableau, le point d'exclamation est dans la colonne sans titre de la story.</dd>
-          <dt>État vide</dt><dd>Sans écart, la liste laisse place à « Aucun écart entre la story map, la roadmap, les stories et les PV ».</dd>
-        </dl>
+        <dl class="defs">{{pilotage.tpl.bl.info.ecarts-entre-sources}}</dl>
       </div>
       <!-- gen:ecarts -->
       <!-- /gen:ecarts -->
