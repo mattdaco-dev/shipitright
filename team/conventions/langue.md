@@ -39,7 +39,7 @@ visible. Il lit :
 | Champ d'en-tête | `<meta name="<code>" content="<valeur>">` dans `<head>` | `<meta name="date" content="2026-10-02">` |
 | Section | attribut `data-section="<code>"` sur la `<section>` | `<section class="section" data-section="results">` |
 | Colonne d'un tableau | attribut `data-col="<code>"` sur le `<th>` | `<th data-col="nature">Nature</th>` |
-| Valeur d'une cellule | attribut `data-value="<code>"` sur le `<td>` | `<td data-value="essai">trial for one sprint</td>` |
+| Valeur d'un élément | attribut `data-value="<code>"` (`<td>`, `<dt>`, `<p>`…) | `<td data-value="essai">trial for one sprint</td>` |
 | Date | ISO `AAAA-MM-JJ` dans la méta ou `datetime` | `<time datetime="2026-10-02">2. Oktober 2026</time>` |
 
 - Les codes nouveaux (`data-section`, `data-col`, noms de méta) sont en anglais, en kebab-case
@@ -50,6 +50,12 @@ visible. Il lit :
 - Compatibilité : les scripts gardent leur ancienne lecture du texte français **en repli**, quand la
   méta ou l'attribut manque, pour les projets créés avant la 0.4.0. Le repli ne sert jamais pour un
   projet qui a un `.team/projet.json`.
+
+Fichiers sans attribut (Markdown, YAML) : la structure se lit sur une forme fixe, jamais sur un mot.
+
+- Schéma YAML de l'API : première ligne `# domain: <libellé du domaine>`.
+- Question (`.team/questions/`) : sa réponse est la dernière section `##` d'une question au statut
+  `repondue`, quel que soit son titre (format : `team/conventions/forum.md`).
 
 ## 4. Journal : la décision d'un gate
 
@@ -85,7 +91,9 @@ team/i18n/<langue>/<espace>.json      fournis par le plugin, langues fr et en
 - Pas d'accord composé à l'exécution (unité + participe accordé) : chaque phrase est une clé entière.
 - Résolution d'une clé : `.team/libelles.json`, puis la langue exacte (`pt-BR`), puis sa langue de base
   (`pt`), puis `en`. Une clé absente partout s'affiche telle quelle et `check-livrable` le signale.
-- Dates affichées : `Intl.DateTimeFormat` dans la langue du projet ; nombres : `Intl.NumberFormat`.
+- Dates affichées : format court donné par le libellé `common.date.short` (`dd.mm.yyyy` en `fr`,
+  surchargeable par le projet), sinon `Intl.DateTimeFormat` dans la langue du projet ; nombres :
+  `Intl.NumberFormat`.
 
 **Langue sans dictionnaire fourni** : au `projet-init`, le PO traduit les fichiers `team/i18n/en/*.json`
 dans la langue du projet et écrit `.team/libelles.json`, en gardant clés et paramètres. Pour

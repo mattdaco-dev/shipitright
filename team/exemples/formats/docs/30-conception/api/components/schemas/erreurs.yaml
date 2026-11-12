@@ -1,4 +1,5 @@
-# Domaine « Erreurs » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Erreurs
+# Schémas nommés dans openapi.yaml sous components/schemas
 
 
 CodeErreur:

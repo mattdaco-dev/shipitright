@@ -1,4 +1,5 @@
-# Domaine « Commun » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Commun
+# Schémas nommés dans openapi.yaml sous components/schemas
 
 Jour:
   type: string

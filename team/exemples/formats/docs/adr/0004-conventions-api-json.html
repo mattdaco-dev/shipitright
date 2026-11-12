@@ -42,7 +42,7 @@
       <!-- /gen -->
     </header>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="socle-deviation">
       <h2>Écart au socle</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -55,7 +55,7 @@
       <p>Non. Le socle <code>node-sqlite-angular</code> impose OpenAPI 3 mais pas de format d'échange ; le gabarit de la team retient par défaut JSON simple et problem+json.</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="context">
       <h2>Contexte</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -67,7 +67,7 @@
       <p><a href="../30-conception/api/openapi.yaml"><code>openapi.yaml</code></a> est le contrat d'API entre back et front. Il faut fixer le format des corps, des erreurs et des listes avant de le rédiger. Les listes du produit sont courtes (une dizaine de salles, une journée de réservations, les réservations à venir d'un employé).</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="decision">
       <h2>Décision</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -84,7 +84,7 @@
       </ul>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="rationale">
       <h2>Raison</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -106,7 +106,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="consequences">
       <h2>Conséquences</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -116,9 +116,9 @@
         </dl>
       </div>
       <dl class="defs">
-        <dt>Positif</dt><dd>contrat court et lisible, mock front facile ; aligné sur les conventions par défaut du gabarit : le squelette du contrat d'API sert tel quel.</dd>
-        <dt>Négatif</dt><dd>pas de pagination au MVP : une liste qui grossit demandera un ajout annoncé au contrat d'API (<a href="../30-conception/detaillee/transverse/conformite.html#CF-58">CF-58</a>).</dd>
-        <dt>Suites</dt><dd>Architecte : reporter ces conventions dans le socle complété, et ajouter une pagination par curseur au sprint planning où une liste grossit (historique, statistiques de la release R3).</dd>
+        <dt data-value="positive">Positif</dt><dd>contrat court et lisible, mock front facile ; aligné sur les conventions par défaut du gabarit : le squelette du contrat d'API sert tel quel.</dd>
+        <dt data-value="negative">Négatif</dt><dd>pas de pagination au MVP : une liste qui grossit demandera un ajout annoncé au contrat d'API (<a href="../30-conception/detaillee/transverse/conformite.html#CF-58">CF-58</a>).</dd>
+        <dt data-value="next">Suites</dt><dd>Architecte : reporter ces conventions dans le socle complété, et ajouter une pagination par curseur au sprint planning où une liste grossit (historique, statistiques de la release R3).</dd>
       </dl>
     </section>
   </main>

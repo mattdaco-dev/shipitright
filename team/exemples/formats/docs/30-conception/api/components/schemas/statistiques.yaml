@@ -1,4 +1,5 @@
-# Domaine « Statistiques » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Statistiques
+# Schémas nommés dans openapi.yaml sous components/schemas
 
 StatistiquesOccupation:
   type: object

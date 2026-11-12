@@ -4,5 +4,6 @@
   "gate.G2": "Validation de la conception technique",
   "gate.G3": "Recette du sprint",
   "decision.validated": "validé",
-  "decision.changes-requested": "retours demandés"
+  "decision.changes-requested": "retours demandés",
+  "date.short": "dd.mm.yyyy"
 }

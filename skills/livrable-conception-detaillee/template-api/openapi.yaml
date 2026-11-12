@@ -9,7 +9,8 @@
 #   paths/<chemin>.yaml               un fichier par chemin (path item), toutes ses opérations ;
 #                                     /ressources/{id} devient paths/ressources-id.yaml
 #   components/schemas/<domaine>.yaml schémas regroupés par domaine fonctionnel ; la première ligne
-#                                     « # Domaine « Libellé » » nomme la card du domaine
+#                                     « # domain: <libellé> » nomme la card du domaine, libellé
+#                                     dans la langue du projet
 #   components/parameters.yaml, components/responses.yaml
 # Un schéma, un paramètre ou une réponse n'existe que s'il est nommé ici sous components ; ailleurs,
 # on le cite par un $ref relatif à son fichier (« ../components/schemas/ressources.yaml#/Ressource »).

@@ -1,4 +1,5 @@
-# Domaine « Salles » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Salles
+# Schémas nommés dans openapi.yaml sous components/schemas
 
 StatutSalle:
   type: string

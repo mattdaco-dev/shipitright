@@ -160,9 +160,9 @@
       <table class="open-points">
         <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
         <tbody>
-          <tr><td><span class="impact fort">fort</span></td><td>Organisation du code backend : le socle <code>node-sqlite-angular</code> est « à compléter » et n'en décrit pas.</td><td>le découpage par cas d'usage du socle de référence <code>play-scala-angular</code>, transposé en TypeScript avec les choix de <a href="../../../adr/0001-framework-node-et-acces-sqlite.html">ADR-0001</a>, posé en invariants provisoires <a href="conformite.html#CF-01">CF-01</a> à <a href="conformite.html#CF-09">CF-09</a> ; à reporter dans le socle, validé par l'humain à G2.</td><td></td></tr>
-          <tr><td><span class="impact moyen">moyen</span></td><td>Version d'Angular : <code>httpResource</code> n'est stable qu'à partir d'Angular 22 (documentation Angular vérifiée).</td><td>lectures en ressources signal ; avec une version antérieure, <code>rxResource</code> ou <code>toSignal</code> dans le service. Version à fixer dans le socle.</td><td></td></tr>
-          <tr><td><span class="impact faible">faible</span></td><td>Réversibilité des migrations.</td><td>pas de migration descendante au pilote ; à reporter dans le socle.</td><td></td></tr>
+          <tr><td data-value="fort"><span class="impact fort">fort</span></td><td>Organisation du code backend : le socle <code>node-sqlite-angular</code> est « à compléter » et n'en décrit pas.</td><td>le découpage par cas d'usage du socle de référence <code>play-scala-angular</code>, transposé en TypeScript avec les choix de <a href="../../../adr/0001-framework-node-et-acces-sqlite.html">ADR-0001</a>, posé en invariants provisoires <a href="conformite.html#CF-01">CF-01</a> à <a href="conformite.html#CF-09">CF-09</a> ; à reporter dans le socle, validé par l'humain à G2.</td><td></td></tr>
+          <tr><td data-value="moyen"><span class="impact moyen">moyen</span></td><td>Version d'Angular : <code>httpResource</code> n'est stable qu'à partir d'Angular 22 (documentation Angular vérifiée).</td><td>lectures en ressources signal ; avec une version antérieure, <code>rxResource</code> ou <code>toSignal</code> dans le service. Version à fixer dans le socle.</td><td></td></tr>
+          <tr><td data-value="faible"><span class="impact faible">faible</span></td><td>Réversibilité des migrations.</td><td>pas de migration descendante au pilote ; à reporter dans le socle.</td><td></td></tr>
         </tbody>
       </table>
     </section>

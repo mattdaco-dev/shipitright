@@ -42,7 +42,7 @@
       <!-- /gen -->
     </header>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="socle-deviation">
       <h2>Écart au socle</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -55,7 +55,7 @@
       <p>Non. Le socle cite « accès sérialisé ou contrainte d'unicité » ; la décision combine les deux idées. Validée avec le socle complété par l'humain à G2.</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="context">
       <h2>Contexte</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -68,7 +68,7 @@
       <p>Cet ADR répond à <a class="qmark" href="../questions.html#Q-001">Q-001</a>, volet concurrence (<a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a>).</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="decision">
       <h2>Décision</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -85,7 +85,7 @@
       </ol>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="rationale">
       <h2>Raison</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -108,7 +108,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="consequences">
       <h2>Conséquences</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -118,9 +118,9 @@
         </dl>
       </div>
       <dl class="defs">
-        <dt>Positif</dt><dd><a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a> tient même en cas d'erreur de code ; test de concurrence simple à écrire (N demandes simultanées, une seule réussit).</dd>
-        <dt>Négatif</dt><dd>les écritures de réservation sont sérialisées (sans effet à cette volumétrie) ; la règle de chevauchement existe en deux endroits (requête du domaine et déclencheur), à garder identiques, ce que le test de concurrence et un test unitaire du déclencheur vérifient.</dd>
-        <dt>Suites</dt><dd>le QA écrit le test de concurrence dès le premier ticket qui crée une réservation ; invariant <a href="../30-conception/detaillee/transverse/conformite.html#CF-60">CF-60</a> du contrat de conformité du projet : « toute écriture de réservation passe par une transaction immédiate ».</dd>
+        <dt data-value="positive">Positif</dt><dd><a href="../20-specs/conception-fonctionnelle.html#RG-01">RG-01</a> tient même en cas d'erreur de code ; test de concurrence simple à écrire (N demandes simultanées, une seule réussit).</dd>
+        <dt data-value="negative">Négatif</dt><dd>les écritures de réservation sont sérialisées (sans effet à cette volumétrie) ; la règle de chevauchement existe en deux endroits (requête du domaine et déclencheur), à garder identiques, ce que le test de concurrence et un test unitaire du déclencheur vérifient.</dd>
+        <dt data-value="next">Suites</dt><dd>le QA écrit le test de concurrence dès le premier ticket qui crée une réservation ; invariant <a href="../30-conception/detaillee/transverse/conformite.html#CF-60">CF-60</a> du contrat de conformité du projet : « toute écriture de réservation passe par une transaction immédiate ».</dd>
       </dl>
     </section>
   </main>

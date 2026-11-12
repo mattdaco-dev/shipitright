@@ -1,4 +1,5 @@
-# Domaine « Réservations » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Réservations
+# Schémas nommés dans openapi.yaml sous components/schemas
 
 Reservation:
   type: object

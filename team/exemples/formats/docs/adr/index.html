@@ -32,7 +32,7 @@
         <span><b>Dernière décision</b> 06.10.2026</span>
       </div>
     </header>
-    <section class="section">
+    <section class="section" data-section="register">
       <h2>Registre</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -44,7 +44,7 @@
         </dl>
       </div>
       <table data-sortable>
-        <thead><tr><th>Id</th><th style="width:34%">Titre</th><th>Statut</th><th>Date</th><th>Remplace</th><th>Remplacé par</th><th>Répond à</th><th>Écart au socle</th></tr></thead>
+        <thead><tr><th data-col="id">Id</th><th data-col="title" style="width:34%">Titre</th><th data-col="status">Statut</th><th data-col="date">Date</th><th data-col="replaces">Remplace</th><th data-col="replaced-by">Remplacé par</th><th data-col="answers">Répond à</th><th data-col="deviation">Écart au socle</th></tr></thead>
         <tbody>
           <tr id="ADR-0001"><td data-sort-value="0001"><a href="0001-framework-node-et-acces-sqlite.html">ADR-0001</a></td><td>Fastify et better-sqlite3 pour l'API</td><td data-sort-value="1"><span class="tag ok">accepté</span></td><td data-sort-value="2026-10-06">06.10.2026</td><td><span class="none">aucun</span></td><td><span class="none">aucun</span></td><td><a class="qmark" href="../questions.html#Q-001">Q-001</a></td><td data-sort-value="non"><span class="tag ok">non</span></td></tr>
           <tr id="ADR-0002"><td data-sort-value="0002"><a href="0002-concurrence-des-reservations-sqlite.html">ADR-0002</a></td><td>Non-chevauchement des réservations garanti en base</td><td data-sort-value="1"><span class="tag ok">accepté</span></td><td data-sort-value="2026-10-06">06.10.2026</td><td><span class="none">aucun</span></td><td><span class="none">aucun</span></td><td><a class="qmark" href="../questions.html#Q-001">Q-001</a></td><td data-sort-value="non"><span class="tag ok">non</span></td></tr>

@@ -1,4 +1,5 @@
-# Domaine « Séries » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Séries
+# Schémas nommés dans openapi.yaml sous components/schemas
 
 Frequence:
   type: string

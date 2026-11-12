@@ -25,9 +25,12 @@
 // differs from the title, mandatory section missing, no rejected option, consequences without positive or
 // negative, missing gen:adr-meta block. Warnings: section without its "i", id cited as bare text while its
 // target exists, Q-xxx absent from questions.html, ADR still in Markdown, no "Suites".
+// Sections are found by data-section, the terms of "Conséquences" by dt data-value (French titles only for a
+// project without .team/projet.json); labels from team/i18n/<lang>/adr.json.
 // Idempotent: a second run changes nothing.
 import { readFileSync, writeFileSync, existsSync, readdirSync, statSync } from 'node:fs';
 import { join, basename, resolve } from 'node:path';
+import { projectLang, hasProjectLang, loadLabels, makeT, formatDate } from './lib/i18n.mjs';
 
 const args = process.argv.slice(2);
 const CHECK = args.includes('--check');
@@ -40,6 +43,12 @@ const ADR = basename(resolve(arg)) === 'adr' ? resolve(arg)
   : existsSync(join(arg, 'docs', 'adr')) ? join(resolve(arg), 'docs', 'adr') : join(resolve(arg), 'adr');
 const DOCS = resolve(ADR, '..');
 if (!existsSync(ADR)) { console.log('adr-pages : pas de dossier adr/, rien à faire'); process.exit(0); }
+// Project root: the folder that holds .team/, else the parent of docs/. Labels in its language
+// (team/conventions/langue.md); a project without .team/projet.json keeps the former French reading.
+const ROOT = existsSync(join(DOCS, '..', '.team')) || basename(DOCS) === 'docs' ? resolve(DOCS, '..') : DOCS;
+const LANG = projectLang(ROOT);
+const LEGACY = !hasProjectLang(ROOT);
+const t = makeT(LANG, loadLabels(ROOT, ['adr'], LANG));
 
 let errors = 0, warnings = 0;
 const err = (m) => { errors++; console.error(`ERROR ${m}`); };
@@ -54,9 +63,18 @@ const STATUS = {
   remplace: { label: 'remplacé', tag: '' },
   abandonne: { label: 'abandonné', tag: '' },
 };
-const statusTag = (s) => `<span class="tag${STATUS[s].tag ? ' ' + STATUS[s].tag : ''}">${STATUS[s].label}</span>`;
-const frDate = (d) => d.split('-').reverse().join('.');
-const SECTIONS = ['Écart au socle', 'Contexte', 'Décision', 'Raison', 'Conséquences'];
+const statusTag = (s) => `<span class="tag${STATUS[s].tag ? ' ' + STATUS[s].tag : ''}">${t(`adr.status.${s}`)}</span>`;
+const showDate = (d) => formatDate(d, LANG);
+// Sections of the format: <section data-section="<code>">; the French h2 title is read only for a project
+// created before 0.4.0 (no .team/projet.json). Code -> French title, for that fallback and the messages.
+const SECTIONS = { 'socle-deviation': 'Écart au socle', context: 'Contexte', decision: 'Décision', rationale: 'Raison', consequences: 'Conséquences' };
+// Terms of "Conséquences": <dt data-value="<code>">, the French term as fallback
+const TERMS = { positive: 'Positif', negative: 'Négatif', next: 'Suites' };
+const codeOf = (map, attrHtml, text) => {
+  const v = (attrHtml.match(/\bdata-(?:section|value)="([^"]*)"/) || [])[1];
+  if (v) return v;
+  return LEGACY ? Object.keys(map).find((k) => map[k] === text) || null : null;
+};
 
 // ---------- ADR pages ----------
 const files = readdirSync(ADR).sort();
@@ -85,21 +103,23 @@ const adrs = pages.map((file) => {
   a.repond.forEach((q) => { if (!/^Q-\d{3}$/.test(q)) err(`${where} : repond_a « ${q} », attendu Q-xxx`); });
   // h1: "ADR-NNNN : titre"
   const h1 = strip((html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || '');
-  if (a.titre && h1 !== `${a.id} : ${a.titre}`) err(`${where} : titre du h1 « ${h1} » différent de meta titre « ${a.titre} »`);
+  // the separator follows the typography of the language (« : » in French, «: » in English)
+  if (a.titre && h1.replace(/^(\S+)\s*:\s*/, '$1 : ') !== `${a.id} : ${a.titre}`) err(`${where} : titre du h1 « ${h1} » différent de meta titre « ${a.titre} »`);
   if (!/<!-- gen:adr-meta -->[\s\S]*?<!-- \/gen -->/.test(html)) err(`${where} : bloc <!-- gen:adr-meta --><!-- /gen --> absent de l'en-tête`);
   // Sections of the format, each with its "i"
-  const sections = [...html.matchAll(/<section\b[^>]*>([\s\S]*?)<\/section>/g)].map(([, body]) => ({
-    title: strip((body.match(/<h2[^>]*>([\s\S]*?)<\/h2>/) || [])[1] || ''), body,
-  }));
-  SECTIONS.forEach((t) => { if (!sections.some((s) => s.title === t)) err(`${where} : section « ${t} » absente`); });
+  const sections = [...html.matchAll(/<section\b([^>]*)>([\s\S]*?)<\/section>/g)].map(([, attrs, body]) => {
+    const title = strip((body.match(/<h2[^>]*>([\s\S]*?)<\/h2>/) || [])[1] || '');
+    return { title, code: codeOf(SECTIONS, attrs, title), body };
+  });
+  Object.entries(SECTIONS).forEach(([code, title]) => { if (!sections.some((s) => s.code === code)) err(`${where} : section « ${title} » (data-section="${code}") absente`); });
   sections.filter((s) => !/<h2[^>]*>[\s\S]*?<\/h2>\s*<div class="info-body" hidden>/.test(s.body)).forEach((s) => warn(`${where} : section « ${s.title} » sans (i)`));
-  const raison = sections.find((s) => s.title === 'Raison');
+  const raison = sections.find((s) => s.code === 'rationale');
   if (raison && !/<table class="options">[\s\S]*?<tbody>\s*<tr/.test(raison.body)) err(`${where} : « Raison » sans tableau des options écartées (table.options)`);
-  const csq = sections.find((s) => s.title === 'Conséquences');
+  const csq = sections.find((s) => s.code === 'consequences');
   if (csq) {
-    const terms = [...csq.body.replace(/<div class="info-body"[\s\S]*?<\/div>/, '').matchAll(/<dt>([\s\S]*?)<\/dt>/g)].map(([, t]) => strip(t));
-    ['Positif', 'Négatif'].forEach((t) => { if (!terms.includes(t)) err(`${where} : « Conséquences » sans « ${t} »`); });
-    if (!terms.includes('Suites')) warn(`${where} : « Conséquences » sans « Suites »`);
+    const terms = [...csq.body.replace(/<div class="info-body"[\s\S]*?<\/div>/, '').matchAll(/<dt\b([^>]*)>([\s\S]*?)<\/dt>/g)].map(([, attrs, x]) => codeOf(TERMS, attrs, strip(x)));
+    ['positive', 'negative'].forEach((c) => { if (!terms.includes(c)) err(`${where} : « Conséquences » sans « ${TERMS[c]} » (dt data-value="${c}")`); });
+    if (!terms.includes('next')) warn(`${where} : « Conséquences » sans « Suites » (dt data-value="next")`);
   }
   return a;
 });
@@ -167,22 +187,22 @@ adrs.forEach((a) => {
 });
 const adrLink = (b) => `<a href="${b.file}">${b.id}</a>`;
 const qLink = (q) => (anchors(P.questions).has(q) ? `<a class="qmark" href="../questions.html#${q}">${q}</a>` : q);
-const ecartTag = (e) => (e === 'oui' ? '<span class="tag danger">oui</span>' : '<span class="tag ok">non</span>');
+const ecartTag = (e) => (e === 'oui' ? `<span class="tag danger">${t('adr.yes')}</span>` : `<span class="tag ok">${t('adr.no')}</span>`);
 const links = (l, none) => (l.length ? l.map(adrLink).join(', ') : `<span class="none">${none}</span>`);
 
 // ---------- Header of each ADR page ----------
 const header = (a) => {
   const out = [`<div class="meta">
-        <span><b>Statut</b> ${statusTag(a.statut)}</span>
-        <span><b>Date</b> ${esc(frDate(a.date))}</span>
-        <span><b>Remplace</b> ${links(a.remplace.map((id) => byId.get(id)).filter(Boolean), 'aucun')}</span>
-        <span><b>Remplacé par</b> ${links(a.par, 'aucun')}</span>
-        <span><b>Répond à</b> ${a.repond.length ? a.repond.map(qLink).join(', ') : '<span class="none">aucune question</span>'}</span>
-        <span><b>Écart au socle</b> ${ecartTag(a.ecart)}</span>
+        <span><b>${t('adr.meta.status')}</b> ${statusTag(a.statut)}</span>
+        <span><b>${t('adr.meta.date')}</b> ${esc(showDate(a.date))}</span>
+        <span><b>${t('adr.meta.replaces')}</b> ${links(a.remplace.map((id) => byId.get(id)).filter(Boolean), t('adr.none.adr'))}</span>
+        <span><b>${t('adr.meta.replaced-by')}</b> ${links(a.par, t('adr.none.adr'))}</span>
+        <span><b>${t('adr.meta.answers')}</b> ${a.repond.length ? a.repond.map(qLink).join(', ') : `<span class="none">${t('adr.none.question')}</span>`}</span>
+        <span><b>${t('adr.meta.deviation')}</b> ${ecartTag(a.ecart)}</span>
       </div>`];
-  if (a.par.length) out.push(`<div class="callout warn"><b>Remplacé</b>Cette décision ne s'applique plus : voir ${a.par.map(adrLink).join(', ')}.</div>`);
-  if (a.parPropose.length) out.push(`<div class="callout warn"><b>Remplacement proposé</b>${a.parPropose.map(adrLink).join(', ')} propose de remplacer cette décision ; elle s'applique jusqu'à son acceptation.</div>`);
-  if (a.statut === 'abandonne') out.push('<div class="callout warn"><b>Abandonné</b>Cette proposition n\'a pas été retenue : elle ne s\'applique pas.</div>');
+  if (a.par.length) out.push(`<div class="callout warn"><b>${t('adr.callout.replaced.title')}</b>${t('adr.callout.replaced.text', { links: a.par.map(adrLink).join(', ') })}</div>`);
+  if (a.parPropose.length) out.push(`<div class="callout warn"><b>${t('adr.callout.replacement.title')}</b>${t('adr.callout.replacement.text', { links: a.parPropose.map(adrLink).join(', ') })}</div>`);
+  if (a.statut === 'abandonne') out.push(`<div class="callout warn"><b>${t('adr.callout.abandoned.title')}</b>${t('adr.callout.abandoned.text')}</div>`);
   return `<!-- gen:adr-meta -->\n      ${out.join('\n      ')}\n      <!-- /gen -->`;
 };
 
@@ -193,13 +213,14 @@ const sorted = [...adrs].sort((x, y) => x.num.localeCompare(y.num));
 const count = (s) => adrs.filter((a) => a.statut === s).length;
 const last = sorted.map((a) => a.date).filter(Boolean).sort().pop() || '';
 const toValidate = adrs.filter((a) => a.statut === 'propose' && a.ecart === 'oui').length;
-const row = (a) => `          <tr id="${a.id}"><td data-sort-value="${a.num}">${adrLink(a)}</td><td>${esc(a.titre)}</td><td data-sort-value="${Object.keys(STATUS).indexOf(a.statut)}">${statusTag(a.statut)}</td><td data-sort-value="${esc(a.date)}">${esc(frDate(a.date))}</td><td>${links(a.remplace.map((id) => byId.get(id)).filter(Boolean), 'aucun')}</td><td>${links(a.par, 'aucun')}${a.parPropose.length ? ` <span class="tag warn">proposé</span> ${a.parPropose.map(adrLink).join(', ')}` : ''}</td><td>${a.repond.length ? a.repond.map(qLink).join(', ') : '<span class="none">aucune</span>'}</td><td data-sort-value="${a.ecart}">${ecartTag(a.ecart)}</td></tr>`;
+const none = t('adr.none.adr');
+const row = (a) => `          <tr id="${a.id}"><td data-sort-value="${a.num}">${adrLink(a)}</td><td>${esc(a.titre)}</td><td data-sort-value="${Object.keys(STATUS).indexOf(a.statut)}">${statusTag(a.statut)}</td><td data-sort-value="${esc(a.date)}">${esc(showDate(a.date))}</td><td>${links(a.remplace.map((id) => byId.get(id)).filter(Boolean), none)}</td><td>${links(a.par, none)}${a.parPropose.length ? ` <span class="tag warn">${t('adr.status.propose')}</span> ${a.parPropose.map(adrLink).join(', ')}` : ''}</td><td>${a.repond.length ? a.repond.map(qLink).join(', ') : `<span class="none">${t('adr.none.question-short')}</span>`}</td><td data-sort-value="${a.ecart}">${ecartTag(a.ecart)}</td></tr>`;
 const index = `<!doctype html>
-<html lang="fr">
+<html lang="${esc(LANG)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Décisions d'architecture · ${esc(project)}</title>
+  <title>${t('adr.register.title')} · ${esc(project)}</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -210,37 +231,34 @@ const index = `<!doctype html>
 <div class="doc">
   <aside class="doc-toc">
     <div class="toc-project">${esc(project)}</div>
-    <div class="toc-type">Décisions d'architecture</div>
+    <div class="toc-type">${t('adr.register.toc-type')}</div>
     <nav></nav>
-    <div class="toc-back"><a href="../30-conception/macro.html">← Conception technique macro</a><br><a href="../index.html">← Pilotage du projet</a></div>
+    <div class="toc-back"><a href="../30-conception/macro.html">${t('adr.back.macro')}</a><br><a href="../index.html">${t('adr.back.portal')}</a></div>
   </aside>
   <main class="doc-main wide">
     <header class="doc-header">
-      <div class="kicker">Architecte · Décisions d'architecture</div>
-      <h1><span class="doc-kind">Registre des ADR</span> : ${esc(project)}</h1>
-      <p class="lede">Les décisions d'architecture du projet, une page par décision. Une décision acceptée ne se réécrit pas : une nouvelle décision la remplace.</p>
+      <div class="kicker">${t('adr.register.kicker')}</div>
+      <h1>${t('adr.heading', { kind: `<span class="doc-kind">${t('adr.register.kind')}</span>`, title: esc(project) })}</h1>
+      <p class="lede">${t('adr.register.lede')}</p>
       <div class="meta">
-        <span><b>Proposés</b> ${count('propose')}</span>
-        <span><b>Acceptés</b> ${count('accepte')}</span>
-        <span><b>Remplacés</b> ${count('remplace')}</span>
-        <span><b>Abandonnés</b> ${count('abandonne')}</span>
-        <span><b>Écarts au socle à valider</b> ${toValidate}</span>
-        <span><b>Dernière décision</b> ${esc(frDate(last))}</span>
+${Object.keys(STATUS).map((s) => `        <span><b>${t(`adr.register.count.${s}`)}</b> ${count(s)}</span>`).join('\n')}
+        <span><b>${t('adr.register.to-validate')}</b> ${toValidate}</span>
+        <span><b>${t('adr.register.last')}</b> ${esc(showDate(last))}</span>
       </div>
     </header>
-    <section class="section">
-      <h2>Registre</h2>
+    <section class="section" data-section="register">
+      <h2>${t('adr.register.section')}</h2>
       <div class="info-body" hidden>
         <dl class="defs">
-          <dt>À quoi sert</dt><dd>Retrouver chaque décision d'architecture et savoir si elle s'applique.</dd>
-          <dt>Contenu</dt><dd>Une ligne par ADR : titre, statut, date, ce qu'il remplace et ce qui le remplace, question à laquelle il répond, écart au socle de stack.</dd>
-          <dt>Pourquoi ce formalisme</dt><dd>Le registre d'ADR, tableau triable ; calculé depuis les pages, il ne diverge jamais d'elles.</dd>
-          <dt>Lire</dt><dd><ul><li>${statusTag('propose')} en attente : un écart au socle remonte à l'humain par le PO.</li><li>${statusTag('accepte')} s'applique.</li><li>${statusTag('remplace')} ne s'applique plus, voir la colonne « Remplacé par ».</li><li>${statusTag('abandonne')} proposition non retenue.</li></ul></dd>
-          <dt>Source</dt><dd>Les balises <code>meta</code> des pages <code>adr/NNNN-&lt;slug&gt;.html</code>, lues par <code>team/scripts/adr-pages.mjs</code> ; « Remplacé par » se calcule depuis la balise <code>remplace</code> de la décision qui remplace.</dd>
+          <dt>${t('adr.info.purpose')}</dt><dd>${t('adr.register.info.purpose')}</dd>
+          <dt>${t('adr.info.content')}</dt><dd>${t('adr.register.info.content')}</dd>
+          <dt>${t('adr.info.why')}</dt><dd>${t('adr.register.info.why')}</dd>
+          <dt>${t('adr.info.read')}</dt><dd><ul>${Object.keys(STATUS).map((s) => `<li>${t(`adr.register.info.read.${s}`, { tag: statusTag(s) })}</li>`).join('')}</ul></dd>
+          <dt>${t('adr.info.source')}</dt><dd>${t('adr.register.info.source')}</dd>
         </dl>
       </div>
       <table data-sortable>
-        <thead><tr><th>Id</th><th style="width:34%">Titre</th><th>Statut</th><th>Date</th><th>Remplace</th><th>Remplacé par</th><th>Répond à</th><th>Écart au socle</th></tr></thead>
+        <thead><tr><th data-col="id">${t('adr.col.id')}</th><th data-col="title" style="width:34%">${t('adr.col.title')}</th><th data-col="status">${t('adr.col.status')}</th><th data-col="date">${t('adr.col.date')}</th><th data-col="replaces">${t('adr.col.replaces')}</th><th data-col="replaced-by">${t('adr.col.replaced-by')}</th><th data-col="answers">${t('adr.col.answers')}</th><th data-col="deviation">${t('adr.col.deviation')}</th></tr></thead>
         <tbody>
 ${sorted.map(row).join('\n')}
         </tbody>
@@ -263,4 +281,5 @@ else outputs.forEach(([f, content]) => {
   if (CHECK) { drift++; console.log(`would update ${f.slice(DOCS.length + 1)}`); } else writeFileSync(f, content);
 });
 console.log(`adr-pages : ${adrs.length} ADR (${Object.keys(STATUS).map((s) => `${count(s)} ${STATUS[s].label}`).join(', ')}), ${errors} erreur(s), ${warnings} avertissement(s)${CHECK ? (drift ? `, ${drift} fichier(s) à régénérer` : ', à jour') : ''}`);
+if (t.missing.size) console.error(`libellés absents : ${[...t.missing].join(', ')}`);
 process.exit(errors || (CHECK && drift) ? 1 : 0);

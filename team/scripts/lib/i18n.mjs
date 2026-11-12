@@ -23,8 +23,14 @@ export function projectLang(dir = '.') {
 // True when the project declares its language: the legacy French fallbacks must not be used then.
 export const hasProjectLang = (dir = '.') => existsSync(join(dir, '.team', 'projet.json'));
 
+// Short date pattern per language, from the label common.date.short (dd.mm.yyyy, dd/mm/yyyy, yyyy-mm-dd…),
+// recorded by loadLabels; without it, Intl decides.
+const datePatterns = new Map();
+
 // Flat map { "<namespace>.<key>": label } for the given namespaces, already resolved.
+// common is always loaded: it holds common.date.short, used by formatDate.
 export function loadLabels(dir = '.', namespaces = NAMESPACES, lang = projectLang(dir)) {
+  if (!namespaces.includes('common')) namespaces = ['common', ...namespaces];
   const chain = ['en'];
   const base = lang.split('-')[0];
   if (base !== 'en') chain.push(base);
@@ -35,6 +41,7 @@ export function loadLabels(dir = '.', namespaces = NAMESPACES, lang = projectLan
     for (const l of chain) Object.assign(out, prefix(ns, readJson(join(I18N_DIR, l, `${ns}.json`))));
     Object.assign(out, prefix(ns, project[ns]));
   }
+  if (typeof out['common.date.short'] === 'string') datePatterns.set(lang, out['common.date.short']);
   return out;
 }
 const prefix = (ns, dict) => Object.fromEntries(Object.entries(dict || {}).map(([k, v]) => [`${ns}.${k}`, v]));
@@ -55,11 +62,14 @@ export function makeT(lang, labels) {
   return t;
 }
 
-// Date of an ISO day (AAAA-MM-JJ) in the project language. style: short (02.10.2026 in de), medium, long.
+// Date of an ISO day (AAAA-MM-JJ) in the project language. style: short (common.date.short if loaded, else
+// Intl: 02.10.2026 in de), medium, long.
 export function formatDate(iso, lang, style = 'short') {
   if (!iso) return '';
   const m = String(iso).match(/^(\d{4})-(\d{2})-(\d{2})/);
   if (!m) return String(iso);
+  const pattern = style === 'short' && datePatterns.get(lang);
+  if (pattern) return pattern.replace('dd', m[3]).replace('mm', m[2]).replace('yyyy', m[1]);
   const d = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3]));
   const opts = style === 'short' ? { day: '2-digit', month: '2-digit', year: 'numeric' }
     : style === 'medium' ? { day: 'numeric', month: 'short', year: 'numeric' } : { day: 'numeric', month: 'long', year: 'numeric' };

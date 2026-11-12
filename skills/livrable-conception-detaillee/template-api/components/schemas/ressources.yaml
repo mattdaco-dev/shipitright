@@ -1,4 +1,5 @@
-# Domaine « Ressources » : schémas nommés dans openapi.yaml sous components/schemas
+# domain: Ressources
+# Schémas nommés dans openapi.yaml sous components/schemas
 # Un fichier par domaine fonctionnel, A REMPLACER. Un schéma échangé (envoyé ou reçu directement par
 # un endpoint) a sa page ; un type utilisé seulement à l'intérieur d'autres schémas est un type
 # partagé, sans page. Schémas à plat : un allOf d'un schéma en additionalProperties: false refuse

@@ -40,7 +40,7 @@
       </div>
     </header>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="physical-model">
       <h2>Modèle physique</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -148,7 +148,7 @@ stateDiagram-v2
       <table class="open-points">
         <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
         <tbody>
-          <tr><td><span class="impact moyen">moyen</span></td><td>Réactivation d'une salle désactivée : avec « oui », une transition Désactivée vers Active et un endpoint sur le modèle de <a href="../endpoints/EP-17.html">EP-17</a>, sans restaurer les réservations annulées.</td><td>pas de réactivation ; si elle vient, l'index unique partiel refuse la réactivation d'une salle dont le nom a été repris, le domaine le dit avant (<a href="../transverse/erreurs.html#NOM_SALLE_PRIS"><code>NOM_SALLE_PRIS</code></a>).</td><td><a class="qmark" href="../../../questions.html#Q-004">Q-004</a></td></tr>
+          <tr><td data-value="moyen"><span class="impact moyen">moyen</span></td><td>Réactivation d'une salle désactivée : avec « oui », une transition Désactivée vers Active et un endpoint sur le modèle de <a href="../endpoints/EP-17.html">EP-17</a>, sans restaurer les réservations annulées.</td><td>pas de réactivation ; si elle vient, l'index unique partiel refuse la réactivation d'une salle dont le nom a été repris, le domaine le dit avant (<a href="../transverse/erreurs.html#NOM_SALLE_PRIS"><code>NOM_SALLE_PRIS</code></a>).</td><td><a class="qmark" href="../../../questions.html#Q-004">Q-004</a></td></tr>
         </tbody>
       </table>
     </section>

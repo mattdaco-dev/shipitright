@@ -155,7 +155,10 @@ qu'elle peut toucher) :
   provisoire n'en a pas : ses points sont dans `x-open` de l'opération.
 - **Forme** : `impact` (fort, moyen, faible), `sujet` (ce qui reste à trancher et ce qu'une autre
   réponse changerait), `hypothese` (ce que le code suit en attendant), `question` (`Q-xxx` si elle
-  est posée au PO, sinon vide : « non posée »). Rangés par impact décroissant dans chaque page.
+  est posée au PO, sinon vide : « non posée »). Rangés par impact décroissant dans chaque page. Dans
+  une page écrite, l'impact est un code : `<td data-value="moyen"><span class="impact moyen">…</span></td>`,
+  le libellé visible dans la langue du projet ; sans point, `<p data-value="none">…</p>` ou pas de
+  section.
 - **Vue unique** : `detaillee/points-ouverts.html`, générée, rangée par impact puis par objet, avec
   lien vers l'endroit concerné et vers la question ; compteur par impact dans l'en-tête du sommaire.
 
@@ -203,7 +206,7 @@ docs/30-conception/
   api/                             contrat d'API, à la main   ← template-api/ (tout le dossier)
     openapi.yaml                   racine : info (version, x-changelog), tags, chemins, nom de chaque composant
     paths/<chemin>.yaml            un fichier par chemin : /salles/{id} → paths/salles-id.yaml
-    components/schemas/<domaine>.yaml   schémas d'un domaine ; 1re ligne : # Domaine « Libellé » ...
+    components/schemas/<domaine>.yaml   schémas d'un domaine ; 1re ligne : # domain: <libellé>
     components/parameters.yaml, components/responses.yaml
     .redocly.lint-ignore.yaml      ignores ciblés du lint
   detaillee/
@@ -299,14 +302,14 @@ une provisoire) qui montre la règle des schémas partagés.
 | Opération figée | `paths/<chemin>.yaml` | obligatoire | `x-endpoint-id`, `x-release`, `x-contract`, `x-roles`, `x-module`, `x-entities` ou `x-processes` ; si elle écrit (C, U ou D) : `x-idempotence` et `x-sequence` ; en lecture : `x-sequence` recommandé ; exemple du corps de requête et de chaque réponse 2xx qui a un corps (`example` du contenu, ou `examples` du schéma échangé ; erreur du générateur sinon) ; `x-codes` sur chaque erreur ; `x-entities` avec `via` pour chaque entité que touche un traitement appelé |
 | Opération provisoire | `paths/<chemin>.yaml` | obligatoire, niveau réduit | `summary`, `x-roles`, `x-module`, `x-entities` ou `x-processes`, `x-open` ; séquence et exemples facultatifs |
 | Sommaire | Plan du site, Endpoints, Matrice CRUD | obligatoire | blocs `gen:` seulement ; le (i) du plan du site porte l'ordre de lecture et le lien vers l'ADR des conventions d'API |
-| Entité | Modèle physique | obligatoire | DDL commenté ; règles hors de la base |
+| Entité | Modèle physique | obligatoire | `data-section="physical-model"` ; DDL commenté ; règles hors de la base |
 | Entité | Machine à états | recommandé | `table.transitions` et bloc `state-diagram` ; sans cycle de vie : une phrase |
 | Entité | Qui agit dessus | obligatoire | bloc `entity-usage` |
 | Traitement | Appelé par et entités | obligatoire | bloc `process-usage` |
 | Traitement | Signature et transaction, Algorithme | obligatoire | signature typée ; étapes avec règle et refus |
 | Traitement d'une opération provisoire | Algorithme proposé | obligatoire, niveau réduit | seule section avec « Appelé par et entités » ; ses points ouverts sont dans `x-open` de l'opération |
 | Traitement | Cas limites | recommandé | un cas par ligne avec le résultat attendu |
-| Entité, traitement, transverse | Points ouverts | recommandé | `table.open-points`, ou « Aucun point ouvert. », ou pas de section |
+| Entité, traitement, transverse | Points ouverts | recommandé | `table.open-points` (impact en `data-value`), ou `<p data-value="none">`, ou pas de section |
 | Organisation du code | Backend, Frontend, Persistance | obligatoire | celles du socle appliquées au produit ; `table.modules` avec chaque module déclaré et bloc `code-modules` ; `#transactions` avec les deux règles du gabarit |
 | Conformité | Framework, socle de stack, design system, projet, écarts | obligatoire | voir ci-dessous |
 | Erreurs | Principes, Catalogue des codes | obligatoire | principes du gabarit complétés ; bloc `error-catalog` |
@@ -387,11 +390,14 @@ l'humain les valide à G2.
   Calculé par le générateur, jamais écrit à la main.
 - **Liens et infobulles** : ne pas écrire de `title` sur un lien EP, EN, TR : doc.js calcule
   l'infobulle depuis `xref.js`. Dans le YAML, un nom de schéma d'un seul mot s'écrit entre accents
-  graves pour être lié ; « conception macro », « conception fonctionnelle », « spec UX/UI » sont liés.
+  graves pour être lié ; le nom de la conception macro, de la conception fonctionnelle et de la spec
+  UX/UI, tel que le dictionnaire `detaillee` l'écrit dans la langue du projet (« conception macro »,
+  « conception fonctionnelle », « spec UX/UI » en français), est lié.
 - **Tableaux triables** : `<table data-sortable>` (doc.js) ; `data-sort-value` sur une cellule,
   `data-sort-order="MVP|R2|R3"` sur un en-tête pour un ordre logique.
-- **Fichiers de schémas** : un par domaine fonctionnel, première ligne
-  `# Domaine « Libellé » : ...` (le libellé nomme la card du domaine).
+- **Fichiers de schémas** : un par domaine fonctionnel, première ligne `# domain: <libellé>` (le
+  libellé, dans la langue du projet, nomme la card du domaine ; `# Domaine « Libellé »` n'est plus lu
+  que pour un projet sans `.team/projet.json`).
 - **DDL** : vérifié dans le moteur du store avant de le rendre (par exemple `sqlite3 :memory:`),
   `<`, `>` et `&` échappés dans la page.
 - **Pièges YAML** : un texte non quoté qui contient « : » devient un objet (le générateur le

@@ -42,7 +42,7 @@
       <!-- /gen -->
     </header>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="socle-deviation">
       <h2>Écart au socle</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -55,7 +55,7 @@
       <p>Non. Le socle ne dit rien de l'authentification.</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="context">
       <h2>Contexte</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -67,7 +67,7 @@
       <p>Le cadrage prévoit une connexion par email et mot de passe sur des comptes locaux préchargés, deux rôles (employé, gestionnaire), sans SSO ni annuaire. Le front Angular et l'API sont servis depuis la même origine (proxy en local, backend qui sert le front en démo).</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="decision">
       <h2>Décision</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -84,7 +84,7 @@
       </ul>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="rationale">
       <h2>Raison</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -107,7 +107,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="consequences">
       <h2>Conséquences</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -117,9 +117,9 @@
         </dl>
       </div>
       <dl class="defs">
-        <dt>Positif</dt><dd>aucun secret applicatif à gérer, révocation immédiate.</dd>
-        <dt>Négatif</dt><dd>une lecture de session par requête (négligeable sur SQLite local) ; purge des sessions expirées à prévoir (au démarrage et à la connexion).</dd>
-        <dt>Suites</dt><dd>aucune.</dd>
+        <dt data-value="positive">Positif</dt><dd>aucun secret applicatif à gérer, révocation immédiate.</dd>
+        <dt data-value="negative">Négatif</dt><dd>une lecture de session par requête (négligeable sur SQLite local) ; purge des sessions expirées à prévoir (au démarrage et à la connexion).</dd>
+        <dt data-value="next">Suites</dt><dd>aucune.</dd>
       </dl>
     </section>
   </main>

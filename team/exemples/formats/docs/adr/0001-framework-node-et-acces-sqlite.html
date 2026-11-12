@@ -42,7 +42,7 @@
       <!-- /gen -->
     </header>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="socle-deviation">
       <h2>Écart au socle</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -55,7 +55,7 @@
       <p>Non. Le socle <code>node-sqlite-angular</code> laisse le framework à choisir, et le <a href="../00-cadrage/cadrage.html#contraintes">cadrage</a> (contraintes, 01.10.2026) le confie à l'architecte. La stack complète reste validée par l'humain à G2.</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="context">
       <h2>Contexte</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -68,7 +68,7 @@
       <p>Cet ADR répond à <a class="qmark" href="../questions.html#Q-001">Q-001</a>, volet framework et accès aux données.</p>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="decision">
       <h2>Décision</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -85,7 +85,7 @@
       </ul>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="rationale">
       <h2>Raison</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -112,7 +112,7 @@
       </table>
     </section>
 
-    <section class="section" data-level="obligatoire">
+    <section class="section" data-level="obligatoire" data-section="consequences">
       <h2>Conséquences</h2>
       <div class="info-body" hidden>
         <dl class="defs">
@@ -122,9 +122,9 @@
         </dl>
       </div>
       <dl class="defs">
-        <dt>Positif</dt><dd>peu de dépendances, contrat d'API et validation au même endroit, transactions lisibles.</dd>
-        <dt>Négatif</dt><dd>module natif (compilation ou binaire précompilé à l'installation) ; les types des lignes SQL sont écrits à la main et doivent rester alignés sur les migrations.</dd>
-        <dt>Suites</dt><dd>Architecte : reporter ces choix dans <code>.team/socles/stacks/node-sqlite-angular/socle.md</code> (organisation du code, outillage, commandes) et créer son <code>conformite.md</code> en P3 réelle. Dev backend : vérifier l'installation de better-sqlite3 sur la machine avant le premier sprint.</dd>
+        <dt data-value="positive">Positif</dt><dd>peu de dépendances, contrat d'API et validation au même endroit, transactions lisibles.</dd>
+        <dt data-value="negative">Négatif</dt><dd>module natif (compilation ou binaire précompilé à l'installation) ; les types des lignes SQL sont écrits à la main et doivent rester alignés sur les migrations.</dd>
+        <dt data-value="next">Suites</dt><dd>Architecte : reporter ces choix dans <code>.team/socles/stacks/node-sqlite-angular/socle.md</code> (organisation du code, outillage, commandes) et créer son <code>conformite.md</code> en P3 réelle. Dev backend : vérifier l'installation de better-sqlite3 sur la machine avant le premier sprint.</dd>
       </dl>
     </section>
   </main>

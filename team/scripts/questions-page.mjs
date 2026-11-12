@@ -5,12 +5,17 @@
 // Usage: node team/scripts/questions-page.mjs [<project dir>]   (default: the current directory)
 import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
+import { projectLang, hasProjectLang, loadLabels, makeT, formatDate } from './lib/i18n.mjs';
 
 const root = process.argv[2] ?? '.';
 if ( !existsSync(join(root, '.team/questions'))) {
   console.error('Usage: questions-page.mjs [<project dir>]'); process.exit(2);
 }
 const docs = join(root, 'docs');
+// Labels in the project language (team/conventions/langue.md)
+const lang = projectLang(root);
+const t = makeT(lang, loadLabels(root, ['questions'], lang));
+const LEGACY = !hasProjectLang(root);
 const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 // Project name, from the steering page docs/index.html (toc-project), else from an old portal title "Portail : Name"
@@ -34,7 +39,7 @@ const parse = (src) => {
 // Body: "## Title" sections, or a single block when the file has none
 const sections = (body) => {
   const out = [];
-  let cur = { title: 'Question', lines: [] };
+  let cur = { title: t('questions.part.question'), lines: [] };
   body.split('\n').forEach((l) => {
     const h = l.match(/^##\s+(.*)$/);
     if (h) { if (cur.lines.join('').trim()) out.push(cur); cur = { title: h[1].trim(), lines: [] }; } else cur.lines.push(l);
@@ -74,31 +79,36 @@ const qs = readdirSync(join(root, '.team/questions')).filter((f) => /^Q-\d+.*\.m
   return { file: f, id: meta.id || f.match(/^(Q-\d+)/)[1], meta, parts: sections(body) };
 });
 
-const STATUS = { ouverte: ['Ouvertes', 'warn'], remontee: ["Remontées à l'humain", 'danger'], repondue: ['Répondues', 'ok'] };
+// Status code (front matter statut) -> tag class; group heading and tag label come from the dictionary
+const STATUS = { ouverte: 'warn', remontee: 'danger', repondue: 'ok' };
+const SECTION = { ouverte: 'open', remontee: 'raised', repondue: 'answered' };
+// The answer part: its "## Réponse" heading in a project created before 0.4.0; otherwise the heading is
+// written in the project language, so the answer is the last part of an answered question (forum.md order)
+const isAnswer = (q, i) => (LEGACY ? /réponse/i.test(q.parts[i].title) : q.meta.statut === 'repondue' && i > 0 && i === q.parts.length - 1);
 const card = (q) => {
   const s = q.meta.statut || 'ouverte';
-  const tags = [`<span class="tag ${(STATUS[s] || STATUS.ouverte)[1]}">${esc(s)}</span>`];
-  if (q.meta.bloquant === 'oui') tags.push('<span class="tag danger">bloquante</span>');
+  const tags = [`<span class="tag ${STATUS[s] || STATUS.ouverte}">${esc(STATUS[s] ? t(`questions.status.${s}`) : s)}</span>`];
+  if (q.meta.bloquant === 'oui') tags.push(`<span class="tag danger">${t('questions.blocking')}</span>`);
   const meta = [];
-  if (q.meta.de) meta.push(`<span><b>De</b> ${esc(q.meta.de)}</span>`);
-  if (q.meta.pour) meta.push(`<span><b>Pour</b> ${esc(q.meta.pour)}</span>`);
-  if ((q.meta.lie_a || []).length) meta.push(`<span><b>Lié à</b> ${q.meta.lie_a.map(ref).join(', ')}</span>`);
-  meta.push(`<span><b>Fichier</b> <code>.team/questions/${esc(q.file)}</code></span>`);
-  const parts = q.parts.map((p) => `<div class="q-part${/réponse/i.test(p.title) ? ' answer' : ''}"><h4>${esc(p.title)}</h4>${md(p.lines)}</div>`).join('');
+  if (q.meta.de) meta.push(`<span><b>${t('questions.field.from')}</b> ${esc(q.meta.de)}</span>`);
+  if (q.meta.pour) meta.push(`<span><b>${t('questions.field.for')}</b> ${esc(q.meta.pour)}</span>`);
+  if ((q.meta.lie_a || []).length) meta.push(`<span><b>${t('questions.field.linked')}</b> ${q.meta.lie_a.map(ref).join(', ')}</span>`);
+  meta.push(`<span><b>${t('questions.field.file')}</b> <code>.team/questions/${esc(q.file)}</code></span>`);
+  const parts = q.parts.map((p, i) => `<div class="q-part${isAnswer(q, i) ? ' answer' : ''}"><h4>${esc(p.title)}</h4>${md(p.lines)}</div>`).join('');
   return `<article class="q-card" id="${esc(q.id)}"><header><span class="q-id">${esc(q.id)}</span>${tags.join('')}</header>
   <div class="meta">${meta.join('')}</div>${parts}</article>`;
 };
 
 const groups = Object.keys(STATUS).map((s) => [s, qs.filter((q) => (q.meta.statut || 'ouverte') === s)]).filter(([, l]) => l.length);
 const count = (s) => qs.filter((q) => (q.meta.statut || 'ouverte') === s).length;
-const today = new Date().toLocaleDateString('fr-FR').replace(/\//g, '.');
+const todayIso = new Date().toISOString().slice(0, 10);
 
 const html = `<!doctype html>
-<html lang="fr">
+<html lang="${esc(lang)}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Questions · ${esc(project)}</title>
+  <title>${t('questions.title')} · ${esc(project)}</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -109,27 +119,27 @@ const html = `<!doctype html>
 <div class="doc">
   <aside class="doc-toc">
     <div class="toc-project">${esc(project)}</div>
-    <div class="toc-type">Questions</div>
+    <div class="toc-type">${t('questions.toc-type')}</div>
     <nav></nav>
-    <div class="toc-back"><a href="index.html">← Pilotage du projet</a></div>
+    <div class="toc-back"><a href="index.html">${t('questions.back.portal')}</a></div>
   </aside>
   <main class="doc-main">
     <header class="doc-header">
-      <div class="kicker">Suivi</div>
-      <h1><span class="doc-kind">Questions</span> : ${esc(project)}</h1>
-      <p class="lede">Les questions métier posées au PO par la team, et leur réponse. Chaque question vit dans son fichier de <code>.team/questions/</code> ; cette page les rassemble.</p>
+      <div class="kicker">${t('questions.kicker')}</div>
+      <h1>${t('questions.heading', { kind: `<span class="doc-kind">${t('questions.kind')}</span>`, title: esc(project) })}</h1>
+      <p class="lede">${t('questions.lede')}</p>
       <div class="meta">
-        <span><b>Ouvertes</b> ${count('ouverte')}</span>
-        <span><b>Remontées</b> ${count('remontee')}</span>
-        <span><b>Répondues</b> ${count('repondue')}</span>
-        <span><b>Bloquantes ouvertes</b> ${qs.filter((q) => q.meta.bloquant === 'oui' && q.meta.statut !== 'repondue').length}</span>
-        <span><b>Générée le</b> ${today}</span>
+        <span><b>${t('questions.meta.open')}</b> ${count('ouverte')}</span>
+        <span><b>${t('questions.meta.raised')}</b> ${count('remontee')}</span>
+        <span><b>${t('questions.meta.answered')}</b> ${count('repondue')}</span>
+        <span><b>${t('questions.meta.blocking-open')}</b> ${qs.filter((q) => q.meta.bloquant === 'oui' && q.meta.statut !== 'repondue').length}</span>
+        <span><b>${t('questions.meta.generated')}</b> <time datetime="${todayIso}">${formatDate(todayIso, lang)}</time></span>
       </div>
     </header>
-${groups.length ? groups.map(([s, l]) => `    <section class="section">
-      <h2>${STATUS[s][0]}</h2>
+${groups.length ? groups.map(([s, l]) => `    <section class="section" data-section="${SECTION[s]}">
+      <h2>${t(`questions.group.${s}`)}</h2>
       ${l.map(card).join('\n      ')}
-    </section>`).join('\n') : '    <section class="section"><h2>Aucune question</h2><p>Aucune question posée pour l\'instant.</p></section>'}
+    </section>`).join('\n') : `    <section class="section"><h2>${t('questions.none.title')}</h2><p>${t('questions.none.text')}</p></section>`}
   </main>
 </div>
 <script src="_assets/doc.js"></script>
@@ -138,3 +148,4 @@ ${groups.length ? groups.map(([s, l]) => `    <section class="section">
 `;
 writeFileSync(join(docs, 'questions.html'), html);
 console.log(`docs/questions.html : ${qs.length} question(s)`);
+if (t.missing.size) console.error(`libellés absents : ${[...t.missing].join(', ')}`);

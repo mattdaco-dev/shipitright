@@ -8,7 +8,7 @@
 #   paths/<chemin>.yaml              un fichier par chemin (path item), toutes ses opérations
 #   components/schemas/<domaine>.yaml schémas regroupés par domaine (commun, session, salles,
 #                                    reservations, series, statistiques, erreurs) ; la première
-#                                    ligne « # Domaine « Libellé » » nomme la card du domaine
+#                                    ligne « # domain: <libellé> » nomme la card du domaine
 #   components/parameters.yaml, components/responses.yaml
 # Un schéma, un paramètre ou une réponse n'existe que s'il est nommé ici sous components ; ailleurs,
 # on le cite par un $ref relatif à son fichier (« ../components/schemas/salles.yaml#/Salle »).

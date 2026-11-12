@@ -59,6 +59,9 @@ lie_a: [US-012, RG-08]
 <remplie par le PO, avec la source : "humain, 2026-10-02" ou "PO, d'après le cadrage RG-04">
 ```
 
+Les titres de sections s'écrivent dans la langue du projet. La réponse est toujours la dernière
+section, celle que les scripts lisent quand la question est `repondue` (`team/conventions/langue.md`).
+
 Le PO répond s'il peut, à partir du cadrage et de ce que l'humain a déjà dit. Sinon il passe la question
 en `remontee` et la pose à l'humain, **groupée** avec les autres, jamais une par une au fil de l'eau.
 Une réponse qui crée ou modifie une règle de gestion est reportée dans le livrable concerné.

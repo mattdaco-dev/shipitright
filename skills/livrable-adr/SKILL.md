@@ -77,12 +77,16 @@ grep -l 'name="ecart_socle" content="oui"' docs/adr/*.html                     #
 
 | Section | Niveau | Ce qu'on y attend |
 |---|---|---|
-| En-tête | obligatoire | balises `<meta>`, `h1` « ADR-NNNN : titre », bloc `<!-- gen:adr-meta --><!-- /gen -->` (statut, date, remplace, remplacé par, répond à, écart au socle), rempli par le générateur |
+| En-tête | obligatoire | balises `<meta>`, `h1` « ADR-NNNN : titre » (deux-points selon la typographie de la langue), bloc `<!-- gen:adr-meta --><!-- /gen -->` (statut, date, remplace, remplacé par, répond à, écart au socle), rempli par le générateur |
 | Écart au socle | obligatoire | une ou deux phrases. Non : ce que le socle dit du sujet et pourquoi la décision le respecte. Oui : la règle ou l'invariant `CF-xx` écarté, sa portée ; l'ADR reste « proposé » jusqu'à l'accord de l'humain |
 | Contexte | obligatoire | le problème, les contraintes (cadrage, socle, `RG-xx`), le volet de la question `Q-xxx` traité ; prose courte |
 | Décision | obligatoire | liste, une affirmation par choix, à l'affirmatif ; numérotée quand l'ordre compte |
 | Raison | obligatoire | arguments de la décision en liste, puis `table.options` : une ligne par option écartée et pourquoi. Au moins une option |
-| Conséquences | obligatoire | `dl.defs` à trois termes fixes : **Positif**, **Négatif**, **Suites** (actions et qui les porte, ou « aucune ») |
+| Conséquences | obligatoire | `dl.defs` à trois termes fixes : **Positif**, **Négatif**, **Suites** (actions et qui les porte, ou « aucune »), repérés par `<dt data-value="positive">`, `negative`, `next` |
+
+Le générateur repère chaque section par son attribut `data-section` (`socle-deviation`, `context`,
+`decision`, `rationale`, `consequences`), jamais par son titre : le titre et les termes visibles
+s'écrivent dans la langue du projet, les attributs restent tels quels.
 
 Chaque section garde son **(i)** du gabarit : `<div class="info-body" hidden>` juste après le `h2`, avec
 une `<dl class="defs">` **À quoi sert**, **Contenu**, **Pourquoi ce formalisme**, puis au besoin
