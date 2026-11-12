@@ -26,6 +26,7 @@ import { readFileSync, statSync, readdirSync, existsSync } from 'node:fs';
 import { join, relative, dirname, resolve, sep } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
+import { projectLang, hasProjectLang } from './lib/i18n.mjs';
 
 const files = [];
 const walk = (p) => {
@@ -39,6 +40,39 @@ targets.forEach(walk);
 if (!files.length) { console.error('Usage: check-livrable.mjs <file.html|dir> [...]'); process.exit(2); }
 
 const LEVELS = ['obligatoire', 'recommande', 'facultatif'];
+// Project of a deliverable: the nearest parent folder holding .team/ (team/conventions/langue.md)
+const rootCache = new Map();
+const projectRootOf = (file) => {
+  const start = dirname(resolve(file));
+  if (rootCache.has(start)) return rootCache.get(start);
+  let d = start, root = null;
+  for (;;) {
+    if (existsSync(join(d, '.team'))) { root = d; break; }
+    const up = dirname(d);
+    if (up === d) break;
+    d = up;
+  }
+  rootCache.set(start, root);
+  return root;
+};
+// Gherkin scenario keywords of every language the plugin ships, plus the project's own (.team/libelles.json)
+const I18N_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', 'i18n');
+const builtinScenario = existsSync(I18N_DIR) ? readdirSync(I18N_DIR).flatMap((l) => {
+  const f = join(I18N_DIR, l, 'gherkin.json');
+  return existsSync(f) ? JSON.parse(readFileSync(f, 'utf8')).scenario || [] : [];
+}) : [];
+const scenarioCache = new Map();
+const scenarioRe = (file) => {
+  const root = projectRootOf(file);
+  if (!scenarioCache.has(root)) {
+    let words = [...builtinScenario];
+    const own = root && join(root, '.team', 'libelles.json');
+    if (own && existsSync(own)) { try { words = words.concat((JSON.parse(readFileSync(own, 'utf8')).gherkin || {}).scenario || []); } catch { /* reported by pilotage-pages */ } }
+    const esc = [...new Set(words)].map((w) => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|');
+    scenarioCache.set(root, new RegExp(`^\\s*(?:${esc || 'Scénario'})\\s+(\\d+)\\s*:`, 'gmu'));
+  }
+  return scenarioCache.get(root);
+};
 // Anchors of a deliverable: explicit ids, plus the ids doc.js gives section titles (same slug)
 const slug = (t) => t.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '')
   .replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -48,7 +82,7 @@ const anchorsOf = (f) => {
     const t = readFileSync(f, 'utf8'), set = new Set();
     for (const [, id] of t.matchAll(/\bid="([^"]+)"/g)) set.add(id);
     for (const [, h] of t.matchAll(/<h[23][^>]*>([\s\S]*?)<\/h[23]>/g)) set.add(slug(h.replace(/<[^>]+>/g, '').trim()));
-    for (const [, n] of t.matchAll(/^\s*Scénario\s+(\d+)\s*:/gm)) set.add('S' + n); // Gherkin cards, ids given by doc.js
+    for (const [, n] of t.matchAll(scenarioRe(f))) set.add('S' + n); // Gherkin cards, ids given by doc.js
     anchorCache.set(f, set);
   }
   return anchorCache.get(f);
@@ -123,7 +157,8 @@ const SIGIL_HINT = {
 };
 // Retro chain of a sprint page: rows <tr id="Sn-Pm|Sn-Am|Sn-Em"> of its tables, columns found by their header
 const RETRO_ID = /^S(\d+)-([PAE])(\d+)$/;
-const NATURES = ["essai d'un sprint", 'changement durable'];
+const NATURES = ['essai', 'durable'];
+const NATURES_FR = { "essai d'un sprint": 'essai', 'changement durable': 'durable' }; // pages before 0.4.0
 const PROJECT_PATH = /^(\.\/|\/)?(docs|\.team|src|backend|frontend)\//;
 const cellText = (h) => h.replace(/<[^>]+>/g, ' ').replace(/&nbsp;|&#160;/g, ' ').replace(/[\u2019]/g, "'").replace(/\s+/g, ' ').trim();
 const sprintPage = (file) => (file.match(/[\\/]sprints[\\/]sprint-(\d+)\.html$/) || [])[1];
@@ -132,18 +167,24 @@ function checkSprint(html, n) {
   const errs = [], warns = [];
   const items = [];
   for (const [, table] of html.matchAll(/<table\b[^>]*>([\s\S]*?)<\/table>/g)) {
-    const heads = [...((table.match(/<thead\b[^>]*>([\s\S]*?)<\/thead>/) || [])[1] || '').matchAll(/<th\b[^>]*>([\s\S]*?)<\/th>/g)].map((m) => cellText(m[1]).toLowerCase());
+    // A column is found by its data-col code, else (pages before 0.4.0) by its French header
+    const heads = [...((table.match(/<thead\b[^>]*>([\s\S]*?)<\/thead>/) || [])[1] || '').matchAll(/<th\b([^>]*)>([\s\S]*?)<\/th>/g)]
+      .map((m) => ({ code: (m[1].match(/\bdata-col="([^"]+)"/) || [])[1], text: cellText(m[2]).toLowerCase() }));
     for (const [, attrs, body] of table.matchAll(/<tr\b([^>]*)>([\s\S]*?)<\/tr>/g)) {
       const id = (attrs.match(/\bid="([^"]+)"/) || [])[1];
       const m = id && id.match(RETRO_ID);
       if (!m) continue;
-      const cells = [...body.matchAll(/<td\b[^>]*>([\s\S]*?)<\/td>/g)].map((c) => c[1]);
-      const col = (name, dflt) => { const i = heads.findIndex((h) => h.startsWith(name)); return cells[i >= 0 ? i : dflt] || ''; };
+      const cells = [...body.matchAll(/<td\b([^>]*)>([\s\S]*?)<\/td>/g)].map((c) => ({ attrs: c[1], html: c[2] }));
+      const col = (code, fr, dflt) => {
+        let i = heads.findIndex((h) => h.code === code);
+        if (i < 0) i = heads.findIndex((h) => h.text.startsWith(fr));
+        return cells[i >= 0 ? i : dflt] || { attrs: '', html: '' };
+      };
       items.push({ id, sprint: m[1], kind: m[2], body, col });
     }
   }
   if (!items.length) {
-    if (/<h2[^>]*>\s*Rétro\s*<\/h2>/.test(html)) warns.push("format de rétro antérieur : aucune ligne Sn-Pm, Sn-Am ou Sn-Em (skill livrable-sprint)");
+    if (/data-section="retro"/.test(html) || /<h2[^>]*>\s*Rétro\s*<\/h2>/.test(html)) warns.push("format de rétro antérieur : aucune ligne Sn-Pm, Sn-Am ou Sn-Em (skill livrable-sprint)");
     return { errs, warns };
   }
   const cites = (body, kind) => [...body.matchAll(/<a\b[^>]*\bhref="[^"#]*#(S\d+-[PAE]\d+)"/g)].map((x) => x[1]).filter((x) => x.match(RETRO_ID)[2] === kind);
@@ -154,11 +195,13 @@ function checkSprint(html, n) {
       const ps = cites(it.body, 'P');
       ps.forEach((p) => cited.add(p));
       if (!ps.length) errs.push(`${it.id} : aucun lien vers un problème Sn-Pm`);
-      const nature = cellText(it.col('nature', 3)).toLowerCase();
-      if (!NATURES.includes(nature)) errs.push(`${it.id} : nature « ${nature} », attendu ${NATURES.map((x) => `« ${x} »`).join(' ou ')}`);
+      const cell = it.col('nature', 'nature', 3);
+      const code = (cell.attrs.match(/\bdata-value="([^"]*)"/) || [])[1];
+      const nature = code ?? NATURES_FR[cellText(cell.html).toLowerCase()] ?? cellText(cell.html);
+      if (!NATURES.includes(nature)) errs.push(`${it.id} : nature « ${nature} », attendu data-value="essai" (essai d'un sprint) ou "durable" (changement durable)`);
     } else if (it.kind === 'E') {
       if (!cites(it.body, 'A').length) errs.push(`${it.id} : aucun lien vers une action Sn-Am`);
-      const f = cellText(it.col('fichier', 1));
+      const f = cellText(it.col('file', 'fichier', 1).html);
       if (PROJECT_PATH.test(f)) warns.push(`${it.id} : le fichier « ${f.split(/[\s,]/)[0]} » est un chemin du projet ; une évolution vise un fichier du plugin, un changement du projet est une action`);
     }
   });
@@ -252,6 +295,13 @@ for (const file of files) {
       else broken.push(href);
     }
   }
+  // Language: a deliverable of a project that declares its language carries it on <html lang>
+  const root = projectRootOf(file);
+  const langWarn = [];
+  if (root && hasProjectLang(root)) {
+    const want = projectLang(root), got = (html.match(/<html\b[^>]*\blang="([^"]*)"/i) || [])[1];
+    if (got !== want) langWarn.push(`<html lang="${got ?? ''}">, langue du projet ${want} (.team/projet.json)`);
+  }
   const plan = checkPlan(html);
   const sprintN = sprintPage(file);
   const retro = sprintN ? checkSprint(html, sprintN) : { errs: [], warns: [] };
@@ -273,6 +323,7 @@ for (const file of files) {
   if (retro.errs.length) console.log(`     rétro KO     ${retro.errs.join(' | ')}`);
   if (retro.warns.length) console.log(`     rétro        ${retro.warns.join(' | ')}`);
   if (oldRetro.length) console.log(`     liens        page de sprint au format de rétro antérieur, ancre absente : ${[...new Set(oldRetro)].join(' | ')}`);
+  if (langWarn.length) console.log(`     langue       ${langWarn.join(' | ')}`);
   if (unknown.length) console.log(`     glossaire    préfixe non déclaré dans team/glossaire.md : ${unknown.join(' | ')}`);
   for (const [k, list] of Object.entries(sigils)) if (list.length) console.log(`     sigle ${k}n      ${SIGIL_HINT[k]} : ${list.join(' | ')}`);
   if (pending.length) console.log(`     liens        cible pas encore produite : ${[...new Set(pending)].join(' | ')}`);
@@ -332,6 +383,11 @@ targets.forEach((a) => {
   else if (existsSync(join(p, '..', '.team', 'journal.md')) && existsSync(join(p, '20-specs'))) projects.add(resolve(p, '..'));
 });
 const pilGenerator = join(dirname(fileURLToPath(import.meta.url)), 'pilotage-pages.mjs');
+const i18nGenerator = join(dirname(fileURLToPath(import.meta.url)), 'i18n-assets.mjs');
+projects.forEach((dir) => {
+  const r = spawnSync(process.execPath, [i18nGenerator, dir, '--check'], { encoding: 'utf8' });
+  if (r.status !== 0) console.log(`     warn docs/_assets/i18n.js absent ou périmé : relancer node ${i18nGenerator} ${relative(process.cwd(), dir) || '.'}`);
+});
 projects.forEach((dir) => {
   const r = spawnSync(process.execPath, [pilGenerator, dir, '--check'], { encoding: 'utf8' });
   const lines = `${r.stdout || ''}${r.stderr || ''}`.split('\n').filter(Boolean);

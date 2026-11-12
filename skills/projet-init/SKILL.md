@@ -17,10 +17,15 @@ Demander à l'humain le nom du projet s'il ne l'a pas donné, et proposer un slu
 déjà un projet (ni `.team/` ni `docs/`). Un dossier `docs/` existant, même sans rapport avec
 ShipItRight, fait refuser le script : le dire à l'humain, qui le déplace ou choisit un autre dossier.
 
+Fixer aussi la **langue du projet** : celle dans laquelle l'humain t'écrit, sauf s'il en demande une
+autre (ses utilisateurs finaux peuvent parler une autre langue que lui : poser la question si le
+doute existe). Code BCP 47 : `fr`, `en`, `de`, `pt-BR`… Convention complète :
+`team/conventions/langue.md` du plugin.
+
 ## 2. Initialiser
 
 ```sh
-${CLAUDE_PLUGIN_ROOT}/team/scripts/init-projet.sh <slug> "<Nom du projet>"
+${CLAUDE_PLUGIN_ROOT}/team/scripts/init-projet.sh --lang <code> <slug> "<Nom du projet>"
 ```
 
 Le script crée :
@@ -28,7 +33,8 @@ Le script crée :
 ```
 <dossier courant>/
   .team/board/  forum/  questions/  journal.md  socle.md (socles à déclarer au cadrage)
-  docs/_assets/ (copie de ${CLAUDE_PLUGIN_ROOT}/team/assets)  index.html (page de pilotage, gabarit livrable-pilotage)
+        projet.json ({ "langue": "<code>" })
+  docs/_assets/ (copie de ${CLAUDE_PLUGIN_ROOT}/team/assets, plus i18n.js : libellés dans la langue du projet)  index.html (page de pilotage, gabarit livrable-pilotage)
   docs/00-cadrage/ 10-analyse/ 20-specs/{epics,stories}/ 20-ux/ 30-conception/api/ 40-qa/ 50-recette/ sprints/ adr/
   docs/10-analyse/index.html (inventaire des analyses) et docs/20-specs/backlog.html : générés par
     pilotage-pages.mjs, comme la page de pilotage
@@ -47,7 +53,22 @@ script a créé ou modifié. Le script vérifie tout avant d'écrire, et retire 
   que l'arbre de travail n'a pas de modification en cours, sinon le script refuse ;
 - `.team/` ou `docs/` déjà présents : le script refuse, sans rien écrire.
 
-## 3. Board Notion, si le MCP Notion est disponible
+## 3. Langue sans libellés fournis
+
+Le plugin fournit les libellés `fr` et `en` (`${CLAUDE_PLUGIN_ROOT}/team/i18n/<langue>/`). Pour une
+autre langue, les pages générées s'affichent en anglais tant que le projet n'a pas ses libellés :
+
+1. lire chaque fichier `${CLAUDE_PLUGIN_ROOT}/team/i18n/en/*.json` et le traduire dans la langue du
+   projet, clés et paramètres `{…}` inchangés, formes plurielles CLDR de la langue (`one`, `few`,
+   `many`, `other`…) ; pour `gherkin`, les mots-clés officiels de Gherkin dans cette langue ;
+2. écrire le tout dans `.team/libelles.json` : `{ "<espace>": { "<clé>": "…" } }`, un objet par
+   fichier (le nom du fichier sans `.json` est l'espace) ;
+3. traduire aussi l'en-tête de `.team/journal.md`, `.team/socle.md` et la section ShipItRight du
+   `README.md`, écrits en anglais par le script ;
+4. régénérer : `node ${CLAUDE_PLUGIN_ROOT}/team/scripts/pilotage-pages.mjs .` (il réécrit aussi
+   `docs/_assets/i18n.js`), puis commiter sur `conception`.
+
+## 4. Board Notion, si le MCP Notion est disponible
 
 Sans MCP Notion, sauter cette étape : pas de board, pas de `.team/notion.md`, le board local suffit.
 Sinon, suivre le skill `shipitright:notion-board`, section 1 : **demander à l'humain où créer le
@@ -55,7 +76,7 @@ board** (URL d'une page parente, ou accord pour une page privée), puis créer l
 `.team/notion.md`. Le bouton Notion de la page de pilotage lit ce fichier : régénérer la page
 (section suivante).
 
-## 4. Démarrer le cadrage
+## 5. Démarrer le cadrage
 
 Enchaîner sur l'entretien de cadrage (skill `shipitright:livrable-cadrage`), une fois le projet
 créé, pas avant. Les socles (stack, design system) se déclarent pendant l'entretien : le PO demande

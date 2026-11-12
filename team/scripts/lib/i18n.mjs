@@ -6,7 +6,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const I18N_DIR = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'i18n');
-export const NAMESPACES = ['common', 'pilotage', 'detaillee', 'adr', 'questions', 'doc', 'plan', 'gherkin'];
+export const NAMESPACES = ['common', 'init', 'pilotage', 'detaillee', 'adr', 'questions', 'doc', 'plan', 'gherkin'];
 export const CLIENT_NAMESPACES = ['common', 'doc', 'plan', 'gherkin'];
 
 const readJson = (file) => {

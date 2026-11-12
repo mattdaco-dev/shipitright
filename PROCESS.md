@@ -89,6 +89,8 @@ Le projet est le dossier où l'on ouvre Claude Code, et son propre dépôt git :
     board/                   un fichier par ticket ou anomalie
     forum/                   un fichier par sujet
     questions/               questions métier au PO
+    projet.json              langue du projet ({ "langue": "<code BCP 47>" }), team/conventions/langue.md
+    libelles.json            libellés des pages générées, pour une langue que le plugin ne fournit pas
     journal.md               une ligne par événement, tenu par le PO
     socle.md                 socles retenus (stack, design system) et surcharges du projet
     socles/                  socles créés pour le projet : stacks/<nom>/, design-systems/<nom>/
@@ -96,7 +98,7 @@ Le projet est le dossier où l'on ouvre Claude Code, et son propre dépôt git :
   .claude/agent-memory/      mémoire persistante de chaque rôle (shipitright-<rôle>/), commitée
   docs/
     index.html               page de pilotage, générée par pilotage-pages.mjs (remplace le portail)
-    _assets/                 copie de team/assets
+    _assets/                 copie de team/assets, plus i18n.js (libellés dans la langue du projet)
     00-cadrage/  10-analyse/  20-specs/  20-ux/  30-conception/  40-qa/  50-recette/  sprints/  adr/
     30-conception/
       macro.html             conception technique macro

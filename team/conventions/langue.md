@@ -59,10 +59,11 @@ projet :
 ```
 2026-10-02 14:10 · G1 · validated · conception fonctionnelle validée, retours P2 intégrés
 2026-10-09 11:00 · G2 · changes-requested · trois retours sur l'API de réservation
-2026-10-20 17:30 · G3 · favorable-avec-reserves · sprint 1 (RES-01, RES-02)
+2026-10-20 17:30 · G3 · accepte-avec-reserves · sprint 1 (RES-01, RES-02)
 ```
 
-Codes : `validated`, `changes-requested` pour G0 à G2 ; pour G3, le code du `verdict` du PV. Les
+Codes : `validated`, `changes-requested` pour G0 à G2 ; pour G3, le code du `verdict` du PV
+(`accepte`, `accepte-avec-reserves`, `refuse`). Les
 autres lignes (`dispatch`, `rapport`, `incident`, `reprise`…) gardent leur type en français, qui est un
 code, et leur texte dans la langue du projet.
 

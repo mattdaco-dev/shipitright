@@ -3,10 +3,22 @@
 # commits it in the project's git repository on the branch conception. The framework files (assets,
 # templates, scripts) are read from the plugin this script belongs to; nothing is written in the
 # plugin. Every check runs before the first write; on failure, what the script created is removed.
-# Usage: init-projet.sh <slug> "<Project name>" [<project dir>]
+# The project language (BCP 47 code, default en) goes to .team/projet.json and sets the language of the
+# texts this script writes (team/conventions/langue.md).
+# Usage: init-projet.sh [--lang <code>] <slug> "<Project name>" [<project dir>]
 set -euo pipefail
 
-usage='usage: init-projet.sh <slug> "<Project name>" [<project dir>]'
+usage='usage: init-projet.sh [--lang <code>] <slug> "<Project name>" [<project dir>]'
+lang=en
+pos=()
+while [ $# -gt 0 ]; do
+  case "$1" in
+    --lang) [ $# -ge 2 ] || { echo "$usage" >&2; exit 1; }; lang="$2"; shift 2;;
+    --lang=*) lang="${1#--lang=}"; shift;;
+    *) pos+=("$1"); shift;;
+  esac
+done
+set -- "${pos[@]+"${pos[@]}"}"
 slug="${1:?$usage}"
 name="${2:-$slug}"
 target="${3:-.}"
@@ -17,6 +29,7 @@ fail() { echo "init-projet: $*" >&2; exit 1; }
 # 1. Checks, before any write.
 [[ "$slug" =~ ^[a-z0-9]+(-[a-z0-9]+)*$ ]] || fail "slug '$slug' must be kebab-case (a-z, 0-9, -)"
 [ -n "${name//[[:space:]]/}" ] || fail "empty project name"
+[[ "$lang" =~ ^[A-Za-z]{2,3}(-[A-Za-z0-9]{2,8})*$ ]] || fail "language '$lang' must be a BCP 47 code (fr, en, de, pt-BR)"
 case "$name" in *$'\n'*) fail "project name on one line only";; esac
 command -v node >/dev/null || fail "node is required"
 command -v git >/dev/null || fail "git is required"
@@ -99,6 +112,7 @@ mkdir -p "$dir"/.team/{board,forum,questions} \
          "$dir"/docs/{_assets,00-cadrage,10-analyse,20-specs/epics,20-specs/stories,20-ux,30-conception/api,40-qa,50-recette,sprints,adr}
 
 cp "$root"/team/assets/* "$dir/docs/_assets/"
+printf '{ "langue": "%s" }\n' "$lang" > "$dir/.team/projet.json"
 
 # The name goes through node: no shell or sed escaping, HTML-escaped where it lands in a page.
 subst() { # subst <template> <output> <html|text>
@@ -113,45 +127,25 @@ subst() { # subst <template> <output> <html|text>
   ' "$1" "$2" "$3"
 }
 subst "$root/skills/livrable-pilotage/template-pilotage.html" "$dir/docs/index.html" html
+node "$root/team/scripts/i18n-assets.mjs" "$dir" >/dev/null
 
-cat > "$tmp/journal.md" <<'J'
-# Journal du projet NOM_PROJET
+# Texts in the project language (team/i18n/<lang>/init.json, en when the language has none).
+# The name goes through node: no shell or sed escaping.
+texts() { # texts <key> <output>
+  PROJECT_NAME="$name" node --input-type=module -e '
+    import { writeFileSync } from "node:fs";
+    const [lib, dir, key, out] = process.argv.slice(1);
+    const { loadLabels, makeT, projectLang } = await import(lib);
+    const t = makeT(projectLang(dir), loadLabels(dir, ["init"]));
+    writeFileSync(out, t("init." + key, { name: process.env.PROJECT_NAME }));
+  ' "$root/team/scripts/lib/i18n.mjs" "$dir" "$1" "$2"
+}
+texts journal "$dir/.team/journal.md"
+texts journal.created "$tmp/created.txt"
+printf '%s %s · création · %s\n' "$today" "$(date +%H:%M)" "$(cat "$tmp/created.txt")" >> "$dir/.team/journal.md"
+texts socle "$dir/.team/socle.md"
+texts readme "$tmp/readme-section.md"
 
-Une ligne par événement, la plus récente en bas. Tenu par le PO.
-
-J
-printf '%s %s · création · squelette du projet initialisé\n' "$today" "$(date +%H:%M)" >> "$tmp/journal.md"
-subst "$tmp/journal.md" "$dir/.team/journal.md" text
-
-cat > "$tmp/socle.md" <<'S'
-# Socles du projet NOM_PROJET
-
-Rempli au cadrage par le PO. Le plugin ShipItRight n'embarque aucun socle : la stack et le design
-system sont ceux de l'humain (une source à lui : dossier, dépôt git, MCP, skill, URL), ou créés dans
-le projet (stack par l'architecte en P3, design system par l'UX en P2). Chaque socle a son manifeste
-dans `.team/socles/<type>/<nom>/socle.md`. Format : `team/conventions/socle.md` du plugin.
-
-| Type | Socle | Version | Statut |
-|---|---|---|---|
-| Stack | à déclarer au cadrage | | |
-| Design system | à déclarer au cadrage | | |
-
-## Surcharges du projet
-
-Aucune.
-S
-subst "$tmp/socle.md" "$dir/.team/socle.md" text
-
-cat > "$tmp/readme-section.md" <<'R'
-## ShipItRight
-
-Projet construit par la team d'agents ShipItRight (voir `PROCESS.md` du plugin ShipItRight).
-
-- Livrables : ouvrir `docs/index.html` dans un navigateur.
-- Prototype : `prototype/index.html`.
-- Board : `.team/board/` (source de vérité), miroir Notion dans `.team/notion.md` s'il existe.
-- Socles (stack, design system) : `.team/socle.md`.
-R
 if [ ! -e "$dir/README.md" ]; then
   { printf '# %s\n\n' "$name"; cat "$tmp/readme-section.md"; } > "$dir/README.md"
   created+=(README.md)

@@ -1,0 +1,6 @@
+{
+ "journal": "# Journal of the project {name}\n\nOne line per event, the most recent at the bottom. Kept by the PO.\n\n",
+ "journal.created": "project skeleton initialised",
+ "socle": "# Foundations of the project {name}\n\nFilled in by the PO during framing. The ShipItRight plugin ships no foundation: the stack and the\ndesign system are the human's own (a source of theirs: folder, git repository, MCP, skill, URL), or\ncreated in the project (stack by the architect in P3, design system by UX in P2). Each foundation has\nits manifest in `.team/socles/<type>/<name>/socle.md`. Format: `team/conventions/socle.md` in the plugin.\n\n| Type | Foundation | Version | Status |\n|---|---|---|---|\n| Stack | to declare during framing | | |\n| Design system | to declare during framing | | |\n\n## Project overrides\n\nNone.\n",
+ "readme": "## ShipItRight\n\nProject built by the ShipItRight agent team (see `PROCESS.md` in the ShipItRight plugin).\n\n- Deliverables: open `docs/index.html` in a browser.\n- Prototype: `prototype/index.html`.\n- Board: `.team/board/` (source of truth), Notion mirror in `.team/notion.md` if it exists.\n- Foundations (stack, design system): `.team/socle.md`.\n"
+}

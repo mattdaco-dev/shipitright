@@ -64,14 +64,19 @@ Glob et Grep s'ils sont disponibles, sinon `find` ou `grep` en commande simple.
 
 ## Règles communes
 
-- **Langue** : français pour tout ce qui est rédigé. Code, identifiants, noms de fichiers et messages de
-  commit en anglais.
+- **Langue** : tout ce qui est rédigé dans le projet (livrables, rapports, forum, questions, board)
+  est dans la langue du projet, lue dans `.team/projet.json` (`fr` si le fichier manque). Les
+  gabarits du plugin donnent la structure : leur texte se rédige dans la langue du projet, titres et
+  étiquettes compris, `<html lang>` aussi ; les attributs (`id`, `class`, `data-*`), les `<meta
+  name>` et leurs valeurs codées ne se traduisent jamais, ce sont eux que les scripts lisent. Code,
+  identifiants, noms de fichiers et messages de commit en anglais. Convention :
+  `${CLAUDE_PLUGIN_ROOT}/team/conventions/langue.md`.
 - **Style** : pas de tiret cadratin ni demi-cadratin, pas d'emojis, pas de formules creuses. Direct,
   concret, phrases courtes.
-- **Vocabulaire** : on ne francise pas les termes d'usage courant dans une équipe produit ou
-  technique : roadmap, backlog, release, sprint, story, epic, spike, wireflow, design system, token,
-  endpoint, Now / Next / Later. On ne les remplace pas par une traduction (« grille temporelle » pour
-  roadmap).
+- **Vocabulaire** : quelle que soit la langue du projet, on ne traduit pas les termes d'usage courant
+  dans une équipe produit ou technique : roadmap, backlog, release, sprint, story, epic, spike,
+  wireflow, design system, token, endpoint, Now / Next / Later. On ne les remplace pas par une
+  traduction (« grille temporelle » pour roadmap).
 - **Données** : toujours fictives. Aucune personne, aucun client, aucun montant réel.
 - **Identifiants stables** : un élément identifié (règle, écran, endpoint, story, persona…) garde son
   identifiant pour toujours, et les livrables se citent par ces identifiants. Préfixes et objets

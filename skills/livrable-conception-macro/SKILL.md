@@ -139,7 +139,7 @@ Balisage (voir le gabarit, qui contient un exemple complet) :
 10. **Système externe = externe à l'organisation.** Un outil d'une autre équipe interne est un
     domaine voisin (`.container.dom` à son nom, avec les seuls endpoints consommés). Aucun bloc
     externe sur le schéma : l'écrire dans la légende, c'est un résultat.
-11. **Libellés en français lisible** : « Demande d'équipement », pas `DemandeEquipement`. Les chemins
+11. **Libellés lisibles, dans la langue du projet** : « Demande d'équipement », pas `DemandeEquipement`. Les chemins
     d'endpoint restent littéraux.
 
 ## Contenu
