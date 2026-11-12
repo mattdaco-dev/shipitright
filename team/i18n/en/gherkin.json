@@ -1,0 +1,8 @@
+{
+  "given": ["Given"],
+  "when": ["When"],
+  "then": ["Then"],
+  "and": ["And"],
+  "but": ["But"],
+  "scenario": ["Scenario", "Example"]
+}

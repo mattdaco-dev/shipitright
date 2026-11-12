@@ -1,0 +1,8 @@
+{
+  "given": ["Étant donné", "Etant donné", "Étant donnée", "Étant donnés", "Étant données", "Soit"],
+  "when": ["Quand", "Lorsque", "Lorsqu'"],
+  "then": ["Alors"],
+  "and": ["Et"],
+  "but": ["Mais"],
+  "scenario": ["Scénario", "Exemple"]
+}

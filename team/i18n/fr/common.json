@@ -1,0 +1,8 @@
+{
+  "gate.G0": "Validation du cadrage",
+  "gate.G1": "Validation de la conception fonctionnelle",
+  "gate.G2": "Validation de la conception technique",
+  "gate.G3": "Recette du sprint",
+  "decision.validated": "validé",
+  "decision.changes-requested": "retours demandés"
+}

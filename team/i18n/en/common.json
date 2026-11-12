@@ -1,0 +1,8 @@
+{
+  "gate.G0": "Framing approval",
+  "gate.G1": "Functional design approval",
+  "gate.G2": "Technical design approval",
+  "gate.G3": "Sprint acceptance",
+  "decision.validated": "approved",
+  "decision.changes-requested": "changes requested"
+}
