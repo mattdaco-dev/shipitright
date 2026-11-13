@@ -1,0 +1,269 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="validated">
+  <meta name="date" content="2026-10-01">
+  <title>Cadrage et vision · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Cadrage et vision</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P0 · Cadrage et vision</div>
+      <h1>Réservation de salles</h1>
+      <p class="lede">Chaque employé voit en un coup d'œil quelle salle est libre et la réserve sans risque de conflit. Le gestionnaire tient le parc de salles à jour.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> 01.10.2026</span>
+        <span><b>Auteur</b> PO</span>
+        <span><b>Statut</b> <span class="tag ok">validé 02.10.2026</span></span>
+        <span><b>Sources</b> entretien de cadrage du 01.10.2026</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Vision</h2>
+      <p class="hint">Énoncé de vision et pitch. Un lecteur qui ne lit que cette section sait de quoi on parle.</p>
+      <div class="callout decision">
+        <b>Énoncé de vision</b>
+        Un outil unique où l'on voit l'occupation des salles et où l'on réserve un créneau, ponctuel ou récurrent, avec la garantie qu'une salle n'est jamais réservée deux fois en même temps.
+      </div>
+      <table>
+        <tr><th style="width:180px">Pour</th><td>les employés qui organisent des réunions, et le gestionnaire des salles</td></tr>
+        <tr><th>Qui</th><td>ne savent pas aujourd'hui quelle salle est libre et se retrouvent en conflit</td></tr>
+        <tr><th>Le produit est</th><td>une application web de réservation de salles en libre-service</td></tr>
+        <tr><th>Qui</th><td>montre les disponibilités, trouve une salle adaptée et empêche toute double réservation</td></tr>
+        <tr><th>Contrairement à</th><td>la pratique actuelle : frapper à la porte, demander à l'accueil</td></tr>
+        <tr><th>Notre produit</th><td>rend l'occupation visible à tous et vérifie chaque créneau à la réservation</td></tr>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Problème et contexte</h2>
+      <p class="hint">Ce qui se passe aujourd'hui, pourquoi ça ne suffit pas, ce que coûte l'inaction.</p>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Aujourd'hui</h4>
+          <div>Rien n'est outillé. Pour savoir si une salle est libre, on va voir sur place ou on demande à l'accueil. Les réservations sont orales et ne laissent pas de trace.</div>
+        </div>
+        <div class="card soft">
+          <h4>Ce qui ne va pas</h4>
+          <div>Personne n'a de vue d'ensemble de l'occupation. Deux équipes se présentent dans la même salle à la même heure. Trouver une salle avec la bonne capacité et le bon équipement prend du temps. Les réunions hebdomadaires doivent se renégocier chaque semaine.</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Objectifs et indicateurs de succès</h2>
+      <p class="hint">Trois à cinq objectifs, chacun avec un indicateur mesurable et une cible.</p>
+      <div class="grid c3">
+        <div class="kpi">
+          <div class="label">Zéro double réservation</div>
+          <div class="value">0</div>
+          <div class="sub">Indicateur : nombre de couples de réservations actives qui se chevauchent sur une même salle (contrôle en base et test de concurrence)</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Disponibilité lisible</div>
+          <div class="value">&lt; 30 s</div>
+          <div class="sub">Indicateur : temps pour savoir quelle salle est libre sur un créneau donné, depuis l'accueil de l'application</div>
+        </div>
+        <div class="kpi">
+          <div class="label">Réserver vite</div>
+          <div class="value">&lt; 1 min</div>
+          <div class="sub">Indicateur : temps pour trouver une salle selon capacité et équipements, puis la réserver</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Utilisateurs cibles</h2>
+      <p class="hint">Un persona par profil d'usage distinct. Des rôles, jamais des personnes réelles.</p>
+      <div class="grid c2">
+        <div class="card" id="PER-01">
+          <div class="persona">
+            <div class="avatar">E</div>
+            <div>
+              <h3 style="margin:0">PER-01 · L'employé</h3>
+              <div class="role">Organise des réunions, ponctuelles ou régulières</div>
+              <dl class="defs">
+                <dt>Objectifs</dt><dd>trouver vite une salle adaptée (taille, équipement), la réserver, poser une réunion récurrente une fois pour toutes</dd>
+                <dt>Frustrations</dt><dd>salle occupée en arrivant, aucune visibilité, aller-retour avec l'accueil</dd>
+                <dt>Fréquence</dt><dd>hebdomadaire, parfois quotidienne</dd>
+                <dt>Aisance</dt><dd>numérique correcte, aucune formation attendue</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+        <div class="card" id="PER-02">
+          <div class="persona">
+            <div class="avatar">G</div>
+            <div>
+              <h3 style="margin:0">PER-02 · Le gestionnaire des salles</h3>
+              <div class="role">Services généraux, responsable du parc de salles</div>
+              <dl class="defs">
+                <dt>Objectifs</dt><dd>déclarer les salles avec capacité et équipements, retirer une salle indisponible, régler un conflit en annulant une réservation</dd>
+                <dt>Frustrations</dt><dd>sollicité pour chaque réservation, aucune donnée fiable sur l'occupation</dd>
+                <dt>Fréquence</dt><dd>ponctuelle pour le parc, quotidienne pour les arbitrages</dd>
+                <dt>Aisance</dt><dd>bonne, connaît chaque salle</dd>
+              </dl>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Périmètre</h2>
+      <p class="hint">Ce qui est dedans, ce qui est explicitement dehors, ce qui viendra plus tard.</p>
+      <div class="scope">
+        <div class="in"><h4>Dans le périmètre</h4>
+          <ul>
+            <li>Connexion par email et mot de passe, deux rôles : employé, gestionnaire</li>
+            <li>Consultation des disponibilités, par salle et par jour</li>
+            <li>Recherche d'une salle libre selon capacité et équipements sur un créneau</li>
+            <li>Réservation ponctuelle et annulation</li>
+            <li>Réservation récurrente (quotidienne ou hebdomadaire) et annulation d'une occurrence ou de la série</li>
+            <li>Mes réservations, avec le motif quand le gestionnaire a annulé</li>
+            <li>Gestion des salles par le gestionnaire : créer, modifier, désactiver</li>
+            <li>Annulation d'une réservation par le gestionnaire, avec motif</li>
+          </ul>
+        </div>
+        <div class="out"><h4>Hors périmètre</h4>
+          <ul>
+            <li>SSO, annuaire d'entreprise : pilote autonome, comptes locaux suffisants</li>
+            <li>Synchronisation avec un agenda (Outlook, Google) : aucun système externe demandé</li>
+            <li>Notifications par email : l'information dans l'application suffit pour le pilote</li>
+            <li>Plusieurs sites, fuseaux horaires multiples : un seul site</li>
+            <li>Inscription en libre-service et gestion des comptes : comptes fictifs préchargés</li>
+            <li>Facturation, refacturation interne</li>
+          </ul>
+        </div>
+        <div class="later"><h4>Plus tard</h4>
+          <ul>
+            <li>Libération automatique d'une salle non occupée (check-in)</li>
+            <li>Statistiques d'occupation pour dimensionner le parc</li>
+            <li>Quota de réservations par personne, horizon maximal de réservation</li>
+            <li>Récurrences plus riches (mensuelle, tous les N)</li>
+            <li>Déplacement d'une réservation par le gestionnaire</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Contraintes</h2>
+      <p class="hint">Ce qui s'impose au projet et ne se négocie pas dans la team.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Contrainte</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Technique</span></td><td>Backend en Node.js, framework au choix de l'architecte. Socle de stack <code>node-sqlite-angular</code>, à compléter en P3.</td><td>humain, 01.10.2026</td></tr>
+          <tr><td><span class="tag">Technique</span></td><td>Base de données SQLite.</td><td>humain, 01.10.2026</td></tr>
+          <tr><td><span class="tag">Technique</span></td><td>Frontend Angular 20+.</td><td>humain, 01.10.2026</td></tr>
+          <tr><td><span class="tag">Technique</span></td><td>Aucun design system imposé : l'UX pose un design system minimal en P2.</td><td>arbitrage PO, 05.10.2026</td></tr>
+          <tr><td><span class="tag">Réglementaire</span></td><td>Données personnelles limitées au nom, à l'email et aux réservations. Uniquement des données fictives pendant le pilote.</td><td>règles de la team</td></tr>
+          <tr><td><span class="tag">Calendrier</span></td><td>Aucune échéance : projet pilote pour éprouver ShipItRight.</td><td>humain</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Questions ouvertes</h2>
+      <p class="hint">Ce qui n'est pas tranché au cadrage. Chaque question a un propriétaire. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question</th><th>Propriétaire</th><th>Bloquante pour</th></tr></thead>
+        <tbody>
+          <tr id="Q-001"><td><a href="../questions.html#Q-001">Q-001</a></td><td>Quel framework Node, quel outillage d'accès à SQLite, et comment garantir l'absence de chevauchement en cas de réservations simultanées ?</td><td>architecte</td><td>P3, conception macro (non bloquante avant)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Règles métier connues</h2>
+      <p class="hint">Règles exprimées au cadrage, numérotées. La conception fonctionnelle les reprend et les complète.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Règle</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr id="BR-01"><td>BR-01</td><td>Une salle ne peut pas porter deux réservations actives qui se chevauchent, même d'une minute. Une réservation qui finit à 10h00 et une qui commence à 10h00 ne se chevauchent pas.</td><td>humain</td></tr>
+          <tr id="BR-02"><td>BR-02</td><td>Les créneaux se posent par pas de 15 minutes, en heures ouvrées : du lundi au vendredi, de 8h00 à 19h00. Une réservation dure au plus 4 heures.</td><td>humain</td></tr>
+          <tr id="BR-03"><td>BR-03</td><td>On ne réserve pas dans le passé. Une réservation passée ou en cours ne s'annule plus.</td><td>arbitrage PO</td></tr>
+          <tr id="BR-04"><td>BR-04</td><td>Une réservation récurrente est quotidienne (jours ouvrés) ou hebdomadaire. Sa dernière occurrence tombe au plus 3 mois après la première.</td><td>arbitrage PO</td></tr>
+          <tr id="BR-05"><td>BR-05</td><td>Quand des occurrences d'une série tombent sur un créneau déjà pris, l'application les liste avant validation. Après confirmation, seules les occurrences libres sont créées.</td><td>arbitrage PO</td></tr>
+          <tr id="BR-06"><td>BR-06</td><td>Le titulaire annule une occurrence seule ou toutes les occurrences futures de sa série.</td><td>arbitrage PO</td></tr>
+          <tr id="BR-07"><td>BR-07</td><td>Le gestionnaire peut annuler toute réservation, avec un motif obligatoire visible par le titulaire dans « Mes réservations ».</td><td>arbitrage PO</td></tr>
+          <tr id="BR-08"><td>BR-08</td><td>Désactiver une salle annule ses réservations futures avec le motif « salle désactivée ». Une salle désactivée n'apparaît plus à la réservation.</td><td>arbitrage PO</td></tr>
+          <tr id="BR-09"><td>BR-09</td><td>La recherche ne propose que les salles actives, libres sur tout le créneau, de capacité au moins égale au besoin, qui ont tous les équipements demandés.</td><td>humain (périmètre), arbitrage PO (règle)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Hypothèses et risques</h2>
+      <p class="hint">Ce qu'on suppose vrai sans l'avoir vérifié, et ce qui peut faire échouer le projet.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Description</th><th>Impact</th><th>Parade ou vérification</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag violet">Hypothèse</span></td><td>Un seul site, une dizaine de salles, une centaine d'employés, un seul fuseau horaire (Europe/Luxembourg).</td><td><span class="tag">faible</span></td><td>confirmée par l'humain à G0</td></tr>
+          <tr><td><span class="tag violet">Hypothèse</span></td><td>Jeu de données fictif : 8 salles, 3 équipements (écran, visioconférence, tableau blanc), une dizaine de comptes dont un gestionnaire.</td><td><span class="tag">faible</span></td><td>BA en P1</td></tr>
+          <tr><td><span class="tag danger">Risque</span></td><td>Deux réservations simultanées du même créneau passent toutes les deux, SQLite gérant mal la concurrence si l'accès n'est pas sérialisé.</td><td><span class="tag danger">fort</span></td><td><a href="../questions.html#Q-001">Q-001</a> : contrainte en base ou transaction sérialisée, test de concurrence dédié par le QA</td></tr>
+          <tr><td><span class="tag danger">Risque</span></td><td>Le calcul des occurrences d'une série (jours ouvrés, conflits partiels) est la règle la plus sujette aux erreurs.</td><td><span class="tag warn">moyen</span></td><td>tests unitaires du domaine sur <a href="#BR-04">BR-04</a> et <a href="#BR-05">BR-05</a>, exemples chiffrés dans la conception fonctionnelle</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Glossaire</h2>
+      <p class="hint">Les termes métier, avec une définition que tout le monde partage. La team les utilise au mot près.</p>
+      <dl class="defs">
+        <dt>Salle</dt><dd>espace réservable, avec un nom, une capacité (nombre de places) et des équipements. Active ou désactivée.</dd>
+        <dt>Équipement</dt><dd>matériel présent dans une salle : écran, visioconférence, tableau blanc.</dd>
+        <dt>Créneau</dt><dd>intervalle entre une heure de début et une heure de fin, le même jour, aligné sur 15 minutes.</dd>
+        <dt>Réservation</dt><dd>occupation d'une salle sur un créneau par un titulaire. Active ou annulée.</dd>
+        <dt>Série</dt><dd>ensemble de réservations créées ensemble par une règle de récurrence. Chacune est une occurrence.</dd>
+        <dt>Occurrence</dt><dd>une réservation d'une série, annulable seule.</dd>
+        <dt>Titulaire</dt><dd>l'employé qui a créé la réservation.</dd>
+        <dt>Gestionnaire</dt><dd>rôle qui gère le parc de salles et peut annuler toute réservation.</dd>
+        <dt>Conflit</dt><dd>chevauchement entre un créneau demandé et une réservation active de la même salle.</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Parties prenantes</h2>
+      <p class="hint">Qui décide, qui est consulté, qui est informé. Des rôles, pas des noms.</p>
+      <table>
+        <thead><tr><th>Rôle</th><th>Intérêt</th><th>Implication</th></tr></thead>
+        <tbody>
+          <tr><td>Commanditaire (l'humain)</td><td>éprouver ShipItRight sur un projet complet</td><td><span class="tag">décide</span></td></tr>
+          <tr><td>Gestionnaire des salles</td><td>fiabilité du parc, moins de sollicitations</td><td><span class="tag">consulté</span></td></tr>
+          <tr><td>Employés</td><td>réserver sans friction</td><td><span class="tag">informé</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2>Jalons envisagés</h2>
+      <p class="hint">Les grandes étapes connues au cadrage. La roadmap les détaille ensuite.</p>
+      <div class="flow-line">
+        <span class="step">Cadrage G0</span><span class="arrow">→</span>
+        <span class="step">Specs et proto G1</span><span class="arrow">→</span>
+        <span class="step">Conception G2</span><span class="arrow">→</span>
+        <span class="step">MVP recetté G3</span>
+      </div>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="in-review">
+  <meta name="date" content="2026-10-08">
+  <title>Sécurité et droits · Conception technique détaillée · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Sécurité et droits</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#site-map">Transverse</a></div>
+      <h1><span class="doc-kind">Sécurité et droits</span> : qui appelle quoi</h1>
+      <p class="lede">Session, rôles, contrôles sur les données. Le backend contrôle, le front ne fait que masquer. Les principes sont dans la <a href="../../macro.html#securite-et-authentification">conception macro</a> ; ici, leur application endpoint par endpoint.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Session et contrôle d'accès</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire comment une requête est authentifiée, puis autorisée.</dd>
+          <dt>Contenu</dt><dd><ul><li>Le mécanisme de session.</li><li>Le contrôle commun avant chaque route.</li><li>La déclaration des rôles par route.</li><li>La place des contrôles sur les données.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les principes de la conception macro appliqués au code, en liste courte, chacun avec l'invariant qui le rend vérifiable.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li>Session serveur, cookie opaque <code>rs_session</code> <code>HttpOnly</code>, <code>SameSite=Strict</code>, <code>Secure</code> hors local (<a href="../../../adr/0003-authentification-par-session.html">ADR-0003</a>, <a href="../entities/EN-02.html">EN-02</a>). <code>SameSite=Strict</code> et la même origine dispensent d'un jeton anti-falsification.</li>
+        <li>Un contrôle commun, avant chaque route, lit la session et repousse son expiration ; sans session valide, <a href="errors.html#UNAUTHENTICATED"><code>UNAUTHENTICATED</code></a>. Seules <a href="../endpoints/EP-01.html">EP-01</a> et <a href="../endpoints/EP-03.html">EP-03</a> sont publiques.</li>
+        <li>Chaque route déclare les rôles admis ; une route sans déclaration fait échouer le démarrage (<a href="compliance.html#INV-08">INV-08</a>). Rôle insuffisant : <a href="errors.html#INTERDIT"><code>INTERDIT</code></a>.</li>
+        <li>Les contrôles sur les données (titulaire, motif) vivent dans le domaine, pas dans la route (<a href="compliance.html#INV-04">INV-04</a>).</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Matrice des droits</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui peut appeler quoi.</dd>
+          <dt>Contenu</dt><dd>En lignes les endpoints, en colonnes les rôles (oui ou non), puis les contrôles sur les données au-delà du rôle.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice d'accès rôles × opérations, forme standard d'un contrôle d'accès par rôle (RBAC).</dd>
+          <dt>Lire</dt><dd>Un endpoint public est aussi ouvert aux rôles.</dd>
+          <dt>Source</dt><dd><code>x-roles</code> et <code>x-data-control</code> d'<code>openapi.yaml</code>.</dd>
+        </dl>
+      </div>
+      <!-- gen:rights-matrix -->
+      <table>
+        <thead><tr><th>Endpoint</th><th>Verbe et chemin</th><th>public</th><th><code>employe</code></th><th><code>gestionnaire</code></th><th>Contrôle sur les données</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../endpoints/EP-01.html">EP-01</a></td><td><code>POST /session</code></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>seule route publique ; limitée à 5 tentatives par minute et par adresse<br>le refus ne dit pas si l'email existe (même code pour email inconnu et mot de passe faux)</td></tr>
+          <tr><td><a href="../endpoints/EP-02.html">EP-02</a></td><td><code>GET /session</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>renvoie l'employé de la session seulement, email compris</td></tr>
+          <tr><td><a href="../endpoints/EP-03.html">EP-03</a></td><td><code>DELETE /session</code></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>ne supprime que la session du cookie présenté</td></tr>
+          <tr><td><a href="../endpoints/EP-04.html">EP-04</a></td><td><code>GET /salles</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>statut &quot;desactivee&quot; ou &quot;toutes&quot; réservé au gestionnaire, sinon 403 <a href="errors.html#INTERDIT"><code>INTERDIT</code></a></td></tr>
+          <tr><td><a href="../endpoints/EP-05.html">EP-05</a></td><td><code>GET /equipements</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td></td></tr>
+          <tr><td><a href="../endpoints/EP-06.html">EP-06</a></td><td><code>GET /reservations</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>nom du titulaire seulement, jamais son email ni son identifiant<br>estAMoi calculé depuis la session</td></tr>
+          <tr><td><a href="../endpoints/EP-07.html">EP-07</a></td><td><code>GET /salles/disponibles</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>ne révèle pas qui occupe une salle</td></tr>
+          <tr><td><a href="../endpoints/EP-08.html">EP-08</a></td><td><code>POST /reservations</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>le titulaire est l'employé de la session ; le corps n'a pas de champ titulaire (<a href="compliance.html#INV-63">INV-63</a>)</td></tr>
+          <tr><td><a href="../endpoints/EP-09.html">EP-09</a></td><td><code>POST /series/apercu</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>l'aperçu dit « conflit », jamais qui occupe</td></tr>
+          <tr><td><a href="../endpoints/EP-10.html">EP-10</a></td><td><code>POST /series</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>titulaire = employé de la session (<a href="compliance.html#INV-63">INV-63</a>)</td></tr>
+          <tr><td><a href="../endpoints/EP-11.html">EP-11</a></td><td><code>GET /moi/reservations</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>les réservations de l'employé de la session seulement ; aucun paramètre d'employé</td></tr>
+          <tr><td><a href="../endpoints/EP-12.html">EP-12</a></td><td><code>POST /reservations/{id}/annulation</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>titulaire ou gestionnaire seulement, sinon 403 <a href="errors.html#INTERDIT"><code>INTERDIT</code></a> (<a href="../../../20-specs/functional-design.html#BR-11">BR-11</a>)<br>motif obligatoire quand le gestionnaire annule la réservation d'autrui (<a href="../../../20-specs/functional-design.html#BR-07">BR-07</a>)</td></tr>
+          <tr><td><a href="../endpoints/EP-13.html">EP-13</a></td><td><code>POST /series/{id}/annulation</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>titulaire de la série ou gestionnaire, sinon 403 <a href="errors.html#INTERDIT"><code>INTERDIT</code></a> (<a href="../../../20-specs/functional-design.html#BR-11">BR-11</a>)<br>motif obligatoire quand le gestionnaire annule la série d'autrui (<a href="../../../20-specs/functional-design.html#BR-07">BR-07</a>)<br>gestionnaire sur la série d'autrui : permis par l'API, sans écran au MVP (<a href="../../../20-ux/ux-ui-spec.html#SCR-05">SCR-05</a> ne liste que ses propres réservations)</td></tr>
+          <tr><td><a href="../endpoints/EP-14.html">EP-14</a></td><td><code>GET /salles/{id}</code></td><td><span class="tag">non</span></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td></td></tr>
+          <tr><td><a href="../endpoints/EP-15.html">EP-15</a></td><td><code>POST /salles</code></td><td><span class="tag">non</span></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td></td></tr>
+          <tr><td><a href="../endpoints/EP-16.html">EP-16</a></td><td><code>PUT /salles/{id}</code></td><td><span class="tag">non</span></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td></td></tr>
+          <tr><td><a href="../endpoints/EP-17.html">EP-17</a></td><td><code>POST /salles/{id}/desactivation</code></td><td><span class="tag">non</span></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td></td></tr>
+          <tr><td><a href="../endpoints/EP-18.html">EP-18</a></td><td><code>GET /creneaux/plus-proche</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>ne révèle pas qui occupe une salle</td></tr>
+          <tr><td><a href="../endpoints/EP-19.html">EP-19</a></td><td><code>PUT /reservations/{id}</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>titulaire seulement, sinon 403 <a href="errors.html#INTERDIT"><code>INTERDIT</code></a> ; le gestionnaire ne déplace pas la réservation d'autrui</td></tr>
+          <tr><td><a href="../endpoints/EP-20.html">EP-20</a></td><td><code>POST /reservations/{id}/presence</code></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td>titulaire seulement, sinon 403 <a href="errors.html#INTERDIT"><code>INTERDIT</code></a></td></tr>
+          <tr><td><a href="../endpoints/EP-21.html">EP-21</a></td><td><code>GET /statistiques/occupation</code></td><td><span class="tag">non</span></td><td><span class="tag">non</span></td><td><span class="tag ok">oui</span></td><td>agrégats par salle seulement, aucun nom d'employé</td></tr>
+        </tbody>
+      </table>
+      <!-- /gen -->
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Données et protections</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer ce qui protège les données.</dd>
+          <dt>Contenu</dt><dd><ul><li>Les données personnelles et qui les voit.</li><li>Les mots de passe.</li><li>Les jetons.</li><li>L'injection.</li><li>Les journaux.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une ligne par sujet, avec l'invariant ou l'entité qui la porte : la revue de sécurité la suit telle quelle.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><b>Données personnelles</b> : nom et email des employés, rien d'autre, tout est fictif. Le nom du titulaire est visible de tous (<a href="../endpoints/EP-06.html">EP-06</a>) ; l'email et l'identifiant d'un autre employé ne sortent jamais (<a href="compliance.html#INV-67">INV-67</a>).</li>
+        <li><b>Mots de passe</b> : empreinte scrypt seulement (<a href="../entities/EN-01.html">EN-01</a>), comparaison en temps constant, jamais journalisés ; limite de 5 tentatives par minute et par adresse (<a href="../endpoints/EP-01.html">EP-01</a>).</li>
+        <li><b>Jetons</b> : 32 octets aléatoires, seule leur empreinte SHA-256 est en base (<a href="../entities/EN-02.html">EN-02</a>).</li>
+        <li><b>Injection</b> : requêtes préparées seulement (<a href="compliance.html#INV-06">INV-06</a>) ; schémas JSON stricts sur chaque route, champ inconnu refusé (<a href="compliance.html#INV-63">INV-63</a> pour le titulaire).</li>
+        <li><b>Journaux</b> : une ligne JSON par requête, identifiants techniques seulement, ni nom ni email (<a href="compliance.html#INV-52">INV-52</a>).</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

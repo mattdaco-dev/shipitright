@@ -1,0 +1,90 @@
+# Path item /reservations/{id}/annulation, referenced by openapi.yaml
+
+parameters:
+  - {$ref: '../components/parameters.yaml#/IdReservation'}
+post:
+  tags: [reservations]
+  operationId: annulerReservation
+  x-endpoint-id: EP-12
+  x-module: domain/reservation
+  x-release: MVP
+  x-contract: frozen
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - titulaire ou gestionnaire seulement, sinon 403 INTERDIT (BR-11)
+    - motif obligatoire quand le gestionnaire annule la réservation d'autrui (BR-07)
+  x-processes: [PROC-06]
+  x-entities:
+    - {id: EN-05, access: R}
+    - {id: EN-05, access: RU, via: PROC-06}
+  x-rules: [BR-03, BR-06, BR-07, BR-11]
+  x-idempotence: >-
+    Idempotent : une réservation déjà annulée répond 204 sans rien changer ; le premier motif reste.
+  x-sequence: |
+    sequenceDiagram
+      actor U as Titulaire ou gestionnaire
+      participant F as Front SCR-05 ou SCR-02
+      participant A as API
+      participant T as PROC-06
+      participant D as SQLite
+      U->>F: Confirmer l'annulation (motif si gestionnaire)
+      F->>A: POST /reservations/{id}/annulation
+      A->>D: BEGIN IMMEDIATE (UnitOfWork)
+      A->>D: réservation
+      alt inconnue
+        A->>D: ROLLBACK
+        A-->>F: 404 RESERVATION_INTROUVABLE
+      else
+        A->>T: annuler (auteur = session, motif)
+        alt ni titulaire ni gestionnaire (BR-11)
+          T-->>A: refus INTERDIT
+          A->>D: ROLLBACK
+          A-->>F: 403 INTERDIT
+        else déjà commencée (BR-03)
+          T-->>A: refus DEJA_COMMENCEE
+          A->>D: ROLLBACK
+          A-->>F: 409 DEJA_COMMENCEE
+          F-->>U: liste rechargée
+        else auteur autre que le titulaire, sans motif (BR-07)
+          T-->>A: refus MOTIF_OBLIGATOIRE
+          A->>D: ROLLBACK
+          A-->>F: 422 MOTIF_OBLIGATOIRE
+        else
+          T->>D: UPDATE statut annulee, motif, annulee_le, annulee_par
+          T-->>A: annulée, ou déjà annulée
+          A->>D: COMMIT
+          A-->>F: 204
+          F-->>U: ligne retirée, ou case libérée sur SCR-02
+        end
+      end
+  x-open:
+    - impact: low
+      subject: "Comportement de SCR-05 quand le serveur répond DEJA_COMMENCEE (horloge du poste en retard)."
+      hypothesis: "la liste se recharge, sans message dédié."
+  summary: Annuler une réservation ou une occurrence
+  description: >-
+    Annule une réservation active qui n'a pas commencé (BR-03), ponctuelle ou occurrence de série
+    (BR-06). Le titulaire annule les siennes ; le gestionnaire annule toute réservation, avec un
+    motif quand elle n'est pas à lui (BR-07, BR-11). La transition est celle de PROC-06, commune à
+    toutes les annulations. Le motif est rendu au titulaire par EP-11 (MSG-05).
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema: {$ref: '../components/schemas/reservations.yaml#/AnnulationDemande'}
+        example: {motif: Salle réquisitionnée pour la visite du comité.}
+  responses:
+    '204':
+      description: réservation annulée, ou déjà annulée
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403': {$ref: '../components/responses.yaml#/Forbidden'}
+    '404': {$ref: '../components/responses.yaml#/ReservationIntrouvable'}
+    '409': {$ref: '../components/responses.yaml#/DejaCommencee'}
+    '422':
+      description: motif absent alors que le gestionnaire annule la réservation d'autrui (BR-07)
+      x-codes: [MOTIF_OBLIGATOIRE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

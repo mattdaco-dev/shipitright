@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Functional design · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Functional design</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Specifications</div>
+      <h1><span class="doc-kind">Functional design</span>: PROJECT_NAME</h1>
+      <p class="lede"><span class="todo">one sentence that says what this design covers (release, epics)</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> BA</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Sources</b> <a href="../00-framing/framing.html">framing</a>, <a href="story-map.html">story map</a>, <span class="todo">analyses, as links</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="scope-and-references">Scope and references</h2>
+      <p class="hint">What this design covers, and the deliverables it derives from.</p>
+      <dl class="defs">
+        <dt>Release covered</dt><dd><span class="todo">e.g. MVP</span></dd>
+        <dt>Epics</dt><dd><a href="epics/EPIC-01-slug.html">EPIC-01</a> <span class="todo">name</span></dd>
+        <dt>Outside this design</dt><dd><span class="todo">what is handled later, with the reason</span></dd>
+      </dl>
+      <h3 id="related-deliverables">Related deliverables</h3>
+      <ul>
+        <li><a href="../00-framing/framing.html">Framing and vision</a></li>
+        <li><a href="../10-analysis/big-picture.html">Big picture</a></li>
+        <li><a href="story-map.html">Story map</a></li>
+        <li><a href="../20-ux/ux-ui-spec.html">UX/UI specifications</a></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="functional-flows">Functional flows</h2>
+      <p class="hint">One flow per activity of the story map, in the same formalism for all: one colour per step type, rules and messages as chips. The flow describes what happens, not the screens.</p>
+      <div class="legend">
+        <span><i class="pf-start"></i>Trigger</span>
+        <span><i class="pf-user"></i>Action of the actor</span>
+        <span><i class="pf-system"></i>Processing by the application</span>
+        <span><i class="pf-decision"></i>Decision</span>
+        <span><i class="pf-end"></i>Outcome</span>
+        <span><i class="pf-error"></i>Rejection or error</span>
+        <span><i class="pf-stop"></i>Abandonment</span>
+      </div>
+
+      <h3 id="FL-01">FL-01 · <span class="todo">name of the flow</span></h3>
+      <dl class="defs"><dt>Actor</dt><dd><a href="../00-framing/framing.html#PER-01">PER-01</a> <span class="todo">role</span></dd><dt>Outcome</dt><dd><span class="todo">observable final state</span></dd></dl>
+      <!-- Each step: class (start, user, system, decision, end, error, stop), data-c column, data-r row, data-links "id|label".
+           A decision's main branch goes right, its alternative goes straight below it. 6 columns at most. -->
+      <div class="pf">
+        <div class="pf-node start" id="fl-01-a" data-c="1" data-r="1" data-links="fl-01-b"><span class="todo">trigger</span></div>
+        <div class="pf-node user" id="fl-01-b" data-c="2" data-r="1" data-links="fl-01-c"><small>Actor</small><span class="todo">action</span><span class="refs"><a href="#BR-01">BR-01</a></span></div>
+        <div class="pf-node decision" id="fl-01-c" data-c="3" data-r="1" data-links="fl-01-d|yes fl-01-e|no"><span class="todo">Question?</span></div>
+        <div class="pf-node end" id="fl-01-d" data-c="4" data-r="1"><span class="todo">outcome</span><span class="refs"><a href="#MSG-01">MSG-01</a></span></div>
+        <div class="pf-node error" id="fl-01-e" data-c="3" data-r="2"><span class="todo">rejection</span></div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="business-rules">Business rules</h2>
+      <p class="hint">One rule per row, declarative sentence, stable number. The rules of the framing keep their number. An abandoned rule stays, struck through, with the reason. The Stories and Screens columns carry the traceability: each rule has at least one story.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Rule</th><th>Scope</th><th>Source</th><th>Stories</th><th>Screens</th></tr></thead>
+          <tbody>
+            <tr id="BR-01"><td>BR-01</td><td><span class="todo">declarative and testable statement</span></td><td>object, flow or screen concerned</td><td><a href="../00-framing/framing.html#BR-01">framing</a></td><td><a href="stories/US-001-slug.html">US-001</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-01">SCR-01</a></td></tr>
+            <tr id="BR-02"><td>BR-02</td><td><span class="todo">statement</span></td><td></td><td><a href="../questions.html#Q-001">Q-001</a></td><td></td><td></td></tr>
+            <tr class="abandoned" id="BR-03"><td>BR-03</td><td>example of an abandoned rule</td><td></td><td></td><td>abandoned: reason</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout hypothesis">
+        <b>Hypothesis</b>
+        <span class="todo">rule assumed while waiting for the answer to a question, with its Q-xxx</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="conceptual-business-data-model">Conceptual business data model</h2>
+      <p class="hint">The objects the business handles, their key attributes in the format name [business type] and their relations. At both ends of each relation, the cardinality on the object side: how many of this object for one of the other (0:1, 1:1, 0:n, 1:n). No technical keys nor SQL types: the physical model belongs to the Architect.</p>
+      <!-- One card per object: name in <b>, one attribute per line "name <i>[business type]</i>".
+           Relations: data-links="target|label|card near the source|card near the target" (0:1, 1:1, 0:n, 1:n).
+           Place the objects so that each relation is a straight line, one relation per side when possible. -->
+      <div class="mcd">
+        <div class="mcd-entity" id="o-a" data-c="1" data-r="1" data-links="o-b|verb|1:1|0:n"><b><span class="todo">Object A</span></b><ul><li>attribute <i>[text]</i></li><li>status <i>[value 1 | value 2]</i></li></ul></div>
+        <div class="mcd-entity" id="o-b" data-c="2" data-r="1"><b><span class="todo">Object B</span></b><ul><li>attribute <i>[date]</i></li></ul></div>
+      </div>
+      <div class="grid c2">
+        <div class="card">
+          <h4><span class="todo">Business object</span></h4>
+          <dl class="defs">
+            <dt>Definition</dt><dd>taken from the glossary</dd>
+            <dt>Key attributes</dt><dd><span class="todo">those the rules or the screens use</span></dd>
+            <dt>Identified by</dt><dd><span class="todo">what distinguishes it for the business</span></dd>
+            <dt>Rules</dt><dd>BR-01</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="business-object-lifecycles">Business object lifecycles</h2>
+      <p class="hint">One diagram per object that has a status. Each transition states its event; the table gives the actor and the condition.</p>
+      <h3><span class="todo">Business object</span></h3>
+      <!-- States: pf-node state (state final for an end state), start: pf-node dot. Each transition carries its event. -->
+      <div class="pf lifecycle">
+        <div class="pf-node dot" id="cv-a0" data-c="1" data-r="1" data-links="cv-a1|creation"></div>
+        <div class="pf-node state" id="cv-a1" data-c="2" data-r="1" data-links="cv-a2|validation"><span class="todo">Draft</span></div>
+        <div class="pf-node state final" id="cv-a2" data-c="3" data-r="1"><span class="todo">Active</span></div>
+      </div>
+      <table>
+        <thead><tr><th>Transition</th><th>Event</th><th>Actor</th><th>Condition</th><th>Rules</th></tr></thead>
+        <tbody>
+          <tr><td>Draft → Active</td><td><span class="todo">event</span></td><td>role</td><td></td><td>BR-02</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="roles-and-permissions">Roles and permissions</h2>
+      <p class="hint">Who can do what, and on which scope. One column per role of the framing.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th>Role A</th><th>Role B</th><th>Rules</th></tr></thead>
+          <tbody>
+            <tr><td><span class="todo">business action</span></td><td><span class="tag ok">yes</span></td><td><span class="tag danger">no</span></td><td></td></tr>
+            <tr><td><span class="todo">business action</span></td><td><span class="tag warn">own scope</span> their own files</td><td><span class="tag ok">yes</span></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="questions-and-hypotheses">Questions and hypotheses</h2>
+      <p class="hint">What is not settled. Each question is also asked in .team/questions/. Empty list: write it.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question or hypothesis</th><th>Blocking</th><th>Impacts</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="todo">question asked to the PO</span></td><td><span class="tag danger">yes</span></td><td>BR-02, US-004</td><td><span class="tag warn">open</span></td></tr>
+          <tr><td><span class="tag violet">Hypothesis</span></td><td><span class="todo">what we assume true</span></td><td><span class="tag">no</span></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="notifications-and-messages">Notifications and messages</h2>
+      <p class="hint">Messages seen by the user, e-mails, notifications. Wording word for word, variable parts between angle brackets.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Trigger</th><th>Channel</th><th>Recipient</th><th>Wording</th><th>Rules</th></tr></thead>
+          <tbody>
+            <tr id="MSG-01"><td>MSG-01</td><td><span class="todo">event</span></td><td>screen / e-mail</td><td>role</td><td>"<span class="todo">exact text with &lt;variable&gt;</span>"</td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="business-calculations-and-algorithms">Business calculations and algorithms</h2>
+      <p class="hint">Formula, inputs, rounding rules, edge cases, and a fictitious worked example.</p>
+      <div class="card" id="CALC-01">
+        <h4>CALC-01 · <span class="todo">name of the calculation</span></h4>
+        <dl class="defs">
+          <dt>Formula</dt><dd><code>result = input_a × rate</code></dd>
+          <dt>Inputs</dt><dd><span class="todo">where each input comes from</span></dd>
+          <dt>Rounding</dt><dd><span class="todo">e.g. up to the next cent</span></dd>
+          <dt>Example</dt><dd><span class="todo">fictitious values and expected result</span></dd>
+          <dt>Rules</dt><dd>BR-01</dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="business-non-functional-requirements">Business non-functional requirements</h2>
+      <p class="hint">What the business expects in lead times, volumes, availability, retention. Each requirement is measurable.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Requirement</th><th>Target</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Volume</span></td><td><span class="todo">e.g. number of files handled per day</span></td><td></td><td></td></tr>
+          <tr><td><span class="tag">Retention</span></td><td><span class="todo">data retention period</span></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2 id="additional-glossary">Additional glossary</h2>
+      <p class="hint">Terms that appeared since the framing. To be carried into the glossary of the framing afterwards.</p>
+      <dl class="defs">
+        <dt><span class="todo">term</span></dt><dd>definition</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

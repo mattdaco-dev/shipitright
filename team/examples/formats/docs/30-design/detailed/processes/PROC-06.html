@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PROC-06 Annuler une réservation · Conception technique détaillée · Réservation de salles</title>
+  <!-- Process metadata, read by team/scripts/detailed-pages.mjs -->
+  <meta name="id" content="PROC-06">
+  <meta name="name" content="Annuler une réservation">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/reservation">
+  <meta name="entities" content="EN-05:RU">
+  <meta name="errors" content="INTERDIT DEJA_COMMENCEE MOTIF_OBLIGATOIRE">
+  <meta name="rules" content="BR-03 BR-07 BR-11">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Traitement PROC-06</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#crud-matrix">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">PROC-06</span> : Annuler une réservation</h1>
+      <p class="lede">La transition unique Active → Annulée de <a href="../entities/EN-05.html">EN-05</a>. Trois appelants l'utilisent : l'annulation d'une réservation, celle d'une série et la désactivation d'une salle. Elle vérifie les règles et renseigne le motif, la date et l'auteur, toujours de la même façon (<a href="../cross-cutting/compliance.html#INV-68">INV-68</a>).</p>
+      <div class="meta">
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Appelé par et entités</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Situer le traitement dans l'application.</dd>
+          <dt>Contenu</dt><dd>Qui l'appelle, ce qu'il appelle, les données qu'il touche en lettres CRUD, ses règles et ses erreurs métier.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, un fait par terme ; calculée, elle reste juste sans rien écrire.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les balises <code>meta</code> de la page.</dd>
+        </dl>
+      </div>
+      <!-- gen:process-usage -->
+      <dl class="defs">
+        <dt>Module</dt><dd><a href="../cross-cutting/code-organization.html#module-domain-reservation"><code>domain/reservation</code></a></dd>
+        <dt>Appelé par</dt><dd><a href="../endpoints/EP-12.html">EP-12</a> <code>POST /reservations/{id}/annulation</code> <span class="tag accent">MVP</span><br><a href="../endpoints/EP-13.html">EP-13</a> <code>POST /series/{id}/annulation</code> <span class="tag accent">MVP</span><br><a href="PROC-03.html">PROC-03</a> Annuler les réservations futures d'une salle <span class="tag accent">MVP</span></dd>
+        <dt>Données</dt><dd><a href="../entities/EN-05.html">EN-05</a> Réservation <span class="crud" data-tip="lecture, mise à jour">RU</span></dd>
+        <dt>Règles</dt><dd><a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>, <a href="../../../20-specs/functional-design.html#BR-07">BR-07</a>, <a href="../../../20-specs/functional-design.html#BR-11">BR-11</a></dd>
+        <dt>Erreurs métier</dt><dd><a href="../cross-cutting/errors.html#INTERDIT"><code>INTERDIT</code></a>, <a href="../cross-cutting/errors.html#DEJA_COMMENCEE"><code>DEJA_COMMENCEE</code></a>, <a href="../cross-cutting/errors.html#MOTIF_OBLIGATOIRE"><code>MOTIF_OBLIGATOIRE</code></a></dd>
+      </dl><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Signature et transaction</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le contrat du traitement dans le code.</dd>
+          <dt>Contenu</dt><dd>Sa signature dans le langage du socle (entrées typées, résultat, refus en valeurs de <a href="../schemas/index.html#CodeErreur"><code>CodeErreur</code></a>), puis la transaction où il s'exécute : toujours celle de son appelant (<a href="../cross-cutting/code-organization.html#transactions">règle des transactions</a>).</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une signature typée est la forme la plus courte et la moins ambiguë ; le dev la recopie dans le domaine.</dd>
+        </dl>
+      </div>
+      <pre class="signature"><code>// module domain/reservation : annulation
+annuler(
+  reservation: Reservation,                       // déjà chargée par l'appelant
+  cmd: { auteurId: number; auteurRole: Role;      // employé de la session, ou gestionnaire qui désactive
+         motif?: string },
+  deps: { reservations: ReservationRepository; horloge: Horloge },   // horloge injectée (<a href="../cross-cutting/compliance.html#INV-62">INV-62</a>)
+): Result&lt;'annulee' | 'deja_annulee',             // deja_annulee : rien ne change, le premier motif reste
+          'INTERDIT' | 'DEJA_COMMENCEE' | 'MOTIF_OBLIGATOIRE'&gt;</code></pre>
+      <dl class="defs">
+        <dt>Transaction</dt><dd>la transaction immédiate que l'endpoint ouvre et ferme (<a href="../endpoints/EP-12.html">EP-12</a>, <a href="../endpoints/EP-13.html">EP-13</a>, <a href="../endpoints/EP-17.html">EP-17</a> par <a href="PROC-03.html">PROC-03</a>) ; un refus est rendu à l'appelant, qui annule la transaction</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Algorithme</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que fait le traitement, dans l'ordre.</dd>
+          <dt>Contenu</dt><dd>Une étape par contrôle ou par action, chacune avec sa règle de gestion et son refus.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste numérotée fixe l'ordre (un contrôle avant l'écriture) sans prose.</dd>
+        </dl>
+      </div>
+      <ol>
+        <li>Auteur titulaire ou gestionnaire, sinon <a href="../cross-cutting/errors.html#INTERDIT"><code>INTERDIT</code></a> (<a href="../../../20-specs/functional-design.html#BR-11">BR-11</a>).</li>
+        <li>Réservation déjà annulée : <code>deja_annulee</code>, rien ne change (idempotence de <a href="../endpoints/EP-12.html">EP-12</a> et <a href="../endpoints/EP-13.html">EP-13</a>).</li>
+        <li>Réservation pas commencée à l'horloge du serveur, sinon <a href="../cross-cutting/errors.html#DEJA_COMMENCEE"><code>DEJA_COMMENCEE</code></a> (<a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>).</li>
+        <li>Auteur autre que le titulaire : motif non vide, sinon <a href="../cross-cutting/errors.html#MOTIF_OBLIGATOIRE"><code>MOTIF_OBLIGATOIRE</code></a> (<a href="../../../20-specs/functional-design.html#BR-07">BR-07</a>).</li>
+        <li>Écriture par le dépôt : <code>statut = 'annulee'</code>, <code>motif_annulation</code>, <code>annulee_le</code> = maintenant, <code>annulee_par</code> = l'auteur. C'est le seul <code>UPDATE</code> du statut vers <code>annulee</code> (<a href="../cross-cutting/compliance.html#INV-68">INV-68</a>).</li>
+      </ol>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Cas limites</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister les cas que les tests du traitement couvrent.</dd>
+          <dt>Contenu</dt><dd>Une ligne par situation, avec son résultat attendu.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une table de décision : chaque ligne devient un test unitaire. Les <a href="../cross-cutting/tests.html">tests imposés</a> la citent sans la recopier.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Situation</th><th>Résultat attendu</th></tr></thead>
+        <tbody>
+          <tr><td>le titulaire annule sa réservation de demain, sans motif</td><td>annulée, <code>motif_annulation</code> vide, <code>annulee_par</code> = le titulaire</td></tr>
+          <tr><td>le gestionnaire annule la réservation d'autrui avec un motif</td><td>annulée, motif conservé, rendu au titulaire par <a href="../endpoints/EP-11.html">EP-11</a> (<a href="../../../20-specs/functional-design.html#MSG-05">MSG-05</a>)</td></tr>
+          <tr><td>le gestionnaire annule la réservation d'autrui, motif vide ou blanc</td><td><a href="../cross-cutting/errors.html#MOTIF_OBLIGATOIRE"><code>MOTIF_OBLIGATOIRE</code></a></td></tr>
+          <tr><td>réservation commencée il y a une minute</td><td><a href="../cross-cutting/errors.html#DEJA_COMMENCEE"><code>DEJA_COMMENCEE</code></a>, rien ne change</td></tr>
+          <tr><td>second appel sur une réservation déjà annulée, autre motif</td><td><code>deja_annulee</code>, le premier motif reste</td></tr>
+          <tr><td>désactivation d'une salle : réservation de demain d'un employé</td><td>annulée, motif « salle désactivée », <code>annulee_par</code> = le gestionnaire</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

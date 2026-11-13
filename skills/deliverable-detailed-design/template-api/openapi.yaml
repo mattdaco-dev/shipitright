@@ -1,0 +1,144 @@
+# API contract of PROJECT_NAME: single source of truth between backend and frontend, and source of the
+# endpoint and schema pages of the detailed design (team/scripts/detailed-pages.mjs).
+# Template of the skill deliverable-detailed-design, to copy into docs/30-design/api/. The example
+# content takes over the example diagram of the macro design template (EP-01, EP-02, EN-01, EN-02,
+# resources): replace it with the content of the macro design of the project.
+#
+# Files: this root file declares info, tags, the list of paths and the name of each component; the
+# content is in files joined by external $ref:
+#   paths/<path>.yaml                 one file per path (path item), all its operations;
+#                                     /resources/{id} becomes paths/resources-id.yaml
+#   components/schemas/<domain>.yaml  schemas grouped by functional domain; the first line
+#                                     "# domain: <label>" names the card of the domain, label in the
+#                                     project language
+#   components/parameters.yaml, components/responses.yaml
+# A schema, a parameter or a response exists only if it is named here under components; elsewhere, it
+# is cited by a $ref relative to its file ("../components/schemas/resources.yaml#/Resource").
+# Validation: npx @redocly/cli@2.58.2 lint openapi.yaml (from this folder); then
+# node team/scripts/detailed-pages.mjs docs/30-design --check.
+#
+# Default conventions of the team (a foundation that chooses others, JSON:API for example, adapts
+# them here and in components/; the deviation from the foundation goes through an ADR):
+#   - OpenAPI 3.1, every route under /api, URL of the local server: the one of the stack foundation
+#   - bodies in application/json, flat resources, no envelope
+#   - errors in application/problem+json (RFC 9457) with a stable business "code" field, value of
+#     ErrorCode; the front translates code, never title nor detail
+#   - malformed request in 400, missing session in 401, insufficient role in 403, unknown resource
+#     in 404, state conflict in 409, input rule in 422, unexpected in 500
+#   - common codes expected by the generator: VALIDATION, UNAUTHENTICATED, INTERNAL_ERROR
+#   - pagination and filters: TO REPLACE according to the foundation, or "no pagination, each list is
+#     bounded by its filters"
+#
+# Evolution of the API contract (INV-58, INV-59 of the compliance contract, detailed/cross-cutting/compliance.html):
+#   - a "frozen" operation loses nothing and changes nothing. Only backward compatible additions are
+#     allowed: optional request parameter or property, response property, enum value announced in
+#     advance with its release (x-enum-releases). Before its release, an announced element is neither
+#     sent nor accepted by the server (400 VALIDATION).
+#   - the front ignores an unknown response property and translates an enum value it does not know
+#     as the generic case of the screen.
+#   - a "provisional" operation changes freely until the sprint planning that freezes it.
+#   - info.version: major forbidden without an accepted ADR (breaking a frozen operation); minor at
+#     each frozen backward compatible addition, or operation that goes from provisional to frozen;
+#     patch for a change without effect on a frozen operation (text, example, provisional operation).
+#   - each version has its entry at the top of info.x-changelog, kept by hand by the Architect at the
+#     planning that freezes or adds; the generator rejects a version without an entry.
+#
+# Extensions of the team (read by the generator, ignored by OpenAPI tools):
+#   info        x-changelog      [{ version, date 'YYYY-MM-DD', changes: ["kind: text"] }], the most
+#                                recent first; kind: added, announced, frozen, fix, breaking
+#   operation   x-endpoint-id    EP-xx of the macro design (required)
+#               x-release        first release that needs it: MVP, R2, R3 (required)
+#               x-contract       frozen (frozen operation, the front starts on a mock) or provisional
+#                                (waits for a business answer); required, no other value
+#               x-roles          roles allowed, or public (required); the rights matrix comes from it
+#               x-module         backend code module where the operation lives (required); a row of
+#                                the modules table (table.modules) of the code organization
+#               x-data-control   checks on the data, beyond the role (list of sentences)
+#               x-processes      processes PROC-xx called
+#               x-entities       access to the entities, in letters of a CRUD matrix (C create, R read,
+#                                U update, D delete): [{ id: EN-xx, access: CU }] for a direct access;
+#                                [{ id: EN-xx, access: C, via: PROC-xx }] for the access actually
+#                                obtained through a process of x-processes, included in what the process
+#                                declares (meta entities); one row per entity that each process touches
+#               x-rules          business rules BR-xx and calculations CALC-xx applied
+#               x-idempotence    behaviour of an identical second call
+#               x-sequence       mermaid sequence diagram; the endpoint opens and closes the
+#                                transaction, a process never does; "participant F as Front SCR-xx"
+#                                ties the sequence to the screen (screens view)
+#               x-open           open points of the operation, each written only once, sorted by
+#                                decreasing impact: [{ impact: high | medium | low, subject: what
+#                                remains to settle, hypothesis: what the code follows meanwhile,
+#                                question: Q-xxx if it is asked }]; high: data model or frozen
+#                                operation; medium: provisional operation, process, schema not frozen,
+#                                screen; low: label, message, edge case. No hypothesis anywhere else
+#                                in the API contract
+#   response    x-codes          business error codes (ErrorCode) the response can carry
+#   parameter   x-release        release that adds the parameter, if it comes after the operation
+#   schema      x-entity         entity EN-xx of which the schema is the actual projection (not a calculation)
+#               x-release        on a property: release that adds it, if it comes later
+#               x-enum-releases  announced enum values and their release: { value: R3 }
+#               x-for-codes      on a property of Problem: codes that fill it
+#               x-error-catalog  on ErrorCode: status, case, screen (behaviour on the screen, with
+#                                SCR-xx and MSG-xx) of each code, and entity, the entity EN-xx the
+#                                code puts in question
+#
+# Requirement levels checked by the generator:
+#   every operation       x-endpoint-id, x-release, x-contract, x-roles, x-module: error if missing
+#   frozen that writes    (C, U or D) x-idempotence, x-sequence, x-entities or x-processes: error if missing
+#   frozen that reads     x-entities or x-processes: error; x-sequence: warning if missing
+#   provisional           summary, x-roles, x-entities or x-processes, x-open: error if missing;
+#                         sequence and examples optional
+#
+# Pitfalls: an unquoted YAML text that contains ": " becomes an object (quote it); a one-word schema
+# name (Resource) is linked in the pages only if it is between backticks.
+openapi: 3.1.0
+info:
+  title: PROJECT_NAME API
+  version: 0.1.0
+  description: >-
+    TO REPLACE: one sentence on the scope of the API (all releases). The x-contract "frozen"
+    operations are frozen; the "provisional" ones will be frozen at the sprint planning that takes them.
+  x-changelog:
+    - version: 0.1.0
+      date: '2026-01-01'
+      changes:
+        - "frozen: EP-01; EP-02 provisional (release R2)"
+  license:
+    name: internal use, fictitious data
+    identifier: CC0-1.0
+servers:
+  - url: http://localhost:3000/api
+    description: local, TO REPLACE with the URL of the stack foundation
+security:
+  - session: []
+tags:
+  - name: resources
+    description: TO REPLACE, one tag per functional domain
+
+paths:
+  /resources: {$ref: paths/resources.yaml}
+
+components:
+  securitySchemes:
+    session:
+      type: apiKey
+      in: cookie
+      name: session
+      description: TO REPLACE with the authentication mode of the macro design (ADR).
+
+  parameters:
+    Day: {$ref: components/parameters.yaml#/Day}
+
+  schemas:
+    Day: {$ref: components/schemas/common.yaml#/Day}
+    ResourceStatus: {$ref: components/schemas/resources.yaml#/ResourceStatus}
+    Resource: {$ref: components/schemas/resources.yaml#/Resource}
+    ResourceRequest: {$ref: components/schemas/resources.yaml#/ResourceRequest}
+    ErrorCode: {$ref: components/schemas/errors.yaml#/ErrorCode}
+    Problem: {$ref: components/schemas/errors.yaml#/Problem}
+
+  responses:
+    BadRequest: {$ref: components/responses.yaml#/BadRequest}
+    Unauthorized: {$ref: components/responses.yaml#/Unauthorized}
+    Forbidden: {$ref: components/responses.yaml#/Forbidden}
+    InternalError: {$ref: components/responses.yaml#/InternalError}

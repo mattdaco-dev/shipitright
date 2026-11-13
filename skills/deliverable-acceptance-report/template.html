@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="verdict" content="">                    <!-- accepted | accepted-with-reservations | rejected; empty until the human decides -->
+  <meta name="status" content="prepared">             <!-- prepared | signed | refused: the Status field of the header, as a code -->
+  <meta name="acceptance_date" content="YYYY-MM-DD">  <!-- day of the acceptance session, ISO -->
+  <title>Acceptance report sprint N · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Acceptance report sprint N</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../sprints/sprint-N.html">→ Sprint N</a><br><a href="../40-qa/campaign-sprint-N.html">→ Test campaign</a><br><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Sprint N · G3 acceptance</div>
+      <h1><span class="doc-kind">Acceptance report</span>: sprint N</h1>
+      <p class="lede"><span class="todo">the human's verdict on the accepted commit, stories accepted, reservations and their ticket, merge decision</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Acceptance date</b> YYYY-MM-DD</span>
+        <span><b>Author</b> PO; decision by the human</span>
+        <span><b>Status</b> <span class="tag warn">prepared</span></span>
+        <span><b>Sources</b> <a href="../sprints/sprint-N.html">sprint N</a>, <a href="../40-qa/campaign-sprint-N.html">campaign</a>, stories of the sprint</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="accepted-scope">Accepted scope</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the human accepted, on which version and where, so that the verdict is never read out of its context.</dd>
+          <dt>Content</dt><dd>The stories of the sprint, the branch and the accepted commit, the environment and its state, the date, the participants, the starting QA verdict.</dd>
+          <dt>Why this format</dt><dd>A definition list, one topic per term. The accepted commit is taken as is from the campaign, as a link to its runs: the human accepts the code the campaign played last, not another one.</dd>
+          <dt>Read</dt><dd>The QA verdict is cited, not copied: its criteria and its bugs are in the campaign. Acceptance only starts on a favorable verdict, with or without reservations, and on an environment reset by the QA.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-001-slug.html">US-001</a> <span class="todo">title</span>, <a href="../20-specs/stories/US-002-slug.html">US-002</a> <span class="todo">title</span></dd>
+        <dt>Version</dt><dd>branch <code>sprint/N</code>, accepted commit <a href="../40-qa/campaign-sprint-N.html#runs"><code><span class="todo">short sha</span></code></a>, taken from the campaign runs</dd>
+        <dt>Environment</dt><dd><a href="../30-design/macro.html#environments">Demo and acceptance</a>, <span class="todo">reset by the QA on MM-DD, how to access it</span></dd>
+        <dt>Participants</dt><dd>human (decides), PO (records), <span class="todo">qa-n</span> (answers on the campaign)</dd>
+        <dt>QA verdict</dt><dd><a href="../40-qa/campaign-sprint-N.html#qa-verdict"><span class="todo">favorable, favorable with reservations</span></a></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="acceptance-path">Acceptance path</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Give the human a walkthrough they follow alone, on screen, and keep track of what they saw.</dd>
+          <dt>Content</dt><dd>15 minutes at most: steps numbered end to end, per journey, that target the decisions taken by delegation (PO rulings), the accepted limits and one complete journey; per step, scenario served, action with the data to enter, expected result, actual result, status.</dd>
+          <dt>Why this format</dt><dd>An acceptance test case: action, expected, actual. The expected result and the data come from the scenarios and data sets <code>US-xxx/Dn</code> of the stories, shifted to future dates without changing the day of the week; the actual result is noted during acceptance, with the words of the screen. Three statuses: <span class="tag ok">ok</span>, <span class="tag warn">reservation</span> (the gap becomes a reservation), <span class="tag danger">ko</span> (the human rejects the step).</dd>
+          <dt>Read</dt><dd>A journey, not one scenario per step: the human plays the whole path, the other scenarios and those the screen cannot trigger (technical error, past state) have no step, the end-of-journey line says where the campaign proves them. The order follows the recommendation of the QA verdict: the human first judges a reservation on screen.</dd>
+        </dl>
+      </div>
+      <h3><span class="todo">Journey 1: use of the sprint</span></h3>
+      <table>
+        <thead><tr><th class="num">#</th><th>Scenario</th><th>Action and data</th><th>Expected result</th><th>Actual result</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td class="ref-id"><a href="../20-specs/stories/US-001-slug.html#S1">US-001/S1</a></td><td><span class="todo">on <a href="../20-ux/ux-ui-spec.html#SCR-01">SCR-01</a>, enter "fictional value"</span></td><td><span class="todo">what must be seen, with the words of the screen</span></td><td><span class="todo">what was seen</span></td><td><span class="tag ok">ok</span></td></tr>
+          <tr><td class="num">2</td><td class="ref-id"><a href="../20-specs/stories/US-001-slug.html#S2">US-001/S2</a></td><td><span class="todo">action</span></td><td><span class="todo">expected</span></td><td><span class="todo">actual</span></td><td><span class="tag warn">reservation</span> <a href="#RES-01">RES-01</a></td></tr>
+          <tr><td colspan="6"><span class="todo">no step: US-001/S3, proven by the campaign (link to its results by scenario), reason</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="results">
+      <h2 id="results">Results</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say, story by story, what the human accepts.</dd>
+          <dt>Content</dt><dd>One row per story of the sprint: steps of the path, result, human's comment.</dd>
+          <dt>Why this format</dt><dd>Three results: <span class="tag ok">accepted</span>, <span class="tag warn">accepted with reservations</span>, <span class="tag danger">rejected</span>. The result follows from the step statuses: a reservation makes the story accepted with reservations, a ko makes it rejected, unless the human says otherwise in the comment.</dd>
+          <dt>Read</dt><dd>The comment is the human's, word for word; empty if they made none.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Story</th><th>Steps</th><th data-col="result">Result</th><th>Human's comment</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td>1, 2</td><td data-value="accepted-with-reservations"><span class="tag warn">accepted with reservations</span></td><td><span class="todo">comment</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="reserves">
+      <h2 id="reservations">Reservations</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List the gaps the human agrees to see fixed later, each with the ticket that fixes it.</dd>
+          <dt>Content</dt><dd>One row per reservation: identifier <code>RES-xx</code>, gap observed, story and step, ticket, due.</dd>
+          <dt>Why this format</dt><dd>A reservation without a ticket gets lost: the ticket exists in the board before signing. A minor bug left open at the QA verdict becomes a reservation, and its ticket is the existing <code>BUG-xxx</code>, left at status <code>backlog</code>.</dd>
+          <dt>Read</dt><dd>The <code>RES-xx</code> is stable: the sprint page, the roadmap and the next sprint cite it. A reservation is lifted when the item linked to it (the bug <code>BUG-xxx</code> or the ticket <code>T-xxx</code> created for it) moves to status <code>done</code> in the board; the signed report is not rewritten. No reservation: say so.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Reservation</th><th>Gap observed</th><th>Story, step</th><th>Ticket</th><th>Due</th></tr></thead>
+        <tbody>
+          <tr id="RES-01"><td>RES-01</td><td><span class="todo">factual description</span></td><td><a href="../20-specs/stories/US-001-slug.html">US-001</a>, step 2</td><td><a href="../../.team/board/BUG-001-slug.md">BUG-001</a> <span class="todo">or T-xxx created</span></td><td>sprint N+1</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="accepted-open-bugs">Accepted open bugs</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Keep track of a major bug delivered open, which only the human can accept.</dd>
+          <dt>Content</dt><dd>One row per open major: <code>BUG-xxx</code>, title, written acceptance by the PO in the campaign, reason given by the human, fix due.</dd>
+          <dt>Why this format</dt><dd>Open minors are reservations, they have no row here: a bug is recorded only once. An open blocking bug never gets here: the QA verdict would be unfavorable and acceptance would not take place.</dd>
+          <dt>Read</dt><dd>No open major: say so, and name the minors carried over as reservations.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Bug</th><th>Title</th><th>PO acceptance</th><th>Human's reason</th><th>Due</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../.team/board/BUG-002-slug.md">BUG-002</a></td><td><span class="todo">title</span></td><td><a href="../40-qa/campaign-sprint-N.html#qa-verdict"><span class="todo">YYYY-MM-DD</span></a></td><td><span class="todo">reason given by the human</span></td><td>sprint N+1</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="verdict-and-decision">Verdict and decision</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Record the human's decision and what it triggers.</dd>
+          <dt>Content</dt><dd>The verdict, the human's wording word for word, the merge decision, the decision maker, the date, the signature.</dd>
+          <dt>Why this format</dt><dd>Three verdicts: accepted, accepted with reservations (at least one reservation), rejected (the report says what is missing to accept). The verdict is the human's, neither the PO's nor the QA's: their wording is quoted.</dd>
+          <dt>Read</dt><dd>Accepted, with or without reservations: the human merges <code>sprint/N</code> into <code>main</code>, at the accepted commit. Rejected: the sprint stays open, nothing is merged.</dd>
+        </dl>
+      </div>
+      <div class="callout decision">
+        <b>Verdict: <span class="todo">accepted / accepted with reservations / rejected</span></b>
+        <span class="todo">"the human's wording"</span>
+      </div>
+      <dl class="defs">
+        <dt>Decision</dt><dd><span class="todo">merge of sprint/N into main at the accepted commit, by the human; or what is missing to accept</span></dd>
+        <dt>Decision maker</dt><dd>human</dd>
+        <dt>Date</dt><dd><span class="todo">YYYY-MM-DD</span></dd>
+        <dt>Signature</dt><dd><span class="todo">recorded by the PO in the journal, line of YYYY-MM-DD</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="left-in-the-backlog">Left in the backlog</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Give the next planning what the acceptance leaves: stories not delivered, reservations, new needs.</dd>
+          <dt>Content</dt><dd>One row per item: type, origin, planned follow-up.</dd>
+          <dt>Why this format</dt><dd>A new need expressed during acceptance is not a reservation: it does not block the verdict, it goes to the backlog as a story candidate, which the BA analyzes.</dd>
+          <dt>Read</dt><dd>A reservation appears by its <code>RES-xx</code> and its ticket; a story not delivered, by its identifier and the reason given by the sprint page.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Item</th><th>Type</th><th>Origin</th><th>Follow-up</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-003-slug.html">US-003</a></td><td><span class="tag">story not delivered</span></td><td><a href="../sprints/sprint-N.html#review">sprint N review</a></td><td><span class="todo">sprint N+1 or backlog</span></td></tr>
+          <tr><td><a href="#RES-01">RES-01</a>, <a href="../../.team/board/BUG-001-slug.md">BUG-001</a></td><td><span class="tag warn">reservation</span></td><td>step 2</td><td>sprint N+1</td></tr>
+          <tr><td><span class="todo">need expressed, in the human's words</span></td><td><span class="tag accent">new need</span></td><td>acceptance, step <span class="todo">n</span></td><td>story candidate, for the BA to analyze</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

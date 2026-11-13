@@ -1,5 +1,5 @@
 /*!
- * proto-bar 1.3.0
+ * proto-bar 2.0.0
  * Prototype control bar, identical across every HTML prototype.
  * Source of truth: skills/proto-bar/proto-bar.js in the ShipItRight plugin. Copy it, never edit the copy.
  *
@@ -7,7 +7,7 @@
  *   ProtoBar.mount({
  *     title: 'Room booking, target design',
  *     version: 'v1', date: '2026-09-29',
- *     lang: 'fr',                           // BCP 47 code of the project language, 'fr' by default
+ *     lang: 'en',                           // BCP 47 code of the project language, 'en' by default
  *     labels: { mock: 'Testdaten' },        // fixed labels, given or overridden (required for a language
  *                                           // other than fr and en, which are built in)
  *     dateFormat: 'dd.mm.yyyy',             // 'dd/mm/yyyy' | 'dd.mm.yyyy' | 'yyyy-mm-dd'; default from Intl for lang
@@ -16,10 +16,10 @@
  *     onReset: () => location.reload(),     // default
  *     controls: [
  *       { type: 'seg', id: 'layout', label: 'Layout', value: 'new',
- *         options: [['old', 'Ancien'], ['new', 'Nouveau']], onChange: (v) => {} },
- *       { type: 'select', id: 'profile', label: 'Profil', value: 'member',
- *         groups: [{ label: 'Interne', options: [['member', 'Collaborateur']] }], onChange: (v) => {} },
- *       { type: 'button', id: 'tour', label: 'Rejouer la démo', onClick: () => {} },
+ *         options: [['old', 'Old'], ['new', 'New']], onChange: (v) => {} },
+ *       { type: 'select', id: 'profile', label: 'Profile', value: 'member',
+ *         groups: [{ label: 'Internal', options: [['member', 'Employee']] }], onChange: (v) => {} },
+ *       { type: 'button', id: 'tour', label: 'Replay the demo', onClick: () => {} },
  *     ],
  *   });
  *   ProtoBar.set('layout', 'old');   // sync a control from the app (never calls onChange)
@@ -115,8 +115,8 @@
   // Fixed labels for opts.lang: opts.labels first, then the built-in labels of the language or of its base
   // language, then en, with a warning when a language has neither built-in labels nor complete opts.labels
   function labelsFor(opts) {
-    var lang = opts.lang || 'fr';
-    try { lang = Intl.getCanonicalLocales(lang)[0]; } catch (e) { warn('invalid lang "' + opts.lang + '", ignored (fr used)'); lang = 'fr'; }
+    var lang = opts.lang || 'en';
+    try { lang = Intl.getCanonicalLocales(lang)[0]; } catch (e) { warn('invalid lang "' + opts.lang + '", ignored (en used)'); lang = 'en'; }
     var own = I18N[lang] || I18N[lang.split('-')[0]];
     var given = opts.labels || {};
     var t = { lang: lang };

@@ -10,7 +10,7 @@
  *   start                  ISO date, the wished start; the remaining work never starts before today
  *   today                   optional ISO date, only to freeze a snapshot (an example); the real date otherwise
  *   holidays                ISO dates that are not worked
- *   modes                   [{ id: "ia"|"assiste"|"humain", label, note, default }]
+ *   modes                   [{ id: "ai"|"assisted"|"human", label, note, default }]
  *   profiles                [{ id, label, skills: [..], count (full-time equivalents, 1.5 allowed), avail (%), from (ISO), modes: [..], unit: "h", hoursPerDay,
  *                              maxPerItem, team: "dev" (shares the productivity loss), external, fixed (count not editable, e.g. the PO),
  *                              calc: false (shown, not scheduled, e.g. the UX), hint, note }]
@@ -29,13 +29,13 @@
  *                              a ticket has story: "US-xxx" and replaces that story's realisation once it exists (after P3);
  *                              the story keeps its id and its business validation, after all its tickets
  *   storyDeps               { "US-006": ["US-005"], ... } ; every story also waits for storyAfter
- *   storyAfter              [ids] ; stories start after these (socle, G2)
+ *   storyAfter              [ids] ; stories start after these (foundation, G2)
  *   storyGroup              { rel: "group label" } for the Gantt ; groups: [labels] fixes the order of the groups
  *
  * Stories come from the estimate table (doc.js): size, front share, release; their effort per mode is
- *   humain  : front h x front %, back the rest (person-days), then the business validation
- *   assiste : the same x the assisted ratio, then the business validation
- *   ia      : agent hours, then the business validation
+ *   human    : front h x front %, back the rest (person-days), then the business validation
+ *   assisted : the same x the assisted ratio, then the business validation
+ *   ai       : agent hours, then the business validation
  * The business validation is the human share of the size (data-hpart), on the "validation" skill (the PO, the helpers).
  * Fixed durations (d) are drawn in the error range too; external deliveries are commitments, never drawn.
  * Work rows of the estimate table with data-items="<item ids>" are filled from this configuration.
@@ -52,116 +52,116 @@
   if (!D) return;
   const { $, $$, EST, drawGantt, watch, dmy, dm, lastDay, nextDay, day0, isWe, days, tms, t, esc } = D;
   const I = D.i18n;
-  // French labels for a project older than 0.4.0, without i18n.js: keep equal to team/i18n/fr/plan.json
+  // Default labels without i18n.js, written by team/scripts/i18n-fallback.mjs
   I.addFallback({
-    "plan.story.validation": "{label} : validation métier",
-    "plan.group.other": "Autres",
-    "plan.mode.humain": "Sans assistance IA",
-    "plan.mode.assiste": "Avec assistance IA",
-    "plan.mode.ia": "IA en autonomie",
-    "plan.modeTag.humain": "sans IA",
-    "plan.modeTag.assiste": "avec IA",
-    "plan.modeTag.ia": "en IA autonome",
-    "plan.h.planning": "Planning",
-    "plan.h.load": "Charge des équipes",
-    "plan.h.loadHint": "Part de la capacité de chaque profil occupée, par semaine. Un profil à 100 % sur la durée est le goulot ; un profil vide attend du travail.",
-    "plan.h.people": "Planning par personne",
-    "plan.h.compare": "Comparaison des modes",
-    "plan.rename.aria": "Nom",
-    "plan.rename.title": "Renommer",
-    "plan.less": "Moins",
-    "plan.more": "Plus",
-    "plan.skill.front": "front",
-    "plan.skill.back": "back",
-    "plan.skill.qa": "campagne de test",
-    "plan.skill.agent": "développement, tests, campagne QA",
-    "plan.skill.validation": "validation métier",
+    "plan.story.validation": "{label}: business validation",
+    "plan.group.other": "Other",
+    "plan.mode.human": "Without AI assistance",
+    "plan.mode.assisted": "With AI assistance",
+    "plan.mode.ai": "Autonomous AI",
+    "plan.modeTag.human": "without AI",
+    "plan.modeTag.assisted": "with AI",
+    "plan.modeTag.ai": "with autonomous AI",
+    "plan.h.planning": "Schedule",
+    "plan.h.load": "Team load",
+    "plan.h.loadHint": "Share of each profile's capacity in use, per week. A profile at 100% over the whole period is the bottleneck; an empty profile waits for work.",
+    "plan.h.people": "Schedule per person",
+    "plan.h.compare": "Comparison of the modes",
+    "plan.rename.aria": "Name",
+    "plan.rename.title": "Rename",
+    "plan.less": "Less",
+    "plan.more": "More",
+    "plan.skill.front": "front end",
+    "plan.skill.back": "back end",
+    "plan.skill.qa": "test campaign",
+    "plan.skill.agent": "development, tests, QA campaign",
+    "plan.skill.validation": "business validation",
     "plan.skill.gate": "gates",
-    "plan.skill.recette": "recette",
-    "plan.skill.uxreview": "review UX/UI",
-    "plan.skill.ident": "SSO",
-    "plan.skill.exploit": "exploitation",
-    "plan.team.title": "Composition de l'équipe",
-    "plan.team.hint": "En équivalents temps plein : 1,5 = une personne à plein temps et une à mi-temps. Les colonnes de droite donnent l'effet d'un temps plein de plus ou de moins sur la date de la dernière release, dans chaque mode.",
-    "plan.team.profile": "Profil",
-    "plan.team.fte": "Temps plein",
-    "plan.team.plusOne": "Un de plus",
-    "plan.team.minusOne": "Un de moins",
-    "plan.team.fixed": "fixe",
-    "plan.settings.title": "Paramètres",
-    "plan.settings.hint": "Dates, autres équipes et règles de calcul. Chaque changement recalcule le planning tout de suite.",
+    "plan.skill.acceptance": "acceptance",
+    "plan.skill.uxreview": "UX/UI review",
+    "plan.skill.identity": "SSO",
+    "plan.skill.operations": "operations",
+    "plan.team.title": "Team composition",
+    "plan.team.hint": "In full-time equivalents: 1.5 = one person full time and one half time. The columns on the right give the effect of one full-time more or less on the date of the last release, in each mode.",
+    "plan.team.profile": "Profile",
+    "plan.team.fte": "Full time",
+    "plan.team.plusOne": "One more",
+    "plan.team.minusOne": "One less",
+    "plan.team.fixed": "fixed",
+    "plan.settings.title": "Settings",
+    "plan.settings.hint": "Dates, other teams and calculation rules. Each change recomputes the schedule at once.",
     "plan.dates.title": "Dates",
-    "plan.dates.hint": "Le travail restant commence au démarrage souhaité, jamais avant aujourd'hui. Une MEP souhaitée vient du cadrage ou de l'humain ; vide, pas d'échéance.",
-    "plan.dates.start": "Démarrage souhaité",
-    "plan.dates.due": "MEP souhaitée {release}",
-    "plan.dates.dueHint": "vide : aucune échéance",
-    "plan.ext.title": "Autres équipes",
-    "plan.ext.hint": "Les livraisons attendues d'équipes hors projet, à la date qu'elles s'engagent à tenir. Le planning attend chaque livraison avant de lancer ce qui en dépend. La durée de leur tâche ne sert qu'à dessiner leur barre.",
-    "plan.ext.deliver": "Livre le",
-    "plan.ext.duration": "Durée",
-    "plan.ext.durationUnit": "j",
-    "plan.agents.title": "Team d'agents",
-    "plan.agents.hint": "Pour le mode IA en autonomie : combien d'agents travaillent en parallèle. Le PO et l'aide à la recette viennent de la section Composition de l'équipe.",
-    "plan.agents.hours": "{n} h de travail par jour chacun",
-    "plan.rules.title": "Règles de calcul",
-    "plan.rules.hint": "Comment le planning traduit l'équipe et les estimations en dates. Les mêmes pour les trois modes.",
-    "plan.rules.loss": "Temps perdu en coordination, par collègue",
-    "plan.rules.lossHint": "Chaque développeur perd ce pourcentage de son temps pour chaque collègue (échanges, synchronisation). Au-delà d'une certaine taille, ajouter quelqu'un ralentit l'équipe.",
-    "plan.rules.maxPer": "Personnes au plus sur une même story",
-    "plan.rules.maxPerHint": "Une story ne se partage pas entre plus de personnes que ça : au-delà, elle ne finit pas plus vite.",
-    "plan.rules.opt": "Au mieux",
-    "plan.rules.pess": "Au pire",
-    "plan.rules.range": "Marge d'erreur des estimations",
-    "plan.rules.rangeHint": "Une estimation n'est jamais exacte : une story peut prendre moins (au mieux) ou plus (au pire) que prévu, en % de son estimation. Dans chaque simulation, la moitié de l'écart est commune à toutes les stories : les estimations se trompent souvent dans le même sens.",
-    "plan.rules.runs": "Nombre de simulations",
-    "plan.rules.runsHint": "Le planning est rejoué autant de fois, avec à chaque fois des durées tirées au hasard dans la marge d'erreur. On en déduit la date probable et la date prudente. Plus il y en a, plus elles sont stables et plus le calcul est long.",
-    "plan.rules.calib": "Correction tirée des sprints réels",
-    "plan.rules.calibMeasured": {"one":"Mesurée sur {n} sprint : temps réel divisé par temps estimé. Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage.","other":"Mesurée sur {n} sprints : temps réel divisé par temps estimé. Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage."},
-    "plan.rules.calibNone": "Aucun sprint mesuré pour l'instant : 1, pas de correction. Elle multiplie toutes les estimations des stories. Les sprints mesurés sont dans la section Calibrage.",
-    "plan.fold.start": "Démarrage {date}",
-    "plan.fold.due": "MEP {release} {date}",
-    "plan.sum.team": "La date est tenue par la disponibilité de {profile}.",
-    "plan.sum.today": "La date est tenue par la date du jour : le travail restant ne commence pas avant aujourd'hui.",
-    "plan.sum.start": "La date est tenue par le démarrage souhaité.",
-    "plan.sum.ext": "La date est tenue par une livraison externe : {item}.",
-    "plan.sum.extTeam": "La date est tenue par une livraison externe : {item} ({team}).",
-    "plan.sum.bottleneck": "Goulot sur le chemin critique : {profile}.",
-    "plan.sum.missing": "Compétence absente : {skills} ; le travail qui la demande reste bloqué.",
-    "plan.note.done": "fait",
-    "plan.note.stuck": "bloqué : compétence absente",
-    "plan.note.deliveredBy": "livré par {team}",
-    "plan.note.delivered": "livré par l'équipe",
-    "plan.delta.stuck": "reste bloqué",
-    "plan.delta.unblocks": "débloque",
-    "plan.delta.blocks": "bloque la livraison",
-    "plan.delta.none": "aucun effet",
-    "plan.warn.title": "Profils en trop",
+    "plan.dates.hint": "The remaining work starts at the wished start, never before today. A wished go-live comes from the framing or from the human; empty, no deadline.",
+    "plan.dates.start": "Wished start",
+    "plan.dates.due": "Wished go-live {release}",
+    "plan.dates.dueHint": "empty: no deadline",
+    "plan.ext.title": "Other teams",
+    "plan.ext.hint": "Deliveries expected from teams outside the project, on the date they commit to. The schedule waits for each delivery before starting what depends on it. The duration of their task only draws their bar.",
+    "plan.ext.deliver": "Delivers on",
+    "plan.ext.duration": "Duration",
+    "plan.ext.durationUnit": "d",
+    "plan.agents.title": "Agent team",
+    "plan.agents.hint": "For the autonomous AI mode: how many agents work in parallel. The PO and the acceptance helper come from the Team composition section.",
+    "plan.agents.hours": "{n} h of work per day each",
+    "plan.rules.title": "Calculation rules",
+    "plan.rules.hint": "How the schedule turns the team and the estimates into dates. The same for the three modes.",
+    "plan.rules.loss": "Time lost in coordination, per teammate",
+    "plan.rules.lossHint": "Each developer loses this share of their time for each teammate (discussions, synchronisation). Beyond a certain size, adding someone slows the team down.",
+    "plan.rules.maxPer": "People at most on one story",
+    "plan.rules.maxPerHint": "A story is not shared between more people than this: beyond that, it does not finish sooner.",
+    "plan.rules.opt": "At best",
+    "plan.rules.pess": "At worst",
+    "plan.rules.range": "Error margin of the estimates",
+    "plan.rules.rangeHint": "An estimate is never exact: a story may take less (at best) or more (at worst) than planned, as a % of its estimate. In each simulation, half of the gap is shared by all the stories: estimates are often wrong in the same direction.",
+    "plan.rules.runs": "Number of simulations",
+    "plan.rules.runsHint": "The schedule is replayed this many times, each time with durations drawn at random within the error margin. The probable and the prudent dates come from them. The more there are, the more stable they are and the longer the calculation.",
+    "plan.rules.calib": "Correction from the actual sprints",
+    "plan.rules.calibMeasured": {"one":"Measured on {n} sprint: actual time divided by estimated time. It multiplies every story estimate. The measured sprints are in the Calibration section.","other":"Measured on {n} sprints: actual time divided by estimated time. It multiplies every story estimate. The measured sprints are in the Calibration section."},
+    "plan.rules.calibNone": "No sprint measured yet: 1, no correction. It multiplies every story estimate. The measured sprints are in the Calibration section.",
+    "plan.fold.start": "Start {date}",
+    "plan.fold.due": "Go-live {release} {date}",
+    "plan.sum.team": "The date is held by the availability of {profile}.",
+    "plan.sum.today": "The date is held by today's date: the remaining work does not start before today.",
+    "plan.sum.start": "The date is held by the wished start.",
+    "plan.sum.ext": "The date is held by an external delivery: {item}.",
+    "plan.sum.extTeam": "The date is held by an external delivery: {item} ({team}).",
+    "plan.sum.bottleneck": "Bottleneck on the critical path: {profile}.",
+    "plan.sum.missing": "Missing skill: {skills}; the work that needs it stays blocked.",
+    "plan.note.done": "done",
+    "plan.note.stuck": "blocked: missing skill",
+    "plan.note.deliveredBy": "delivered by {team}",
+    "plan.note.delivered": "delivered by the team",
+    "plan.delta.stuck": "stays blocked",
+    "plan.delta.unblocks": "unblocks",
+    "plan.delta.blocks": "blocks the delivery",
+    "plan.delta.none": "no effect",
+    "plan.warn.title": "Profiles in excess",
     "plan.warn.gain": "{d} {mode}",
-    "plan.warn.slow": "{profile} : un temps plein de moins avancerait la dernière release ({list}).",
-    "plan.warn.slowDev": "Le temps perdu en coordination dépasse ce qu'il apporte.",
-    "plan.warn.idle": "{profile} : le dernier temps plein ne fait rien gagner ({list}) ; un temps plein de moins donne la même date.",
-    "plan.ex.loss": "Avec {n} développeurs (temps plein) dans ce mode, chacun travaille à {share} de son temps.",
-    "plan.ex.lossIa": "Ne s'applique pas aux agents.",
-    "plan.ex.lossOne": "Avec un seul développeur, rien n'est perdu.",
-    "plan.ex.range": "Exemple : une story estimée à {ref} prend entre {lo} et {hi}.",
-    "plan.ex.calib": "Exemple : {factor} veut dire que les stories ont pris {more} de plus que prévu.",
+    "plan.warn.slow": "{profile}: one full-time less would bring the last release forward ({list}).",
+    "plan.warn.slowDev": "The time lost in coordination exceeds what it brings.",
+    "plan.warn.idle": "{profile}: the last full-time brings no gain ({list}); one full-time less gives the same date.",
+    "plan.ex.loss": "With {n} developers (full time) in this mode, each one works {share} of their time.",
+    "plan.ex.lossIa": "Does not apply to agents.",
+    "plan.ex.lossOne": "With a single developer, nothing is lost.",
+    "plan.ex.range": "Example: a story estimated at {ref} takes between {lo} and {hi}.",
+    "plan.ex.calib": "Example: {factor} means that the stories took {more} more than planned.",
     "plan.cmp.mode": "Mode",
-    "plan.cmp.team": "Équipe",
+    "plan.cmp.team": "Team",
     "plan.cmp.p50": "probable",
-    "plan.cmp.p85": "prudente",
-    "plan.cmp.ref": "{d} de réalisation (référence)",
-    "plan.cmp.same": "même durée que {mode}",
-    "plan.cmp.diff": "{d} par rapport à {mode}",
-    "plan.cmp.blocked": "bloqué",
-    "plan.cmp.computing": "calcul…",
-    "plan.cmp.tip": "Chances de tenir la MEP souhaitée : sur {runs} simulations, {share} livrent la release {release} au plus tard le {date}.",
-    "plan.cmp.mep": "MEP {date} : {share}",
+    "plan.cmp.p85": "prudent",
+    "plan.cmp.ref": "{d} of build (reference)",
+    "plan.cmp.same": "same duration as {mode}",
+    "plan.cmp.diff": "{d} compared with {mode}",
+    "plan.cmp.blocked": "blocked",
+    "plan.cmp.computing": "computing…",
+    "plan.cmp.tip": "Chances of meeting the wished go-live: out of {runs} simulations, {share} deliver release {release} on {date} at the latest.",
+    "plan.cmp.mep": "Go-live {date}: {share}",
     "plan.calib.sprint": "Sprint",
-    "plan.calib.estimated": "Estimé",
-    "plan.calib.actual": "Réel",
-    "plan.calib.ratio": "Réel / estimé",
-    "plan.calib.factor": "Facteur mesuré",
-    "plan.calib.none": "Aucun sprint mesuré pour l'instant : facteur 1, les estimations ne sont pas corrigées.",
+    "plan.calib.estimated": "Estimated",
+    "plan.calib.actual": "Actual",
+    "plan.calib.ratio": "Actual / estimated",
+    "plan.calib.factor": "Measured factor",
+    "plan.calib.none": "No sprint measured yet: factor 1, the estimates are not corrected.",
   });
   const n2 = (v) => I.num(v); // 1,5 in fr, 1.5 in en
   const pct = (v, digits = 0) => I.num(v, { style: 'percent', maximumFractionDigits: digits });
@@ -225,9 +225,9 @@
       }
       const f = r.front / 100;
       let work;
-      if (mode === 'ia') work = [[['agent', r.v.ag]], [['validation', r.v.hu]]];
+      if (mode === 'ai') work = [[['agent', r.v.ag]], [['validation', r.v.hu]]];
       else {
-        const h = mode === 'assiste' ? r.v.h * assist / 100 : r.v.h;
+        const h = mode === 'assisted' ? r.v.h * assist / 100 : r.v.h;
         work = [[['front', h * f], ['back', h * (1 - f)]].filter((x) => x[1] > 0), [['validation', r.v.hu]]];
       }
       items.push({ ...base, id, label, type: 'story', phases: work });
@@ -455,8 +455,8 @@
     const cur = () => ({ ...set, today, cal: calendar(cfg.start, cfg.holidays), calib: calibFactor() });
     const cnt = (p, c = set.count) => (p.fixed ? p.count : c[p.id] ?? p.count);
     // the work rows of the estimate (data-items="<item ids>") take their values from this configuration, so the
-    // work out of stories is written once: realisation by mode (days, agent hours in IA), then the work common
-    // to all modes (gates, recette)
+    // work out of stories is written once: realisation by mode (days, agent hours in AI mode), then the work
+    // common to all modes (gates, acceptance)
     const workRows = $$('.est tr.work[data-items]');
     if (workRows.length) {
       const total = (list) => (list || []).reduce((t, [, a]) => t + a, 0);
@@ -468,14 +468,14 @@
           return total(w) + (agent ? 0 : (it.d && it.d[mode]) || 0);
         };
         const common = sum((it) => total(it.work && it.work.all) + ((it.d && it.d.all) || 0));
-        tr.dataset.fixed = [sum((it) => own(it, 'humain', false)), sum((it) => own(it, 'assiste', false)), sum((it) => own(it, 'ia', true)), common].join(' ');
+        tr.dataset.fixed = [sum((it) => own(it, 'human', false)), sum((it) => own(it, 'assisted', false)), sum((it) => own(it, 'ai', true)), common].join(' ');
       });
       EST.refresh();
     }
     const profiles = (mode) => cfg.profiles.filter((p) => !p.modes || p.modes.includes(mode));
     const relEnd = (out, r) => out.res.get(r.gate).b;
     const dueMs = (r) => (set.due[r.id] ? nextDay(tms(set.due[r.id])) : null);
-    // probable and prudent dates, and the chance of meeting the wished MEP when one is set
+    // probable and prudent dates, and the chance of meeting the wished go-live when one is set
     const stats = (r, smp) => {
       const due = dueMs(r);
       return [percentile(smp, 0.5), percentile(smp, 0.85), due ? smp.filter((v) => v <= due).length / smp.length : null];
@@ -492,8 +492,8 @@
     const host = $$('.capa-team')[n], bars = [tabs];
     if (host) { crew.classList.add('flat'); host.replaceChildren(crew); settings.append(conf); } else settings.append(crew, conf);
     // the human team is shared by the modes without autonomous agents; agents are set with the other settings
-    const humanModes = modes.filter((m) => m.id !== 'ia');
-    // the effect of one more or one less full-time is shown for every mode (the helpers count in IA too)
+    const humanModes = modes.filter((m) => m.id !== 'ai');
+    // the effect of one more or one less full-time is shown for every mode (the helpers count in AI mode too)
     const effName = (m) => (I.has('plan.mode.' + m.id) ? t('plan.mode.' + m.id) : m.label);
     const effTag = (m) => (I.has('plan.modeTag.' + m.id) ? t('plan.modeTag.' + m.id) : m.label);
     const humanTeam = () => cfg.profiles.filter((p) => !p.external && !p.fixed && humanModes.some((m) => !p.modes || p.modes.includes(m.id)));
@@ -841,7 +841,7 @@
       $('.cap-warn', crew).innerHTML = warns.length ? `<b>${esc(t('plan.warn.title'))}</b><ul>${warns.map((w) => `<li>${w}</li>`).join('')}</ul>` : '';
       const devs = profiles(mode).filter((p) => p.team === 'dev').reduce((t, p) => t + cnt(p), 0);
       const ex = (k, html) => { const e = $(`[data-ex="${k}"]`, conf); if (e) e.innerHTML = html; };
-      ex('loss', esc(devs > 1 ? t('plan.ex.loss', { n: devs, share: pct(Math.pow(1 - set.loss / 100, devs - 1)) }) : mode === 'ia' ? t('plan.ex.lossIa') : t('plan.ex.lossOne')));
+      ex('loss', esc(devs > 1 ? t('plan.ex.loss', { n: devs, share: pct(Math.pow(1 - set.loss / 100, devs - 1)) }) : mode === 'ai' ? t('plan.ex.lossIa') : t('plan.ex.lossOne')));
       ex('range', esc(t('plan.ex.range', { ref: days(10), lo: days(set.opt / 10), hi: days(set.pess / 10) })));
       ex('calib', esc(t('plan.ex.calib', { factor: 1.2, more: pct(0.2) })));
       foldSummary();

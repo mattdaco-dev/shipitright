@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 // Writes docs/_assets/i18n.js (labels of doc.js and plan.js in the project language), see
-// team/conventions/langue.md. Usage: node i18n-assets.mjs [<project dir>]   (default: the current directory)
+// team/conventions/language.md. Usage: node i18n-assets.mjs [<project dir>]   (default: the current directory)
 // --check: exit code 1 if the file is missing or out of date, without writing.
 import { existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';

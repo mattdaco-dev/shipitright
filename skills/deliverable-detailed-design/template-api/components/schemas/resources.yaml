@@ -1,0 +1,33 @@
+# domain: Resources
+# Schemas named in openapi.yaml under components/schemas
+# One file per functional domain, TO REPLACE. An exchanged schema (sent or received directly by an
+# endpoint) has its page; a type used only inside other schemas is a shared type, without a page.
+# Flat schemas: an allOf of a schema with additionalProperties: false rejects the added fields.
+
+ResourceStatus:
+  type: string
+  enum: [active, archived]
+  description: lifecycle of the resource (EN-01)
+Resource:
+  type: object
+  additionalProperties: false
+  x-entity: EN-01
+  description: a resource, as the front displays it
+  required: [id, name, day, status]
+  properties:
+    id: {type: integer, minimum: 1}
+    name: {type: string, minLength: 1, maxLength: 60}
+    day: {$ref: 'common.yaml#/Day'}
+    status: {$ref: '#/ResourceStatus'}
+  examples:
+    - {id: 1, name: First resource, day: '2026-01-05', status: active}
+ResourceRequest:
+  type: object
+  additionalProperties: false
+  description: creation of a resource; the status is not chosen
+  required: [name, day]
+  properties:
+    name: {type: string, minLength: 1, maxLength: 60, description: 'leading and trailing spaces removed'}
+    day: {$ref: 'common.yaml#/Day'}
+  examples:
+    - {name: First resource, day: '2026-01-05'}

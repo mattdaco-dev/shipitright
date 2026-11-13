@@ -1,0 +1,66 @@
+# domain: Errors
+# Schemas named in openapi.yaml under components/schemas
+
+ErrorCode:
+  type: string
+  description: >-
+    stable business code, translated by the front into a message MSG-xx or MSG-Uxx. VALIDATION,
+    UNAUTHENTICATED and INTERNAL_ERROR are common to every screen.
+  enum:
+    - VALIDATION
+    - UNAUTHENTICATED
+    - FORBIDDEN
+    - NAME_TAKEN
+    - INTERNAL_ERROR
+  x-error-catalog:
+    VALIDATION:
+      status: 400
+      case: parameter or body outside the schema; errors[] per field
+      screen: should not happen (input bounded by the screen); handled as the technical error of the
+        screen
+    UNAUTHENTICATED:
+      status: 401
+      case: missing or expired session
+      screen: login screen, then back to the page requested
+    FORBIDDEN:
+      status: 403
+      case: insufficient role
+      screen: TO REPLACE
+    NAME_TAKEN:
+      entity: EN-01
+      status: 409
+      case: an active resource already has this name
+      screen: TO REPLACE, message under the Name field
+    INTERNAL_ERROR:
+      status: 500
+      case: unexpected; transaction rolled back, nothing is written
+      screen: error message of the screen with "Retry"
+Problem:
+  type: object
+  description: >-
+    Error in the RFC 9457 format (application/problem+json), with the code field. The front translates
+    `code`, never `title` nor `detail`.
+  required: [title, status, code]
+  properties:
+    type: {type: string, default: about:blank}
+    title: {type: string, description: stable summary for a given code}
+    status: {type: integer}
+    detail: {type: string, description: 'explanation specific to the occurrence, never displayed as is'}
+    instance: {type: string, description: 'request identifier, for the logs'}
+    code: {$ref: '#/ErrorCode'}
+    field:
+      type: string
+      description: body field in question
+      x-for-codes: [NAME_TAKEN]
+    errors:
+      type: array
+      description: form errors, one per field
+      x-for-codes: [VALIDATION]
+      items:
+        type: object
+        required: [field, message]
+        properties:
+          field: {type: string}
+          message: {type: string}
+  examples:
+    - {type: about:blank, title: Name already taken, status: 409, code: NAME_TAKEN, field: name}

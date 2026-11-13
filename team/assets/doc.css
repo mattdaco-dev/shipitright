@@ -117,9 +117,9 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 24px 0; }
   position: absolute; top: 14px; right: 16px; font-size: 11px; font-weight: 600;
   padding: 2px 8px; border-radius: 99px; display: none;
 }
-.section[data-level="obligatoire"]::after { content: var(--doc-l-mandatory, "Obligatoire"); background: var(--danger-soft); color: var(--danger); }
-.section[data-level="recommande"]::after  { content: var(--doc-l-recommended, "Recommandé");  background: var(--warn-soft);   color: var(--warn); }
-.section[data-level="facultatif"]::after  { content: var(--doc-l-optional, "Facultatif");  background: var(--surface-2);   color: var(--ink-3); }
+.section[data-level="required"]::after   { content: var(--doc-l-mandatory, "Mandatory"); background: var(--danger-soft); color: var(--danger); }
+.section[data-level="recommended"]::after { content: var(--doc-l-recommended, "Recommended"); background: var(--warn-soft);   color: var(--warn); }
+.section[data-level="optional"]::after    { content: var(--doc-l-optional, "Optional");    background: var(--surface-2);   color: var(--ink-3); }
 .section.has-todo::after, body.show-levels .section[data-level]::after { display: block; }
 
 /* Placeholder left by the template: must disappear before delivery */
@@ -127,7 +127,7 @@ hr { border: 0; border-top: 1px solid var(--line); margin: 24px 0; }
   border: 1.5px dashed var(--warn); background: var(--warn-soft); color: var(--warn);
   border-radius: var(--radius-sm); padding: 8px 12px; font-size: 13px; margin: 6px 0;
 }
-.todo::before { content: var(--doc-l-todo, "À compléter : "); font-weight: 700; }
+.todo::before { content: var(--doc-l-todo, "To complete: "); font-weight: 700; }
 span.todo { display: inline-block; padding: 1px 8px; margin: 0; }
 
 /* Banner shown by doc.js when mandatory sections are still placeholders */
@@ -173,7 +173,7 @@ span.todo { display: inline-block; padding: 1px 8px; margin: 0; }
 .callout.decision { border-color: var(--ok); background: var(--ok-soft); }
 .callout.warn { border-color: var(--warn); background: var(--warn-soft); }
 .callout.danger { border-color: var(--danger); background: var(--danger-soft); }
-.callout.hypothese { border-color: var(--violet); background: var(--violet-soft); }
+.callout.hypothesis { border-color: var(--violet); background: var(--violet-soft); }
 .callout.question { border-color: var(--accent); background: var(--accent-soft); }
 
 table { width: 100%; border-collapse: collapse; font-size: 14px; margin: 8px 0 14px; }
@@ -245,10 +245,10 @@ dl.defs dd :is(ul, ol) { margin: 0; padding-left: 1.2em; }
 .section.opportunities > h2::before { content: ""; width: 20px; height: 20px; flex: none; background: #3f9b1f;
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z'/%3E%3C/svg%3E") center / contain no-repeat;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9 18h6M10 22h4M12 2a7 7 0 0 0-4 12.7c.6.5 1 1.3 1 2.1V17h6v-.2c0-.8.4-1.6 1-2.1A7 7 0 0 0 12 2z'/%3E%3C/svg%3E") center / contain no-repeat; }
-/* An identifier (RG-01, MSG-03) never wraps in the first column of its defining table */
+/* An identifier (BR-01, MSG-03) never wraps in the first column of its defining table */
 tr[id] > td:first-child, .ref-id { white-space: nowrap; }
 
-/* Landing on a cross-reference anchor (#RG-04, #EC-03): flash the target */
+/* Landing on a cross-reference anchor (#BR-04, #SCR-03): flash the target */
 :target { scroll-margin-top: 24px; animation: target-flash 2.4s ease-out; }
 @keyframes target-flash { from { background: #fff3a8; } to { background: transparent; } }
 
@@ -266,7 +266,7 @@ tr[id] > td:first-child, .ref-id { white-space: nowrap; }
 .legend i.lane { background: transparent; border: 0; border-left: 2px solid var(--ink-3); border-radius: 0; }
 .legend i.out { background: var(--surface-2); border: 1px dashed var(--ink-3); }
 
-/* ---------- Functional journey (PF-xx) ---------- */
+/* ---------- Functional journey (FL-xx) ---------- */
 /* Same family as the big picture: one color per kind of step, arrows routed by doc.js.
    Nodes are placed on a grid with data-c (column) and data-r (row). */
 .pf { display: grid; grid-auto-columns: max-content; gap: 64px 92px; align-items: center; justify-content: start; padding: 14px 6px 18px; }
@@ -346,7 +346,7 @@ ul.checklist li::before { content: ""; position: absolute; left: 2px; top: 7px; 
 ul.checklist li.done::before { background: var(--ok); border-color: var(--ok); }
 ul.checklist li.done::after { content: ""; position: absolute; left: 7px; top: 9px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
 .dor-count { font-size: 12px; font-weight: 700; padding: 0 8px; border-radius: 999px; line-height: 20px; }
-/* Prototype captures next to the story: <figure class="shot"><img src="US-006_x.jpg"><figcaption>…</figcaption></figure> */
+/* Prototype screenshots next to the story: <figure class="shot"><img src="US-006_x.jpg"><figcaption>…</figcaption></figure> */
 .shots { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 14px; margin-top: 12px; }
 .shot { margin: 0; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; background: var(--surface); }
 .shot img { display: block; width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; background: var(--surface-2); }
@@ -429,7 +429,7 @@ a.sm-story:hover .id { color: var(--accent); }
 @media (prefers-reduced-motion: reduce) { .rm-item { transition: none; } }
 .rm-milestone { font-weight: 700; color: var(--violet); }
 .rm-milestone::before { content: "◆ "; }
-/* Gates between columns: data-gate="G1" (to come) or "G1|validé" (crossed) on a .rm-head draws a band on its right edge (doc.js) */
+/* Gates between columns: data-gate="G1" (to come) or "G1|validated" (crossed) on a .rm-head draws a band on its right edge (doc.js) */
 .rm-gate { position: absolute; top: 0; bottom: 0; width: 3px; min-height: 0; margin-left: -2px; padding: 0; border: 0; background: var(--violet); z-index: 2; pointer-events: none; }
 .rm-gate.done { background: var(--ok); }
 .rm-gate b { position: absolute; top: 6px; left: 50%; transform: translateX(-50%); padding: 1px 7px; border-radius: 99px; background: var(--violet); color: #fff;
@@ -570,7 +570,7 @@ body[data-release="all"] .chain .node[data-release]::before { content: attr(data
 .xref-menu a { display: flex; justify-content: space-between; gap: 12px; padding: 5px 8px; border-radius: 6px; color: var(--ink); text-decoration: none; }
 .xref-menu a:hover, .xref-menu a:focus-visible { background: var(--accent-soft); outline: none; }
 .xref-menu a small { color: var(--ink-3); font-family: var(--mono); }
-/* Detailed design pages generated from openapi.yaml (team/scripts/detaillee-pages.mjs) */
+/* Detailed design pages generated from openapi.yaml (team/scripts/detailed-pages.mjs) */
 .verb { display: inline-block; padding: 2px 8px; border-radius: 5px; font-family: var(--mono); font-size: .62em; font-weight: 700;
   letter-spacing: .03em; color: #fff; vertical-align: .18em; }
 .verb.get { background: var(--info); }
@@ -578,7 +578,7 @@ body[data-release="all"] .chain .node[data-release]::before { content: attr(data
 .verb.put, .verb.patch { background: var(--warn); }
 .verb.delete { background: var(--danger); }
 td .verb { font-size: 10.5px; vertical-align: 1px; }
-/* Object cards (detaillee-pages.mjs): one card per entity or per domain of schemas, dense id lists */
+/* Object cards (detailed-pages.mjs): one card per entity or per domain of schemas, dense id lists */
 .obj-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 14px; align-items: start; }
 .obj-cards.wide { grid-template-columns: repeat(auto-fill, minmax(min(100%, 440px), 1fr)); }
 .obj-card { min-width: 0; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); padding: 12px 14px 14px; font-size: 13px; }
@@ -612,13 +612,13 @@ a.obj-title:hover { color: var(--accent); }
 .sc-dir.err { color: var(--danger); }
 .obj-legend { display: flex; flex-wrap: wrap; gap: 4px 18px; margin: 10px 0 0; font-size: 12.5px; color: var(--ink-2); }
 .sc-status { font-family: var(--mono); font-size: 11px; color: var(--ink-3); }
-/* detailed design (detaillee-pages.mjs): impact of an open point, CRUD letters and matrix, links under a
+/* detailed design (detailed-pages.mjs): impact of an open point, CRUD letters and matrix, links under a
    diagram, common errors of an operation, DDL and signatures */
 .impact { display: inline-block; min-width: 4.2em; padding: 1px 8px; border-radius: 99px; font-size: 12px; font-weight: 700;
   text-align: center; cursor: help; }
-.impact.fort { background: var(--danger-soft); color: var(--danger); }
-.impact.moyen { background: var(--warn-soft); color: var(--warn); }
-.impact.faible { background: var(--surface-2); color: var(--ink-2); }
+.impact.high { background: var(--danger-soft); color: var(--danger); }
+.impact.medium { background: var(--warn-soft); color: var(--warn); }
+.impact.low { background: var(--surface-2); color: var(--ink-2); }
 table.open-points td:first-child { white-space: nowrap; }
 table.open-points .none, td .none { color: var(--ink-3); }
 .crud { font-family: var(--mono); font-size: 12.5px; font-weight: 700; letter-spacing: .08em; color: var(--accent); cursor: help; }
@@ -639,7 +639,7 @@ pre.ddl a, pre.signature a { color: #9ec5ff; }
 .node[data-badge="done"] { opacity: .75; }
 
 /* ---------- Wireflow / screen inventory ---------- */
-/* Wireflow: the .pf engine with screen nodes. A screen is a small window, its EC-xx in the title bar;
+/* Wireflow: the .pf engine with screen nodes. A screen is a small window, its SCR-xx in the title bar;
    a dialog belongs to its screen and is drawn dashed. Arrow labels are the user's actions. */
 .pf-node.screen { width: 150px; padding: 0 0 9px; background: #fff; border: 1.5px solid #23324d; border-radius: 7px; font-weight: 600; text-align: center; }
 .pf-node.screen > a.ec { display: block; margin-bottom: 7px; padding: 3px 8px; background: #23324d; color: #fff; border-radius: 5px 5px 0 0;
@@ -686,8 +686,8 @@ a.screen-card:hover { text-decoration: none; transform: translateY(-1px); box-sh
   .screen-flow .sf-next { display: block; }
 }
 .screen-card .body .who { display: block; color: var(--ink-3); font-size: 12px; margin-top: 2px; }
-.section h3[id^="EC-"] { margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--line); }
-.section h3[id^="EC-"]:first-of-type { margin-top: 12px; padding-top: 0; border-top: 0; }
+.section h3[id^="SCR-"] { margin-top: 34px; padding-top: 20px; border-top: 1px solid var(--line); }
+.section h3[id^="SCR-"]:first-of-type { margin-top: 12px; padding-top: 0; border-top: 0; }
 .states { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
 .states .tag.na { text-decoration: line-through; opacity: .55; }
 
@@ -968,7 +968,7 @@ th.sortable .sort-ind::after { content: "\2195"; font-size: 12px; opacity: .35; 
 th.sortable[aria-sort="ascending"] .sort-ind::after { content: "\25B2"; font-size: 9px; opacity: 1; color: var(--accent); }
 th.sortable[aria-sort="descending"] .sort-ind::after { content: "\25BC"; font-size: 9px; opacity: 1; color: var(--accent); }
 th.sortable[aria-sort] { color: var(--ink); }
-/* sitemap tree (summary of the detailed design), generated by detaillee-pages.mjs (gen:sitemap): nested
+/* sitemap tree (summary of the detailed design), generated by detailed-pages.mjs (gen:sitemap): nested
    li.st-item / ul.st-sub drawn left to right, connectors in pseudo-elements, hooked to the head of each node.
    A node (.st-node) is a page: a filled head in its branch color (st-b1..st-b6 on the li) and the list of its
    sections (.st-anchors), st-b7 for the open points. Classes given by the generator: st-leaf (no children), st-single (a group with a
@@ -1210,11 +1210,11 @@ svg.ext { display: inline-block; width: .8em; height: .8em; margin-left: .35em; 
 .pil-scale span:first-child { margin-right: 6px; } .pil-scale span:last-child { margin-left: 6px; }
 /* ---- Backlog page (docs/20-specs/backlog.html) ---- */
 /* story statuses, in the order of the journey; release tints of the story map; all AA as text on white and on their 12 % tint */
-.t-st-arediger { --t: #5d636e; } .t-st-redigee { --t: #4b6380; } .t-st-prete { --t: #6a3fb5; }
-.t-st-validee { --t: #0b6e99; } .t-st-sprint { --t: #2f5bea; } .t-st-livree { --t: #186a2b; }
+.t-st-to-write { --t: #5d636e; } .t-st-written { --t: #4b6380; } .t-st-ready { --t: #6a3fb5; }
+.t-st-validated { --t: #0b6e99; } .t-st-sprint { --t: #2f5bea; } .t-st-delivered { --t: #186a2b; }
 .t-rel-mvp { --t: #2f5bea; } .t-rel-r2 { --t: #8f5f00; } .t-rel-r3 { --t: #5d636e; }
 .tag.bl-st { color: var(--t); background: color-mix(in srgb, var(--t) 12%, #fff); }
-.tag.bl-st.t-st-arediger { background: var(--surface); box-shadow: inset 0 0 0 1px var(--t); border: 0; outline: 1px dashed transparent; }
+.tag.bl-st.t-st-to-write { background: var(--surface); box-shadow: inset 0 0 0 1px var(--t); border: 0; outline: 1px dashed transparent; }
 /* sizes and the R2 tag darkened inside the backlog only, so that the text reaches AA (the shared ones are lighter) */
 .bl-kpis .size.m, .bl .size.m { color: #8a5a00; } .bl-kpis .size.l, .bl .size.l { color: #9a4a00; }
 .bl .tag.warn { color: #8f5f00; }
@@ -1287,18 +1287,18 @@ a.bl-gap:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 }
 .bl-fbv { display: flex; align-items: center; gap: 6px; margin-top: 6px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .bl-fbv .bl-fb { margin-right: 0; }
-/* ---- Inventory of the analyses (docs/10-analyse/index.html), built on the backlog table (.bl-table) ---- */
+/* ---- Inventory of the analyses (docs/10-analysis/index.html), built on the backlog table (.bl-table) ---- */
 .an-table col.c-who { width: 125px; } .an-table col.c-prog { width: 112px; } .an-table col.c-stat { width: 92px; } .an-table col.c-pour { width: 56px; } .an-table col.c-open { width: 120px; } .an-table col.c-impact { width: 150px; }
 .an-table td { vertical-align: top; }
 .an-table thead th { white-space: normal; vertical-align: bottom; }
-.an-table td[data-label="Auteur"] { white-space: nowrap; }
+.an-table td.an-who { white-space: nowrap; }
 .an-name a { font-weight: 600; }
 .an-q { display: block; margin-top: 2px; font-size: 13px; color: var(--ink-2); }
 .an-table td small { display: block; }
 .an-none { color: var(--ink-2); font-style: italic; }
 .an-list { display: flex; flex-wrap: wrap; gap: 2px 8px; }
 .an-list .qmark { margin: 0; }
-.an-table td[data-label="Livrables impactés"] .an-list { flex-direction: column; align-items: flex-start; }
+.an-table td.an-impacted .an-list { flex-direction: column; align-items: flex-start; }
 @media (max-width: 760px) {
   .an-table tr:not(.bl-epic) { padding-left: 12px; }
   .an-table .an-name, .an-table .an-full { grid-column: 1 / -1; }

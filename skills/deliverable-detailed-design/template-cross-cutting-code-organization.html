@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Code organization · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/cross-cutting/code-organization.html -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Code organization</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#site-map">Cross-cutting</a></div>
+      <h1><span class="doc-kind">Code organization</span>: backend, frontend, persistence</h1>
+      <p class="lede">Where each endpoint, each process and each screen lives in the code, and the conventions of the database. The one of the stack foundation, applied to the product.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Contributors</b> Backend dev, Frontend dev</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="modules">Backend</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know where each endpoint, each process and each entity lives in the backend code.</dd>
+          <dt>Content</dt><dd>The modules table (module, content), written by hand; then the objects of each module; finally the wiring principles and the transaction rule.</dd>
+          <dt>Why this formalism</dt><dd>The component view of the C4 model, as a table. The module is declared once by the object: the list of objects by module is not written by hand and does not diverge.</dd>
+          <dt>Reading</dt><dd>Each object page points to the row of its module. No ticket brief gives a path: the dev finds the files from the modules.</dd>
+          <dt>Source</dt><dd>Objects by module: <code>x-module</code> of an operation, <code>meta module</code> tag of an entity or a process.</dd>
+        </dl>
+      </div>
+      <table class="modules">
+        <thead><tr><th>Module</th><th>Content</th></tr></thead>
+        <tbody>
+          <tr><td><code class="todo">domain/resource</code></td><td><span class="todo">aggregate, value objects, ports, use cases, rules BR-xx and invariants INV-xx as links</span></td></tr>
+        </tbody>
+      </table>
+      <h3 id="objects-by-module">Objects by module</h3>
+      <!-- gen:code-modules --><!-- /gen -->
+      <ul>
+        <li><b>Wiring</b>: <span class="todo">composition root, what the tests replace (clock, database)</span></li>
+        <li><b>Events</b>: <span class="todo">domain events and bus, or "none" with the reason</span></li>
+      </ul>
+      <h3 id="transactions">Transactions and processes</h3>
+      <div class="callout decision"><b>The endpoint opens and closes the transaction</b>The handler of an endpoint that writes opens the transaction, calls the processes, then commits, or rolls back on the first rejection. A process <code>PROC-xx</code> always runs in the transaction of its caller: it never opens, commits or rolls back anything, it returns a result or a rejection. The sequences of the endpoints show it (<code>x-sequence</code>). <span class="todo">Mechanism of the foundation: port, isolation level.</span></div>
+      <div class="callout decision"><b>When a process exists</b>A process <code>PROC-xx</code> exists when a piece of domain logic serves two callers or more (endpoints or processes), when it is a domain calculation or algorithm worth testing on its own, when it is a cascading effect (an action that triggers others on other objects), or when nothing calls it (scheduled task, consumption of a message). Otherwise, the logic stays in the endpoint, in its use case.</div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="frontend">Frontend</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know where each screen lives in the frontend code.</dd>
+          <dt>Content</dt><dd>One row per route: screen, components, state. Then the API access services and what is common to the screens.</dd>
+          <dt>Why this formalism</dt><dd>The front organization of the foundation applied to the product, as a table (C4 component view): one folder per top-level screen loaded on demand, one API access service per resource, the only one to inject <code>HttpClient</code>, state in signals (<a href="compliance.html#stack-foundation">INV-30 to INV-40</a> of the foundation).</dd>
+          <dt>Reading</dt><dd>The endpoints each screen calls are in the <a href="screens.html">per-screen view</a>, not here.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Route</th><th>Screen</th><th>Components</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td><code class="todo">/route</code></td><td><span class="todo">SCR-xx as a link</span></td><td><code class="todo">Component</code></td><td><span class="todo">what is in the URL, in a signal, in a form</span></td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><b>API access services</b>: <span class="todo">one per resource; exchange types drawn from the schemas</span></li>
+        <li><b>Error translation</b>: <span class="todo">service that translates a <code>code</code> into a message MSG-xx, single catalogue of labels</span></li>
+        <li><b>Tolerant reading</b>: the front ignores a response property it does not know, and translates an unknown enum value as the generic case of the screen, without crashing (<a href="compliance.html#INV-59">INV-59</a>). This is what lets a frozen operation grow through announced additions.</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="persistence">Persistence</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Set the conventions common to all the tables and the order of the migrations.</dd>
+          <dt>Content</dt><dd><ul><li>Types of identifiers, days, times and timestamps.</li><li>Connection settings.</li><li>Numbered migrations and what they set up.</li><li>Fictitious data set.</li></ul></dd>
+          <dt>Why this formalism</dt><dd>What applies to all the tables is written once here; the list of migrations sets the creation order (<a href="compliance.html#stack-foundation">invariants of the foundation</a>).</dd>
+          <dt>Reading</dt><dd>The DDL of each table is in the page of its entity.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Identifiers</dt><dd><span class="todo">type and generation</span></dd>
+        <dt>Dates and times</dt><dd><span class="todo">stored format, time zone</span></dd>
+        <dt>Connection</dt><dd><span class="todo">settings at opening, or "those of the foundation"</span></dd>
+      </dl>
+      <table>
+        <thead><tr><th>Migration</th><th>Content</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><code class="todo">0001_name</code></td><td><span class="todo">tables of the EN-xx as links, indexes, constraints</span></td><td><span class="tag accent">MVP</span></td></tr>
+        </tbody>
+      </table>
+      <ul>
+        <li><b>Fictitious set</b>: <span class="todo">command and content of the data set, no real data</span> (<a href="compliance.html#INV-51">INV-51</a>).</li>
+        <li><b>Reversibility</b>: <span class="todo">down migration or recreation of the database</span></li>
+      </ul>
+    </section>
+    <section class="section" id="open-points" data-level="recommended">
+      <h2 id="open-points">Open points</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List what remains to settle on the code organization.</dd>
+          <dt>Content</dt><dd>One point per row, sorted by decreasing impact: the subject, the hypothesis the code follows meanwhile, the question <code>Q-xxx</code> if it is asked to the PO.</dd>
+          <dt>Why this formalism</dt><dd>A table, because each point has the same attributes and compares with the others.</dd>
+          <dt>Reading</dt><dd><ul><li><span class="impact high">high</span> the answer can change the data model, a frozen operation of the API contract or what structures the whole code</li><li><span class="impact medium">medium</span> the answer can change a provisional operation, a process, a schema not frozen or a screen</li><li><span class="impact low">low</span> the answer only changes a label, a message, a value or an edge case</li></ul></dd>
+          <dt>Source</dt><dd>Written here only once; the generator takes it over in the <a href="../open-points.html">open points view</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Subject</th><th>Hypothesis kept</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="medium"><span class="impact medium">medium</span></td><td><span class="todo">what remains to settle (for example what the foundation does not set yet)</span></td><td><span class="todo">what the code follows meanwhile</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,145 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Compliance contract · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/cross-cutting/compliance.html. One row per invariant,
+       <tr id="INV-xx"> with a self link in the first cell: every INV-xx cited elsewhere links to its row
+       (compliance.html#INV-xx), and the generator reports an INV-xx cited and absent from this page. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Compliance contract</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#site-map">Cross-cutting</a></div>
+      <h1><span class="doc-kind">Compliance contract</span>: the invariants of the code</h1>
+      <p class="lede">What the code respects, whatever the ticket. The dev self-reviews against it before handing in, the Reviewer checks each invariant and cites it by its identifier. An invariant not respected is blocking, unless there is an accepted deviation with its ADR.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" id="framework" data-level="required">
+      <h2 id="framework-invariants">Framework invariants</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Set the invariants every project of the team respects, whatever the foundation.</dd>
+          <dt>Content</dt><dd><code>INV-50</code> to <code>INV-59</code>, copied from the template without change, each with the way to check it.</dd>
+          <dt>Why this formalism</dt><dd>A table, one checkable invariant per row. Each row has an anchor, target of the link of an <code>INV-xx</code>; the Check column tells the Reviewer how to conclude.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr id="INV-50"><td><a href="#INV-50">INV-50</a></td><td>No secret, password or token in the repository. Configuration through environment variables.</td><td>search, <code>gitleaks</code> if available</td></tr>
+          <tr id="INV-51"><td><a href="#INV-51">INV-51</a></td><td>No real data in the test sets, fixtures or seeds.</td><td>review of the data</td></tr>
+          <tr id="INV-52"><td><a href="#INV-52">INV-52</a></td><td>Logs are structured and contain no personal data in clear.</td><td>review of the log calls</td></tr>
+          <tr id="INV-53"><td><a href="#INV-53">INV-53</a></td><td>Technical identifiers and code are in English; the business terms of the glossary may stay in the project language in the names of the domain, word for word.</td><td>review of the names</td></tr>
+          <tr id="INV-54"><td><a href="#INV-54">INV-54</a></td><td>Commits in Conventional Commits with the ticket id as scope: <code>feat(t-012): ...</code>.</td><td><code>git log</code> of the branch</td></tr>
+          <tr id="INV-55"><td><a href="#INV-55">INV-55</a></td><td>Each endpoint is declared in the API contract (<a href="../../api/openapi.yaml">openapi.yaml</a> and its linked files) and respects it: path, verb, statuses, schemas. A dev does not change the API contract alone.</td><td>comparison of route, inbound adapter, YAML</td></tr>
+          <tr id="INV-56"><td><a href="#INV-56">INV-56</a></td><td>Each business rule carried by the domain has a unit test that names it (<code>BR-xx</code> in the name or the description of the test).</td><td>search of the <code>BR-xx</code> of the ticket in the tests</td></tr>
+          <tr id="INV-57"><td><a href="#INV-57">INV-57</a></td><td>Each screen handles its nominal, empty, loading and error states, as described in the <a href="../../../20-ux/ux-ui-spec.html">UX/UI spec</a>.</td><td>component test per state</td></tr>
+          <tr id="INV-58"><td><a href="#INV-58">INV-58</a></td><td>A frozen operation loses nothing and changes nothing: only backward compatible additions enter it (optional request parameter or property, response property, enum value announced in advance with its release in <code>x-enum-releases</code>). Before its release, an announced element is neither sent nor accepted by the server. Each change of the API contract has its entry in the <a href="../schemas/index.html#changelog">changelog</a> and raises <code>info.version</code>: minor for a frozen addition, patch without effect on what is frozen, major only with an accepted ADR.</td><td>diff of <code>api/</code> against the previous version; <code>detailed-pages.mjs --check</code></td></tr>
+          <tr id="INV-59"><td><a href="#INV-59">INV-59</a></td><td>The front reads the responses tolerantly: it ignores a property it does not know, and handles an unknown enum value (error code, status) as the generic case of the screen, without crashing.</td><td>component test with an unknown value and property</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="stack-foundation" data-level="required">
+      <h2 id="stack-foundation-invariants">Stack foundation invariants</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say which invariants of the stack apply to the project.</dd>
+          <dt>Content</dt><dd>The foundation declared, the invariants taken by reference, those that do not apply with their reason, and, as long as the foundation is "to be completed", the provisional invariants it will have.</dd>
+          <dt>Why this formalism</dt><dd>The invariants of a foundation serve several projects and live in its <code>compliance.md</code>: taking them by reference avoids two versions of the same invariant. A provisional invariant already carries the identifier it will have in the foundation: neither the code nor the reviews will have to change.</dd>
+          <dt>Reading</dt><dd>An invariant taken by reference has no row here: a page that cites it links to this section (<code>compliance.html#stack-foundation</code>), the generator does it on its own.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Foundation declared</dt><dd><span class="todo">name and version of the foundation of <code>.team/foundation.md</code></span>; invariants <code>INV-01</code> to <code>INV-49</code> of <code>.team/foundations/stacks/&lt;name&gt;/compliance.md</code> (or of the source it points to), taken by reference, as is</dd>
+        <dt>Not applicable</dt><dd><span class="todo">"none", or each invariant set aside with its reason, taken over in the accepted deviations</span></dd>
+      </dl>
+      <h3 id="provisional-invariants">Provisional invariants of the foundation</h3>
+      <p><span class="todo">Only if the foundation is "to be completed" (no <code>compliance.md</code>, or a part of the stack without an invariant); otherwise remove this subtitle and the table.</span> They apply to every ticket of the part concerned until the foundation is completed, where they will be carried then removed from here; the human validates them with the foundation at G2 (<a href="code-organization.html#open-points">open point of the code organization</a>, high impact). They translate the ADRs of the macro and the code organization.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Provisional invariant (<span class="todo">part of the stack</span>)</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr id="INV-01"><td><a href="#INV-01">INV-01</a></td><td><span class="todo">code organization: packaging by use case, in the module the object declares (<a href="code-organization.html#modules">modules</a>); forbidden dependencies of the domain…</span></td><td><span class="todo">how to check it by reading the code</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="design-system" data-level="required">
+      <h2 id="design-system-invariants">Design system invariants</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Set the invariants of the front that depend on the design system.</dd>
+          <dt>Content</dt><dd>The design system foundation declared and its invariants <code>INV-70</code> to <code>INV-79</code>: taken by reference if it has some, otherwise set here with the UX, checkable in the front code (tokens, components of the catalogue, accessibility).</dd>
+          <dt>Why this formalism</dt><dd>The same rule as for the stack: an invariant has a single source.</dd>
+          <dt>Reading</dt><dd>An invariant taken by reference links to this section (<code>compliance.html#design-system</code>).</dd>
+        </dl>
+      </div>
+      <p>Design system foundation declared: <span class="todo">name and version; "invariants taken by reference" if it has a <code>compliance.md</code>, otherwise the table below</span>.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr id="INV-70"><td><a href="#INV-70">INV-70</a></td><td><span class="todo">colours, typography, spacing drawn from the tokens of the design system…</span></td><td><span class="todo">search for hard-coded values in the styles</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="project" data-level="required">
+      <h2 id="project-invariants">Project invariants</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Set what the detailed design imposes on the code of this project, in a way the Reviewer can check.</dd>
+          <dt>Content</dt><dd><code>INV-60</code> to <code>INV-69</code>, each with the objects it protects as links.</dd>
+          <dt>Why this formalism</dt><dd>An object page says how to build it; an invariant says what must never happen, from one object to another, and is checked by reading the code.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Id</th><th>Invariant</th><th>Check</th></tr></thead>
+        <tbody>
+          <tr id="INV-60"><td><a href="#INV-60">INV-60</a></td><td><span class="todo">checkable invariant, with the EP-xx, PROC-xx, EN-xx, BR-xx and ADR-xxxx it protects, as links</span></td><td><span class="todo">how to check it by reading the code</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="deviations" data-level="required">
+      <h2 id="accepted-deviations">Accepted deviations</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List the only deviations allowed from the invariants above or from those of the foundations.</dd>
+          <dt>Content</dt><dd>One deviation per row: the invariant as a link, what departs from it, the ADR that accepts it, its scope. Without a deviation: "No accepted deviation."</dd>
+          <dt>Why this formalism</dt><dd>A table backed by the ADRs: a deviation not listed here is blocking in review, a deviation from the stack foundation goes up to the human through its ADR in status <code>proposed</code>.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Invariant</th><th>Deviation</th><th>ADR</th><th>Scope</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">INV-xx as a link</span></td><td><span class="todo">what departs from it</span></td><td><span class="todo">ADR-xxxx as a link</span></td><td><span class="todo">modules or objects concerned</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

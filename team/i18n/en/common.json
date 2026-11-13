@@ -5,7 +5,7 @@
   "gate.G3": "Sprint acceptance",
   "decision.validated": "approved",
   "decision.changes-requested": "changes requested",
-  "decision.accepte": "accepted",
-  "decision.accepte-avec-reserves": "accepted with reservations",
-  "decision.refuse": "rejected"
+  "decision.accepted": "accepted",
+  "decision.accepted-with-reservations": "accepted with reservations",
+  "decision.rejected": "rejected"
 }

@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EPIC-02 Recherche et réservation · Réservation de salles</title>
+  <!-- Epic metadata. Its stories carry <meta name="epic" content="EPIC-02">: grep -l 'name="epic" content="EPIC-02"' ../stories/ -->
+  <meta name="id" content="EPIC-02">
+  <meta name="status" content="draft">
+  <meta name="priority" content="must">
+  <meta name="release" content="MVP">
+  <meta name="notion_url" content="">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Epic EPIC-02</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../story-map.html">← Story map</a><br><a href="../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">EPIC-02</span> : Recherche et réservation</h1>
+      <div class="meta">
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Priorité</b> <span class="moscow must">Must</span></span>
+        <span><b>Release</b> MVP</span>
+      </div>
+      <div class="meta">
+        <span><b>Sources</b> <a href="../../00-framing/framing.html#objectifs-et-indicateurs-de-succes">cadrage, objectifs</a>, <a href="../story-map.html">story map</a> (« Trouver une salle », « Réserver »), <a href="../functional-design.html#FL-01">FL-01</a>, <a href="../functional-design.html#FL-02">FL-02</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Contexte</h2>
+      <p>Aujourd'hui, rien n'est outillé : pour savoir si une salle est libre, l'employé va voir sur place ou demande à l'accueil, et deux équipes se retrouvent dans la même salle à la même heure. Les réunions régulières se renégocient chaque semaine.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Intention</h2>
+      <p class="us-need">L'employé voit en un coup d'œil quelle salle est libre, trouve celle qui a la bonne capacité et les bons équipements, et la réserve pour une fois ou pour une série, sans jamais entrer en conflit avec une autre réservation.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Périmètre</h2>
+      <div class="scope two">
+        <div class="in"><h4>Dans l'epic</h4>
+          <ul>
+            <li>l'occupation des salles sur une journée, salle par salle et toutes salles ;</li>
+            <li>la recherche d'une salle libre par créneau, capacité et équipements ;</li>
+            <li>la réservation ponctuelle, avec ses contrôles de créneau ;</li>
+            <li>la réservation d'une série quotidienne ou hebdomadaire, avec la présentation des conflits.</li>
+          </ul>
+        </div>
+        <div class="out"><h4>Hors epic</h4>
+          <ul>
+            <li>l'annulation et la liste « Mes réservations » (<a href="EPIC-03-mes-reservations.html">EPIC-03</a>) ;</li>
+            <li>la modification d'une réservation (<a href="../stories/US-011-modifier-une-reservation.html">US-011</a>, release R2, <a href="../../questions.html#Q-002">Q-002</a> en attente) ;</li>
+            <li>la garantie technique contre deux demandes simultanées, traitée par l'architecte (<a href="../../questions.html#Q-001">Q-001</a>) : l'epic en montre l'effet.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Conditions de sortie</h2>
+      <ul class="checklist">
+        <li>Toutes les stories rattachées sont recettées.</li>
+        <li>Aucun couple de réservations actives ne se chevauche sur une salle, y compris après un test de demandes simultanées.</li>
+        <li>Un employé trouve une salle libre sur un créneau en moins de 30 secondes et la réserve en moins d'une minute.</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Points à trancher</h2>
+      <ul>
+        <li><a href="../../questions.html#Q-001">Q-001</a> : garantie de BR-01 sous des réservations simultanées (architecte, non bloquant pour G1).</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../_assets/doc.js"></script>
+</body>
+</html>

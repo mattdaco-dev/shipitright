@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EPIC-xx Name · PROJECT_NAME</title>
+  <!-- Epic metadata. Its stories carry <meta name="epic" content="EPIC-xx">: grep -l 'name="epic" content="EPIC-xx"' ../stories/ -->
+  <meta name="id" content="EPIC-xx">
+  <meta name="status" content="draft">          <!-- draft | ready | validated | in-progress | done | abandoned -->
+  <meta name="priority" content="must">         <!-- must | should | could | wont -->
+  <meta name="release" content="MVP">
+  <meta name="notion_url" content="">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Epic EPIC-xx</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../story-map.html">← Story map</a><br><a href="../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P2 · Specifications</div>
+      <h1><span class="doc-kind">EPIC-xx</span>: <span class="todo">epic name</span></h1>
+      <div class="meta">
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Priority</b> <span class="moscow must">Must</span></span>
+        <span><b>Release</b> MVP</span>
+      </div>
+      <div class="meta">
+        <span><b>Sources</b> <a href="../story-map.html">story map</a> (<span class="todo">activities covered</span>), <span class="todo">FL-xx, structuring BR-xx, as links</span></span>
+      </div>
+    </header>
+
+    <!-- An epic does not list its stories: the list diverges at the first split. They carry
+         <meta name="epic" content="EPIC-xx">, and the story map shows them. -->
+
+    <section class="section" data-level="required">
+      <h2 id="context">Context</h2>
+      <p><span class="todo">the problem or the opportunity, at the scale of the batch. 3 to 5 lines.</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="intent">Intent</h2>
+      <p class="us-need"><span class="todo">what the product will be able to do at the end of the epic, from the user's point of view</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="scope">Scope</h2>
+      <div class="scope two">
+        <div class="in"><h4>In the epic</h4><ul><li><span class="todo">main functional blocks</span></li></ul></div>
+        <div class="out"><h4>Outside the epic</h4><ul><li><span class="todo">what is handled elsewhere or later, with the epic or story as a link</span></li></ul></div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="exit-conditions">Exit conditions</h2>
+      <p class="hint">How we know the epic is finished. Closing conditions, not acceptance criteria. Tick with class="done".</p>
+      <ul class="checklist">
+        <li>All attached stories are accepted.</li>
+        <li><span class="todo">condition specific to the epic, checkable</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="points-to-settle">Points to settle</h2>
+      <ul>
+        <li><a class="qmark" href="../../questions.html#Q-xxx">Q-xxx</a> <span class="todo">open ruling at the scale of the batch. None: say so</span></li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../_assets/doc.js"></script>
+</body>
+</html>

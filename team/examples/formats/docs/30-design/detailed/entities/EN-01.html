@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-01 Employé · Conception technique détaillée · Réservation de salles</title>
+  <!-- Entity metadata, read by team/scripts/detailed-pages.mjs -->
+  <meta name="id" content="EN-01">
+  <meta name="name" content="Employé">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/session">
+  <meta name="tables" content="employes">
+  <meta name="rules" content="">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Entité EN-01</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#crud-matrix">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">EN-01</span> : Employé</h1>
+      <p class="lede">Compte de connexion local, avec son rôle. Les comptes sont préchargés par le jeu fictif : aucun endpoint ne crée ni ne modifie un employé.</p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info">SQLite</span> table <code>employes</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required" data-section="physical-model">
+      <h2>Modèle physique</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
+          <dt>Contenu</dt><dd>Le DDL SQL dans le dialecte du store, chaque contrainte commentée par la règle qu'elle tient, puis les règles que la base ne peut pas tenir et l'endroit où elles vivent.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le DDL est ce que contient la migration : le dev le reprend sans traduction.</dd>
+          <dt>Lire</dt><dd>Un index porte en commentaire la requête qu'il sert ; une colonne d'une release suivante porte sa release, à titre indicatif. Les conventions communes sont dans la <a href="../cross-cutting/code-organization.html#persistance">persistance</a>.</dd>
+        </dl>
+      </div>
+      <pre class="ddl"><code>CREATE TABLE employes (
+  id                      INTEGER PRIMARY KEY,
+  nom                     TEXT NOT NULL,                 -- « Prénom Nom », visible de tous sur <a href="../../../20-ux/ux-ui-spec.html#SCR-02">SCR-02</a> (<a href="../endpoints/EP-06.html">EP-06</a>)
+  email                   TEXT NOT NULL UNIQUE COLLATE NOCASE,
+                                                         -- identifiant de connexion (<a href="../endpoints/EP-01.html">EP-01</a>), rendu à son seul
+                                                         -- propriétaire (<a href="../cross-cutting/compliance.html#INV-67">INV-67</a>)
+  role                    TEXT NOT NULL CHECK (role IN ('employe','gestionnaire')),
+                                                         -- rôles et droits de la conception fonctionnelle
+  mot_de_passe_empreinte  TEXT NOT NULL,                 -- scrypt$N$r$p$sel$empreinte en base64, jamais le mot
+                                                         -- de passe (<a href="../../../adr/0003-authentification-par-session.html">ADR-0003</a>)
+  cree_le                 TEXT NOT NULL                  -- ISO 8601 UTC
+);
+-- aucun autre index que l'unicité de email, qui sert la connexion : une centaine de lignes</code></pre>
+      <p>Données personnelles : nom et email, rien d'autre (cadrage).</p>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Machine à états</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
+          <dt>Contenu</dt><dd>Une ligne par transition (de, vers, événement, garde, action), puis le diagramme d'états tiré de ce tableau. Sans cycle de vie, une phrase le dit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La notation UML <i>événement [garde] / action</i>, en deux vues d'une seule source : le tableau porte les liens et se relit ligne à ligne, le diagramme montre le cycle d'un coup d'œil.</dd>
+        </dl>
+      </div>
+      <p>Sans cycle de vie : les comptes sont chargés par le jeu fictif et aucun endpoint ne les change.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Qui agit dessus</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
+          <dt>Contenu</dt><dd>Sa colonne de la matrice CRUD, endpoint par endpoint et traitement par traitement, puis les schémas qui en sont la projection.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, standard de ce croisement ; la même que celle du <a href="../index.html#crud-matrix">sommaire</a>, lue depuis l'entité.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les pages des traitements : rien à écrire.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage -->
+      <table>
+        <thead><tr><th>Id</th><th>Endpoint ou traitement</th><th>CRUD</th><th>Comment</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../endpoints/EP-01.html">EP-01</a></td><td><code>POST /session</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-02.html">EP-02</a></td><td><code>GET /session</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-06.html">EP-06</a></td><td><code>GET /reservations</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+        </tbody>
+      </table>
+      <p><b>Schémas qui l'exposent</b> : <a href="../schemas/Utilisateur.html"><code>Utilisateur</code></a>. <b>Module</b> : <a href="../cross-cutting/code-organization.html#module-domain-session"><code>domain/session</code></a>.</p><!-- /gen -->
+    </section>
+
+    <section class="section" id="open-points" data-level="recommended">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur cette entité.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact high">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact medium">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact low">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../open-points.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="low"><span class="impact low">faible</span></td><td>Retrait d'un compte pendant le pilote.</td><td>aucune suppression pendant le pilote ; un compte retiré l'est du jeu fictif avec ses sessions, ses réservations le gardent comme titulaire (clé étrangère sans suppression en cascade).</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Screens · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/cross-cutting/screens.html. Its gen: block is filled by team/scripts/detailed-pages.mjs. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Screens</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#site-map">Cross-cutting</a></div>
+      <h1><span class="doc-kind">Screens</span>: what each screen calls and translates</h1>
+      <p class="lede">The view of the frontend dev: for each screen of the macro design, the endpoints it calls, the error codes it must translate and the messages it displays, then its address, what comes to it from another screen and the accessible roles and names the e2e tests target. The behaviour of each code is in the <a href="errors.html">error handling</a>.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" id="screen-map" data-level="required">
+      <h2 id="screen-map">Screen map</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>See all the screens of the product, how one goes from one to another, and go to their definition.</dd>
+          <dt>Content</dt><dd>One card per screen of the macro design, grouped by journey: preview and name from the UX/UI spec, link to its definition and to its "By screen" row. The arrows carry the action that leads from one screen to another.</dd>
+          <dt>Why this formalism</dt><dd>A wireflow, the counterpart of the site map for the front, drawn with the same engine as the one of the UX/UI spec.</dd>
+          <dt>Reading</dt><dd><ul><li>A screen present in two journeys is drawn once.</li><li>A dialog counts for its screen.</li><li>Results and going back are not drawn.</li><li>A screen without a journey is at the end, without an arrow.</li></ul></dd>
+          <dt>Source</dt><dd>The screen inventory and the wireflow of the UX/UI spec, and the macro design. The wireflow stays the only source of the transitions.</dd>
+        </dl>
+      </div>
+      <!-- gen:screen-map --><!-- /gen -->
+    </section>
+
+    <section class="section" id="by-screen" data-level="required">
+      <h2 id="by-screen">By screen</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Serve as the entry point of the frontend dev, screen by screen.</dd>
+          <dt>Content</dt><dd>For each screen of the macro design: the endpoints it calls, the error codes it translates, the messages it displays, and the link to its "Address, landing and structure" row.</dd>
+          <dt>Why this formalism</dt><dd>A table, one row per screen: the dev reads at once everything their screen touches.</dd>
+          <dt>Reading</dt><dd>A screen of a later release, not yet in the UX/UI spec, stays without a link.</dd>
+          <dt>Source</dt><dd>The screen, feature, endpoint chain of the macro, the <code>x-codes</code> of <code>openapi.yaml</code>, the error catalogue and the sequences.</dd>
+        </dl>
+      </div>
+      <!-- gen:screens --><!-- /gen -->
+    </section>
+
+    <section class="section" id="address-landing-structure" data-level="required">
+      <h2 id="address-landing-and-structure">Address, landing and structure</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say, before the dev, how one lands on each screen and what the e2e tests target there, so that neither the frontend dev nor QA has to guess.</dd>
+          <dt>Content</dt><dd>One row per screen of the macro design: address and parameters (path, path and query parameters), what comes from another screen (origin screen, message carried and mechanism: address parameter, navigation state), accessible roles and names of the elements the e2e tests target.</dd>
+          <dt>Why this formalism</dt><dd>The page objects of the e2e tests and the screens are built in parallel: they agree on this table, written once, rather than on the assumptions of each ticket.</dd>
+          <dt>Reading</dt><dd>An accessible name is the exact label of the UX/UI spec. A screen of a later release keeps its row, with what is already known.</dd>
+          <dt>Source</dt><dd>Written by hand by the Architect, reviewed by the UX and QA, from the UX/UI spec (content, actions, wireflow) and the code organization. The generator flags a screen of the macro without a row.</dd>
+        </dl>
+      </div>
+      <table class="screen-details">
+        <thead><tr><th>Screen</th><th>Address and parameters</th><th>Comes from</th><th>Accessible roles and names</th></tr></thead>
+        <tbody>
+          <tr id="structure-SCR-xx"><td><span class="todo">SCR-xx Screen name</span></td><td><span class="todo"><code>/path</code>, <code>?parameter=</code></span></td><td><span class="todo">origin screen: message carried, mechanism</span></td><td><span class="todo"><code>heading</code> "Title", <code>button</code> "Action"</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

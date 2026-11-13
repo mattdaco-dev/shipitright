@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PROC-xx Name · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/processes/PROC-xx.html (file name = id).
+       Process metadata, read by team/scripts/detailed-pages.mjs: -->
+  <meta name="id" content="PROC-xx">
+  <meta name="name" content="Name of the process, as a verb">
+  <meta name="release" content="MVP">          <!-- first release that needs it, as in the macro (indicative) -->
+  <meta name="module" content="domain/resource">     <!-- backend module where it lives, a row of table.modules in code-organization.html -->
+  <meta name="entities" content="EN-xx:CU">    <!-- EN-xx:CRUD letters (C create, R read, U update, D delete), separated by spaces -->
+  <meta name="processes" content="">           <!-- PROC-xx it calls -->
+  <meta name="errors" content="">              <!-- ErrorCode values it returns -->
+  <meta name="rules" content="">               <!-- BR-xx and CALC-xx it applies -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Process PROC-xx</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#crud-matrix">CRUD matrix</a></div>
+      <h1><span class="doc-kind">PROC-xx</span>: <span class="todo">Name of the process</span></h1>
+      <p class="lede"><span class="todo">What the process does and why it is a process (two callers or more, domain calculation tested on its own, cascading effect, or no caller: scheduled task, consumption of a message).</span></p>
+      <div class="meta">
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="called-by-and-entities">Called by and entities</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Place the process within the application.</dd>
+          <dt>Content</dt><dd>Who calls it, what it calls, the data it touches in CRUD letters, its rules and its business errors.</dd>
+          <dt>Why this formalism</dt><dd>A definition list, one fact per term; computed, it stays right without writing anything.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> and the <code>meta</code> tags of the page.</dd>
+        </dl>
+      </div>
+      <!-- gen:process-usage --><!-- /gen -->
+    </section>
+
+    <!-- Process of a provisional operation: keep "Called by and entities" and "Proposed algorithm" only; its
+         open points are in the x-open of the operation. The rest is written at the sprint planning that
+         freezes it. -->
+    <section class="section" data-level="required">
+      <h2 id="signature-and-transaction">Signature and transaction</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Give the contract of the process in the code.</dd>
+          <dt>Content</dt><dd>Its signature in the language of the foundation (typed inputs, result, rejections as values of <a href="../schemas/index.html#ErrorCode"><code>ErrorCode</code></a>), then the transaction it runs in: always the one of its caller (<a href="../cross-cutting/code-organization.html#transactions">transaction rule</a>).</dd>
+          <dt>Why this formalism</dt><dd>A typed signature is the shortest and least ambiguous form; the dev copies it into the domain.</dd>
+        </dl>
+      </div>
+      <!-- In the language of the foundation; module named, never a file path; schemas, codes and ids in links. -->
+<pre class="signature"><code>// module <span class="todo">domain/aggregate</span>
+<span class="todo">processName</span>(
+  cmd: { <span class="todo">input: type</span> },                  // <span class="todo">where each input comes from</span>
+  deps: { <span class="todo">repository: Repository; clock: Clock</span> },
+): Result&lt;<span class="todo">Output</span>, <span class="todo">'ERROR_CODE'</span>&gt;</code></pre>
+      <dl class="defs">
+        <dt>Transaction</dt><dd><span class="todo">the one of the caller, endpoints as links; a process without a caller (task, message) opens its own and says so</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="algorithm">Algorithm</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the process does, in order.</dd>
+          <dt>Content</dt><dd>One step per check or action, each with its business rule and its rejection.</dd>
+          <dt>Why this formalism</dt><dd>A numbered list sets the order (a check before the write) without prose.</dd>
+        </dl>
+      </div>
+      <ol>
+        <li><span class="todo">check, otherwise rejection ERROR_CODE as a link (BR-xx as a link)</span></li>
+        <li><span class="todo">write through the repository: what changes</span></li>
+      </ol>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="edge-cases">Edge cases</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List the cases the tests of the process cover.</dd>
+          <dt>Content</dt><dd>One row per situation, with its expected result.</dd>
+          <dt>Why this formalism</dt><dd>A decision table: each row becomes a unit test. The <a href="../cross-cutting/tests.html">required tests</a> cite it without copying it.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Situation</th><th>Expected result</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">boundary, duplicate, second call, clock at the limit</span></td><td><span class="todo">result or rejection</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="open-points" data-level="recommended">
+      <h2 id="open-points">Open points</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List what remains to settle on this process.</dd>
+          <dt>Content</dt><dd>One point per row, sorted by decreasing impact: the subject, the hypothesis the code follows meanwhile, the question <code>Q-xxx</code> if it is asked to the PO.</dd>
+          <dt>Why this formalism</dt><dd>A table, because each point has the same attributes and compares with the others.</dd>
+          <dt>Reading</dt><dd><ul><li><span class="impact high">high</span> the answer can change the data model, a frozen operation of the API contract or what structures the whole code</li><li><span class="impact medium">medium</span> the answer can change a provisional operation, a process, a schema not frozen or a screen</li><li><span class="impact low">low</span> the answer only changes a label, a message, a value or an edge case</li></ul></dd>
+          <dt>Source</dt><dd>Written here only once; the generator takes it over in the <a href="../open-points.html">open points view</a>.</dd>
+        </dl>
+      </div>
+      <!-- One row per point, highest impact first; a point that bears on an operation goes in its x-open,
+           not here. No point: <p data-value="none">No open point.</p>, or remove the section. -->
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Subject</th><th>Hypothesis kept</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="medium"><span class="impact medium">medium</span></td><td><span class="todo">what remains to settle, and what a different answer would change</span></td><td><span class="todo">what the code follows meanwhile</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

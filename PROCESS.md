@@ -1,376 +1,381 @@
-# Process de ShipItRight
+# ShipItRight process
 
-ShipItRight (Product Builder) : une équipe d'agents Claude Code qui construit un produit, du besoin à la recette.
+ShipItRight (Product Builder): a team of Claude Code agents that builds a product, from the need to acceptance.
 
-Comment la team transforme une expression de besoin en logiciel recetté. Ce document est la référence
-commune : le PO l'applique, les agents s'y réfèrent, le Scrum Master en propose les évolutions après
-chaque rétro.
+How the team turns an expression of need into accepted software. This document is the shared
+reference: the PO applies it, the agents refer to it, the Scrum Master proposes changes to it after
+each retro.
 
-**Chemins.** ShipItRight est un plugin Claude Code. Dans ce document et dans les autres documents du
-framework (`team/…`), un chemin comme `team/conventions/git.md`, `skills/…` ou `agents/…` part de la
-racine du plugin, notée `<racine du plugin>` (la fiche d'agent ou le skill qui renvoie ici en donne le
-chemin réel) ; un chemin comme `.team/…`, `docs/…` ou `prototype/…` part de la racine du projet, le
-dossier où l'on ouvre Claude Code. Un skill s'invoque avec son nom préfixé, `shipitright:<nom>`.
+**Paths.** ShipItRight is a Claude Code plugin. In this document and in the other framework
+documents (`team/…`), a path such as `team/conventions/git.md`, `skills/…` or `agents/…` starts from
+the plugin root, written `<plugin root>` (the agent file or skill that points here gives its real
+path); a path such as `.team/…`, `docs/…` or `prototype/…` starts from the project root, the folder
+where Claude Code is opened. A skill is invoked with its prefixed name, `shipitright:<name>`.
 
-## 1. Principes
+## 1. Principles
 
-1. **L'humain ne parle qu'au PO.** Le PO est le seul point de contact entre le métier et la team.
-   Aucun autre agent ne s'adresse à l'humain.
-2. **La rigueur est dans les gates, pas dans la séquence.** Les livrables d'une phase peuvent avancer
-   ensemble (specs et proto, par exemple), mais rien de non résolu ne franchit un gate. Les fichiers
-   sur disque sont les gates : un livrable absent ou incomplet bloque.
-3. **Le PO aiguille, il ne lit pas le code.** Il dispatche les agents, lit les statuts du board, les
-   rapports, les en-têtes du forum et le `git log`. Son contexte reste disponible pour l'humain.
-4. **Un agent démarre à froid.** Il ne voit pas la conversation. Tout ce dont il a besoin est dans son
-   brief et dans les fichiers que le brief désigne.
-5. **On écrit dans son propre fichier ou en ajout.** Un fichier par ticket, un fichier par sujet de
-   forum, des posts en ajout seulement. Deux agents en parallèle ne peuvent pas s'écraser.
-6. **La rigueur suit l'enjeu, pas l'horloge.** Plus une erreur est coûteuse à défaire (sécurité,
-   migration de données, contrat partagé), plus la revue est stricte et les tickets petits.
-7. **Une incohérence structurelle n'est jamais tranchée en autonomie.** Elle remonte à l'humain via le PO.
+1. **The human only talks to the PO.** The PO is the only point of contact between the business and
+   the team. No other agent addresses the human.
+2. **Rigor lives in the gates, not in the sequence.** The deliverables of a phase can move forward
+   together (specs and prototype, for example), but nothing unresolved passes a gate. The files on
+   disk are the gates: a missing or incomplete deliverable blocks.
+3. **The PO routes, it does not read the code.** It dispatches the agents, reads the board statuses,
+   the reports, the forum headers and the `git log`. Its context stays available to the human.
+4. **An agent starts cold.** It does not see the conversation. Everything it needs is in its brief
+   and in the files the brief points to.
+5. **Each one writes in its own file or appends.** One file per ticket, one file per forum topic,
+   posts appended only. Two agents in parallel cannot overwrite each other.
+6. **Rigor follows the stakes, not the clock.** The more costly an error is to undo (security, data
+   migration, shared contract), the stricter the review and the smaller the tickets.
+7. **A structural inconsistency is never settled autonomously.** It goes up to the human through the
+   PO.
 
-## 2. Rôles
+## 2. Roles
 
-| Rôle | Fiche | Responsabilité principale | Instances |
+| Role | File | Main responsibility | Instances |
 |---|---|---|---|
-| **PO** | `agents/po.md` (agent principal, via `settings.json`) | besoin, priorités, règles métier, orchestration, gates | 1 |
-| **Scrum Master** | `agents/scrum-master.md` | plan de sprint, DoR/DoD, checklist préalable à G2, rétro (problèmes, actions, évolutions proposées pour le plugin) | 1 |
-| **Business Analyst** | `agents/business-analyst.md` | analyse, big picture, story map, conception fonctionnelle, epics et US | 1 à N |
-| **UX/UI Designer** | `agents/ux-designer.md` | parcours, écrans, spec UX/UI, prototype | 1 |
-| **Architecte** | `agents/architecte.md` | conception macro et détaillée, contrat d'API, conformité, ADR | 1 |
-| **Dev backend** | `agents/dev-backend.md` | tickets backend, dans la stack du socle | 1 à N |
-| **Dev frontend** | `agents/dev-frontend.md` | tickets frontend, dans la stack et le design system du socle | 1 à N |
-| **QA** | `agents/qa.md` | stratégie de test, e2e, campagnes, anomalies | 1 à N |
-| **Relecteur** | `agents/relecteur.md` | revues indépendantes, passes de cohérence et d'intégration | 1 par revue |
+| **PO** | `agents/po.md` (main agent, through `settings.json`) | need, priorities, business rules, orchestration, gates | 1 |
+| **Scrum Master** | `agents/scrum-master.md` | sprint plan, DoR/DoD, pre-G2 checklist, retro (problems, actions, proposed plugin changes) | 1 |
+| **Business Analyst** | `agents/business-analyst.md` | analysis, big picture, story map, functional design, epics and stories | 1 to N |
+| **UX/UI Designer** | `agents/ux-designer.md` | flows, screens, UX/UI spec, prototype | 1 |
+| **Architect** | `agents/architect.md` | macro and detailed design, API contract, compliance, ADR | 1 |
+| **Dev backend** | `agents/dev-backend.md` | backend tickets, in the stack of the foundation | 1 to N |
+| **Dev frontend** | `agents/dev-frontend.md` | frontend tickets, in the stack and design system of the foundation | 1 to N |
+| **QA** | `agents/qa.md` | test strategy, e2e, campaigns, defects | 1 to N |
+| **Reviewer** | `agents/reviewer.md` | independent reviews, consistency and integration passes | 1 per review |
 
-Chaque fiche décrit le rôle, les compétences, les attentes, les livrables, les skills et MCP utilisables,
-les limites et la multiplicité. Les rôles multiples se démultiplient selon la charge de production et
-de recette : autant d'instances que de travaux indépendants et prêts, **5 agents simultanés au maximum**
-toutes catégories confondues.
+Each file describes the role, the skills, the expectations, the deliverables, the usable skills and
+MCP, the limits and the multiplicity. Multiple roles multiply with the production and testing load:
+as many instances as independent and ready work items, **5 simultaneous agents at most** across all
+roles.
 
-Le PO est l'agent principal du plugin : quand le plugin est activé, sa fiche remplace le prompt par
-défaut de Claude Code, et il lance les autres rôles comme sous-agents (`shipitright:<rôle>`). Les
-sous-agents préchargent le skill `shipitright:regles-team` et les skills de leurs livrables. Chacun
-garde une mémoire persistante par rôle dans le projet (`.claude/agent-memory/shipitright-<rôle>/`), où
-il consigne ce qu'il a appris sur ce projet. Cette mémoire a la portée du projet : elle se commite
-avec lui, comme ses livrables.
+The PO is the plugin's main agent: when the plugin is enabled, its file replaces Claude Code's
+default prompt, and it launches the other roles as sub-agents (`shipitright:<role>`). Sub-agents
+preload the skill `shipitright:team-rules` and the skills of their deliverables. Each keeps a
+persistent memory per role in the project (`.claude/agent-memory/shipitright-<role>/`), where it
+records what it learned about this project. This memory has project scope: it is committed with the
+project, like its deliverables.
 
-## 3. Arborescence
+## 3. Tree
 
-Le plugin, installé depuis la marketplace (copie en lecture dans le cache de Claude Code) ou chargé en
-développement avec `claude --plugin-dir` :
+The plugin, installed from the marketplace (read-only copy in Claude Code's cache) or loaded in
+development with `claude --plugin-dir`:
 
 ```
-shipitright/                 <racine du plugin>
-  .claude-plugin/            plugin.json (nom, version), marketplace.json
-  settings.json              {"agent": "po"} : le PO est l'agent principal
-  package.json               dépendance des scripts (yaml), installée avec le plugin
-  PROCESS.md                 ce document
-  agents/                    po.md (agent principal) et une fiche par rôle de sous-agent
-  skills/                    regles-team, projet-init, notion-board, proto-bar, livrable-<type> (gabarit + exigences)
+shipitright/                 <plugin root>
+  .claude-plugin/            plugin.json (name, version), marketplace.json
+  settings.json              {"agent": "po"}: the PO is the main agent
+  package.json               scripts dependency (yaml), installed with the plugin
+  PROCESS.md                 this document
+  agents/                    po.md (main agent) and one file per sub-agent role
+  skills/                    team-rules, project-init, notion-board, proto-bar, deliverable-<type> (template + requirements)
   team/
-    livrables.md             catalogue des livrables
-    glossaire.md             identifiants et cibles de liens, sigles, vocabulaire de la team
-    conventions/             brief, rapport, ticket, forum, git, socle
-    assets/                  doc.css, doc.js : bibliothèque des livrables HTML
-    scripts/                 init-projet.sh, check-livrable.mjs, questions-page.mjs, detaillee-pages.mjs,
-                             adr-pages.mjs, pilotage-pages.mjs (argument : le projet, `.` par défaut)
-    exemples/formats/        formats figés des livrables, remplis à la main
+    deliverables.md          deliverables catalogue
+    glossary.md              identifiers and link targets, abbreviations, team vocabulary
+    conventions/             brief, report, ticket, forum, git, foundation, language
+    assets/                  doc.css, doc.js: library of the HTML deliverables
+    i18n/                    labels of the generated pages and assets, per language
+    scripts/                 init-project.sh, check-deliverable.mjs, questions-page.mjs, detailed-pages.mjs,
+                             adr-pages.mjs, dashboard-pages.mjs (argument: the project, `.` by default)
+    examples/formats/        frozen formats of the deliverables, filled by hand
 ```
 
-Le plugin n'embarque aucun socle : la stack et le design system appartiennent à l'utilisateur ou au
-projet (section 8).
+The plugin ships no foundation: the stack and the design system belong to the user or to the
+project (section 8).
 
-Le projet est le dossier où l'on ouvre Claude Code, et son propre dépôt git :
+The project is the folder where Claude Code is opened, and its own git repository:
 
 ```
-<projet>/
+<project>/
   .team/
-    board/                   un fichier par ticket ou anomalie
-    forum/                   un fichier par sujet
-    questions/               questions métier au PO
-    projet.json              langue du projet ({ "langue": "<code BCP 47>" }), team/conventions/langue.md
-    libelles.json            libellés des pages générées, pour une langue que le plugin ne fournit pas
-    journal.md               une ligne par événement, tenu par le PO
-    socle.md                 socles retenus (stack, design system) et surcharges du projet
-    socles/                  socles créés pour le projet : stacks/<nom>/, design-systems/<nom>/
-    notion.md                liens du board Notion, s'il existe
-  .claude/agent-memory/      mémoire persistante de chaque rôle (shipitright-<rôle>/), commitée
+    board/                   one file per ticket or defect
+    forum/                   one file per topic
+    questions/               business questions to the PO
+    project.json             project language ({ "language": "<BCP 47 code>" }), team/conventions/language.md
+    labels.json              labels of the generated pages, for a language the plugin does not provide
+    journal.md               one line per event, kept by the PO
+    foundation.md            chosen foundations (stack, design system) and project overrides
+    foundations/             foundations created for the project: stacks/<name>/, design-systems/<name>/
+    notion.md                links of the Notion board, if it exists
+  .claude/agent-memory/      persistent memory of each role (shipitright-<role>/), committed
   docs/
-    index.html               page de pilotage, générée par pilotage-pages.mjs (remplace le portail)
-    _assets/                 copie de team/assets, plus i18n.js (libellés dans la langue du projet)
-    00-cadrage/  10-analyse/  20-specs/  20-ux/  30-conception/  40-qa/  50-recette/  sprints/  adr/
-    30-conception/
-      macro.html             conception technique macro
-      api/                   contrat d'API : openapi.yaml (racine), paths/, components/
-      detaillee/             conception technique détaillée par objet : index.html (sommaire), endpoints/, schemas/
-                             (générées), entites/, traitements/ (à la main), transverse/ (dont
-                             conformite.html, contrat de conformité), points-ouverts.html, swagger.html
-    10-analyse/
-      index.html             inventaire des analyses de chantier, généré par pilotage-pages.mjs
+    index.html               dashboard page, generated by dashboard-pages.mjs (replaces the portal)
+    _assets/                 copy of team/assets, plus i18n.js (labels in the project language)
+    00-framing/  10-analysis/  20-specs/  20-ux/  30-design/  40-qa/  50-acceptance/  sprints/  adr/
+    30-design/
+      macro.html             macro technical design
+      api/                   API contract: openapi.yaml (root), paths/, components/
+      detailed/              detailed technical design per object: index.html (contents), endpoints/, schemas/
+                             (generated), entities/, processes/ (by hand), cross-cutting/ (including
+                             compliance.html, compliance contract), open-points.html, swagger.html
+    10-analysis/
+      index.html             inventory of the workstream analyses, generated by dashboard-pages.mjs
     20-specs/
-      backlog.html           page backlog, générée par pilotage-pages.mjs
+      backlog.html           backlog page, generated by dashboard-pages.mjs
     roadmap.html
-  prototype/                 HTML/CSS/JS vanilla, proto-bar, données fictives
-  backend/  frontend/        selon le socle de stack
+  prototype/                 vanilla HTML/CSS/JS, proto-bar, fictional data
+  backend/  frontend/        depending on the stack foundation
 ```
 
-Les scripts se lancent depuis la racine du projet :
-`node <racine du plugin>/team/scripts/<script>.mjs .` (voir **Chemins** en tête de ce document).
+Scripts run from the project root:
+`node <plugin root>/team/scripts/<script>.mjs .` (see **Paths** at the top of this document).
 
-## 4. Cycle de vie d'un projet
+## 4. Project life cycle
 
 ```
-P0 Cadrage ─G0─▶ P1 Analyse ─▶ P2 Specs, UX, proto ─G1─▶ P3 Conception technique ─G2─▶ Sprints
-Sprint N : Planning ▶ Dev par vagues ▶ Revues ▶ QA ▶ Intégration ▶ Pré-recette ─G3─▶ Review, rétro
+P0 Framing ─G0─▶ P1 Analysis ─▶ P2 Specs, UX, prototype ─G1─▶ P3 Technical design ─G2─▶ Sprints
+Sprint N: Planning ▶ Dev in waves ▶ Reviews ▶ QA ▶ Integration ▶ Pre-acceptance ─G3─▶ Review, retro
 ```
 
-Gates humains : **G0** (cadrage), **G1** (validation), **G2** (conception technique), **G3** (recette).
-Le détail de chaque livrable (contenu obligatoire, recommandé, facultatif) est dans son skill ; la
-vue d'ensemble dans `team/livrables.md`.
+Human gates: **G0** (framing), **G1** (validation), **G2** (technical design), **G3** (acceptance).
+The detail of each deliverable (required, recommended, optional content) is in its skill; the
+overview in `team/deliverables.md`.
 
-### P0 Cadrage, avec l'humain
+### P0 Framing, with the human
 
-- **Participants** : PO + humain. Mode interactif : questions une à une, chacune avec la réponse
-  pressentie (skill `shipitright:livrable-cadrage`).
-- **Livrable** : cadrage et vision (`docs/00-cadrage/cadrage.html`), socles déclarés (`.team/socle.md`).
-- **Avant** : création du projet (`shipitright:projet-init`), puis du board Notion
-  (`shipitright:notion-board`) si le MCP Notion est disponible ; sans lui, cette étape est sautée.
-- **Socles** : le PO demande à l'humain sa stack et son design system (une source à lui : dossier,
-  dépôt git, MCP, skill, URL), ou décide avec lui qu'ils seront créés dans le projet (stack par
-  l'architecte en P3, design system par l'UX en P2).
-- **G0, validé par l'humain** : vision et périmètre acceptés, socles de stack et de design system
-  déclarés (ou à créer, avec leur auteur), questions ouvertes listées avec un propriétaire.
+- **Participants**: PO + human. Interactive mode: questions one by one, each with the expected
+  answer (skill `shipitright:deliverable-framing`).
+- **Deliverable**: framing and vision (`docs/00-framing/framing.html`), declared foundations
+  (`.team/foundation.md`).
+- **Before**: creation of the project (`shipitright:project-init`), then of the Notion board
+  (`shipitright:notion-board`) if the Notion MCP is available; without it, this step is skipped.
+- **Foundations**: the PO asks the human for their stack and design system (a source of theirs:
+  folder, git repository, MCP, skill, URL), or decides with them that they will be created in the
+  project (stack by the Architect in P3, design system by the UX in P2).
+- **G0, validated by the human**: vision and scope accepted, stack and design system foundations
+  declared (or to create, with their author), open questions listed with an owner.
 
-### P1 Analyse et exploration, en autonomie
+### P1 Analysis and exploration, autonomous
 
-- **Participants** : BA (1 à N, un par chantier), UX pour l'exploration des usages, Architecte consulté
-  sur la faisabilité.
-- **Livrables** : big picture, une analyse par chantier, première version de la story map.
-  L'inventaire des analyses (`docs/10-analyse/index.html`) est généré depuis les pages d'analyse.
-  Chaque analyse porte sa cible, la phase ou la release qu'elle prépare (meta `pour` : `P1` en P1 ;
-  après G1, la phase ou la release visée).
-- **Mode** : le PO découpe en chantiers indépendants et lance un BA par chantier en parallèle. Une
-  question non bloquante n'arrête pas un chantier : `HYPOTHÈSE` visible, et on continue.
-- **Avancement et statut** : une analyse porte l'avancement de son chantier (`en cours` tant que la
-  timebox n'est pas épuisée et qu'une passe reste à faire, `terminé`, `restitué partiel`) et, à part, le
-  statut de sa page (`brouillon`, `en revue`, `validé`). Son auteur est « IA » quand un agent de la team
-  l'a traitée, sinon le nom de la personne qui l'a faite ; l'instance du BA reste tracée par le journal.
-- **Chantier ouvert après G1** : le PO peut ouvrir un chantier d'analyse après G1 pour préparer une
-  phase ou une release suivante. Les stories qui en sortent suivent la règle des stories rédigées
-  après G1 (P2).
+- **Participants**: BA (1 to N, one per workstream), UX for the exploration of uses, Architect
+  consulted on feasibility.
+- **Deliverables**: big picture, one analysis per workstream, first version of the story map. The
+  analysis inventory (`docs/10-analysis/index.html`) is generated from the analysis pages. Each
+  analysis carries its target, the phase or release it prepares (meta `target`: `P1` in P1; after
+  G1, the phase or release aimed at).
+- **Mode**: the PO splits into independent workstreams and launches one BA per workstream in
+  parallel. A non-blocking question does not stop a workstream: visible `HYPOTHESIS`, and on we go.
+- **Progress and status**: an analysis carries the progress of its workstream (`in progress` as long
+  as the timebox is not used up and a pass remains to be done, `done`, `partial`) and, separately,
+  the status of its page (`draft`, `in review`, `validated`). Its author is "AI" when a team agent
+  handled it, otherwise the name of the person who did it; the BA instance stays traced in the
+  journal.
+- **Workstream opened after G1**: the PO can open an analysis workstream after G1 to prepare a later
+  phase or release. The stories that come out of it follow the rule of stories written after G1
+  (P2).
 
-### P2 Specs fonctionnelles, UX/UI et prototype, en autonomie
+### P2 Functional specs, UX/UI and prototype, autonomous
 
-- **Participants** : BA (story map, conception fonctionnelle, epics et US), UX (spec UX/UI, prototype,
-  socle de design system s'il faut le créer), PO (roadmap), en tandem.
-- **Livrables** : story map, conception fonctionnelle, epics et US, spec UX/UI, prototype, roadmap.
-- **Taille des stories** : chaque story porte sa taille (XS à XL) et sa part front ; la roadmap et la
-  page backlog les lisent. Une story XL ne passe pas `prete` : celles des releases présentées au G1 se
-  découpent avant G1.
-- **Passe de cohérence** : un Relecteur frais croise stories, règles, écrans et proto avant G1.
-- **G1, validé par l'humain** : le PO présente le prototype et une synthèse. Les retours deviennent des
-  corrections P2, puis le gate est représenté.
-- **Après G1** : epics et stories reportées dans le board Notion, s'il existe.
-- **Story rédigée après G1**, issue ou non d'un chantier d'analyse ouvert après G1 : le PO la valide
-  (`Arbitrage PO`, statut `validee`), puis la montre à l'humain au G3 suivant. Elle lui remonte avant,
-  sans attendre ce gate, si elle change le périmètre ou porte une règle métier forte.
+- **Participants**: BA (story map, functional design, epics and stories), UX (UX/UI spec, prototype,
+  design system foundation if it must be created), PO (roadmap), in tandem.
+- **Deliverables**: story map, functional design, epics and stories, UX/UI spec, prototype, roadmap.
+- **Story size**: each story carries its size (XS to XL) and its front share; the roadmap and the
+  backlog page read them. An XL story does not move to `ready`: those of the releases presented at
+  G1 are split before G1.
+- **Consistency pass**: a fresh Reviewer cross-checks stories, rules, screens and prototype before
+  G1.
+- **G1, validated by the human**: the PO presents the prototype and a summary. Feedback becomes P2
+  corrections, then the gate is presented again.
+- **After G1**: epics and stories carried over to the Notion board, if it exists.
+- **Story written after G1**, whether or not it comes from an analysis workstream opened after G1:
+  the PO validates it (`PO ruling`, status `validated`), then shows it to the human at the next G3.
+  It goes up to them earlier, without waiting for that gate, if it changes the scope or carries a
+  strong business rule.
 
-### P3 Conception technique, en autonomie
+### P3 Technical design, autonomous
 
-- **Participants** : Architecte (auteur), devs (relecture de faisabilité), QA (stratégie de test).
-- **Livrables** : conception technique macro ; conception technique détaillée de **toute
-  l'application**, organisée par objet (`docs/30-conception/detaillee/`) ; contrat d'API
-  (`api/openapi.yaml` et ses fichiers liés) ;
-  contrat de conformité (`detaillee/transverse/conformite.html`) ; ADR (pages HTML
-  `docs/adr/NNNN-<slug>.html`, registre `docs/adr/index.html` généré par `team/scripts/adr-pages.mjs`) ;
-  stratégie de test. Les pages des endpoints et des schémas sont générées
-  depuis le contrat d'API par `team/scripts/detaillee-pages.mjs`, celles des entités et des
-  traitements sont écrites à la main avec leurs blocs calculés. L'architecte complète les notes
-  techniques des stories : bloc généré et tableau scénario, élément, écran.
-- **Opérations figées ou provisoires** : une opération du contrat d'API est figée (rien n'en est
-  retiré ni changé, seuls des ajouts rétrocompatibles annoncés sont permis ; le front peut partir sur
-  un mock) ou provisoire (elle attend une réponse métier, son détail est réduit). Une opération
-  provisoire est figée au sprint planning qui la prend.
-- **Passe de cohérence** : chaque story couverte par au moins un endpoint et un écran (notes
-  techniques des stories), modèle de données qui porte toutes les règles, macro et contrat d'API
-  d'accord, chaque scénario des stories présent dans la matrice de couverture de la stratégie de test.
-- **Vérification avant G2** : le Scrum Master vérifie la checklist, dont la stratégie de test présente,
-  `check-livrable.mjs` sans KO sur
-  `docs/` (il lance `detaillee-pages.mjs --check`, `adr-pages.mjs --check` et `pilotage-pages.mjs --check` :
-  pages générées, registre des ADR et page de pilotage à jour, références résolues) et
-  le lint Redocly du contrat d'API sans erreur. L'architecte vérifie l'outillage de la machine et
-  liste ce qu'il faut installer.
-- **G2, validé par l'humain** : la conception technique est revue par l'équipe technique et l'équipe
-  d'architecture humaines. Le PO présente à l'humain les pages de la conception et une synthèse ;
-  l'humain les fait relire par ces équipes avant de valider. **Toute déviation au socle de stack ou
-  au standard d'architecture lui remonte** (ADR `propose` avec écart au socle, listés dans le
-  registre `docs/adr/index.html`), avec les points ouverts d'impact fort de la conception détaillée
-  (`detaillee/points-ouverts.html`), l'outillage à installer, pour accord, et le socle créé pour le
-  projet s'il y en a un, validé à ce gate. Les retours deviennent des corrections P3, puis le gate
-  est représenté.
+- **Participants**: Architect (author), devs (feasibility review), QA (test strategy).
+- **Deliverables**: macro technical design; detailed technical design of **the whole application**,
+  organized per object (`docs/30-design/detailed/`); API contract (`api/openapi.yaml` and its linked
+  files); compliance contract (`detailed/cross-cutting/compliance.html`); ADR (HTML pages
+  `docs/adr/NNNN-<slug>.html`, register `docs/adr/index.html` generated by
+  `team/scripts/adr-pages.mjs`); test strategy. The endpoint and schema pages are generated from the
+  API contract by `team/scripts/detailed-pages.mjs`, the entity and process pages are written by hand
+  with their computed blocks. The Architect completes the technical notes of the stories: generated
+  block and scenario, element, screen table.
+- **Frozen or provisional operations**: an operation of the API contract is frozen (nothing is
+  removed or changed in it, only announced backward-compatible additions are allowed; the front can
+  start on a mock) or provisional (it waits for a business answer, its detail is reduced). A
+  provisional operation is frozen at the sprint planning that takes it.
+- **Consistency pass**: each story covered by at least one endpoint and one screen (technical notes
+  of the stories), a data model that carries all the rules, macro and API contract in agreement,
+  each story scenario present in the coverage matrix of the test strategy.
+- **Check before G2**: the Scrum Master checks the checklist, including the test strategy present,
+  `check-deliverable.mjs` with no KO on `docs/` (it runs `detailed-pages.mjs --check`,
+  `adr-pages.mjs --check` and `dashboard-pages.mjs --check`: generated pages, ADR register and
+  dashboard page up to date, references resolved) and the Redocly lint of the API contract with no
+  error. The Architect checks the machine's tooling and lists what must be installed.
+- **G2, validated by the human**: the technical design is reviewed by the human technical team and
+  architecture team. The PO presents the design pages and a summary to the human; the human has these
+  teams review them before validating. **Any deviation from the stack foundation or the architecture
+  standard goes up to them** (`proposed` ADR with a foundation deviation, listed in the register
+  `docs/adr/index.html`), with the high-impact open points of the detailed design
+  (`detailed/open-points.html`), the tooling to install, for approval, and the foundation created for
+  the project if there is one, validated at this gate. Feedback becomes P3 corrections, then the gate
+  is presented again.
 
-### Sprint N, en autonomie
+### Sprint N, autonomous
 
-1. **Planning** : le PO choisit le lot de stories, toutes validées (au G1, ou par le PO pour une story
-   rédigée après G1, montrée à l'humain au G3 suivant, voir P2) et aucune de taille XL ; l'architecte fige les opérations provisoires
-   qu'elles touchent, puis met à jour la version (`info.version`) et le journal des changements
-   (`info.x-changelog`) du contrat d'API dès qu'il fige ou ajoute une opération. Le SM et
-   l'architecte découpent le lot en tickets à partir des pages de la conception détaillée (endpoints,
-   traitements, entités, vue par écran), posent dépendances et vagues, vérifient la DoR. Le SM prévoit
-   aussi, dans la liste des tickets à créer, un ticket `e2e` par lot de stories, confié à une instance
-   QA (`team/conventions/ticket.md`) ; le PO en crée le fichier, comme pour tout ticket.
-   La matrice de couverture de la stratégie de test, complète à G2, est mise à jour par le QA pour
-   toute story ajoutée ou modifiée après G2. Page de sprint, tickets dans le board, synchro Notion s'il existe.
-2. **Dev par vagues** : tickets dont les dépendances sont fermées, 3 en parallèle en cible, 5 au
-   maximum, chacun dans son worktree. Un ticket frontend qui consomme une opération figée ne dépend
-   pas du ticket backend qui la produit : il part en même temps, sur un mock. Les tickets `e2e` du QA
-   partent dans ces vagues : tests écrits et mis au point en Local. Un ticket `e2e` n'a pas de
-   dépendance : il part dans une vague de dev et se met au point au fil des merges, il peut donc fermer
-   après les vagues suivantes ; la colonne Vague de la page de sprint dit où il part.
-3. **Revue indépendante** de chaque ticket rendu par un Relecteur frais. Bloquant → retour à l'auteur,
-   3 tours de correction au maximum, puis remontée à l'humain. Sans bloquant → merge dans `sprint/N`. Si l'auteur
-   corrige des majeurs avant le merge, la correction est relue par un Relecteur frais sur ces seuls
-   constats, sauf si elle n'ajoute que des tests ; le PO trace ce choix au journal. Un ticket qui
-   touche au contrat d'API est revu avec `detaillee-pages.mjs --check` et le lint Redocly, et contre
-   `CF-58` (rien ne change dans une opération figée).
-4. **QA**, en deux temps : (1) les tickets `e2e` sont écrits, revus et mergés comme les autres
-   tickets (étapes 2 et 3) ; (2) la campagne se joue sur l'environnement « Démo et recette », que le
-   QA démarre au commit de `sprint/N` qui contient les tickets `e2e` mergés, noté dans la campagne, et
-   relance après chaque merge de correction. Le dernier commit joué est le commit recetté ; le double
-   passage exigé par le critère de sortie se fait à ce commit, une correction mergée en fin de
-   campagne est donc rejouée deux fois. Les preuves des vérifications manuelles (redémarrage, lecteur
-   d'écran…) sont versionnées dans `docs/40-qa/preuves/sprint-N/` et liées depuis la campagne ; le
-   rapport HTML de Playwright reste hors git. Données de test : un nom unique par
-   exécution, un seed de test qui ne passe par aucun endpoint de story. Anomalies `BUG-xxx` traitées
-   dans le sprint : le QA commite le test de l'anomalie, rouge, sur sa branche de correction créée
-   depuis `sprint/N` (`team/conventions/git.md`), le dev corrige sur la même branche, revue et merge comme un ticket. Verdict : favorable sans réserves si
-   aucune anomalie n'est ouverte ; favorable avec réserves si seules des mineures sont ouvertes, ou
-   une majeure acceptée par écrit par le PO dans la campagne ; défavorable si une bloquante est
-   ouverte ou une majeure non acceptée. Après son dernier passage, rejeux des corrections compris, le
-   QA remet « Démo et recette » à zéro avant la pré-recette ; le PO s'en assure.
-5. **Intégration** : un Relecteur frais passe sur l'ensemble mergé.
-6. **Pré-recette** (PO) : verdict de campagne favorable, avec ou sans réserves ; chaque story du
-   sprint a ses critères au vert, sauf un scénario rendu rouge par une anomalie admise au verdict
-   (mineure, ou majeure acceptée par écrit par le PO), citée dans la campagne ; chemin de recette prêt.
-7. **G3 Recette, avec l'humain** : PV de recette, au commit recetté. Les réserves deviennent des
-   tickets ; une anomalie mineure laissée ouverte au verdict y est reportée en réserve `RES-xx`. Une
-   réserve est levée quand l'élément qui lui est lié (l'anomalie `BUG-xxx` ou le ticket `T-xxx` créé
-   pour elle) passe au statut `fait`.
-8. **Review et rétro** (SM) : page de sprint complétée ; sa section Rétro enchaîne problèmes `Sn-Pm`,
-   actions `Sn-Am` et évolutions proposées pour le plugin `Sn-Em`, que le PO soumet à l'humain.
-   Roadmap mise à jour. Une évolution acceptée ne s'applique pas dans le plugin
-   installé (copie en lecture, écrasée à chaque mise à jour) : elle part en proposition au dépôt
-   ShipItRight, où elle s'applique et sort dans une nouvelle version.
+1. **Planning**: the PO chooses the batch of stories, all validated (at G1, or by the PO for a story
+   written after G1, shown to the human at the next G3, see P2) and none of size XL; the Architect
+   freezes the provisional operations they touch, then updates the version (`info.version`) and the
+   changelog (`info.x-changelog`) of the API contract as soon as it freezes or adds an operation. The
+   SM and the Architect split the batch into tickets from the pages of the detailed design
+   (endpoints, processes, entities, per-screen view), set dependencies and waves, check the DoR. The
+   SM also plans, in the list of tickets to create, one `e2e` ticket per batch of stories, entrusted
+   to a QA instance (`team/conventions/ticket.md`); the PO creates its file, as for any ticket. The
+   coverage matrix of the test strategy, complete at G2, is updated by the QA for any story added or
+   modified after G2. Sprint page, tickets in the board, Notion sync if it exists.
+2. **Dev in waves**: tickets whose dependencies are closed, 3 in parallel as a target, 5 at most,
+   each in its worktree. A frontend ticket that consumes a frozen operation does not depend on the
+   backend ticket that produces it: it starts at the same time, on a mock. The QA's `e2e` tickets go
+   out in these waves: tests written and tuned in Local. An `e2e` ticket has no dependency: it goes
+   out in a dev wave and is tuned as merges land, so it can close after the following waves; the
+   Wave column of the sprint page says where it goes out.
+3. **Independent review** of each returned ticket by a fresh Reviewer. Blocking → back to the author,
+   3 correction rounds at most, then escalation to the human. No blocking → merge into `sprint/N`. If
+   the author fixes majors before the merge, the fix is reviewed by a fresh Reviewer on those findings
+   only, unless it only adds tests; the PO records this choice in the journal. A ticket that touches
+   the API contract is reviewed with `detailed-pages.mjs --check` and the Redocly lint, and against
+   `INV-58` (nothing changes in a frozen operation).
+4. **QA**, in two stages: (1) the `e2e` tickets are written, reviewed and merged like the other
+   tickets (steps 2 and 3); (2) the campaign runs on the "Demo and acceptance" environment, which the
+   QA starts at the `sprint/N` commit that contains the merged `e2e` tickets, noted in the campaign,
+   and restarts after each fix merge. The last commit run is the accepted commit; the double run
+   required by the exit criterion is done at this commit, so a fix merged at the end of the campaign
+   is run twice. The evidence of manual checks (restart, screen reader…) is versioned in
+   `docs/40-qa/evidence/sprint-N/` and linked from the campaign; the Playwright HTML report stays out
+   of git. Test data: a unique name per run, a test seed that goes through no story endpoint.
+   Defects `BUG-xxx` handled within the sprint: the QA commits the defect's test, red, on its fix
+   branch created from `sprint/N` (`team/conventions/git.md`), the dev fixes on the same branch,
+   review and merge as for a ticket. Verdict: favorable without reservations if no defect is open;
+   favorable with reservations if only minor ones are open, or a major one accepted in writing by the
+   PO in the campaign; unfavorable if a blocking one is open or a major one not accepted. After its
+   last run, fix replays included, the QA resets "Demo and acceptance" before pre-acceptance; the PO
+   makes sure of it.
+5. **Integration**: a fresh Reviewer goes over the whole merged set.
+6. **Pre-acceptance** (PO): campaign verdict favorable, with or without reservations; each sprint
+   story has its criteria green, except a scenario turned red by a defect admitted in the verdict
+   (minor, or major accepted in writing by the PO), cited in the campaign; acceptance path ready.
+7. **G3 Acceptance, with the human**: acceptance report, at the accepted commit. Reservations become
+   tickets; a minor defect left open in the verdict is carried over as a reservation `RES-xx`. A
+   reservation is lifted when the item linked to it (the defect `BUG-xxx` or the ticket `T-xxx`
+   created for it) moves to status `done`.
+8. **Review and retro** (SM): sprint page completed; its Retro section chains problems `Sn-Pm`,
+   actions `Sn-Am` and proposed plugin changes `Sn-Em`, which the PO submits to the human. Roadmap
+   updated. An accepted change is not applied in the installed plugin (read-only copy, overwritten at
+   each update): it goes as a proposal to the ShipItRight repository, where it is applied and ships
+   in a new version.
 
-## 5. Board, forum, échanges
+## 5. Board, forum, exchanges
 
-- **Board local** (`.team/board/`) : source de vérité. Format et règles : `team/conventions/ticket.md`.
-  Seul le PO change un statut ou une affectation.
-- **Board Notion**, facultatif (MCP Notion) : miroir pour l'humain, tenu par le PO seul, synchronisé
-  par lots (skill `shipitright:notion-board`).
-- **Page de pilotage, backlog et inventaire des analyses** (`docs/index.html`,
-  `docs/20-specs/backlog.html`, `docs/10-analyse/index.html`) : vue de l'humain sur le projet
-  (Overview, Hotspot, indicateurs, derniers événements), sur les stories et sur les chantiers
-  d'analyse ; l'inventaire s'ouvre depuis la carte « Analyses de chantier » que la page de pilotage
-  montre dans chaque colonne de l'Overview qui a au moins un chantier (cible lue dans la meta `pour`).
-  Générées par `team/scripts/pilotage-pages.mjs` depuis le journal, le board, les questions et les
-  méta des livrables ; le PO les régénère à chaque synchro de vague, à chaque gate et à chaque merge
-  dans `sprint/N`. Aucune ligne de journal propre, ni date prévue ni retard. Skill `shipitright:livrable-pilotage`.
-- **Forum et questions** : `team/conventions/forum.md`.
-- **Brief et rapport** : `team/conventions/brief.md` et `rapport.md`.
-- **Git** : `team/conventions/git.md`.
+- **Local board** (`.team/board/`): source of truth. Format and rules: `team/conventions/ticket.md`.
+  Only the PO changes a status or an assignment.
+- **Notion board**, optional (Notion MCP): mirror for the human, kept by the PO alone, synced in
+  batches (skill `shipitright:notion-board`).
+- **Dashboard page, backlog and analysis inventory** (`docs/index.html`,
+  `docs/20-specs/backlog.html`, `docs/10-analysis/index.html`): the human's view of the project
+  (Overview, Hotspot, indicators, latest events), of the stories and of the analysis workstreams; the
+  inventory opens from the "Workstream analyses" card that the dashboard page shows in each Overview
+  column that has at least one workstream (target read from the meta `target`). Generated by
+  `team/scripts/dashboard-pages.mjs` from the journal, the board, the questions and the deliverables'
+  meta; the PO regenerates them at each wave sync, at each gate and at each merge into `sprint/N`. No
+  journal line of their own, neither planned date nor delay. Skill `shipitright:deliverable-dashboard`.
+- **Forum and questions**: `team/conventions/forum.md`.
+- **Brief and report**: `team/conventions/brief.md` and `report.md`.
+- **Git**: `team/conventions/git.md`.
 
-## 6. Cérémonies
+## 6. Ceremonies
 
-Pas de daily : un cycle de dev d'agents dure quelques minutes, une synchro au milieu n'aurait rien à
-synchroniser.
+No daily: an agent dev cycle lasts a few minutes, a sync in the middle would have nothing to sync.
 
-| Cérémonie | Quand | Qui | Sortie |
+| Ceremony | When | Who | Output |
 |---|---|---|---|
-| Lancement de phase | entrée de chaque phase | PO | briefs des agents |
-| Passation | sortie de chaque agent | l'agent | rapport, posts forum |
-| Synchro de vague | après chaque vague parallèle | PO | statuts, réponses aux questions, page de pilotage régénérée, vague suivante |
-| Sprint planning | début de sprint | SM, Architecte | opérations du lot figées, version du contrat d'API, page de sprint, tickets |
-| Gate | fin de P0, P2 et P3, fin de sprint (G3) | PO + humain | décision consignée au journal, page de pilotage régénérée |
-| Recette | fin de sprint | PO + humain | PV de recette |
-| Review et rétro | après la recette | SM | page de sprint complétée : actions `Sn-Am`, évolutions proposées pour le plugin `Sn-Em` |
+| Phase launch | entry of each phase | PO | agent briefs |
+| Handoff | exit of each agent | the agent | report, forum posts |
+| Wave sync | after each parallel wave | PO | statuses, answers to questions, dashboard page regenerated, next wave |
+| Sprint planning | sprint start | SM, Architect | batch operations frozen, API contract version, sprint page, tickets |
+| Gate | end of P0, P2 and P3, end of sprint (G3) | PO + human | decision recorded in the journal, dashboard page regenerated |
+| Acceptance | end of sprint | PO + human | acceptance report |
+| Review and retro | after acceptance | SM | sprint page completed: actions `Sn-Am`, proposed plugin changes `Sn-Em` |
 
-## 7. Definition of Ready et Definition of Done
+## 7. Definition of Ready and Definition of Done
 
-**DoR d'une story** (case à cocher de la story, skill `shipitright:livrable-epic-us`)
-- sa taille (`taille`, XS à XL) et sa part front (`front`) sont renseignées ;
-- elle n'est pas de taille XL : une story XL ne passe pas `prete`, elle se découpe avant. Une XL d'une
-  release présentée au G1 se découpe donc avant G1 ; une XL rédigée plus tard, avant d'entrer en sprint.
+**DoR of a story** (story checkbox, skill `shipitright:deliverable-epics-stories`)
+- its size (`size`, XS to XL) and its front share (`front`) are filled in;
+- it is not size XL: an XL story does not move to `ready`, it is split first. An XL of a release
+  presented at G1 is therefore split before G1; an XL written later, before entering a sprint.
 
-**DoR d'un ticket**
-- les stories liées sont validées (au G1, ou par le PO pour une story rédigée après G1), donc aucune
-  n'est de taille XL ;
-- le brief décrit le comportement, les signatures et les critères, sans chemins de code ; il cite les
-  scénarios `US-xxx/Sn` qu'il sert et les jeux de données d'exemple de la story qui les illustrent ;
-- `consomme` et `produit` sont renseignés ;
-- les dépendances sont fermées ;
-- les opérations du contrat d'API qu'il produit ou consomme sont figées ;
-- pour un ticket `e2e`, la matrice de couverture de la stratégie de test est à jour ;
-- il tient dans un contexte frais (sinon, le découper).
+**DoR of a ticket**
+- the linked stories are validated (at G1, or by the PO for a story written after G1), so none is
+  size XL;
+- the brief describes the behavior, the signatures and the criteria, without code paths; it cites
+  the scenarios `US-xxx/Sn` it serves and the story's example data sets that illustrate them;
+- `consumes` and `produces` are filled in;
+- the dependencies are closed;
+- the API contract operations it produces or consumes are frozen;
+- for an `e2e` ticket, the coverage matrix of the test strategy is up to date;
+- it fits in a fresh context (otherwise, split it).
 
-**DoD d'un ticket**
-- build vert, tests unitaires verts ;
-- auto-revue sur la checklist du rôle faite ;
-- revue indépendante sans bloquant ;
-- respect du contrat de conformité (`detaillee/transverse/conformite.html`) ;
-- rapport rempli ;
-- commit sur la branche du ticket, mergé dans `sprint/N`.
+**DoD of a ticket**
+- green build, green unit tests;
+- self-review against the role's checklist done;
+- independent review with no blocking finding;
+- compliance contract respected (`detailed/cross-cutting/compliance.html`);
+- report filled in;
+- commit on the ticket branch, merged into `sprint/N`.
 
-**DoD d'un livrable documentaire**
-- `check-livrable.mjs` sans KO ;
-- recommandés présents ou justifiés en une ligne ;
-- passe de cohérence sans bloquant avant son gate.
+**DoD of a document deliverable**
+- `check-deliverable.mjs` with no KO;
+- recommended items present or justified in one line;
+- consistency pass with no blocking finding before its gate.
 
-**DoD d'un sprint**
-- verdict de campagne favorable, avec ou sans réserves ;
-- tous les critères Gherkin des stories du sprint couverts par un test au vert, au niveau indiqué par
-  la matrice de couverture de la stratégie de test (un scénario « sans e2e » est couvert par un test du
-  niveau complémentaire) ; un scénario peut rester rouge s'il est rendu rouge par une anomalie admise
-  au verdict (mineure, ou majeure acceptée par écrit par le PO), citée dans la campagne ;
-- passe d'intégration sans bloquant ;
-- PV de recette signé par l'humain.
+**DoD of a sprint**
+- campaign verdict favorable, with or without reservations;
+- all Gherkin criteria of the sprint stories covered by a green test, at the level set by the
+  coverage matrix of the test strategy (a scenario "without e2e" is covered by a test of the
+  complementary level); a scenario may stay red if it is turned red by a defect admitted in the
+  verdict (minor, or major accepted in writing by the PO), cited in the campaign;
+- integration pass with no blocking finding;
+- acceptance report signed by the human.
 
-## 8. Socles : stack et design system
+## 8. Foundations: stack and design system
 
-Le plugin n'embarque ni stack ni design system : ils sont propres à l'utilisateur. Chaque projet
-déclare les siens au cadrage dans `.team/socle.md`, sous forme de **socles** : soit une source de
-l'utilisateur (dossier local, dépôt git, MCP, skill, URL), soit un socle créé dans le projet
-(`.team/socles/stacks/<nom>/`, `.team/socles/design-systems/<nom>/`). Format, sources et règles :
-`team/conventions/socle.md`.
+The plugin ships neither stack nor design system: they belong to the user. Each project declares its
+own at framing in `.team/foundation.md`, as **foundations**: either a user source (local folder, git
+repository, MCP, skill, URL), or a foundation created in the project
+(`.team/foundations/stacks/<name>/`, `.team/foundations/design-systems/<name>/`). Format, sources and
+rules: `team/conventions/foundation.md`.
 
-- **Les livrables citent le socle, ils ne le recopient pas** : la conception macro renvoie à la stack,
-  la spec UX/UI au design system ; seuls les écarts et les compléments du produit y figurent.
-- **Pas de socle fourni par l'humain** : l'architecte crée le socle de stack en P3 dans
-  `.team/socles/stacks/<nom>/` (validé à G2), l'UX crée un design system minimal en P2 dans
-  `.team/socles/design-systems/<nom>/` (validé à G1). Ces socles sont versionnés avec le projet.
-- **Constant quel que soit le socle** : contrat d'API en OpenAPI 3, réparti en plusieurs fichiers
-  (`api/openapi.yaml` racine, `paths/`, `components/`) reliés par `$ref`, tests unitaires du domaine,
-  e2e en Playwright pilotés par le QA, prototype en HTML/CSS/JS vanilla avec `proto-bar` et données fictives, aux
-  tokens du design system.
-- **Toute déviation au socle de stack** passe par un ADR au statut proposé (`meta statut propose`) et remonte à l'humain.
-  Un écart au design system se justifie dans la spec UX/UI.
+- **Deliverables cite the foundation, they do not copy it**: the macro design points to the stack,
+  the UX/UI spec to the design system; only the product's deviations and additions appear in them.
+- **No foundation provided by the human**: the Architect creates the stack foundation in P3 in
+  `.team/foundations/stacks/<name>/` (validated at G2), the UX creates a minimal design system in P2
+  in `.team/foundations/design-systems/<name>/` (validated at G1). These foundations are versioned
+  with the project.
+- **Constant whatever the foundation**: API contract in OpenAPI 3, split into several files
+  (`api/openapi.yaml` root, `paths/`, `components/`) linked by `$ref`, domain unit tests, e2e in
+  Playwright driven by the QA, prototype in vanilla HTML/CSS/JS with `proto-bar` and fictional data,
+  using the design system tokens.
+- **Any deviation from the stack foundation** goes through an ADR with status proposed
+  (`meta status proposed`) and goes up to the human. A deviation from the design system is justified
+  in the UX/UI spec.
 
-**Outillage** : la team installe ce que le socle demande (runtime, outil de build, Docker…) au premier
-besoin, après accord de l'humain demandé par le PO.
+**Tooling**: the team installs what the foundation requires (runtime, build tool, Docker…) at first
+need, after the human's approval requested by the PO.
 
-## 9. Ce qui remonte à l'humain
+## 9. What goes up to the human
 
-Le PO interrompt l'autonomie et s'adresse à l'humain pour :
+The PO interrupts autonomy and addresses the human for:
 
-- les gates G0, G1, G2, G3 ;
-- une question métier qu'il ne peut pas trancher (groupées, pas une par une) ;
-- une déviation au socle de stack ou au standard d'architecture ;
-- une incohérence structurelle entre tickets ou entre livrables ;
-- une boucle revue → correction qui ne converge pas en 3 tours de correction ;
-- l'installation d'un outil sur la machine ;
-- la page Notion où créer le board d'un nouveau projet ;
-- toute opération irréversible hors du dépôt du projet.
+- gates G0, G1, G2, G3;
+- a business question it cannot settle (grouped, not one by one);
+- a deviation from the stack foundation or the architecture standard;
+- a structural inconsistency between tickets or between deliverables;
+- a review → correction loop that does not converge within 3 correction rounds;
+- installing a tool on the machine;
+- the Notion page where to create the board of a new project;
+- any irreversible operation outside the project repository.
 
-Le reste du temps, la team avance seule et le PO tient l'humain informé par un point court à chaque
-fin de phase.
+The rest of the time, the team moves on its own and the PO keeps the human informed with a short
+update at the end of each phase.

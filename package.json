@@ -1,7 +1,7 @@
 {
   "name": "shipitright",
   "private": true,
-  "description": "Runtime dependencies of the ShipItRight plugin scripts (team/scripts/detaillee-pages.mjs reads openapi.yaml)",
+  "description": "Runtime dependencies of the ShipItRight plugin scripts (team/scripts/detailed-pages.mjs reads openapi.yaml)",
   "type": "module",
   "dependencies": {
     "yaml": "2.9.1"

@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="in-review">
+  <meta name="date" content="2026-10-08">
+  <title>Stratégie de test technique · Conception technique détaillée · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Stratégie de test technique</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#site-map">Transverse</a></div>
+      <h1><span class="doc-kind">Stratégie de test technique</span> : ce que testent les devs</h1>
+      <p class="lede">Les tests unitaires et d'intégration que les devs écrivent avec leur code. Les e2e des critères Gherkin relèvent du QA. Chaque test d'une règle cite son <code>BR-xx</code> (<a href="compliance.html#INV-56">INV-56</a>).</p>
+      <div class="meta">
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Outillage</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire avec quoi les devs testent.</dd>
+          <dt>Contenu</dt><dd>Les outils de chaque niveau (unitaire, intégration, composant) et leur environnement.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>L'outillage du socle de stack appliqué au produit, en liste de définitions : un niveau par terme.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Unitaire et intégration backend</dt><dd>Vitest ; base SQLite <code>:memory:</code> migrée ; routes testées par <code>fastify.inject()</code>, sans port réseau ; horloge fixe injectée</dd>
+        <dt>Concurrence</dt><dd>fichier SQLite temporaire, deux connexions</dd>
+        <dt>Composant frontend</dt><dd>le runner de la version d'Angular retenue</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Cas imposés</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que chaque test doit couvrir, pour qu'un ticket ne se rende pas sans.</dd>
+          <dt>Contenu</dt><dd>Une ligne par cible (objet du domaine, traitement, dépôt, route, composant), avec son niveau de test et ses cas.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau cible, niveau, cas se relit comme une check-list en revue (<a href="compliance.html#INV-56">INV-56</a>, <a href="compliance.html#INV-57">INV-57</a>).</dd>
+          <dt>Lire</dt><dd>Les cas limites d'un traitement sont dans sa page : cités ici, jamais recopiés.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Cible</th><th>Type</th><th>Cas imposés</th></tr></thead>
+        <tbody>
+          <tr><td><code>Creneau</code></td><td>unitaire domaine, horloge fixe</td><td><a href="../../../20-specs/functional-design.html#BR-02">BR-02</a> : 08:00 et 19:00 acceptés, 07:45 et 19:15 refusés, 10:10 refusé, 4 h acceptées et 4 h 15 refusées, samedi refusé ; <a href="../../../20-specs/functional-design.html#BR-03">BR-03</a> : quart d'heure en cours refusé, suivant accepté, veille refusée</td></tr>
+          <tr><td><a href="../processes/PROC-01.html">PROC-01</a> occurrences</td><td>unitaire domaine, fonction pure</td><td>cas limites de la page <a href="../processes/PROC-01.html">PROC-01</a></td></tr>
+          <tr><td><a href="../processes/PROC-02.html">PROC-02</a></td><td>unitaire domaine, dépôt en mémoire</td><td>cas limites de la page <a href="../processes/PROC-02.html">PROC-02</a></td></tr>
+          <tr><td>Dépôt SQLite des réservations</td><td>intégration, base <code>:memory:</code></td><td>déclencheurs : mêmes cas que <a href="../processes/PROC-02.html">PROC-02</a> en insertion directe, dont 10:00-10:00 (<a href="compliance.html#INV-61">INV-61</a>) ; <code>CHECK</code> de <a href="../../../20-specs/functional-design.html#BR-02">BR-02</a> ; requête de conflit et déclencheur d'accord sur chaque cas</td></tr>
+          <tr><td>Concurrence <a href="../endpoints/EP-08.html">EP-08</a></td><td>intégration, fichier SQLite temporaire</td><td>le cas « 20 demandes simultanées » de <a href="../processes/PROC-02.html">PROC-02</a>, sur deux connexions et par la route : 1 <code>201</code>, 19 <code>409</code> (cible de la conception macro). Repris par le QA</td></tr>
+          <tr><td><a href="../endpoints/EP-10.html">EP-10</a> création de série</td><td>unitaire, dépôt en mémoire</td><td>12 créées et 1 ignorée sur une série hebdomadaire de 13 occurrences dont 1 en conflit ; jour confirmé pris depuis l'aperçu : <code>409</code> <a href="errors.html#SERIE_CONFLITS_CHANGES"><code>SERIE_CONFLITS_CHANGES</code></a>, rien créé ; jour libéré depuis : non créé ; jour hors série : <a href="errors.html#JOURS_CONFIRMES_INVALIDES"><code>JOURS_CONFIRMES_INVALIDES</code></a></td></tr>
+          <tr><td><a href="../processes/PROC-06.html">PROC-06</a> annulation (appelée par <a href="../endpoints/EP-12.html">EP-12</a>, <a href="../endpoints/EP-13.html">EP-13</a>, <a href="../processes/PROC-03.html">PROC-03</a>)</td><td>unitaire domaine</td><td>commencée refusée (<a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>) ; autrui refusé à l'employé (<a href="../../../20-specs/functional-design.html#BR-11">BR-11</a>) ; gestionnaire sans motif pour autrui refusé (<a href="../../../20-specs/functional-design.html#BR-07">BR-07</a>) ; déjà annulée sans effet ; désactivation : réservation en cours gardée, compte de <a href="../../../20-specs/functional-design.html#MSG-08">MSG-08</a> égal au nombre annulé</td></tr>
+          <tr><td>Routes, toutes</td><td>adaptateur entrant, <code>inject</code></td><td>statuts et corps du contrat d'API, <code>problem+json</code> avec <code>code</code> ; <code>401</code> sans session sauf <a href="../endpoints/EP-01.html">EP-01</a> et <a href="../endpoints/EP-03.html">EP-03</a> ; <code>403</code> selon la <a href="security.html#matrice-des-droits">matrice des droits</a> ; champ inconnu refusé ; une route sans rôle déclaré fait échouer le démarrage</td></tr>
+          <tr><td>Contrat d'API</td><td>test du front</td><td>chaque valeur de <a href="../schemas/index.html#CodeErreur"><code>CodeErreur</code></a> a sa traduction (<a href="compliance.html#INV-64">INV-64</a>) ; un code, un statut ou une propriété inconnus ne font pas planter l'écran (<a href="compliance.html#INV-59">INV-59</a>)</td></tr>
+          <tr><td><code>OccupationGrid</code></td><td>composant</td><td>nominal, vide (<a href="../../../20-ux/ux-ui-spec.html#MSG-U02">MSG-U02</a>), chargement, erreur (<a href="../../../20-ux/ux-ui-spec.html#MSG-U03">MSG-U03</a>) ; cases passées non cliquables ; week-end ; clavier (flèches, Entrée) ; annonce « &lt;salle&gt;, &lt;heure&gt;, libre »</td></tr>
+          <tr><td><code>ReservationForm</code>, <code>SeriesConflictsDialog</code></td><td>composant, <code>SerieApi</code> simulée</td><td>bouton inactif pendant l'envoi ; <a href="../../../20-specs/functional-design.html#MSG-01">MSG-01</a>, <a href="../../../20-specs/functional-design.html#MSG-03">MSG-03</a>, <a href="../../../20-ux/ux-ui-spec.html#MSG-U06">MSG-U06</a>, <a href="../../../20-ux/ux-ui-spec.html#MSG-U13">MSG-U13</a> selon le <code>code</code> ; dialogue : focus, Échap, liste annoncée ; <code>409</code> <a href="errors.html#SERIE_CONFLITS_CHANGES"><code>SERIE_CONFLITS_CHANGES</code></a> rouvre le dialogue avec la nouvelle liste</td></tr>
+          <tr><td>Autres écrans</td><td>composant</td><td>états nominal, vide, chargement, erreur de la spec UX/UI (<a href="compliance.html#INV-57">INV-57</a>)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="open-points" data-level="recommended">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur les tests.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact high">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact medium">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact low">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../open-points.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="medium"><span class="impact medium">moyen</span></td><td>Runners de test : le socle ne les fixe pas encore.</td><td>l'outillage ci-dessus, à reporter dans le socle complété.</td><td></td></tr>
+          <tr><td data-value="medium"><span class="impact medium">moyen</span></td><td>Horloge réglable au démarrage, en environnement de test seulement, demandée par le QA pour jouer en e2e les cas « réservation commencée » (<a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>).</td><td>pas d'horloge réglable : ces cas restent au niveau unitaire, horloge fixe (<a href="../processes/PROC-06.html">PROC-06</a>), sans e2e.</td><td></td></tr>
+          <tr><td data-value="low"><span class="impact low">faible</span></td><td>Cas à ajouter aux cas imposés d'<a href="../endpoints/EP-10.html">EP-10</a>, demandé par le QA : échec du dépôt en cours d'écriture d'une série, rien n'est créé. L'e2e de l'échec d'enregistrement ne prouve que le message affiché.</td><td>le dev d'<a href="../endpoints/EP-10.html">EP-10</a> écrit ce test d'intégration avec ceux de la ligne <a href="../endpoints/EP-10.html">EP-10</a> des cas imposés.</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,296 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Sprint metadata, read by dashboard-pages.mjs (codes, never translated): status planned | in-progress | closed;
+       dates of the sprint in ISO, YYYY-MM-DD, the same as the Dates field of the header. -->
+  <meta name="status" content="planned">
+  <meta name="start-date" content="YYYY-MM-DD">
+  <meta name="end-date" content="YYYY-MM-DD">
+  <title>Sprint N · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Sprint N</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../40-qa/campaign-sprint-N.html">→ Sprint N campaign</a><br><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Sprint N · Planning, review, retro</div>
+      <h1><span class="doc-kind">Sprint N</span>: <span class="todo">what the sprint enables, in a few words</span></h1>
+      <p class="lede"><span class="todo">at planning: the goal and the batch; closed: stories delivered and acceptance verdict, tickets closed, bugs, the main problem of the retro</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Dates</b> from YYYY-MM-DD to YYYY-MM-DD</span>
+        <span><b>Author</b> Scrum Master: <span class="todo">scrum-master-1</span>; split with the Architect</span>
+        <span><b>Status</b> <span class="tag warn">planned</span></span>
+        <span><b>Branch</b> <code>sprint/N</code>, accepted commit <span class="todo">short sha, taken from the campaign</span></span>
+        <span><b>Sources</b> <a href="../roadmap.html">roadmap</a>, <a href="../40-qa/campaign-sprint-N.html">campaign</a>, <a href="../50-acceptance/report-sprint-N.html">acceptance report</a>, board, <a href="../../.team/journal.md">journal</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="sprint-goal">Sprint goal</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say in one sentence what the human will be able to do at the end of the sprint, so that the acceptance has an object and the review a criterion.</dd>
+          <dt>Content</dt><dd>A product role, what it does, on which screens. Set at planning, it no longer changes.</dd>
+          <dt>Why this format</dt><dd>A sentence checkable at acceptance: the human runs it or does not. The review says whether the goal is reached by referring to this sentence, not to the list of tickets.</dd>
+        </dl>
+      </div>
+      <div class="callout decision">
+        <b>Goal</b>
+        <span class="todo">at the end of the sprint, role X can do Y, on screen SCR-xx</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="required" data-section="committed-stories">
+      <h2 id="committed-stories">Committed stories</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Fix the batch the PO chose and prove that each story can start.</dd>
+          <dt>Content</dt><dd>One row per story: epic, number of scenarios, story dependencies and their state, story DoR checked by the SM at planning.</dd>
+          <dt>Why this format</dt><dd>The number of scenarios is the one the campaign must turn green: it ties planning to the verdict. The DoR is the story's (its last section), not the tickets', which is checked further down.</dd>
+          <dt>Read</dt><dd>A story with an API contract operation still provisional at planning leaves the batch and has no row here. A story added or changed after G2 carries the mention "matrix updated" or does not start.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Story</th><th>Title</th><th>Epic</th><th>Scenarios</th><th>Depends on</th><th>DoR</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td><span class="todo">title</span></td><td><a href="../20-specs/epics/EPIC-01-slug.html">EPIC-01</a></td><td class="num"><span class="todo">3</span></td><td><span class="todo">story, and its state: delivered in sprint N-1, same sprint (shared ticket), none</span></td><td><span class="tag ok">ok</span></td></tr>
+        </tbody>
+      </table>
+      <p><span class="todo">n</span> scenarios in total. <span class="todo">Coverage matrix: complete at G2, or updated by the QA for US-xxx added or changed after G2.</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="capacity">Capacity</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say how many instances of each role the PO runs in parallel, so that the waves fit the capacity.</dd>
+          <dt>Content</dt><dd>Instances per role, with their identifier when cited elsewhere (campaign, <code>e2e</code> tickets); the biggest planned wave against the target (3) and the maximum (5).</dd>
+          <dt>Why this format</dt><dd>The number of instances of a role is the number of tickets of that role in the busiest wave: it reads in the tickets table and is checked here.</dd>
+          <dt>Read</dt><dd>Reviewers are not counted: a fresh one per delivered ticket, per review round, per fixed bug, plus the integration pass.</dd>
+        </dl>
+      </div>
+      <div class="grid c4">
+        <div class="kpi"><div class="label">Dev backend</div><div class="value"><span class="todo">1</span></div><div class="sub">back tickets of the busiest wave</div></div>
+        <div class="kpi"><div class="label">Dev frontend</div><div class="value"><span class="todo">1</span></div><div class="sub">front tickets of the busiest wave</div></div>
+        <div class="kpi"><div class="label">QA</div><div class="value"><span class="todo">1</span></div><div class="sub"><span class="todo">qa-1</span>: one <code>e2e</code> ticket per instance, then the campaign</div></div>
+        <div class="kpi"><div class="label">Reviewer</div><div class="value">fresh</div><div class="sub">one per review, plus the integration pass</div></div>
+      </div>
+      <p>Biggest wave: <span class="todo">n</span> tickets, target 3, maximum 5. <span class="todo">reason if above the target</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="tickets-and-waves">Tickets and waves</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Give the PO the list of tickets to create and the order to launch them, and prove that each one meets the DoR.</dd>
+          <dt>Content</dt><dd>The API contract version at planning, the operations of the batch and their state; one row per ticket: role, stories, what it produces and consumes, dependencies, contract, starting wave; the waves and the critical path; the shared files of each wave, with their decision.</dd>
+          <dt>Why this format</dt><dd>Tickets are cut from the pages of the detailed design (endpoints, processes, entities, screen view), not from the stories: the "produces, consumes" column cites those pages, and a process shared by two endpoints of the batch has a single producing ticket. Contract: <code>frozen</code> if the ticket produces or consumes API contract operations, all frozen; empty otherwise.</dd>
+          <dt>Read</dt><dd>A wave only holds tickets whose dependencies are closed. A front ticket on a frozen operation does not depend on the back ticket: it starts on a mock. An <code>e2e</code> ticket has no dependency (DoR: stories through G1, operations frozen, matrix up to date, brief that cites its scenarios and data sets); it starts in its wave and is tuned in Local as merges come in, so it may close after the following waves. Briefs are in the ticket files, not here. A shared file is a file several tickets of the same wave would change by hand (routes, registry, catalogue, exchange types): they would step on each other at merge. Each has its decision: generated by a script, split (one file per ticket, loaded by convention), or a single carrying ticket, cited in the brief of the others. A wave without a shared file: "none".</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>API contract</dt><dd><a href="../30-design/detailed/schemas/index.html#vX.Y.Z"><span class="todo">vX.Y.Z</span></a> at planning, after the Architect's pass</dd>
+        <dt>Operations of the batch</dt><dd><span class="todo">EP-xx, EP-yy: each with the version where it was frozen, or "delivered in sprint N-1"</span></dd>
+        <dt>Frozen at this planning</dt><dd><span class="todo">EP-xx, or none: the batch touches no provisional operation</span></dd>
+      </dl>
+      <table>
+        <thead><tr><th>Ticket</th><th>Title</th><th>Role</th><th>Stories</th><th>Produces, consumes</th><th>Depends on</th><th>Contract</th><th>Wave</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../.team/board/T-001-slug.md">T-001</a></td><td><span class="todo">title</span></td><td>dev-backend</td><td><a href="../20-specs/stories/US-001-slug.html">US-001</a>, <a href="../20-specs/stories/US-002-slug.html">US-002</a></td><td>produces <a href="../30-design/detailed/processes/PROC-01.html">PROC-01</a>, <a href="../30-design/detailed/entities/EN-01.html">EN-01</a></td><td></td><td></td><td class="num">1</td></tr>
+          <tr><td><a href="../../.team/board/T-002-slug.md">T-002</a></td><td><span class="todo">title</span></td><td>dev-backend</td><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td>produces <a href="../30-design/detailed/endpoints/EP-01.html">EP-01</a>; consumes <a href="../30-design/detailed/processes/PROC-01.html">PROC-01</a></td><td><a href="../../.team/board/T-001-slug.md">T-001</a></td><td><span class="tag ok">frozen</span></td><td class="num">2</td></tr>
+          <tr><td><a href="../../.team/board/T-003-slug.md">T-003</a></td><td><span class="todo">title</span></td><td>dev-frontend</td><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td>consumes <a href="../30-design/detailed/endpoints/EP-01.html">EP-01</a> (<a href="../20-ux/ux-ui-spec.html#SCR-01">SCR-01</a>)</td><td></td><td><span class="tag ok">frozen</span></td><td class="num">1</td></tr>
+          <tr><td><a href="../../.team/board/T-004-slug.md">T-004</a></td><td><span class="todo">title</span></td><td>qa (<span class="todo">qa-1</span>)</td><td><a href="../20-specs/stories/US-001-slug.html">US-001</a>, <a href="../20-specs/stories/US-002-slug.html">US-002</a></td><td>consumes <a href="../20-specs/stories/US-001-slug.html#S1">US-001/S1</a> to <a href="../20-specs/stories/US-001-slug.html#S3">S3</a>, <a href="../20-specs/stories/US-002-slug.html#S1">US-002/S1</a>; produces their e2e</td><td></td><td></td><td class="num">1</td></tr>
+        </tbody>
+      </table>
+      <div class="grid c3">
+        <div class="card soft"><h4>Wave 1, <span class="todo">MM-DD</span></h4><p><a href="../../.team/board/T-001-slug.md">T-001</a>, <a href="../../.team/board/T-003-slug.md">T-003</a>, <a href="../../.team/board/T-004-slug.md">T-004</a></p><p class="hint">The shared process; the front on a mock of <a href="../30-design/detailed/endpoints/EP-01.html">EP-01</a>, frozen; the e2e ticket.</p></div>
+        <div class="card soft"><h4>Wave 2, <span class="todo">MM-DD</span></h4><p><a href="../../.team/board/T-002-slug.md">T-002</a></p><p class="hint">Waits for the merge of <a href="../../.team/board/T-001-slug.md">T-001</a>.</p></div>
+        <div class="card soft"><h4>Wave 3, <span class="todo">MM-DD</span></h4><p><span class="todo">tickets</span></p></div>
+      </div>
+      <p>Critical path: <span class="todo"><a href="../../.team/board/T-001-slug.md">T-001</a>, <a href="../../.team/board/T-002-slug.md">T-002</a></span>. <span class="todo">n</span> tickets for the PO to create, including <span class="todo">n</span> <code>e2e</code> tickets.</p>
+      <h3 id="shared-files">Shared files</h3>
+      <table>
+        <thead><tr><th>Wave</th><th>Shared file</th><th>Tickets that change it</th><th>Decision</th></tr></thead>
+        <tbody>
+          <tr><td class="num">1</td><td><span class="todo">path from the repository root, as code</span></td><td><a href="../../.team/board/T-001-slug.md">T-001</a>, <a href="../../.team/board/T-003-slug.md">T-003</a></td><td><span class="todo">generated by a script, split or a single carrying ticket, and how</span></td></tr>
+          <tr><td class="num">2</td><td>none</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="progress">Progress</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show where each ticket stands without opening the board; at closing, the final state the metrics are counted from.</dd>
+          <dt>Content</dt><dd>Counters per status; one row per ticket of the plan, then per <code>BUG-xxx</code> bug opened during the sprint: instance, status, review rounds, merge date, blocking finding or blocker.</dd>
+          <dt>Why this format</dt><dd>Values are those of the tickets' front matter (<code>status</code>, <code>instance</code>, <code>review_rounds</code>), updated after each wave sync: the page sums up the board, it does not replace it. A bug follows a ticket's circuit and therefore has its row.</dd>
+          <dt>Read</dt><dd>A review round is one review by a fresh Reviewer; a ticket at 1 round passed without a blocker the first time. Three fix rounds without convergence go up to the human. The details of the findings are in the Review section of the ticket.</dd>
+        </dl>
+      </div>
+      <div class="grid c4">
+        <div class="kpi"><div class="label">Done</div><div class="value"><span class="todo">0</span></div><div class="sub">out of <span class="todo">n</span> tickets of the plan</div></div>
+        <div class="kpi"><div class="label">In progress or in review</div><div class="value"><span class="todo">0</span></div></div>
+        <div class="kpi"><div class="label">In test</div><div class="value"><span class="todo">0</span></div></div>
+        <div class="kpi"><div class="label">Blocked</div><div class="value"><span class="todo">0</span></div></div>
+      </div>
+      <table>
+        <thead><tr><th>Ticket</th><th>Instance</th><th>Status</th><th>Review rounds</th><th>Merged on</th><th>Remark</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../.team/board/T-001-slug.md">T-001</a></td><td>dev-backend-1</td><td><span class="tag ok">done</span></td><td class="num">1</td><td>YYYY-MM-DD</td><td></td></tr>
+          <tr><td><a href="../../.team/board/T-002-slug.md">T-002</a></td><td>dev-backend-1</td><td><span class="tag info">in-review</span></td><td class="num">2</td><td></td><td><span class="todo">blocking finding of round 1</span></td></tr>
+          <tr><td><a href="../../.team/board/T-003-slug.md">T-003</a></td><td>dev-frontend-1</td><td><span class="tag danger">blocked</span></td><td class="num">0</td><td></td><td><span class="todo">forum topic or question Q-xxx</span></td></tr>
+          <tr><td><a href="../../.team/board/BUG-001-slug.md">BUG-001</a></td><td><span class="todo">instance</span></td><td><span class="tag warn">in-progress</span></td><td class="num">0</td><td></td><td><span class="todo">severity, opened on, effect on the verdict</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="review">Review</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the sprint delivered, what it did not deliver and why, and whether the sprint is done in the sense of its DoD.</dd>
+          <dt>Content</dt><dd>Delivered per story, with its acceptance result; not delivered, with its factual reason and where it restarts; the sprint DoD criterion by criterion, with its proof; the goal reached or not.</dd>
+          <dt>Why this format</dt><dd>The sprint DoD (<code>PROCESS.md</code>, section 7) is checked like the campaign exit criteria: met or not met, with the link that proves it. The review copies neither the campaign nor the acceptance report: it cites their verdict and points to them. The acceptance path run by the human stands in for a demo.</dd>
+          <dt>Read</dt><dd>A reservation <code>RES-xx</code> is defined in the acceptance report; here, only its reason and its follow-up. What is not delivered has a reason: blocked by what, split too big, review not converging; never "lack of time". A topic handled by the retro is not explained again: the review points to the problem <code>Sn-Pm</code> and the action <code>Sn-Am</code> that carry it.</dd>
+        </dl>
+      </div>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Delivered</h4>
+          <div class="todo">one line per story: acceptance result (accepted, accepted with reservation RES-xx); what is delivered outside stories</div>
+        </div>
+        <div class="card soft">
+          <h4>Not delivered</h4>
+          <div class="todo">story, ticket or reservation RES-xx: factual reason, where it restarts (next sprint, backlog). None: say so.</div>
+        </div>
+      </div>
+      <h3 id="sprint-dod">Sprint DoD</h3>
+      <table>
+        <thead><tr><th>Criterion</th><th>State</th><th>Proof</th></tr></thead>
+        <tbody>
+          <tr><td>favorable campaign verdict, with or without reservations</td><td><span class="todo">met</span></td><td><a href="../40-qa/campaign-sprint-N.html#qa-verdict">campaign</a>: <span class="todo">verdict, accepted commit</span></td></tr>
+          <tr><td>Gherkin criteria of the stories covered by a green test, except an admitted red</td><td><span class="todo">met</span></td><td><a href="../40-qa/campaign-sprint-N.html#results-by-scenario">results by scenario</a>: <span class="todo">n out of n; admitted red and its bug</span></td></tr>
+          <tr><td>integration pass without a blocker</td><td><span class="todo">met</span></td><td><a href="../../.team/journal.md">journal</a>, <span class="todo">date, findings</span></td></tr>
+          <tr><td>acceptance report signed by the human</td><td><span class="todo">met</span></td><td><a href="../50-acceptance/report-sprint-N.html">sprint N acceptance report</a>: <span class="todo">date, verdict</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout decision"><b>Goal reached</b><span class="todo">yes, partly, no, and why, against the goal sentence</span></div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="retro">Retro</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Draw from the sprint what we keep and what is a problem, then turn each problem into a change checkable in the next sprint.</dd>
+          <dt>Content</dt><dd>A chain in four parts. Keep, with its sources. Problems, identified <code>Sn-Pm</code> (sprint number, then problem number: <code>S2-P1</code>…): finding, weight (the number of sources) and sources (Retro or Review section of a ticket, bug, forum topic, journal line). Actions, identified <code>Sn-Am</code>: what changes, the problem addressed cited by its <code>Sn-Pm</code>, the nature (one-sprint trial or lasting change), the owner (a role), the done criterion, the due point. Proposed plugin changes, identified <code>Sn-Em</code>: the file, as a path from the plugin root, the text before and after, the action <code>Sn-Am</code> that covers it, the human's decision. Identifiers are unique in the project and each is the anchor of its row.</dd>
+          <dt>Why this format</dt><dd>Consolidated by the SM from the Retro sections of the tickets, not from memory: a point without a source does not pass; seen in several tickets, a problem goes first. One source per topic: the finding, the weight and the sources are only written in the problem; the action cites <code>Sn-Pm</code> without copying them, the change cites <code>Sn-Am</code> without restating the reason, and the review, the metrics and the risks point to the identifiers. An action without an owner or a done criterion cannot be followed: "split better" does not pass.</dd>
+          <dt>Read</dt><dd>Each problem has at least one action. There is no separate "to try" list: a trial is an action of nature "one-sprint trial", judged at the next retro (kept, made lasting or abandoned). The done criterion is checked in the Follow-up of previous actions section of the next sprint. A change always targets a file of the ShipItRight plugin (<code>PROCESS.md</code>, agent file, convention, framework skill): it goes as a proposal to the framework repository, with the human's decision. A change specific to the project (project foundation, code organization, repository conventions) is an action, not a plugin change. The SM proposes, they do not modify: the change is submitted to the human by the PO, with the acceptance; until the decision, the linked action covers it.</dd>
+        </dl>
+      </div>
+      <h3 id="keep">Keep</h3>
+      <ul>
+        <li><span class="todo">practice that worked, and the fact that shows it</span> <span class="tag"><a href="../../.team/board/T-001-slug.md">T-001</a></span></li>
+      </ul>
+      <h3 id="problems">Problems</h3>
+      <table>
+        <thead><tr><th>Problem</th><th>Finding</th><th>Weight</th><th>Sources</th></tr></thead>
+        <tbody>
+          <tr id="SN-P1"><td>SN-P1</td><td><span class="todo">what slowed down, with the facts; the most cited first</span></td><td><span class="todo">n times</span></td><td><span class="todo">Retro or Review sections of tickets, bug, forum, journal</span> <a href="../../.team/board/T-002-slug.md">T-002</a>, <a href="../../.team/board/T-003-slug.md">T-003</a></td></tr>
+        </tbody>
+      </table>
+      <h3 id="actions">Actions</h3>
+      <table>
+        <thead><tr><th>Action</th><th>What changes</th><th>Problem</th><th data-col="nature">Nature</th><th>Owner</th><th>Done criterion</th><th>Due</th></tr></thead>
+        <tbody>
+          <tr id="SN-A1"><td>SN-A1</td><td><span class="todo">the change, without restating the finding</span></td><td><a href="#SN-P1">SN-P1</a></td><td data-value="lasting"><span class="todo">lasting change</span></td><td><span class="todo">role</span></td><td><span class="todo">how we know it is done</span></td><td><span class="todo">planning or retro of sprint N+1</span></td></tr>
+          <tr id="SN-A2"><td>SN-A2</td><td><span class="todo">the trial</span></td><td><a href="#SN-P1">SN-P1</a></td><td data-value="trial"><span class="todo">one-sprint trial</span></td><td><span class="todo">role</span></td><td><span class="todo">what the next retro observes to keep it, make it lasting or abandon it</span></td><td><span class="todo">retro of sprint N+1</span></td></tr>
+        </tbody>
+      </table>
+      <h3 id="proposed-changes">Proposed plugin changes</h3>
+      <table>
+        <thead><tr><th>Change</th><th data-col="file">File</th><th>Before</th><th>After</th><th>Linked action</th><th data-col="decision">Decision</th></tr></thead>
+        <tbody>
+          <tr id="SN-E1"><td>SN-E1</td><td><code>PROCESS.md</code>, <span class="todo">section</span></td><td><span class="todo">current text</span></td><td><span class="todo">proposed text</span></td><td><a href="#SN-A1">SN-A1</a></td><td data-value="to-submit"><span class="tag">to submit</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="metrics">Metrics</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Measure the sprint to compare sprints and adjust the roadmap.</dd>
+          <dt>Content</dt><dd>Tickets closed out of planned, average and maximum review rounds, bugs by severity and follow-up, blocked tickets and duration; estimated and actual time of the delivered stories, which the SM carries over into the roadmap calibration.</dd>
+          <dt>Why this format</dt><dd>Each number is recounted in the board (tickets' front matter) or the journal, never from memory. Estimated time comes from the roadmap estimate, actual time from the journal: their ratio corrects every story estimate (<code>rules.calibration.sprints</code> of the roadmap).</dd>
+          <dt>Read</dt><dd>Average review rounds cover the tickets of the plan; a fixed bug counts separately. The actual time of a story: the agent hours of its tickets, from launch to report, reviews and fixes included, read from the journal. A number is not explained here: if it comes from a retro topic, it points to its problem <code>Sn-Pm</code> or its action <code>Sn-Am</code>.</dd>
+        </dl>
+      </div>
+      <div class="grid c4">
+        <div class="kpi"><div class="label">Tickets closed</div><div class="value"><span class="todo">x / y</span></div><div class="sub">planned at planning; fixed bugs counted separately</div></div>
+        <div class="kpi"><div class="label">Average review rounds</div><div class="value"><span class="todo">1.4</span></div><div class="sub"><span class="todo">n</span> rounds over <span class="todo">n</span> tickets; max <span class="todo">n</span> on T-xxx</div></div>
+        <div class="kpi"><div class="label">Bugs</div><div class="value"><span class="todo">n</span></div><div class="sub">opened by the QA, by severity, and their follow-up</div></div>
+        <div class="kpi"><div class="label">Blocked tickets</div><div class="value"><span class="todo">n</span></div><div class="sub">at least once during the sprint, and for how long</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Story</th><th>Size</th><th>Estimated, agent hours</th><th>Actual, agent hours</th><th>Tickets</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a></td><td><span class="size m">M</span></td><td class="num"><span class="todo">2.0</span></td><td class="num"><span class="todo">2.4</span></td><td><a href="../../.team/board/T-001-slug.md">T-001</a>, <a href="../../.team/board/T-003-slug.md">T-003</a></td></tr>
+          <tr><td><b>Sprint N</b></td><td></td><td class="num"><b><span class="todo">n</span></b></td><td class="num"><b><span class="todo">n</span></b></td><td>actual over estimated ratio <span class="todo">n</span>, carried over into the <a href="../roadmap.html#calibration">roadmap calibration</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="risks-and-blockers">Risks and blockers</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show what threatens the goal during the sprint, and what remains at closing.</dd>
+          <dt>Content</dt><dd>One row per blocker or risk: its source (forum, question <code>Q-xxx</code>, ticket), its effect on the tickets, who unblocks, its state.</dd>
+          <dt>Why this format</dt><dd>The PO reads this table after each wave sync to know what to put in the next brief. A resolved blocker keeps its row: the retro and the metrics use it.</dd>
+          <dt>Read</dt><dd>No risk: say so.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Topic</th><th>Source</th><th>Effect</th><th>Who unblocks</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">blocker or risk</span></td><td><span class="todo">forum, Q-xxx, ticket</span></td><td><span class="todo">tickets affected</span></td><td><span class="todo">role or human via the PO</span></td><td><span class="tag warn">open</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="follow-up-of-previous-actions">Follow-up of previous actions</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Check that the actions of the previous retro were done, before adding others.</dd>
+          <dt>Content</dt><dd>One row per action of <a href="sprint-N-1.html#retro">sprint N-1</a>, cited by its identifier <code>Sn-Am</code> as a link to the sprint N-1 page: owner, state (done, in progress, abandoned), the proof drawn from this sprint. An action whose problem comes back points to the <code>Sn-Pm</code> of this sprint.</dd>
+          <dt>Why this format</dt><dd>The done criterion of each action was set at the previous retro: we observe it, we do not debate it again. An abandoned action says why.</dd>
+          <dt>Read</dt><dd>Filled at planning. First sprint: not applicable.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Action of sprint N-1</th><th>What changes</th><th>Owner</th><th>State</th><th>Proof</th></tr></thead>
+        <tbody>
+          <tr><td class="ref-id"><a href="sprint-N-1.html#SN-1-A1"><span class="todo">SN-1-A1</span></a></td><td><span class="todo">taken from the What changes column of sprint N-1</span></td><td><span class="todo">role</span></td><td><span class="tag ok">done</span></td><td><span class="todo">ticket, page or event of this sprint that shows it</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+# Path item /salles/{id}/desactivation, referenced by openapi.yaml
+
+parameters:
+  - {$ref: '../components/parameters.yaml#/IdSalle'}
+post:
+  tags: [salles]
+  operationId: desactiverSalle
+  x-endpoint-id: EP-17
+  x-module: domain/salle
+  x-release: MVP
+  x-contract: frozen
+  x-roles: [gestionnaire]
+  x-processes: [PROC-03]
+  x-entities:
+    - {id: EN-03, access: RU}
+    - {id: EN-05, access: RU, via: PROC-03}
+  x-rules: [BR-08, BR-03]
+  x-idempotence: >-
+    Idempotent : une salle déjà désactivée répond 200 avec 0 réservation annulée.
+  x-sequence: |
+    sequenceDiagram
+      actor G as Gestionnaire
+      participant F as Front SCR-06
+      participant A as API
+      participant T as PROC-03
+      participant T6 as PROC-06
+      participant D as SQLite
+      G->>F: Désactiver la salle (dialogue, MSG-08)
+      F->>A: POST /salles/{id}/desactivation
+      A->>D: BEGIN IMMEDIATE (UnitOfWork)
+      A->>D: UPDATE salles SET statut = desactivee
+      A->>T: annuler les réservations futures de la salle
+      T->>D: réservations actives de la salle, pas commencées
+      loop chaque réservation
+        T->>T6: annuler (auteur = gestionnaire, motif salle désactivée)
+        T6->>D: UPDATE statut annulee, motif, annulee_le, annulee_par
+      end
+      T-->>A: n annulées
+      A->>D: COMMIT
+      A-->>F: 200 SalleDesactivee (n annulées)
+      F-->>G: MSG-06 en bandeau
+  summary: Désactiver une salle
+  description: >-
+    Passe la salle au statut désactivée et annule ses réservations futures avec le motif « salle
+    désactivée » (PROC-03), dans la même transaction : MSG-06 annonce un nombre exact. La réservation
+    en cours reste active (BR-03).
+  requestBody:
+    required: false
+    content: {}
+  responses:
+    '200':
+      description: salle désactivée
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/salles.yaml#/SalleDesactivee'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403': {$ref: '../components/responses.yaml#/Forbidden'}
+    '404': {$ref: '../components/responses.yaml#/SalleIntrouvable'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

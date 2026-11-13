@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="verdict" content="favorable-with-reservations">   <!-- favorable | favorable-avec-reserves | defavorable -->
+  <meta name="status" content="done">                   <!-- en-cours | terminee -->
+  <meta name="date" content="2026-11-11">
+  <title>Campagne de test sprint 2 · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Campagne de test sprint 2</div>
+    <nav></nav>
+    <div class="toc-back"><a href="strategy.html">→ Stratégie de test</a><br><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Sprint 2 · QA</div>
+      <h1><span class="doc-kind">Campagne de test</span> : sprint 2</h1>
+      <p class="lede">Verdict favorable avec réserves au commit <code>9b07d3e</code> de <code>sprint/2</code> : 10 scénarios sur 11 au vert ; <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> reste rouge par <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, mineure, admise et non corrigée. <a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a>, majeure, a été corrigée et rejouée. Cette campagne applique la <a href="strategy.html">stratégie de test</a> sans la recopier.</p>
+      <div class="meta">
+        <span><b>Version</b> v1.0</span>
+        <span><b>Date</b> 11.11.2026</span>
+        <span><b>Auteur</b> QA : qa-1 (consolide), qa-2 (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag ok">terminée</span></span>
+        <span><b>Sources</b> <a href="strategy.html">stratégie de test</a> v0.1, <a href="../sprints/sprint-2.html">sprint 2</a>, tickets du sprint dans le board</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Périmètre</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que la campagne a testé, avec quels tests et où, pour qu'un résultat ne se lise jamais hors de son contexte.</dd>
+          <dt>Contenu</dt><dd>Les stories du sprint, les tickets <code>e2e</code> mergés d'où viennent les tests, l'environnement, les dates, l'état des critères d'entrée.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, un sujet par terme. Les tickets <code>e2e</code> sont cités parce que la suite jouée est celle qu'ils ont mergée : un test absent d'un ticket mergé n'existe pas pour la campagne.</dd>
+          <dt>Lire</dt><dd>Les commits sont dans les <a href="#passages">passages</a>, pas ici : il y en a un par redéploiement. Les critères d'entrée sont ceux de la <a href="strategy.html#criteres-d-entree-et-de-sortie-de-campagne">stratégie</a> : seul leur état s'écrit ici.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau, <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série, <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</dd>
+        <dt>Tickets e2e</dt><dd><a href="../../.team/board/T-024-e2e-creneau-annulation.md">T-024</a> (qa-1) : <a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a>, <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> et le test de concurrence ; <a href="../../.team/board/T-025-e2e-serie.md">T-025</a> (qa-2) : <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a>. Les deux revus sans bloquant et mergés dans <code>sprint/2</code> avant le démarrage.</dd>
+        <dt>Environnement</dt><dd><a href="../30-design/macro.html#environments">Démo et recette</a>, démarré par le QA ; Playwright tourne sur la machine de démo, projet Chromium.</dd>
+        <dt>Dates</dt><dd>du 10.11.2026 au 11.11.2026</dd>
+        <dt>Critères d'entrée</dt><dd><span class="tag ok">tenus</span> tickets du sprint mergés, build et tests des devs verts, application démarrée et qui répond sur <a href="../30-design/detailed/endpoints/EP-02.html">EP-02</a>, notes techniques des trois stories remplies ; constatés à la ligne de démarrage des <a href="#passages">passages</a>.</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Passages</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir sur quelle version chaque résultat a été obtenu, et prouver que les résultats du verdict viennent du dernier commit.</dd>
+          <dt>Contenu</dt><dd>Une ligne par événement sur « Démo et recette », dans l'ordre : démarrage, passage de la suite, ouverture d'anomalie, redéploiement après le merge d'une correction, rejeu, remise à zéro.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un journal daté, une ligne par événement, comme un journal de test (ISO/IEC/IEEE 29119-3) : le commit de chaque ligne relie un résultat au code qui l'a produit. Le dernier commit de <code>sprint/N</code> joué, rejeux compris, est le commit recetté, que le PV de recette reprend.</dd>
+          <dt>Lire</dt><dd>Un passage de la suite se fait deux fois au même commit ; le second sans le projet <code>limitation</code> (<a href="strategy.html#donnees-de-test">données de test</a>). Le double passage du critère de sortie se fait au commit recetté : une correction mergée en fin de campagne s'y rejoue donc deux fois. Les <a href="#resultats-par-scenario">résultats par scénario</a> sont ceux de ces deux passages. Un test <code>BUG-xxx</code> d'une anomalie non corrigée reste sur sa branche : il n'est pas dans <code>sprint/N</code> et ne tourne pas au commit recetté. La remise à zéro est la dernière ligne : après elle, plus aucun test ne tourne avant la pré-recette.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Date</th><th>Commit de <code>sprint/2</code></th><th>Événement</th><th>Résultat</th></tr></thead>
+        <tbody>
+          <tr><td>10.11.2026</td><td><code>4e1c9a2</code></td><td>démarrage : base recréée, jeu fictif chargé, application démarrée ; contient <a href="../../.team/board/T-024-e2e-creneau-annulation.md">T-024</a> et <a href="../../.team/board/T-025-e2e-serie.md">T-025</a></td><td>répond sur <a href="../30-design/detailed/endpoints/EP-02.html">EP-02</a> avec <code>lea.martin@exemple.test</code></td></tr>
+          <tr><td>10.11.2026</td><td><code>4e1c9a2</code></td><td>1<sup>er</sup> passage, suite complète, projet <code>limitation</code> compris</td><td><span class="tag danger">2 rouges</span> <a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a>, <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a></td></tr>
+          <tr><td>10.11.2026</td><td><code>4e1c9a2</code></td><td>2<sup>e</sup> passage, sans le projet <code>limitation</code></td><td>mêmes résultats</td></tr>
+          <tr><td>10.11.2026</td><td><code>4e1c9a2</code></td><td>ouverture de <a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a> et <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, test rouge commité sur chaque branche de correction</td><td>voir <a href="#anomalies">anomalies</a></td></tr>
+          <tr><td>11.11.2026</td><td><code>9b07d3e</code></td><td>redéploiement : merge de <code>bug-001-serie-quotidienne-samedi</code>, application relancée par le QA</td><td>répond sur <a href="../30-design/detailed/endpoints/EP-02.html">EP-02</a></td></tr>
+          <tr><td>11.11.2026</td><td><code>9b07d3e</code></td><td>rejeu de la correction : test <code>BUG-001</code> et <a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a></td><td><span class="tag ok">verts</span></td></tr>
+          <tr><td>11.11.2026</td><td><code>9b07d3e</code></td><td>1<sup>er</sup> passage au commit recetté, suite complète, projet <code>limitation</code> compris</td><td><span class="tag danger">1 rouge</span> <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> ; le test <code>BUG-002</code>, sur sa branche, n'est pas dans <code>sprint/2</code></td></tr>
+          <tr><td>11.11.2026</td><td><code>9b07d3e</code></td><td>2<sup>e</sup> passage au commit recetté, sans le projet <code>limitation</code></td><td>mêmes résultats</td></tr>
+          <tr><td>11.11.2026</td><td><code>9b07d3e</code></td><td>remise à zéro, après le dernier passage : base recréée par les migrations, <code>npm run seed</code></td><td><span class="tag ok">faite</span> <a href="../30-design/detailed/endpoints/EP-04.html">EP-04</a> ne liste aucune salle « e2e »</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="scenario-results">
+      <h2>Résultats par scénario</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer, scénario par scénario, que chaque critère d'acceptation du sprint a un test au vert, ou pourquoi il ne l'a pas.</dd>
+          <dt>Contenu</dt><dd>Un tableau par story, une ligne par scénario <code>US-xxx/Sn</code> : le test qui le prouve, son résultat aux deux passages du commit recetté, l'anomalie ou la cause qui explique un résultat qui n'est pas vert.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice de la stratégie dit ce qui est prévu ; ce tableau dit ce qui s'est passé, avec le même identifiant. Quatre résultats : <span class="tag ok">vert</span>, <span class="tag danger">rouge</span> (une anomalie est ouverte), <span class="tag warn">bloqué</span> (la cause est écrite), <span class="tag">non joué</span> (la raison est écrite). Un résultat sans test ni anomalie ni cause ne compte pas.</dd>
+          <dt>Lire</dt><dd>Test « e2e » : celui qui porte l'identifiant du scénario, sous la règle de nommage de la <a href="strategy.html#matrice-de-couverture">matrice</a>. Un scénario <span class="tag warn">sans e2e</span> dans la matrice est prouvé par le test du niveau complémentaire qu'elle nomme ; il n'a pas de second passage, ce n'est pas un e2e. Une anomalie corrigée pendant la campagne reste citée, avec le commit de sa correction. Un scénario bloqué ou non joué n'a pas de test au vert, même avec sa cause écrite : il fait manquer le premier critère de sortie et rend le verdict défavorable.</dd>
+        </dl>
+      </div>
+      <h3><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</h3>
+      <table>
+        <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S1">US-005/S1</a> réserver un créneau libre</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html#S2">US-005/S2</a> le créneau est déjà pris</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+        </tbody>
+      </table>
+      <h3><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</h3>
+      <table>
+        <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S1">US-006/S1</a> réserver une série sans conflit</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a> la série quotidienne saute le week-end</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td><a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a>, corrigée au <code>9b07d3e</code></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S3">US-006/S3</a> la date de fin dépasse 3 mois</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> des occurrences sont en conflit</td><td>e2e</td><td data-value="red"><span class="tag danger">rouge</span></td><td data-value="red"><span class="tag danger">rouge</span></td><td><a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, ouverte, admise au <a href="#verdict-qa">verdict</a></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S5">US-006/S5</a> confirmer malgré les conflits</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S6">US-006/S6</a> renoncer à la série</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S7">US-006/S7</a> l'enregistrement échoue</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+        </tbody>
+      </table>
+      <h3><a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</h3>
+      <table>
+        <thead><tr><th>Scénario</th><th>Test</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Anomalie ou cause</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S1">US-008/S1</a> annuler une réservation à venir</td><td>e2e</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td></td></tr>
+          <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html#S2">US-008/S2</a> une réservation commencée ne s'annule plus</td><td><span class="tag warn">sans e2e</span> unitaire domaine <a href="../30-design/detailed/processes/PROC-06.html">PROC-06</a>, « commencée refusée »</td><td data-value="green"><span class="tag ok">vert</span></td><td>sans objet</td><td></td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothesis"><b>Hypothèse</b>Dans cet exemple, seule <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> est rédigée. Les scénarios de <a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> et <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> sont ceux de la <a href="strategy.html#matrice-de-couverture">matrice</a>, qui ne montre que leur forme ; sur un projet, chaque story du sprint a ici tous ses scénarios.</div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Anomalies</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Suivre chaque anomalie ouverte pendant la campagne jusqu'à son effet sur le verdict.</dd>
+          <dt>Contenu</dt><dd>Une ligne par anomalie : scénario touché, sévérité, branche de correction, test <code>BUG-xxx</code> rouge puis vert, statut au board, effet au verdict.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les étapes, l'attendu, l'obtenu et la preuve sont dans le fichier de l'anomalie, au board : la campagne ne les recopie pas, elle trace le circuit de la <a href="strategy.html#gestion-des-anomalies">stratégie</a>. Le test rouge puis vert, avec ses commits, prouve la correction mieux qu'un statut.</dd>
+          <dt>Lire</dt><dd>Statut : celui du board, tenu par le PO. « Admise » : ouverte et sans effet bloquant sur le verdict, parce que mineure, ou majeure acceptée par écrit par le PO dans le <a href="#verdict-qa">verdict</a> ; le scénario qu'elle rend rouge y est cité. Une mineure admise reste au statut <code>backlog</code> ; à la recette, le PO la reporte en réserve <code>RES-xx</code> du PV. Aucune anomalie : l'écrire.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Anomalie</th><th>Scénario</th><th>Sévérité</th><th>Branche</th><th>Test <code>BUG-xxx</code></th><th>Statut</th><th>Au verdict</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a> la série quotidienne commencée un vendredi crée une occurrence le samedi</td><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a></td><td><span class="tag warn">majeure</span></td><td><code>bug-001-serie-quotidienne-samedi</code></td><td>rouge, commité en <code>7d2e4b1</code> ; vert au <code>9b07d3e</code></td><td><span class="tag ok">fait</span></td><td>corrigée et rejouée, sans effet</td></tr>
+          <tr><td><a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a> la liste des conflits affiche <code>2026-12-01</code> au lieu de <code>01.12.2026</code></td><td><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a></td><td><span class="tag info">mineure</span></td><td><code>bug-002-format-date-conflits</code></td><td>rouge, commité en <code>c58f0a3</code> sur sa branche ; non corrigée</td><td><span class="tag">backlog</span></td><td>admise, mineure : <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> rouge ; réserve du PV à la recette</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Non-régression</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Prouver que le sprint n'a pas cassé ce que les sprints précédents ont livré.</dd>
+          <dt>Contenu</dt><dd>Une ligne par story des sprints précédents, puis les tests non fonctionnels des sprints précédents, les tests d'anomalies fermées et la version du contrat d'API : nombre de tests, résultat aux deux passages du commit recetté, régression trouvée.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La suite rejouée et la règle d'entrée sont dans la <a href="strategy.html#non-regression">stratégie</a> ; ici, seulement leur résultat, par story, pour qu'une régression désigne tout de suite ce qu'elle touche. Le même critère de sortie qu'aux scénarios du sprint : vert, sauf un test qu'une anomalie admise rend rouge, cité ici.</dd>
+          <dt>Lire</dt><dd>Obligatoire : un critère de sortie en dépend. Un test instable s'écrit dans « Régression ou instabilité », avec ce qui en est fait. Les nombres de cette section plus les e2e ajoutés au sprint font le total e2e du <a href="#releve-des-tests">relevé</a>. Premier sprint : « sans objet, aucun sprint précédent ».</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Suite du sprint 1</th><th class="num">Tests e2e</th><th>1<sup>er</sup> passage</th><th>2<sup>e</sup> passage</th><th>Régression ou instabilité</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-001-se-connecter.html">US-001</a> Se connecter</td><td class="num">2</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-014-declarer-une-salle.html">US-014</a> Déclarer une salle</td><td class="num">4</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-002-voir-occupation-salle.html">US-002</a> Occupation d'une salle</td><td class="num">3</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td><a href="../20-specs/stories/US-003-voir-occupation-journee.html">US-003</a> Occupation de la journée</td><td class="num">3</td><td data-value="green"><span class="tag ok">vert</span></td><td data-value="green"><span class="tag ok">vert</span></td><td>aucune</td></tr>
+          <tr><td>Tests non fonctionnels des sprints précédents : <a href="#tests-non-fonctionnels">sondage des droits et du RGPD (un test), limitation d'EP-01 (un test)</a></td><td class="num">2</td><td data-value="green"><span class="tag ok">vert</span></td><td><span class="tag ok">vert</span> sondage ; limitation hors 2<sup>e</sup> passage</td><td>aucune</td></tr>
+          <tr><td>Tests d'anomalies fermées</td><td class="num">0</td><td colspan="2">sans objet : aucune anomalie au sprint 1</td><td></td></tr>
+          <tr><td>Contrat d'API</td><td></td><td colspan="2"><a href="../30-design/detailed/schemas/index.html#v1.1.4">v1.1.4</a>, la même qu'au sprint 1 : rien à rejouer hors du sprint</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Tests non fonctionnels</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer que les contrôles non fonctionnels dus ce sprint sont dans leurs seuils.</dd>
+          <dt>Contenu</dt><dd>Une ligne par contrôle joué : l'environnement de la mesure, le nombre de mesures, la valeur mesurée face au seuil, le statut.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le contrôle, son outil, son seuil et sa fréquence sont dans les <a href="strategy.html#tests-non-fonctionnels">tests non fonctionnels</a> de la stratégie ; ici, ce qui a été mesuré, où, et combien de fois. Le seuil est rappelé en chiffres seulement, à côté de la mesure, pour que la ligne se juge sans aller-retour.</dd>
+          <dt>Lire</dt><dd>Une mesure ne vaut que dans l'environnement que sa cible nomme (<a href="strategy.html#environnements">environnements</a>). Obligatoire : un critère de sortie en dépend. Une vérification manuelle a sa preuve versionnée dans <code>docs/40-qa/evidence/sprint-N/</code>, en lien depuis sa ligne. Un contrôle de la stratégie qui n'est pas dû ce sprint, selon sa fréquence, n'a pas de ligne : la dernière ligne les nomme.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Contrôle</th><th>Environnement</th><th>Mesures</th><th>Mesuré</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Intégrité</span> <a href="strategy.html#concurrency-test">test de concurrence</a>, <a href="../30-design/detailed/endpoints/EP-08.html">EP-08</a></td><td>Démo et recette</td><td>5 répétitions de 20 demandes</td><td>à chaque répétition : 1 succès, 19 <a href="../30-design/detailed/cross-cutting/errors.html#CRENEAU_PRIS"><code>CRENEAU_PRIS</code></a>, 0 chevauchement en base</td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td><span class="tag">Performance</span> série de 65 occurrences, <a href="../30-design/detailed/endpoints/EP-10.html">EP-10</a></td><td>Démo et recette</td><td>10 créations</td><td>la plus lente 0,71 s (seuil 1 s)</td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td><span class="tag">Disponibilité</span> redémarrage du backend</td><td>Démo et recette</td><td>1 arrêt et relance</td><td>session et réservation relues par <a href="../30-design/detailed/endpoints/EP-02.html">EP-02</a> et <a href="../30-design/detailed/endpoints/EP-11.html">EP-11</a> ; vérification manuelle, réponses avant et après : <a href="evidence/sprint-2/disponibilite-redemarrage.md">preuve</a></td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td><span class="tag">Sécurité</span> sondage de la matrice des droits</td><td>Démo et recette</td><td>11 endpoints livrés au commit recetté</td><td>les 9 autres que <a href="../30-design/detailed/endpoints/EP-01.html">EP-01</a> et <a href="../30-design/detailed/endpoints/EP-03.html">EP-03</a> refusent sans session (<code>401</code>) ; endpoints du parc : <code>403</code> pour l'employé</td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td><span class="tag">Sécurité</span> limitation de <a href="../30-design/detailed/endpoints/EP-01.html">EP-01</a></td><td>Démo et recette</td><td>6 tentatives, au 1<sup>er</sup> passage seulement</td><td>6<sup>e</sup> refusée par <a href="../30-design/detailed/cross-cutting/errors.html#TROP_DE_TENTATIVES"><code>TROP_DE_TENTATIVES</code></a></td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td><span class="tag">Accessibilité</span> <a href="../20-ux/ux-ui-spec.html#SCR-04">SCR-04</a> et le dialogue <a href="../20-ux/ux-ui-spec.html#SCR-04-conflits">Conflits de la série</a></td><td>Démo et recette</td><td>parcours clavier en e2e ; 1 audit Lighthouse ; 1 écoute au lecteur d'écran</td><td>parcours clavier vert ; Lighthouse accessibilité 97 (seuil 95) ; liste des conflits annoncée à l'ouverture (<a href="evidence/sprint-2/lecteur-ecran-ec-04.md">preuve</a>)</td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td><span class="tag">RGPD</span> sondage à deux comptes, <a href="../30-design/detailed/endpoints/EP-06.html">EP-06</a></td><td>Démo et recette</td><td>1 lecture par compte employé</td><td>0 email ni identifiant d'autrui (<a href="../30-design/detailed/cross-cutting/compliance.html#INV-67">INV-67</a>)</td><td><span class="tag ok">dans le seuil</span></td></tr>
+          <tr><td colspan="5">Pas dus ce sprint : performance de <a href="../30-design/detailed/endpoints/EP-04.html">EP-04</a>, <a href="../30-design/detailed/endpoints/EP-06.html">EP-06</a> et <a href="../30-design/detailed/endpoints/EP-07.html">EP-07</a> (endpoints non modifiés), premier affichage de <a href="../20-ux/ux-ui-spec.html#SCR-02">SCR-02</a>, audits <code>security-audit</code> et <code>gdpr-audit</code> : fin de release ou de MVP.</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Relevé des tests</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Relever, sprint après sprint, le nombre de tests de chaque niveau, pour que la forme de la pyramide se vérifie.</dd>
+          <dt>Contenu</dt><dd>Une ligne par niveau de la <a href="strategy.html#niveaux-de-test-et-pyramide">pyramide</a> : le runner, le nombre de tests qu'il rapporte au commit recetté, ce que le sprint a ajouté.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un nombre rapporté par un runner se vérifie ; « assez de tests » ne se vérifie pas. Les ordres de grandeur sont dans la stratégie, cette page ne les recopie pas : l'écart se discute en rétro, sur la suite des relevés.</dd>
+          <dt>Lire</dt><dd>Les noms de niveau sont ceux de la pyramide, au mot près. Le nombre est celui du runner, pas un décompte à la main. Total e2e : les tests de la <a href="#non-regression">non-régression</a> plus les ajoutés au sprint ; un test <code>BUG-xxx</code> resté sur sa branche n'est pas compté.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Niveau</th><th>Runner</th><th class="num">Tests au <code>9b07d3e</code></th><th class="num">Ajoutés au sprint 2</th></tr></thead>
+        <tbody>
+          <tr><td>Unitaire domaine (back)</td><td>celui de la <a href="../30-design/detailed/cross-cutting/tests.html#outillage">stratégie de test technique</a>, tant que le socle ne fixe pas les runners (point ouvert <a href="../30-design/detailed/cross-cutting/tests.html#open-points">Runners de test</a>)</td><td class="num">68</td><td class="num">37</td></tr>
+          <tr><td>Intégration du dépôt (back)</td><td>idem</td><td class="num">24</td><td class="num">12</td></tr>
+          <tr><td>Route (back), requête simulée</td><td>idem</td><td class="num">61</td><td class="num">29</td></tr>
+          <tr><td>Composant (front)</td><td>idem</td><td class="num">43</td><td class="num">20</td></tr>
+          <tr><td>e2e</td><td>Playwright</td><td class="num">28</td><td class="num">14 : 10 scénarios, 1 anomalie, concurrence, performance, clavier</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Verdict QA</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner au PO un verdict qui se déduit de la campagne, et lui dire comment préparer la recette.</dd>
+          <dt>Contenu</dt><dd>Les compteurs du commit recetté, l'état de chaque critère de sortie de la stratégie, le verdict, les anomalies admises et les scénarios qu'elles rendent rouges, les acceptations écrites du PO, la recommandation pour la recette.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Les critères de sortie de la <a href="strategy.html#criteres-d-entree-et-de-sortie-de-campagne">stratégie</a>, chacun tenu ou non tenu, avec le lien vers la section qui le prouve : le verdict en découle, il ne se négocie pas. Trois verdicts : favorable sans réserves (tous les critères tenus, aucune anomalie ouverte), favorable avec réserves (seules des mineures ouvertes, ou une majeure acceptée par écrit par le PO), défavorable (une bloquante ouverte, une majeure ouverte non acceptée, ou un autre critère manqué).</dd>
+          <dt>Lire</dt><dd>Un scénario bloqué ou non joué n'a pas de test au vert : le premier critère est non tenu et le verdict est défavorable. Seule une majeure peut être acceptée, et seulement par écrit, par le PO, dans cette section, avec la date. Le PO ne prépare la recette que sur un verdict favorable, avec ou sans réserves (G3).</dd>
+        </dl>
+      </div>
+      <div class="grid c4">
+        <div class="kpi"><div class="label">Scénarios au vert</div><div class="value" style="color:var(--ok)">10</div><div class="sub">sur 11, au commit <code>9b07d3e</code></div></div>
+        <div class="kpi"><div class="label">Rouges admis</div><div class="value" style="color:var(--danger)">1</div><div class="sub"><a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a>, par <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a></div></div>
+        <div class="kpi"><div class="label">Bloqués ou non joués</div><div class="value">0</div><div class="sub">aucune cause à écrire</div></div>
+        <div class="kpi"><div class="label">Anomalies ouvertes</div><div class="value">1</div><div class="sub">bloquante 0, majeure 0, mineure 1</div></div>
+      </div>
+      <table>
+        <thead><tr><th>Critère de sortie</th><th>État</th><th>Preuve</th></tr></thead>
+        <tbody>
+          <tr><td>chaque scénario du sprint a un test au vert, sauf ceux qu'une anomalie admise rend rouges</td><td><span class="tag ok">tenu</span></td><td><a href="#resultats-par-scenario">résultats par scénario</a> : <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a> rouge, admis par <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, mineure</td></tr>
+          <tr><td>chaque e2e rejoué deux fois, même résultat, le second sans <code>limitation</code></td><td><span class="tag ok">tenu</span></td><td><a href="#passages">passages</a> au <code>9b07d3e</code></td></tr>
+          <tr><td>aucune bloquante ouverte, aucune majeure ouverte sans acceptation écrite</td><td><span class="tag ok">tenu</span></td><td><a href="#anomalies">anomalies</a> : <a href="../../.team/board/BUG-001-serie-quotidienne-samedi.md">BUG-001</a> fait</td></tr>
+          <tr><td>non-régression au vert, sauf les tests qu'une anomalie admise rend rouges</td><td><span class="tag ok">tenu</span></td><td><a href="#non-regression">non-régression</a></td></tr>
+          <tr><td>contrôles non fonctionnels du sprint dans leurs seuils, dont la concurrence</td><td><span class="tag ok">tenu</span></td><td><a href="#tests-non-fonctionnels">tests non fonctionnels</a></td></tr>
+        </tbody>
+      </table>
+      <div class="callout decision"><b>Verdict : favorable avec réserves</b>Tous les critères de sortie sont tenus ; aucune bloquante ni majeure ouverte ; une mineure ouverte, <a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, d'où la réserve.</div>
+      <dl class="defs">
+        <dt>Anomalies admises</dt><dd><a href="../../.team/board/BUG-002-format-date-conflits.md">BUG-002</a>, mineure : rend rouge <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a>. Reste au statut <code>backlog</code> ; à la recette, le PO la reporte en réserve <code>RES-xx</code> du PV.</dd>
+        <dt>Acceptations écrites du PO</dt><dd>aucune : aucune majeure ouverte</dd>
+        <dt>Recommandation</dt><dd>recette possible, sur « Démo et recette » remis au jeu fictif seul, au commit <code>9b07d3e</code>. Faire dérouler par l'humain d'abord <a href="../20-specs/stories/US-006-reserver-une-serie.html#S4">US-006/S4</a>, pour qu'il juge la réserve sur l'écran, puis <a href="../20-specs/stories/US-006-reserver-une-serie.html#S2">US-006/S2</a>, corrigé pendant la campagne.</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

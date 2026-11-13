@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PROC-04 Chercher le créneau libre le plus proche · Conception technique détaillée · Réservation de salles</title>
+  <!-- Process metadata, read by team/scripts/detailed-pages.mjs -->
+  <meta name="id" content="PROC-04">
+  <meta name="name" content="Chercher le créneau libre le plus proche">
+  <meta name="release" content="R2">
+  <meta name="module" content="domain/reservation">
+  <meta name="entities" content="EN-03:R EN-05:R">
+  <meta name="rules" content="BR-01 BR-02 BR-03 BR-09">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Traitement PROC-04</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#crud-matrix">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">PROC-04</span> : Chercher le créneau libre le plus proche</h1>
+      <p class="lede">Quand la recherche ne trouve rien, proposer le créneau libre le plus proche de celui demandé. Conception provisoire (<a href="../endpoints/EP-18.html">EP-18</a>) : aucune règle ne dit encore ce que « le plus proche » veut dire, le point est ouvert sur l'opération.</p>
+      <div class="meta">
+        <span><b>Release</b> <span class="tag accent">R2</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Appelé par et entités</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Situer le traitement dans l'application.</dd>
+          <dt>Contenu</dt><dd>Qui l'appelle, ce qu'il appelle, les données qu'il touche en lettres CRUD, ses règles et ses erreurs métier.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, un fait par terme ; calculée, elle reste juste sans rien écrire.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les balises <code>meta</code> de la page.</dd>
+        </dl>
+      </div>
+      <!-- gen:process-usage -->
+      <dl class="defs">
+        <dt>Module</dt><dd><a href="../cross-cutting/code-organization.html#module-domain-reservation"><code>domain/reservation</code></a></dd>
+        <dt>Appelé par</dt><dd><a href="../endpoints/EP-18.html">EP-18</a> <code>GET /creneaux/plus-proche</code> <span class="tag accent">R2</span></dd>
+        <dt>Données</dt><dd><a href="../entities/EN-03.html">EN-03</a> Salle <span class="crud" data-tip="lecture">R</span><br><a href="../entities/EN-05.html">EN-05</a> Réservation <span class="crud" data-tip="lecture">R</span></dd>
+        <dt>Règles</dt><dd><a href="../../../20-specs/functional-design.html#BR-01">BR-01</a>, <a href="../../../20-specs/functional-design.html#BR-02">BR-02</a>, <a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>, <a href="../../../20-specs/functional-design.html#BR-09">BR-09</a></dd>
+        <dt>Erreurs métier</dt><dd>aucune</dd>
+      </dl><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Algorithme proposé</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner l'algorithme envisagé tant que l'opération qui appelle le traitement est provisoire.</dd>
+          <dt>Contenu</dt><dd>Les étapes envisagées, une par contrôle ou par action. Ce qui reste à trancher est dans les points ouverts de l'opération.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste numérotée, comme l'algorithme d'un traitement figé. Niveau réduit : le reste de la page s'écrit au sprint planning qui fige l'opération.</dd>
+        </dl>
+      </div>
+      <ol>
+        <li>Salles candidates : celles que retiendrait <a href="../endpoints/EP-07.html">EP-07</a> sans la condition de disponibilité (actives, capacité, équipements, <a href="../../../20-specs/functional-design.html#BR-09">BR-09</a>).</li>
+        <li>Réservations actives du jour de ces salles, en une requête (index <code>reservations(salle_id, jour, statut)</code>).</li>
+        <li>Pour chaque salle, chaque début possible du jour par pas de 15 minutes, de 08:00 à 19:00 moins la durée demandée, qui n'est pas dans le passé (<a href="../../../20-specs/functional-design.html#BR-02">BR-02</a>, <a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>) et ne chevauche rien (<a href="../../../20-specs/functional-design.html#BR-01">BR-01</a>).</li>
+        <li>Le plus petit écart avec le début demandé ; à égalité, le plus tôt, puis la plus petite capacité, puis le nom. Au plus 10 salles × 44 débuts : aucun index de plus.</li>
+      </ol>
+      <p>Sortie : <a href="../schemas/CreneauPropose.html"><code>CreneauPropose</code></a>, ou rien (<code>204</code> de <a href="../endpoints/EP-18.html">EP-18</a>).</p>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

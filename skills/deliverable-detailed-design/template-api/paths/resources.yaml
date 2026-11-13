@@ -1,0 +1,123 @@
+# Path item /resources, referenced by openapi.yaml
+
+get:
+  tags: [resources]
+  operationId: listResources
+  x-endpoint-id: EP-01
+  x-module: domain/resource
+  x-release: MVP
+  x-contract: frozen
+  x-roles: [user, administrator]
+  x-entities:
+    - {id: EN-01, access: R}
+  x-idempotence: read
+  x-sequence: |
+    sequenceDiagram
+      actor U as User
+      participant F as Front SCR-01
+      participant A as API
+      participant D as Database
+      U->>F: opens the list
+      F->>A: GET /resources?day=...
+      A->>D: active resources of the day
+      A-->>F: 200 Resource[]
+      alt empty list
+        F-->>U: empty state of the screen
+      else error
+        F-->>U: technical error of the screen and Retry
+      else
+        F-->>U: the list
+      end
+  summary: List the resources of a day
+  description: >-
+    TO REPLACE. What the operation does, its sorting and what it excludes, in sentences; the rules
+    cited by their BR-xx.
+  parameters:
+    - {$ref: '../components/parameters.yaml#/Day'}
+  responses:
+    '200':
+      description: active resources of the day, sorted by name
+      content:
+        application/json:
+          schema:
+            type: array
+            items: {$ref: '../components/schemas/resources.yaml#/Resource'}
+          example:
+            - {id: 1, name: First resource, day: '2026-01-05', status: active}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}
+post:
+  tags: [resources]
+  operationId: createResource
+  x-endpoint-id: EP-02
+  x-module: domain/resource
+  x-release: R2
+  x-contract: provisional
+  x-roles: [administrator]
+  x-entities:
+    - {id: EN-01, access: C}
+    - {id: EN-02, access: R}
+    # access obtained through a process of x-processes, included in its meta entities:
+    # - {id: EN-01, access: C, via: PROC-01}
+  x-idempotence: >-
+    Not idempotent: an identical second request answers 409 NAME_TAKEN. The front disables the button
+    during the call.
+  x-sequence: |
+    sequenceDiagram
+      actor U as Administrator
+      participant F as Front SCR-01
+      participant A as API
+      participant X as External system X
+      participant D as Database
+      U->>F: Create
+      F->>A: POST /resources
+      A->>X: check the eligibility
+      A->>D: begin transaction
+      A->>D: name already taken?
+      alt name taken
+        A->>D: roll back the transaction
+        A-->>F: 409 NAME_TAKEN
+        F-->>U: message under the field, input kept
+      else free
+        A->>D: insert, references read
+        A->>D: commit the transaction
+        A-->>F: 201 Resource
+        F-->>U: back to the list
+      end
+  x-open:
+    - impact: medium
+      subject: "TO REPLACE: answer when external system X rejects the resource; to settle before freezing the operation."
+      hypothesis: "422 with a dedicated business code."
+  summary: Create a resource
+  description: >-
+    Provisional operation, at the reduced level: summary, roles, entities or processes, open points.
+    Sequence, examples and fine error cases are optional until the sprint planning that freezes it.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema: {$ref: '../components/schemas/resources.yaml#/ResourceRequest'}
+        example: {name: First resource, day: '2026-01-05'}
+  responses:
+    '201':
+      description: resource created
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/resources.yaml#/Resource'}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403': {$ref: '../components/responses.yaml#/Forbidden'}
+    '409':
+      description: an active resource already has this name
+      x-codes: [NAME_TAKEN]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Problem'}
+          example:
+            type: about:blank
+            title: Name already taken
+            status: 409
+            code: NAME_TAKEN
+            field: name
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

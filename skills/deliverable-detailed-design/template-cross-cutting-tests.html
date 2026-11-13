@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Technical test strategy · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/cross-cutting/tests.html -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Technical test strategy</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#site-map">Cross-cutting</a></div>
+      <h1><span class="doc-kind">Technical test strategy</span>: what the devs test</h1>
+      <p class="lede">The unit and integration tests the devs write with their code. The e2e tests of the Gherkin criteria belong to QA. Each test of a rule cites its <code>BR-xx</code> (<a href="compliance.html#INV-56">INV-56</a>).</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="tooling">Tooling</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the devs test with.</dd>
+          <dt>Content</dt><dd>The tools of each level (unit, integration, component) and their environment.</dd>
+          <dt>Why this formalism</dt><dd>The tooling of the stack foundation applied to the product, as a definition list: one level per term.</dd>
+        </dl>
+      </div>
+      <p><span class="todo">back and front runners of the foundation, test database, fixed clock, what is simulated</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="required-cases">Required cases</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what each test must cover, so that a ticket is not handed in without it.</dd>
+          <dt>Content</dt><dd>One row per target (domain object, process, repository, route, component), with its test level and its cases.</dd>
+          <dt>Why this formalism</dt><dd>A target, level, cases table reads as a checklist in review (<a href="compliance.html#INV-56">INV-56</a>, <a href="compliance.html#INV-57">INV-57</a>).</dd>
+          <dt>Reading</dt><dd>The edge cases of a process are in its page: cited here, never copied.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Target</th><th>Type</th><th>Required cases</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">PROC-xx as a link</span></td><td><span class="todo">domain unit</span></td><td><span class="todo">edge cases of the process page</span></td></tr>
+          <tr><td>Routes, all</td><td>inbound adapter</td><td>statuses and bodies of the API contract, <code>problem+json</code> with <code>code</code>; <code>401</code> without a session except public endpoints; <code>403</code> according to the <a href="security.html#rights-matrix">rights matrix</a>; unknown field rejected</td></tr>
+          <tr><td>API contract</td><td>front test</td><td>each value of <a href="../schemas/index.html#ErrorCode"><code>ErrorCode</code></a> has its translation; an unknown code, status or property does not crash the screen (<a href="compliance.html#INV-59">INV-59</a>)</td></tr>
+          <tr><td>Screens</td><td>component</td><td>nominal, empty, loading, error states of the UX/UI spec (<a href="compliance.html#INV-57">INV-57</a>)</td></tr>
+        </tbody>
+      </table>
+    </section>
+    <section class="section" id="open-points" data-level="recommended">
+      <h2 id="open-points">Open points</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List what remains to settle on the tests.</dd>
+          <dt>Content</dt><dd>One point per row, sorted by decreasing impact: the subject, the hypothesis the code follows meanwhile, the question <code>Q-xxx</code> if it is asked to the PO.</dd>
+          <dt>Why this formalism</dt><dd>A table, because each point has the same attributes and compares with the others.</dd>
+          <dt>Reading</dt><dd><ul><li><span class="impact high">high</span> the answer can change the data model, a frozen operation of the API contract or what structures the whole code</li><li><span class="impact medium">medium</span> the answer can change a provisional operation, a process, a schema not frozen or a screen</li><li><span class="impact low">low</span> the answer only changes a label, a message, a value or an edge case</li></ul></dd>
+          <dt>Source</dt><dd>Written here only once; the generator takes it over in the <a href="../open-points.html">open points view</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Subject</th><th>Hypothesis kept</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="medium"><span class="impact medium">medium</span></td><td><span class="todo">what remains to settle (for example what the foundation does not set yet)</span></td><td><span class="todo">what the code follows meanwhile</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

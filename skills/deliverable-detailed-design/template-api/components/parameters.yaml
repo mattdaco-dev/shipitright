@@ -1,0 +1,8 @@
+# components/parameters, each entry referenced by openapi.yaml
+
+Day:
+  name: day
+  in: query
+  required: true
+  description: day consulted
+  schema: {$ref: 'schemas/common.yaml#/Day'}

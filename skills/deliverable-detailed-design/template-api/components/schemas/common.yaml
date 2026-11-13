@@ -1,0 +1,8 @@
+# domain: Common
+# Schemas named in openapi.yaml under components/schemas
+
+Day:
+  type: string
+  format: date
+  description: YYYY-MM-DD date
+  examples: ['2026-01-05']

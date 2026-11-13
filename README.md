@@ -17,8 +17,8 @@ language works (any BCP 47 code: `en`, `fr`, `de`, `pt-BR`...). The plugin ships
 labels in English and French; for another language, the PO translates them when it creates the
 project.
 
-The team's own prompts and process documents are currently written in French. This does not change
-the language of your project.
+The team's own prompts and process documents are written in English. This does not change the
+language of your project.
 
 ## Requirements
 
@@ -61,7 +61,7 @@ write by hand:
 ```
 
 Then open Claude Code in that folder. On a new need, the PO creates the skeleton (`.team/`, `docs/`,
-a git repository on the `conception` branch), then leads the framing. The folder must contain
+a git repository on the `design` branch), then leads the framing. The folder must contain
 neither `.team/` nor `docs/`: an existing `docs/` makes the creation fail, so move it or pick another
 folder. An existing `README.md` is kept and gets a `ShipItRight` section.
 
@@ -98,7 +98,7 @@ Check the plugin and the marketplace: `claude plugin validate .` from the root o
 ## Contents
 
 - `agents/`: the PO (main session) and the team's subagents.
-- `skills/`: shared rules (`regles-team`), project creation, Notion board, prototype bar
+- `skills/`: shared rules (`team-rules`), project creation, Notion board, prototype bar
   (`proto-bar`), and one skill per deliverable (HTML templates included).
 - `team/`: deliverable scripts, assets (`doc.css`, `doc.js`), interface labels (`i18n/`),
   conventions (including the format of stack and design system foundations, declared by each

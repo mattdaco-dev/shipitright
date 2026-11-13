@@ -1,0 +1,26 @@
+# domain: Statistiques
+# Schémas nommés dans openapi.yaml sous components/schemas
+
+StatistiquesOccupation:
+  type: object
+  additionalProperties: false
+  description: taux d'occupation par salle sur une période (échangé par une opération provisoire, release R3)
+  required: [du, au, salles]
+  properties:
+    du: {$ref: 'common.yaml#/Jour'}
+    au: {$ref: 'common.yaml#/Jour'}
+    salles:
+      type: array
+      items: {$ref: '#/OccupationSalle'}
+OccupationSalle:
+  type: object
+  additionalProperties: false
+  description: indicateurs d'une salle sur la période (agrégat calculé, pas une projection de EN-03)
+  required: [salleId, salleNom, heuresReservees, heuresOuvrees, taux, annulations]
+  properties:
+    salleId: {type: integer, minimum: 1}
+    salleNom: {type: string}
+    heuresReservees: {type: number, minimum: 0, description: réservations actives et passées}
+    heuresOuvrees: {type: number, minimum: 0, description: 'jours ouvrés de la période x 11 h'}
+    taux: {type: number, minimum: 0, maximum: 1}
+    annulations: {type: integer, minimum: 0}

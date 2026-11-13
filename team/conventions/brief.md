@@ -1,51 +1,52 @@
-# Brief d'agent
+# Agent brief
 
-Le brief est le seul message qu'un agent reçoit. Il est rédigé par le PO au moment du dispatch.
+The brief is the only message an agent receives. The PO writes it at dispatch time.
 
-## Règles
+## Rules
 
-- **Autonome** : l'agent ne voit pas la conversation. Tout ce qui n'est pas dans le brief ou dans un
-  fichier qu'il désigne n'existe pas pour lui.
-- **Comportemental, sans chemins vers le code** : on décrit le résultat attendu (types, signatures,
-  critères, hors périmètre), pas les fichiers à toucher. Les chemins de code vieillissent et trompent un
-  agent frais. Les chemins vers les **livrables et le ticket** sont, eux, indispensables.
-- **Court** : un brief qui recopie des pages de spec est un brief raté. Il pointe vers la spec.
-- **Scénarios et jeux cités** : un brief de ticket cite les scénarios `US-xxx/Sn` qu'il sert et les
-  jeux de données d'exemple de la story qui les illustrent (`US-xxx/Dn`), en lien, sans les recopier. Un
-  brief qui ne les cite pas ne passe pas la DoR (`PROCESS.md`, section 7).
-- **État vérifié, livrables cités** : un état de l'environnement (dépendances installées, branche à
-  jour, fichier généré) n'entre dans le brief que vérifié par une commande au dispatch. Un
-  comportement défini par un livrable se cite par son identifiant et la version du livrable
-  (`EC-xx`, `MSG-xx`, spec v0.6), sans le paraphraser.
+- **Self-contained**: the agent does not see the conversation. Anything that is not in the brief or in
+  a file it points to does not exist for the agent.
+- **Behavioral, without paths to code**: describe the expected result (types, signatures, criteria,
+  out of scope), not the files to touch. Code paths go stale and mislead a fresh agent. Paths to the
+  **deliverables and the ticket**, on the other hand, are essential.
+- **Short**: a brief that copies pages of spec is a failed brief. It points to the spec.
+- **Scenarios and data sets cited**: a ticket brief cites the `US-xxx/Sn` scenarios it serves and the
+  story's example data sets that illustrate them (`US-xxx/Dn`), as links, without copying them. A
+  brief that does not cite them does not pass the DoR (`PROCESS.md`, section 7).
+- **State checked, deliverables cited**: a state of the environment (dependencies installed, branch up
+  to date, generated file) goes into the brief only once checked by a command at dispatch. A behavior
+  defined by a deliverable is cited by its identifier and the deliverable's version (`SCR-xx`,
+  `MSG-xx`, spec v0.6), without paraphrasing it.
 
-## Gabarit
+## Template
 
 ```markdown
-Tu es <rôle>, instance <rôle-n>, dans la team ShipItRight. Projet : <nom>, à la racine du
-dossier courant.
+You are <role>, instance <role-n>, in the ShipItRight team. Project: <name>, at the root of the
+current folder.
 
 ## Mission
-<une phrase : ce que tu dois produire>
+<one sentence: what you must produce>
 
-## À lire
-- Ticket : .team/board/T-012-<slug>.md   (ou le livrable à produire)
-- Entrées : <livrables utiles, par chemin>
-- Forum : <sujets ouverts qui te mentionnent, par chemin>   (ou "aucun")
-- Questions répondues récemment : <Q-xxx>                  (ou "aucune")
+## To read
+- Ticket: .team/board/T-012-<slug>.md   (or the deliverable to produce)
+- Inputs: <useful deliverables, by path>
+- Forum: <open topics that mention you, by path>   (or "none")
+- Recently answered questions: <Q-xxx>             (or "none")
 
-## Attendu
-<résultat observable, critères de fin, ce qui est hors périmètre>
-- Scénarios servis : <US-xxx/Sn, …>                         (ticket de code ou e2e)
-- Jeux de données d'exemple : <US-xxx/Dn qui illustrent ces scénarios>   (ou « aucun dans la story »)
+## Expected
+<observable result, completion criteria, what is out of scope>
+- Scenarios served: <US-xxx/Sn, …>                         (code or e2e ticket)
+- Example data sets: <US-xxx/Dn that illustrate these scenarios>   (or "none in the story")
 
-## Cadre
-- Skill : invoque avec l'outil Skill le skill de ton livrable (shipitright:<skill>) avant de lire un
-  fichier du plugin ou d'en lancer un script ; préchargé, il ne donne pas ses permissions.
-- Branche / worktree : <si ticket de code>
-- Scratchpad : <scratchpad>/<rôle-n>/ ; navigateur : un Chromium headless à toi, pas le Chrome
+## Frame
+- Skill: invoke with the Skill tool the skill of your deliverable (shipitright:<skill>) before reading
+  a plugin file or running one of its scripts; preloaded, it does not grant its permissions.
+- Branch / worktree: <if code ticket>
+- Scratchpad: <scratchpad>/<role-n>/; browser: a headless Chromium of your own, not the Chrome
   DevTools MCP
-- Budget de revue : <nombre de tours d'auto-revue>
-- Autorisations particulières : <installation d'outil accordée, etc.>   (ou "aucune")
+- Review budget: <number of self-review rounds>
+- Special permissions: <tool installation granted, etc.>   (or "none")
 
-## Fin
-Rapport au format team/conventions/rapport.md.
+## End
+Report in the format of team/conventions/report.md.
+```

@@ -5,22 +5,21 @@
 // Usage: node team/scripts/questions-page.mjs [<project dir>]   (default: the current directory)
 import { readFileSync, readdirSync, writeFileSync, existsSync } from 'node:fs';
 import { join, basename } from 'node:path';
-import { projectLang, hasProjectLang, loadLabels, makeT, formatDate } from './lib/i18n.mjs';
+import { projectLang, loadLabels, makeT, formatDate } from './lib/i18n.mjs';
 
 const root = process.argv[2] ?? '.';
-if ( !existsSync(join(root, '.team/questions'))) {
+if (!existsSync(join(root, '.team/questions'))) {
   console.error('Usage: questions-page.mjs [<project dir>]'); process.exit(2);
 }
 const docs = join(root, 'docs');
-// Labels in the project language (team/conventions/langue.md)
+// Labels in the project language (team/conventions/language.md)
 const lang = projectLang(root);
 const t = makeT(lang, loadLabels(root, ['questions'], lang));
-const LEGACY = !hasProjectLang(root);
 const esc = (t) => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
-// Project name, from the steering page docs/index.html (toc-project), else from an old portal title "Portail : Name"
+// Project name, from the steering page docs/index.html (toc-project), else the name of the project folder
 const portal = existsSync(join(docs, 'index.html')) ? readFileSync(join(docs, 'index.html'), 'utf8') : '';
-const project = ((portal.match(/<div class="toc-project">([^<]+)<\/div>/) || portal.match(/<h1>[\s\S]*?<\/span>\s*:\s*([^<]+)<\/h1>/) || [])[1] || basename(root)).trim();
+const project = ((portal.match(/<div class="toc-project">([^<]+)<\/div>/) || [])[1] || basename(root)).trim();
 
 // Minimal front matter: "key: value  # comment", lists as [a, b]
 const parse = (src) => {
@@ -63,13 +62,13 @@ const firstFile = (dir, id) => {
 };
 const has = (file, id) => existsSync(join(docs, file)) && readFileSync(join(docs, file), 'utf8').includes(`id="${id}"`);
 const target = (id) => {
-  if (/^(RG|PF|MSG|CALC)-/.test(id)) {
-    if (has('20-specs/conception-fonctionnelle.html', id)) return `20-specs/conception-fonctionnelle.html#${id}`;
-    if (has('00-cadrage/cadrage.html', id)) return `00-cadrage/cadrage.html#${id}`;
+  if (/^(BR|FL|MSG|CALC)-/.test(id)) {
+    if (has('20-specs/functional-design.html', id)) return `20-specs/functional-design.html#${id}`;
+    if (has('00-framing/framing.html', id)) return `00-framing/framing.html#${id}`;
   }
   if (/^US-/.test(id)) return firstFile('20-specs/stories', id);
   if (/^EPIC-/.test(id)) return firstFile('20-specs/epics', id);
-  if (/^EC-/.test(id) && existsSync(join(docs, '20-ux/spec-ux-ui.html'))) return `20-ux/spec-ux-ui.html#${id}`;
+  if (/^SCR-/.test(id) && existsSync(join(docs, '20-ux/ux-ui-spec.html'))) return `20-ux/ux-ui-spec.html#${id}`;
   return null;
 };
 const ref = (id) => { const t = target(id); return t ? `<a href="${t}">${esc(id)}</a>` : esc(id); };
@@ -79,28 +78,29 @@ const qs = readdirSync(join(root, '.team/questions')).filter((f) => /^Q-\d+.*\.m
   return { file: f, id: meta.id || f.match(/^(Q-\d+)/)[1], meta, parts: sections(body) };
 });
 
-// Status code (front matter statut) -> tag class; group heading and tag label come from the dictionary
-const STATUS = { ouverte: 'warn', remontee: 'danger', repondue: 'ok' };
-const SECTION = { ouverte: 'open', remontee: 'raised', repondue: 'answered' };
-// The answer part: its "## Réponse" heading in a project created before 0.4.0; otherwise the heading is
-// written in the project language, so the answer is the last part of an answered question (forum.md order)
-const isAnswer = (q, i) => (LEGACY ? /réponse/i.test(q.parts[i].title) : q.meta.statut === 'repondue' && i > 0 && i === q.parts.length - 1);
+// Status code (front matter status) -> tag class; it is also the code of its section. Group heading and tag
+// label come from the dictionary
+const STATUS = { open: 'warn', raised: 'danger', answered: 'ok' };
+const statusOf = (q) => q.meta.status || 'open';
+// The answer part: its heading is written in the project language, so the answer is the last part of an
+// answered question (forum.md order)
+const isAnswer = (q, i) => statusOf(q) === 'answered' && i > 0 && i === q.parts.length - 1;
 const card = (q) => {
-  const s = q.meta.statut || 'ouverte';
-  const tags = [`<span class="tag ${STATUS[s] || STATUS.ouverte}">${esc(STATUS[s] ? t(`questions.status.${s}`) : s)}</span>`];
-  if (q.meta.bloquant === 'oui') tags.push(`<span class="tag danger">${t('questions.blocking')}</span>`);
+  const s = statusOf(q);
+  const tags = [`<span class="tag ${STATUS[s] || STATUS.open}">${esc(STATUS[s] ? t(`questions.status.${s}`) : s)}</span>`];
+  if (q.meta.blocking === 'yes') tags.push(`<span class="tag danger">${t('questions.blocking')}</span>`);
   const meta = [];
-  if (q.meta.de) meta.push(`<span><b>${t('questions.field.from')}</b> ${esc(q.meta.de)}</span>`);
-  if (q.meta.pour) meta.push(`<span><b>${t('questions.field.for')}</b> ${esc(q.meta.pour)}</span>`);
-  if ((q.meta.lie_a || []).length) meta.push(`<span><b>${t('questions.field.linked')}</b> ${q.meta.lie_a.map(ref).join(', ')}</span>`);
+  if (q.meta.from) meta.push(`<span><b>${t('questions.field.from')}</b> ${esc(q.meta.from)}</span>`);
+  if (q.meta.target) meta.push(`<span><b>${t('questions.field.for')}</b> ${esc(q.meta.target)}</span>`);
+  if ((q.meta.linked_to || []).length) meta.push(`<span><b>${t('questions.field.linked')}</b> ${q.meta.linked_to.map(ref).join(', ')}</span>`);
   meta.push(`<span><b>${t('questions.field.file')}</b> <code>.team/questions/${esc(q.file)}</code></span>`);
   const parts = q.parts.map((p, i) => `<div class="q-part${isAnswer(q, i) ? ' answer' : ''}"><h4>${esc(p.title)}</h4>${md(p.lines)}</div>`).join('');
   return `<article class="q-card" id="${esc(q.id)}"><header><span class="q-id">${esc(q.id)}</span>${tags.join('')}</header>
   <div class="meta">${meta.join('')}</div>${parts}</article>`;
 };
 
-const groups = Object.keys(STATUS).map((s) => [s, qs.filter((q) => (q.meta.statut || 'ouverte') === s)]).filter(([, l]) => l.length);
-const count = (s) => qs.filter((q) => (q.meta.statut || 'ouverte') === s).length;
+const groups = Object.keys(STATUS).map((s) => [s, qs.filter((q) => statusOf(q) === s)]).filter(([, l]) => l.length);
+const count = (s) => qs.filter((q) => statusOf(q) === s).length;
 const todayIso = new Date().toISOString().slice(0, 10);
 
 const html = `<!doctype html>
@@ -129,14 +129,14 @@ const html = `<!doctype html>
       <h1>${t('questions.heading', { kind: `<span class="doc-kind">${t('questions.kind')}</span>`, title: esc(project) })}</h1>
       <p class="lede">${t('questions.lede')}</p>
       <div class="meta">
-        <span><b>${t('questions.meta.open')}</b> ${count('ouverte')}</span>
-        <span><b>${t('questions.meta.raised')}</b> ${count('remontee')}</span>
-        <span><b>${t('questions.meta.answered')}</b> ${count('repondue')}</span>
-        <span><b>${t('questions.meta.blocking-open')}</b> ${qs.filter((q) => q.meta.bloquant === 'oui' && q.meta.statut !== 'repondue').length}</span>
+        <span><b>${t('questions.meta.open')}</b> ${count('open')}</span>
+        <span><b>${t('questions.meta.raised')}</b> ${count('raised')}</span>
+        <span><b>${t('questions.meta.answered')}</b> ${count('answered')}</span>
+        <span><b>${t('questions.meta.blocking-open')}</b> ${qs.filter((q) => q.meta.blocking === 'yes' && statusOf(q) !== 'answered').length}</span>
         <span><b>${t('questions.meta.generated')}</b> <time datetime="${todayIso}">${formatDate(todayIso, lang)}</time></span>
       </div>
     </header>
-${groups.length ? groups.map(([s, l]) => `    <section class="section" data-section="${SECTION[s]}">
+${groups.length ? groups.map(([s, l]) => `    <section class="section" data-section="${s}">
       <h2>${t(`questions.group.${s}`)}</h2>
       ${l.map(card).join('\n      ')}
     </section>`).join('\n') : `    <section class="section"><h2>${t('questions.none.title')}</h2><p>${t('questions.none.text')}</p></section>`}
@@ -147,5 +147,5 @@ ${groups.length ? groups.map(([s, l]) => `    <section class="section" data-sect
 </html>
 `;
 writeFileSync(join(docs, 'questions.html'), html);
-console.log(`docs/questions.html : ${qs.length} question(s)`);
-if (t.missing.size) console.error(`libellés absents : ${[...t.missing].join(', ')}`);
+console.log(`docs/questions.html: ${qs.length} question(s)`);
+if (t.missing.size) console.error(`missing labels: ${[...t.missing].join(', ')}`);

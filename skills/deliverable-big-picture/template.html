@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Big picture · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Big picture</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P1 · Analysis and exploration</div>
+      <h1><span class="doc-kind">Big picture</span>: PROJECT_NAME</h1>
+      <p class="lede"><span class="todo">one sentence that says which journey the timeline covers, from the first to the last event</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> BA</span>
+        <span><b>Contributors</b> PO, UX, Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Sources</b> <a href="../00-framing/framing.html">framing</a> (vision, personas, glossary), questions Q-xxx</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="goals-and-scope">Goals and scope</h2>
+      <p class="hint">What this big picture must make possible, and what it looks at. The vision and the personas are in the framing: we do not copy them.</p>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Goals</h4>
+          <ul>
+            <li>Tell the target operation end to end, flow by flow.</li>
+            <li>Identify the events, the actors and the systems.</li>
+            <li>Surface what must still be settled before the functional design.</li>
+            <li><span class="todo">goal specific to the project, if needed</span></li>
+          </ul>
+        </div>
+        <div class="card soft">
+          <h4>Scope</h4>
+          <p><b>We look at</b>: <span class="todo">what the timeline covers, MVP and beyond</span></p>
+          <p><b>We do not look at</b>: <span class="todo">what is left aside, and why</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="legend">Legend</h2>
+      <p class="hint">The legend of big picture event storming (Brandolini). Keep it as is: every project reads the same one.</p>
+      <div class="legend">
+        <span><i style="background:var(--es-event)"></i>Business event ("I …", lived by the actor)</span>
+        <span><i class="pivot"></i>Pivotal event (closes a phase)</span>
+        <span><i style="background:var(--es-actor)"></i>Actor</span>
+        <span><i style="background:var(--es-system)"></i>External system</span>
+        <span><i style="background:var(--es-hotspot)"></i>Hotspot (question, conflict, risk)</span>
+        <span><i style="background:var(--es-opportunity)"></i>Opportunity</span>
+        <span><i class="lane"></i>Lane: one flow</span>
+        <span><i class="out"></i>Out of scope</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="event-timeline">Event timeline</h2>
+      <p class="hint">Phases follow each other from left to right and wrap. Within a phase, one lane per flow, one column per moment: the event on top ("I …", from the point of view of its actor), then the actor, the system, the hotspot or the opportunity. Arrows follow the flow within a phase; a "→ 3" pointer shows where the lane continues.</p>
+      <!-- data-lanes: the lanes, in display order. data-lanes-out: those out of scope, greyed and without arrows.
+           Each .bp-col: data-lane (its lane) and data-t (its moment in the phase, columns line up from one lane to another).
+           Arrows: automatic from one event to the next of its lane. data-flow="end" on a column breaks the chain
+           (alternatives). Arrow between lanes: id="ev-xxx" on the target, data-links="ev-xxx" on the source event. -->
+      <div class="bp-frise" data-lanes="Flow A ; Flow B ; Out of scope" data-lanes-out="Out of scope">
+
+        <div class="bp-phase" data-phase="1. Phase">
+          <div class="bp-col" data-lane="Flow A" data-t="1">
+            <div class="sticky event"><span class="todo">I …</span></div>
+            <div class="sticky actor"><span class="todo">actor</span></div>
+          </div>
+          <div class="bp-col" data-lane="Flow A" data-t="2">
+            <div class="sticky event"><span class="todo">I …</span></div>
+            <div class="sticky actor"><span class="todo">actor</span></div>
+            <div class="sticky system"><span class="todo">external system</span></div>
+          </div>
+          <div class="bp-col" data-lane="Flow A" data-t="3">
+            <div class="sticky event pivot"><span class="todo">I … (pivotal)</span></div>
+            <div class="sticky actor"><span class="todo">actor</span></div>
+          </div>
+          <div class="bp-col" data-lane="Flow B" data-t="2">
+            <div class="sticky event"><span class="todo">I …</span></div>
+            <div class="sticky actor"><span class="todo">actor</span></div>
+            <div class="sticky hotspot"><a href="../questions.html#Q-001">Q-001</a> · <span class="todo">question</span></div>
+          </div>
+        </div>
+
+        <div class="bp-phase" data-phase="2. Phase">
+          <div class="bp-col" data-lane="Flow A" data-t="1">
+            <div class="sticky event"><span class="todo">I …</span></div>
+            <div class="sticky actor"><span class="todo">actor</span></div>
+            <div class="sticky opportunity"><span class="todo">opportunity</span></div>
+          </div>
+          <div class="bp-col" data-lane="Out of scope" data-t="1">
+            <div class="sticky event"><span class="todo">I … (seen but excluded)</span></div>
+            <div class="sticky actor"><span class="todo">actor</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="bp-time">Time</div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="pivotal-events">Pivotal events</h2>
+      <p class="hint">The 3 to 6 events after which the domain does not go back, or which hand over to another actor. Each one closes a phase.</p>
+      <table>
+        <thead><tr><th>Event</th><th>Phase</th><th>What changes after</th><th>Who takes over</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">I … (pivotal)</span></td><td>1</td><td><span class="todo">new state, commitment made, irreversibility</span></td><td>role</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="actors-and-external-systems">Actors and external systems</h2>
+      <p class="hint">Each actor refers to a persona of the framing ("Application" for automatic reactions). Each external system says what it brings to the journey.</p>
+      <div class="grid c2">
+        <div>
+          <h4>Actors</h4>
+          <table>
+            <thead><tr><th>Actor</th><th>Persona</th><th>Events triggered</th></tr></thead>
+            <tbody>
+              <tr><td><span class="todo">role</span></td><td><a href="../00-framing/framing.html#PER-01">PER-01</a></td><td><span class="todo">events</span></td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h4>External systems</h4>
+          <table>
+            <thead><tr><th>System</th><th>Role in the journey</th><th>Events</th></tr></thead>
+            <tbody>
+              <tr><td><span class="todo">system</span></td><td><span class="todo">what it provides or receives</span></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <section class="section hotspots" data-level="required">
+      <h2 id="hotspots">Hotspots</h2>
+      <p class="hint">Questions, conflicts between rules, risks. A hotspot waiting for a business answer cites its question Q-xxx, as a link to its file. Empty list: write it.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Hotspot</th><th>Phase</th><th>Question</th><th>Blocking</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag accent">question</span></td><td><span class="todo">what we do not know</span></td><td>1</td><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="tag danger">yes</span></td></tr>
+          <tr><td><span class="tag danger">conflict</span></td><td><span class="todo">two rules or two actors that clash</span></td><td></td><td></td><td><span class="tag">no</span></td></tr>
+          <tr><td><span class="tag warn">risk</span></td><td><span class="todo">structuring point or known difficulty</span></td><td></td><td>not applicable</td><td><span class="tag">no</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section opportunities" data-level="recommended">
+      <h2 id="opportunities">Opportunities</h2>
+      <p class="hint">The improvement ideas spotted along the way. They feed the story map, without commitment.</p>
+      <table>
+        <thead><tr><th>Opportunity</th><th>Phase</th><th>Expected value</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">idea</span></td><td>1</td><td><span class="todo">what it would bring</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

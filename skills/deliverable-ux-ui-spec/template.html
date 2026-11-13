@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>UX/UI specifications · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">UX/UI specifications</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Specifications</div>
+      <h1><span class="doc-kind">UX/UI spec</span>: PROJECT_NAME</h1>
+      <p class="lede"><span class="todo">one sentence on the intended experience, for whom</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> UX</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Sources</b> <a href="../00-framing/framing.html">framing</a>, <a href="../20-specs/story-map.html">story map</a> v?, <a href="../20-specs/functional-design.html">functional design</a> v?, <span class="todo">DS &lt;name&gt; v?</span>, prototype v?</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="ux-principles">UX principles</h2>
+      <p class="hint">Three to six principles specific to the product. Each one says what it concretely changes on the screens, citing the screen or the rule concerned.</p>
+      <div class="grid c3">
+        <div class="card">
+          <h4><span class="todo">principle</span></h4>
+          <p><span class="todo">consequence on the screens</span></p>
+        </div>
+        <div class="card">
+          <h4><span class="todo">principle</span></h4>
+          <p><span class="todo">consequence on the screens</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="applied-design-system">Applied design system</h2>
+      <p class="hint">The design system of the project, declared in .team/foundation.md. The spec copies neither its tokens, nor its components, nor its grid: it says which ones it uses, and only describes what the product adds or changes.</p>
+      <dl class="defs">
+        <dt>Foundation</dt><dd><a href="../../.team/foundations/design-systems/DS_NAME/foundation.md"><span class="todo">name of the foundation</span></a></dd>
+        <dt>Version</dt><dd><span class="todo">version of the DS</span></dd>
+        <dt>Status</dt><dd><span class="todo">imposed on the project, or created for the project (to validate at G1)</span></dd>
+      </dl>
+      <h3 id="components-used">Components used</h3>
+      <table>
+        <thead><tr><th>DS component</th><th>Variant</th><th>Screens</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">exact name in the DS</span></td><td></td><td><a href="#SCR-01">SCR-01</a></td></tr>
+        </tbody>
+      </table>
+      <h3 id="additions-and-deviations">Additions and deviations</h3>
+      <p class="hint">Addition: what the DS does not provide (component specific to the product, responsive behaviour of a screen). Deviation: what departs from the DS, with its reason. Empty list: write it.</p>
+      <table>
+        <thead><tr><th>Element</th><th>Nature</th><th>Screens</th><th>What is decided</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">element</span></td><td><span class="tag info">addition</span></td><td><a href="#SCR-01">SCR-01</a></td><td><span class="todo">decision, DS tokens used</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="user-journeys">User journeys</h2>
+      <p class="hint">Wireflow: one diagram per persona, the SCR-xx screens chained by the action that leads from one to the next. A dialog belongs to its screen and returns to it when closed: no return arrow. A rejection that leaves the user on the screen is a state of the screen: it appears as a chip, not as a step. The title cites the functional flows covered.</p>
+      <div class="legend">
+        <span><i class="pf-screen"></i>Screen</span>
+        <span><i class="pf-dialog"></i>Dialog</span>
+        <span><i class="pf-end"></i>Result displayed</span>
+      </div>
+      <h3><span class="todo">Persona</span>: <a href="../20-specs/functional-design.html#FL-01">FL-01</a></h3>
+      <!-- data-c / data-r: grid column and row. data-links="<id>|<action label>". -->
+      <div class="pf">
+        <div class="pf-node screen" id="wf-01" data-c="1" data-r="1" data-links="wf-02|Action"><a class="ec" href="#SCR-01">SCR-01</a>Screen name</div>
+        <div class="pf-node screen" id="wf-02" data-c="2" data-r="1" data-links="wf-02d|Action"><a class="ec" href="#SCR-02">SCR-02</a>Screen name<span class="refs"><a href="../20-specs/functional-design.html#MSG-01">MSG-01</a></span></div>
+        <div class="pf-node screen dialog" id="wf-02d" data-c="2" data-r="2" data-links="wf-02r|Confirm"><a class="ec" href="#SCR-02-dialog">SCR-02</a>Dialog name</div>
+        <div class="pf-node end" id="wf-02r" data-c="3" data-r="2">Result displayed</div>
+      </div>
+      <p><span class="todo">Permanent navigation: entries of the top bar and roles that see them.</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="screen-inventory">Screen inventory</h2>
+      <p class="hint">One card per screen, leading to its details. Thumbnail: screenshot of the prototype (screenshots/SCR-xx-nominal.png), hatched until it is taken. The tags list the states described; a struck-through state (class na) does not apply to the screen.</p>
+      <div class="screens">
+        <a class="screen-card" href="#SCR-01">
+          <div class="thumb"><img src="screenshots/SCR-01-nominal.png" alt="SCR-01, nominal state"></div>
+          <div class="body">
+            <b>SCR-01 · <span class="todo">screen name</span></b>
+            <span class="who"><span class="todo">roles</span> · US-001</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag">empty</span><span class="tag">loading</span><span class="tag danger">error</span><span class="tag na">permissions</span></div>
+          </div>
+        </a>
+      </div>
+      <h3 id="story-coverage">Story coverage</h3>
+      <p class="hint">Each front-end story has a screen, each screen has a story. One row per story of the release.</p>
+      <table>
+        <thead><tr><th>Story</th><th>Screens</th><th>States specific to the story</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../20-specs/stories/US-001-slug.html">US-001</a> <span class="todo">short title</span></td><td><a href="#SCR-01">SCR-01</a></td><td><span class="todo">states</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="screen-details">Screen details</h2>
+      <p class="hint">One block per screen, to duplicate. Functional messages cite their MSG-xx and are taken over word for word, variable parts between angle brackets; interface messages (empty states, technical error) are defined here as MSG-Uxx, with an anchor. A state that does not apply says so. A dialog is described under its screen, anchor SCR-xx-&lt;name&gt;.</p>
+
+      <h3 id="SCR-01">SCR-01 · <span class="todo">screen name</span></h3>
+      <dl class="defs">
+        <dt>Goal</dt><dd><span class="todo">what the user comes here to do, in one sentence</span></dd>
+        <dt>Access</dt><dd><span class="todo">where one comes from, authorized roles</span></dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-001-slug.html">US-001</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-01">prototype/#SCR-01</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Content</h4>
+          <ol><li><span class="todo">blocks and fields displayed, in order, with their DS component if needed</span></li></ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li><span class="todo">"exact label": what it triggers, destination screen</span></li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Display rule</th><th>Business rule</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">e.g. the "Confirm" button is disabled as long as a required field is empty</span></td><td><a href="../20-specs/functional-design.html#BR-01">BR-01</a></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>State</th><th>What is displayed</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td><span class="todo">description</span></td><td></td></tr>
+          <tr><td><span class="tag">empty</span></td><td><span class="todo">description</span></td><td id="MSG-U01"><b>MSG-U01</b> "<span class="todo">exact text</span>"</td></tr>
+          <tr><td><span class="tag">loading</span></td><td><span class="todo">DS skeleton in place of the blocks</span></td><td></td></tr>
+          <tr><td><span class="tag danger">error</span></td><td><span class="todo">what fails, what stays displayed</span></td><td id="MSG-U02"><b>MSG-U02</b> "<span class="todo">cause and way out</span>" + "Retry"</td></tr>
+          <tr><td><span class="tag na">insufficient permissions</span></td><td><span class="todo">hidden, disabled, message, or not applicable and why</span></td><td></td></tr>
+        </tbody>
+      </table>
+      <h4 id="SCR-01-dialog">Dialog "<span class="todo">title</span>"</h4>
+      <p><span class="todo">what it recalls, its fields, its buttons (the default button), what happens on confirmation and on "Esc". Delete if the screen has no dialog.</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="data-formats">Data formats</h2>
+      <p class="hint">The formats of the design system apply (dates, times, numbers, amounts). Only the data specific to the product appear here, with their display and input.</p>
+      <table>
+        <thead><tr><th>Data</th><th>Display</th><th>Input</th><th>Fictitious example</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">data specific to the product</span></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="accessibility">Accessibility</h2>
+      <p class="hint">The level and the general rules come from the design system. Here, what the product adds, checkable at acceptance.</p>
+      <dl class="defs">
+        <dt>Target level</dt><dd><span class="todo">the one of the DS, or stricter with the reason</span></dd>
+        <dt>Keyboard navigation</dt><dd><span class="todo">what the DS does not cover: components specific to the product</span></dd>
+        <dt>Contrast</dt><dd><span class="todo">those of the DS; information never carried by colour alone</span></dd>
+        <dt>Screen readers</dt><dd><span class="todo">announcements specific to the product</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="link-to-the-prototype">Link to the prototype</h2>
+      <p class="hint">The prototype is the clickable version of this spec, with the tokens of the design system. It must cover the same screens and the same states.</p>
+      <dl class="defs">
+        <dt>Path</dt><dd><a href="../../prototype/index.html">prototype/index.html</a></dd>
+        <dt>Version</dt><dd><span class="todo">vN of DD.MM.YYYY</span></dd>
+        <dt>Screens covered</dt><dd><span class="todo">SCR-01 to SCR-xx</span></dd>
+        <dt>Known gaps</dt><dd><span class="todo">what the prototype does not show yet</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2 id="micro-interactions">Micro-interactions</h2>
+      <p class="hint">Transitions, visual feedback, perceived response times, when the DS does not set them.</p>
+      <table>
+        <thead><tr><th>Interaction</th><th>Trigger</th><th>Effect</th><th>Duration</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">interaction</span></td><td></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

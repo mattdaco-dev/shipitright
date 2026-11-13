@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="2026-10-02">
+  <title>Conception fonctionnelle · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Conception fonctionnelle</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">Conception fonctionnelle</span> : Réservation de salles</h1>
+      <p class="lede">Le comportement du MVP : réserver une salle ponctuellement ou en série, annuler, tenir le parc de salles et arbitrer, sans jamais de double réservation.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> 02.10.2026</span>
+        <span><b>Auteur</b> PO (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Sources</b> <a href="../00-framing/framing.html">cadrage</a> (validé G0), <a href="story-map.html">story map</a>, <a href="../10-analysis/big-picture.html">big picture</a>, <a href="../10-analysis/modification-reservation.html">analyse modification</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Périmètre et références</h2>
+      <p class="hint">Ce que cette conception couvre, et les livrables dont elle découle.</p>
+      <dl class="defs">
+        <dt>Release couverte</dt><dd>MVP</dd>
+        <dt>Epics</dt><dd><a href="epics/EPIC-01-acces.html">EPIC-01</a> Accès, <a href="epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a> Recherche et réservation, <a href="epics/EPIC-03-mes-reservations.html">EPIC-03</a> Mes réservations, <a href="epics/EPIC-04-parc-de-salles.html">EPIC-04</a> Parc de salles</dd>
+        <dt>Hors de cette conception</dt><dd>modification d'une réservation (<a href="stories/US-011-modifier-une-reservation.html">US-011</a>, release R2, <a href="../questions.html#Q-002">Q-002</a> en attente) ; stories des releases R2 et R3 de la <a href="story-map.html">story map</a>.</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Parcours fonctionnels</h2>
+      <p class="hint">Un parcours par activité de la story map, dans le même formalisme pour tous : une couleur par type d'étape, les règles et messages en pastilles. Le parcours décrit ce qui se passe, pas les écrans.</p>
+      <div class="legend">
+        <span><i class="pf-start"></i>Déclencheur</span>
+        <span><i class="pf-user"></i>Action de l'acteur</span>
+        <span><i class="pf-system"></i>Traitement de l'application</span>
+        <span><i class="pf-decision"></i>Décision</span>
+        <span><i class="pf-end"></i>Résultat</span>
+        <span><i class="pf-error"></i>Refus ou erreur</span>
+        <span><i class="pf-stop"></i>Abandon</span>
+      </div>
+      <h3 id="FL-01">FL-01 · Réserver un créneau</h3>
+      <dl class="defs"><dt>Acteur</dt><dd>employé (<a href="../00-framing/framing.html#PER-01">PER-01</a>), connecté</dd><dt>Résultat</dt><dd>une réservation active à son nom, visible par tous</dd></dl>
+      <div class="pf">
+        <div class="pf-node start" id="fl-01-a" data-c="1" data-r="1" data-links="fl-01-b">Réunion à organiser</div>
+        <div class="pf-node user" id="fl-01-b" data-c="2" data-r="1" data-links="fl-01-c fl-01-f|vide"><small>Employé</small>Consulte l'occupation ou cherche une salle<span class="refs"><a href="#BR-09">BR-09</a></span></div>
+        <div class="pf-node user" id="fl-01-c" data-c="3" data-r="1" data-links="fl-01-d"><small>Employé</small>Choisit une salle et un créneau</div>
+        <div class="pf-node system" id="fl-01-d" data-c="4" data-r="1" data-links="fl-01-e|valide fl-01-g|invalide"><small>Application</small>Contrôle le créneau<span class="refs"><a href="#BR-02">BR-02</a><a href="#BR-03">BR-03</a></span></div>
+        <div class="pf-node decision" id="fl-01-e" data-c="5" data-r="1" data-links="fl-01-h|non fl-01-i|oui">Salle déjà prise ?<span class="refs"><a href="#BR-01">BR-01</a></span></div>
+        <div class="pf-node end" id="fl-01-h" data-c="6" data-r="1">Réservation confirmée<span class="refs"><a href="#MSG-02">MSG-02</a></span></div>
+        <div class="pf-node error" id="fl-01-f" data-c="2" data-r="2">Aucune salle trouvée : élargir les critères</div>
+        <div class="pf-node error" id="fl-01-g" data-c="4" data-r="2">Refus : créneau hors règles<span class="refs"><a href="#MSG-03">MSG-03</a></span></div>
+        <div class="pf-node error" id="fl-01-i" data-c="5" data-r="2">Refus : salle déjà prise<span class="refs"><a href="#MSG-01">MSG-01</a></span></div>
+      </div>
+      <h3 id="FL-02">FL-02 · Réserver une série</h3>
+      <dl class="defs"><dt>Acteur</dt><dd>employé</dd><dt>Résultat</dt><dd>les occurrences libres de la série sont réservées</dd></dl>
+      <div class="pf">
+        <div class="pf-node start" id="fl-02-a" data-c="1" data-r="1" data-links="fl-02-b">Réunion récurrente à poser</div>
+        <div class="pf-node user" id="fl-02-b" data-c="2" data-r="1" data-links="fl-02-c"><small>Employé</small>Demande une série<span class="refs"><a href="#BR-04">BR-04</a></span></div>
+        <div class="pf-node system" id="fl-02-c" data-c="3" data-r="1" data-links="fl-02-d"><small>Application</small>Calcule les occurrences<span class="refs"><a href="#CALC-01">CALC-01</a></span></div>
+        <div class="pf-node decision" id="fl-02-d" data-c="4" data-r="1" data-links="fl-02-e|non fl-02-f|oui">Occurrences prises ?<span class="refs"><a href="#BR-01">BR-01</a></span></div>
+        <div class="pf-node end" id="fl-02-e" data-c="5" data-r="1">Toutes les occurrences créées</div>
+        <div class="pf-node system" id="fl-02-f" data-c="4" data-r="2" data-links="fl-02-g"><small>Application</small>Présente les conflits<span class="refs"><a href="#MSG-04">MSG-04</a></span></div>
+        <div class="pf-node decision" id="fl-02-g" data-c="5" data-r="2" data-links="fl-02-h|oui fl-02-i|non">Confirme ?<span class="refs"><a href="#BR-05">BR-05</a></span></div>
+        <div class="pf-node end" id="fl-02-h" data-c="6" data-r="2">Occurrences libres créées</div>
+        <div class="pf-node stop" id="fl-02-i" data-c="5" data-r="3">Rien n'est créé</div>
+      </div>
+      <h3 id="FL-03">FL-03 · Annuler</h3>
+      <dl class="defs"><dt>Acteur</dt><dd>titulaire</dd><dt>Résultat</dt><dd>la réservation est annulée, le créneau libéré</dd></dl>
+      <div class="pf">
+        <div class="pf-node start" id="fl-03-a" data-c="1" data-r="1" data-links="fl-03-b">Réunion annulée</div>
+        <div class="pf-node user" id="fl-03-b" data-c="2" data-r="1" data-links="fl-03-c"><small>Titulaire</small>Ouvre ses réservations, choisit une occurrence ou la série</div>
+        <div class="pf-node decision" id="fl-03-c" data-c="3" data-r="1" data-links="fl-03-d|non fl-03-e|oui">Déjà commencée ?<span class="refs"><a href="#BR-03">BR-03</a></span></div>
+        <div class="pf-node end" id="fl-03-d" data-c="4" data-r="1">Annulée, créneau libéré<span class="refs"><a href="#BR-06">BR-06</a></span></div>
+        <div class="pf-node error" id="fl-03-e" data-c="3" data-r="2">Annulation impossible</div>
+      </div>
+      <h3 id="FL-04">FL-04 · Tenir le parc et arbitrer</h3>
+      <dl class="defs"><dt>Acteur</dt><dd>gestionnaire (<a href="../00-framing/framing.html#PER-02">PER-02</a>)</dd><dt>Résultat</dt><dd>les employés ne voient que des salles réservables</dd></dl>
+      <div class="pf">
+        <div class="pf-node user" id="fl-04-a" data-c="1" data-r="1" data-links="fl-04-b"><small>Gestionnaire</small>Déclare une salle</div>
+        <div class="pf-node decision" id="fl-04-b" data-c="2" data-r="1" data-links="fl-04-c|non fl-04-d|oui">Nom déjà pris ?<span class="refs"><a href="#BR-10">BR-10</a></span></div>
+        <div class="pf-node end" id="fl-04-c" data-c="3" data-r="1">Salle active, réservable</div>
+        <div class="pf-node error" id="fl-04-d" data-c="2" data-r="2">Refus : nom déjà pris</div>
+        <div class="pf-node user" id="fl-04-e" data-c="1" data-r="3" data-links="fl-04-f"><small>Gestionnaire</small>Désactive une salle</div>
+        <div class="pf-node system" id="fl-04-f" data-c="2" data-r="3" data-links="fl-04-g"><small>Application</small>Annule les réservations futures, garde celle en cours<span class="refs"><a href="#BR-08">BR-08</a><a href="#BR-03">BR-03</a></span></div>
+        <div class="pf-node end" id="fl-04-g" data-c="3" data-r="3">Salle désactivée<span class="refs"><a href="#MSG-06">MSG-06</a></span></div>
+        <div class="pf-node user" id="fl-04-h" data-c="1" data-r="4" data-links="fl-04-i"><small>Gestionnaire</small>Annule une réservation avec un motif<span class="refs"><a href="#BR-07">BR-07</a></span></div>
+        <div class="pf-node end" id="fl-04-i" data-c="2" data-r="4">Le titulaire voit le motif<span class="refs"><a href="#MSG-05">MSG-05</a></span></div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Règles de gestion</h2>
+      <p class="hint">Une règle par ligne, phrase déclarative, numéro stable. Les règles du cadrage gardent leur numéro. Une règle abandonnée reste, barrée, avec la raison. Les colonnes Stories et Écrans font la traçabilité : chaque règle a au moins une story.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Règle</th><th>Portée</th><th>Source</th><th>Stories</th><th>Écrans</th></tr></thead>
+          <tbody>
+<tr id="BR-01"><td>BR-01</td><td>Une salle ne porte jamais deux réservations actives qui se chevauchent. Une réservation qui finit à 10:00 et une qui commence à 10:00 ne se chevauchent pas.</td><td>Réservation</td><td>cadrage</td><td><a href="stories/US-005-reserver-un-creneau.html">US-005</a>, <a href="stories/US-006-reserver-une-serie.html">US-006</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-04">SCR-04</a></td></tr>
+<tr id="BR-02"><td>BR-02</td><td>Un créneau commence et finit sur un pas de 15 minutes, du lundi au vendredi, entre 08:00 et 19:00, et dure 4 heures au plus.</td><td>Réservation</td><td>cadrage</td><td><a href="stories/US-005-reserver-un-creneau.html">US-005</a>, <a href="stories/US-006-reserver-une-serie.html">US-006</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-04">SCR-04</a></td></tr>
+<tr id="BR-03"><td>BR-03</td><td>On ne réserve pas dans le passé. Une réservation commencée ou passée ne s'annule plus.</td><td>Réservation</td><td>cadrage (arbitrage PO)</td><td><a href="stories/US-005-reserver-un-creneau.html">US-005</a>, <a href="stories/US-008-annuler-une-reservation.html">US-008</a>, <a href="stories/US-009-annuler-une-serie.html">US-009</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-04">SCR-04</a>, <a href="../20-ux/ux-ui-spec.html#SCR-05">SCR-05</a></td></tr>
+<tr id="BR-04"><td>BR-04</td><td>Une série est quotidienne (jours ouvrés) ou hebdomadaire. Sa dernière occurrence tombe au plus 3 mois après la première.</td><td>Série</td><td>cadrage (arbitrage PO)</td><td><a href="stories/US-006-reserver-une-serie.html">US-006</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-04">SCR-04</a></td></tr>
+<tr id="BR-05"><td>BR-05</td><td>Les occurrences d'une série qui tombent sur un créneau pris sont présentées avant validation ; après confirmation, seules les occurrences libres sont créées.</td><td>Série</td><td>cadrage (arbitrage PO)</td><td><a href="stories/US-006-reserver-une-serie.html">US-006</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-04">SCR-04</a></td></tr>
+<tr id="BR-06"><td>BR-06</td><td>Le titulaire annule une occurrence seule ou toutes les occurrences futures de sa série.</td><td>Réservation, Série</td><td>cadrage (arbitrage PO)</td><td><a href="stories/US-008-annuler-une-reservation.html">US-008</a>, <a href="stories/US-009-annuler-une-serie.html">US-009</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-05">SCR-05</a></td></tr>
+<tr id="BR-07"><td>BR-07</td><td>Le gestionnaire annule toute réservation active, avec un motif obligatoire visible par le titulaire.</td><td>Réservation</td><td>cadrage (arbitrage PO)</td><td><a href="stories/US-017-annuler-avec-motif.html">US-017</a>, <a href="stories/US-007-lister-mes-reservations.html">US-007</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-05">SCR-05</a>, <a href="../20-ux/ux-ui-spec.html#SCR-02">SCR-02</a></td></tr>
+<tr id="BR-08"><td>BR-08</td><td>Désactiver une salle annule ses réservations futures avec le motif « salle désactivée ». Une salle désactivée n'est plus proposée à la réservation.</td><td>Salle</td><td>cadrage (arbitrage PO)</td><td><a href="stories/US-016-desactiver-une-salle.html">US-016</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-06">SCR-06</a></td></tr>
+<tr id="BR-09"><td>BR-09</td><td>La recherche ne propose que les salles actives, libres sur tout le créneau, de capacité au moins égale au besoin, qui ont tous les équipements demandés.</td><td>Recherche</td><td>cadrage</td><td><a href="stories/US-004-chercher-une-salle.html">US-004</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-03">SCR-03</a></td></tr>
+<tr id="BR-10"><td>BR-10</td><td>Deux salles actives ne portent pas le même nom.</td><td>Salle</td><td>HYPOTHÈSE, <a href="../questions.html#Q-003">Q-003</a></td><td><a href="stories/US-014-declarer-une-salle.html">US-014</a>, <a href="stories/US-015-modifier-une-salle.html">US-015</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-07">SCR-07</a></td></tr>
+<tr id="BR-11"><td>BR-11</td><td>Seuls le titulaire et le gestionnaire peuvent annuler une réservation.</td><td>Réservation</td><td>cadrage (rôles)</td><td><a href="stories/US-008-annuler-une-reservation.html">US-008</a>, <a href="stories/US-017-annuler-avec-motif.html">US-017</a></td><td><a href="../20-ux/ux-ui-spec.html#SCR-05">SCR-05</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout hypothesis">
+        <b>Hypothèse</b>
+        <a href="#BR-10">BR-10</a> en attente de <a href="../questions.html#Q-003">Q-003</a>.
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Modèle conceptuel des données métier</h2>
+      <p class="hint">Les objets que le métier manipule, leurs attributs clés au format nom [type métier] et leurs relations. Aux deux bouts de chaque relation, la cardinalité côté objet : combien de cet objet pour un de l'autre (0:1, 1:1, 0:n, 1:n). Pas de clés techniques ni de types SQL : le modèle physique revient à l'architecte.</p>
+      <div class="mcd">
+        <div class="mcd-entity" id="o-employe" data-c="1" data-r="1" data-links="o-resa|est titulaire de|1:1|0:n"><b>Employé</b><ul><li>nom <i>[texte]</i></li><li>email <i>[texte]</i></li><li>rôle <i>[employé | gestionnaire]</i></li></ul></div>
+        <div class="mcd-entity" id="o-salle" data-c="3" data-r="1" data-links="o-resa|accueille|1:1|0:n o-equip|dispose de|0:n|0:n"><b>Salle</b><ul><li>nom <i>[texte]</i></li><li>capacité <i>[nombre]</i></li><li>statut <i>[active | désactivée]</i></li></ul></div>
+        <div class="mcd-entity" id="o-resa" data-c="2" data-r="1"><b>Réservation</b><ul><li>jour <i>[date]</i></li><li>début <i>[heure]</i></li><li>fin <i>[heure]</i></li><li>statut <i>[active | annulée | passée]</i></li><li>motif d'annulation <i>[texte]</i></li></ul></div>
+        <div class="mcd-entity" id="o-serie" data-c="2" data-r="2" data-links="o-resa|regroupe|0:1|1:n"><b>Série</b><ul><li>fréquence <i>[quotidienne | hebdomadaire]</i></li><li>première <i>[date]</i></li><li>dernière <i>[date]</i></li></ul></div>
+        <div class="mcd-entity" id="o-equip" data-c="3" data-r="2"><b>Équipement</b><ul><li>libellé <i>[texte]</i></li></ul></div>
+      </div>
+      <div class="grid c2">
+        <div class="card" id="obj-salle">
+          <h4>Salle</h4>
+          <dl class="defs">
+            <dt>Définition</dt><dd>espace réservable, actif ou désactivé (<a href="../00-framing/framing.html#glossaire">glossaire</a>)</dd>
+            <dt>Attributs clés</dt><dd>nom, capacité, équipements, statut</dd>
+            <dt>Identifiée par</dt><dd>son nom (<a href="#BR-10">BR-10</a>)</dd>
+            <dt>Règles</dt><dd><a href="#BR-08">BR-08</a>, <a href="#BR-09">BR-09</a>, <a href="#BR-10">BR-10</a></dd>
+          </dl>
+        </div>
+        <div class="card" id="obj-reservation">
+          <h4>Réservation</h4>
+          <dl class="defs">
+            <dt>Définition</dt><dd>occupation d'une salle sur un créneau par un titulaire</dd>
+            <dt>Attributs clés</dt><dd>salle, titulaire, jour, début, fin, statut, motif d'annulation</dd>
+            <dt>Identifiée par</dt><dd>salle, jour et début</dd>
+            <dt>Règles</dt><dd><a href="#BR-01">BR-01</a> à <a href="#BR-03">BR-03</a>, <a href="#BR-06">BR-06</a>, <a href="#BR-07">BR-07</a>, <a href="#BR-11">BR-11</a></dd>
+          </dl>
+        </div>
+        <div class="card" id="obj-serie">
+          <h4>Série</h4>
+          <dl class="defs">
+            <dt>Définition</dt><dd>réservations créées ensemble par une règle de récurrence</dd>
+            <dt>Attributs clés</dt><dd>fréquence, première et dernière occurrence</dd>
+            <dt>Règles</dt><dd><a href="#BR-04">BR-04</a>, <a href="#BR-05">BR-05</a>, <a href="#BR-06">BR-06</a></dd>
+          </dl>
+        </div>
+        <div class="card" id="obj-employe">
+          <h4>Employé</h4>
+          <dl class="defs">
+            <dt>Définition</dt><dd>compte de connexion, rôle employé ou gestionnaire</dd>
+            <dt>Attributs clés</dt><dd>nom, email, rôle</dd>
+            <dt>Identifié par</dt><dd>son email</dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Cycles de vie des objets métier</h2>
+      <p class="hint">Un diagramme par objet qui a un statut. Chaque transition dit son événement ; le tableau précise l'acteur et la condition.</p>
+      <h3>Réservation</h3>
+      <div class="pf lifecycle">
+        <div class="pf-node dot" id="cv-r0" data-c="1" data-r="1" data-links="cv-r1|réservation confirmée"></div>
+        <div class="pf-node state" id="cv-r1" data-c="2" data-r="1" data-links="cv-r2|annulée (3 cas) cv-r3|fin du créneau">Active</div>
+        <div class="pf-node state final" id="cv-r2" data-c="3" data-r="1">Annulée</div>
+        <div class="pf-node state final" id="cv-r3" data-c="2" data-r="2">Passée</div>
+      </div>
+      <table>
+        <thead><tr><th>Transition</th><th>Événement</th><th>Acteur</th><th>Condition</th><th>Règles</th></tr></thead>
+        <tbody>
+          <tr><td>→ Active</td><td>réservation confirmée</td><td>employé</td><td>aucun chevauchement, créneau valide</td><td><a href="#BR-01">BR-01</a>, <a href="#BR-02">BR-02</a></td></tr>
+          <tr><td>Active → Annulée</td><td>annulée par le titulaire</td><td>titulaire</td><td>pas encore commencée</td><td><a href="#BR-03">BR-03</a>, <a href="#BR-06">BR-06</a></td></tr>
+          <tr><td>Active → Annulée</td><td>annulée par le gestionnaire</td><td>gestionnaire</td><td>motif saisi</td><td><a href="#BR-07">BR-07</a></td></tr>
+          <tr><td>Active → Annulée</td><td>salle désactivée</td><td>application</td><td>réservation future</td><td><a href="#BR-08">BR-08</a></td></tr>
+          <tr><td>Active → Passée</td><td>fin du créneau</td><td>temps</td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <h3>Salle</h3>
+      <div class="pf lifecycle">
+        <div class="pf-node dot" id="cv-s0" data-c="1" data-r="1" data-links="cv-s1|salle déclarée"></div>
+        <div class="pf-node state" id="cv-s1" data-c="2" data-r="1" data-links="cv-s2|salle désactivée">Active</div>
+        <div class="pf-node state" id="cv-s2" data-c="3" data-r="1">Désactivée</div>
+      </div>
+      <table>
+        <thead><tr><th>Transition</th><th>Événement</th><th>Acteur</th><th>Condition</th><th>Règles</th></tr></thead>
+        <tbody>
+          <tr><td>→ Active</td><td>salle déclarée</td><td>gestionnaire</td><td>nom libre</td><td><a href="#BR-10">BR-10</a></td></tr>
+          <tr><td>Active → Désactivée</td><td>salle désactivée</td><td>gestionnaire</td><td></td><td><a href="#BR-08">BR-08</a></td></tr>
+          <tr><td>Désactivée → Active</td><td>salle réactivée (non dessinée tant que Q-004 est ouverte)</td><td>gestionnaire</td><td>HYPOTHÈSE, <a href="../questions.html#Q-004">Q-004</a></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Rôles et droits</h2>
+      <p class="hint">Qui peut faire quoi, et sur quelle portée. Une colonne par rôle du cadrage.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Action</th><th><a href="../00-framing/framing.html#PER-01">Employé</a></th><th><a href="../00-framing/framing.html#PER-02">Gestionnaire</a></th><th>Règles</th></tr></thead>
+          <tbody>
+            <tr><td>Consulter l'occupation, chercher une salle</td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td><a href="#BR-09">BR-09</a></td></tr>
+            <tr><td>Réserver (ponctuel ou série)</td><td><span class="tag ok">oui</span></td><td><span class="tag ok">oui</span></td><td><a href="#BR-01">BR-01</a> à <a href="#BR-05">BR-05</a></td></tr>
+            <tr><td>Annuler une réservation</td><td><span class="tag warn">sa portée</span> les siennes</td><td><span class="tag ok">oui</span>, avec motif</td><td><a href="#BR-06">BR-06</a>, <a href="#BR-07">BR-07</a>, <a href="#BR-11">BR-11</a></td></tr>
+            <tr><td>Déclarer, modifier, désactiver une salle</td><td><span class="tag danger">non</span></td><td><span class="tag ok">oui</span></td><td><a href="#BR-08">BR-08</a>, <a href="#BR-10">BR-10</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Questions et hypothèses</h2>
+      <p class="hint">Ce qui n'est pas tranché. Chaque question est aussi posée dans .team/questions/. Liste vide : l'écrire.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question ou hypothèse</th><th>Bloquante</th><th>Impacte</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../questions.html#Q-001">Q-001</a></td><td>Garantir <a href="#BR-01">BR-01</a> sous des réservations simultanées</td><td><span class="tag">non</span></td><td><a href="#BR-01">BR-01</a>, architecte en P3</td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><a href="../questions.html#Q-002">Q-002</a></td><td>Modification d'une réservation au MVP</td><td><span class="tag">non</span></td><td><a href="stories/US-011-modifier-une-reservation.html">US-011</a></td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><a href="../questions.html#Q-003">Q-003</a></td><td>Nom de salle unique parmi les salles actives</td><td><span class="tag">non</span></td><td><a href="#BR-10">BR-10</a></td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><a href="../questions.html#Q-004">Q-004</a></td><td>Réactivation d'une salle désactivée</td><td><span class="tag">non</span></td><td>cycle de vie Salle</td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><a href="../questions.html#Q-005">Q-005</a></td><td>Les jours fériés sont-ils exclus des séries ? Hypothèse : non (<a href="#CALC-01">CALC-01</a>).</td><td><span class="tag">non</span></td><td><a href="#BR-04">BR-04</a></td><td><span class="tag warn">ouverte</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Notifications et messages</h2>
+      <p class="hint">Messages vus par l'utilisateur, e-mails, notifications. Libellé au mot près, parties variables entre chevrons.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Id</th><th>Déclencheur</th><th>Canal</th><th>Destinataire</th><th>Libellé</th><th>Règles</th></tr></thead>
+          <tbody>
+<tr id="MSG-01"><td>MSG-01</td><td>Créneau en conflit</td><td>écran</td><td>employé</td><td>« La salle &lt;nom&gt; est déjà réservée de &lt;début&gt; à &lt;fin&gt;. »</td><td><a href="#BR-01">BR-01</a></td></tr>
+<tr id="MSG-02"><td>MSG-02</td><td>Réservation confirmée</td><td>écran</td><td>employé</td><td>« Réservation confirmée : &lt;salle&gt;, le &lt;date&gt; de &lt;début&gt; à &lt;fin&gt;. »</td><td><a href="#BR-01">BR-01</a></td></tr>
+<tr id="MSG-03"><td>MSG-03</td><td>Créneau hors règles</td><td>écran</td><td>employé</td><td>« Les réservations se font du lundi au vendredi, de 08:00 à 19:00, par pas de 15 minutes, pour 4 heures au plus. »</td><td><a href="#BR-02">BR-02</a></td></tr>
+<tr id="MSG-04"><td>MSG-04</td><td>Série avec conflits</td><td>écran</td><td>employé</td><td>« &lt;n&gt; occurrences sur &lt;total&gt; sont déjà prises et ne seront pas créées. »</td><td><a href="#BR-05">BR-05</a></td></tr>
+<tr id="MSG-05"><td>MSG-05</td><td>Annulation par le gestionnaire</td><td>Mes réservations</td><td>titulaire</td><td>« Annulée par le gestionnaire : &lt;motif&gt;. »</td><td><a href="#BR-07">BR-07</a></td></tr>
+<tr id="MSG-06"><td>MSG-06</td><td>Salle désactivée</td><td>écran</td><td>gestionnaire</td><td>« La salle &lt;nom&gt; est désactivée : &lt;n&gt; réservations futures ont été annulées. »</td><td><a href="#BR-08">BR-08</a></td></tr>
+<tr id="MSG-07"><td>MSG-07</td><td>Nom de salle déjà pris</td><td>écran</td><td>gestionnaire</td><td>« Une salle active porte déjà ce nom. »</td><td><a href="#BR-10">BR-10</a></td></tr>
+<tr id="MSG-08"><td>MSG-08</td><td>Avant de désactiver une salle</td><td>écran</td><td>gestionnaire</td><td>« &lt;n&gt; réservations futures seront annulées avec le motif « salle désactivée ». »</td><td><a href="#BR-08">BR-08</a></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Calculs et algorithmes métier</h2>
+      <p class="hint">Formule, entrées, règles d'arrondi, cas limites, et un exemple chiffré fictif.</p>
+      <div class="card" id="CALC-01">
+        <h4>CALC-01 · Occurrences d'une série</h4>
+        <dl class="defs">
+          <dt>Formule</dt><dd>à partir de la première occurrence, une occurrence par jour ouvré (quotidienne) ou tous les 7 jours (hebdomadaire), tant que la date est ≤ dernière date demandée et ≤ première + 3 mois</dd>
+          <dt>Entrées</dt><dd>salle, première date, heures de début et de fin, fréquence, dernière date</dd>
+          <dt>Exemple</dt><dd>hebdomadaire, mardi 06.10.2026 de 10:00 à 11:00, jusqu'au 29.12.2026 : 13 occurrences. Si le 20.10 est déjà pris : 12 créées, <a href="#MSG-04">MSG-04</a> « 1 occurrences sur 13 sont déjà prises… »</dd>
+          <dt>Règles</dt><dd><a href="#BR-04">BR-04</a>, <a href="#BR-05">BR-05</a></dd>
+        </dl>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Exigences non fonctionnelles métier</h2>
+      <p class="hint">Ce que le métier attend en délais, volumes, disponibilité, conservation. Chaque exigence est mesurable.</p>
+      <table>
+        <thead><tr><th>Type</th><th>Exigence</th><th>Cible</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Volume</span></td><td>salles, employés</td><td>~10 salles, ~100 employés, un site</td><td><a href="../00-framing/framing.html#hypotheses-et-risques">cadrage</a>, confirmé G0</td></tr>
+          <tr><td><span class="tag">Délai</span></td><td>savoir quelle salle est libre sur un créneau</td><td>&lt; 30 s</td><td><a href="../00-framing/framing.html#objectifs-et-indicateurs-de-succes">cadrage, objectifs</a></td></tr>
+          <tr><td><span class="tag">Délai</span></td><td>trouver et réserver une salle</td><td>&lt; 1 min</td><td><a href="../00-framing/framing.html#objectifs-et-indicateurs-de-succes">cadrage, objectifs</a></td></tr>
+          <tr><td><span class="tag">Conservation</span></td><td>réservations passées et annulées</td><td>sans objet au pilote : conservées</td><td>HYPOTHÈSE</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

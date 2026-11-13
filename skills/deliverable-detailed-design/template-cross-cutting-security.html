@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Security and permissions · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/cross-cutting/security.html. Its gen: block is filled by team/scripts/detailed-pages.mjs. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Security and permissions</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#site-map">Cross-cutting</a></div>
+      <h1><span class="doc-kind">Security and permissions</span>: who calls what</h1>
+      <p class="lede">Session, roles, checks on the data. The backend checks, the front only hides. The principles are in the <a href="../../macro.html#security-and-authentication">macro design</a>; here, their application endpoint by endpoint.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="session-and-access-control">Session and access control</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say how a request is authenticated, then authorized.</dd>
+          <dt>Content</dt><dd><ul><li>The session mechanism.</li><li>The common check before each route.</li><li>The declaration of the roles per route.</li><li>The place of the checks on the data.</li></ul></dd>
+          <dt>Why this formalism</dt><dd>The principles of the macro design applied to the code, as a short list, each with the invariant that makes it checkable.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><span class="todo">session or token, cookie, duration, ADR as a link</span></li>
+        <li><span class="todo">common check before each route; public endpoints as links; without a session: <code>401</code></span></li>
+        <li><span class="todo">roles declared per route; insufficient role: <code>403</code></span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="rights-matrix">Rights matrix</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know who can call what.</dd>
+          <dt>Content</dt><dd>In rows the endpoints, in columns the roles (yes or no), then the checks on the data beyond the role.</dd>
+          <dt>Why this formalism</dt><dd>The roles × operations access matrix, standard form of role-based access control (RBAC).</dd>
+          <dt>Reading</dt><dd>A public endpoint is also open to the roles.</dd>
+          <dt>Source</dt><dd><code>x-roles</code> and <code>x-data-control</code> of <code>openapi.yaml</code>.</dd>
+        </dl>
+      </div>
+      <!-- gen:rights-matrix --><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="data-and-protections">Data and protections</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show what protects the data.</dd>
+          <dt>Content</dt><dd><ul><li>Personal data and who sees it.</li><li>Passwords.</li><li>Tokens.</li><li>Injection.</li><li>Logs.</li></ul></dd>
+          <dt>Why this formalism</dt><dd>One row per subject, with the invariant or the entity that carries it: the security review follows it as is.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><b>Personal data</b>: <span class="todo">which, who sees it, what never goes out</span></li>
+        <li><b>Secrets and passwords</b>: <span class="todo">hash, rotation, or "none"</span></li>
+        <li><b>Injection</b>: <span class="todo">prepared statements, strict schemas</span></li>
+        <li><b>Logs</b>: <span class="todo">what is logged, without personal data in clear</span> (<a href="compliance.html#INV-52">INV-52</a>)</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

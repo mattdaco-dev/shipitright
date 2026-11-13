@@ -1,0 +1,401 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Macro technical design · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Macro technical design</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Technical design</div>
+      <h1><span class="doc-kind">Macro technical design</span>: PROJECT_NAME</h1>
+      <p class="lede">This design says what must be built and where: applications, screens, endpoints, processes and entities, linked in a single chain for the whole project. Each identifier opens its page in the <a href="detailed/index.html">detailed technical design</a>, which says how to build it.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Review</b> Backend dev, Frontend dev</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Sources</b> specs and UX/UI spec of DD.MM.YYYY</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="framing-band">Framing band</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Make the diagram readable without a guide, today and in three months.</dd>
+          <dt>Content</dt><dd><ul><li>Legend: one block of each type, the badges, the containers, then the principles of the model.</li><li>Goals of this design.</li><li>Subject: what is covered, the whole project, and what is excluded.</li><li>Project at a glance, date and version of the source specs.</li></ul></dd>
+          <dt>Why this formalism</dt><dd>Four fixed and required blocks, always at the same place: the reader knows where to look.</dd>
+        </dl>
+      </div>
+
+      <h4>Legend</h4>
+      <div class="legend">
+        <div class="node screen">Screen</div>
+        <div class="node feature">Feature</div>
+        <div class="node endpoint">GET /endpoint</div>
+        <div class="node process">Process (not exposed)</div>
+        <div class="node entity">Entity</div>
+        <div class="node external">External system</div>
+        <div class="node topic">Topic</div>
+        <div class="node attention">Point of attention</div>
+        <div class="node feature" data-badge="todo">To create</div>
+        <div class="node feature" data-badge="update">To adapt</div>
+        <div class="node feature" data-badge="done">Already done</div>
+        <div class="container app"><div class="c-title">Application</div></div>
+        <div class="container dom"><div class="c-title">Domain</div></div>
+      </div>
+      <p class="hint">Without a badge, the element exists and fits. <span class="todo">if no external system: "no external system, all dependencies are internal"</span></p>
+
+      <details>
+        <summary><b>Principles of the model</b></summary>
+        <ol>
+          <li>Screens present features. A feature can serve several screens.</li>
+          <li>A feature relies on one or several endpoints or external services.</li>
+          <li>Endpoints and processes act on one or several entities.</li>
+          <li>An entity and an endpoint appear only once: converging arrows show the reuse.</li>
+          <li>An endpoint is exposed and callable, a process is not: two distinct columns.</li>
+          <li>A call to another domain starts from an endpoint or a process, never from a feature.</li>
+          <li>A topic never reaches an entity: it pushes to a process, which writes into the entity. It lives in the domain that publishes it.</li>
+          <li>The HTTP verb is in the endpoint block, never on the arrow.</li>
+          <li>An external system is a system, not a piece of data: the arrow says what is fetched there.</li>
+          <li>External means external to the organization. An internal team is a neighbouring domain.</li>
+          <li>Labels are readable text in the project language, endpoint paths stay literal.</li>
+        </ol>
+      </details>
+
+      <div class="grid c3" style="margin-top:16px">
+        <div class="card soft">
+          <h4>Goals of this design</h4>
+          <p>What the diagram must make visible:</p>
+          <div class="todo">adapt the list: applications and screens, shared features, endpoints to develop and number of features served, entities, external systems, flows, elements to create and to modify, what must be decided</div>
+        </div>
+        <div class="card soft">
+          <h4>Subject</h4>
+          <dl class="defs">
+            <dt>Covered</dt><dd><span class="todo">scope in one sentence, epics concerned</span></dd>
+            <dt>Excluded</dt><dd><span class="todo">what this diagram does not cover</span></dd>
+          </dl>
+        </div>
+        <div class="card soft">
+          <h4>Project at a glance</h4>
+          <div class="todo">what it is about, for whom, where it stands. Ten lines at most</div>
+          <p class="hint">Source: <span class="todo">specs vX.Y of DD.MM.YYYY</span></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Scope filter: one release per line of the story map, in order -->
+    <div class="release-filter" data-releases="MVP R2"></div>
+
+    <section class="section" data-level="required">
+      <h2 id="technical-chain-diagram">Technical chain diagram</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show what must be built and where, from screen to entity, for the whole project.</dd>
+          <dt>Content</dt><dd>The counters per block type, then a single diagram: screens and features in the application; endpoints, processes and entities in the domain; each block with its identifier and its release.</dd>
+          <dt>Why this formalism</dt><dd>The screen-endpoint-entity chain, read from left to right: an arrow that crosses the boundary is a contract between front and back. Each block appears only once, which shows the reuse.</dd>
+          <dt>Reading</dt><dd><ul><li>The scope filter shows one release: its blocks as TODO and, in context, those of earlier releases it calls (DONE) or adapts (TO UPDATE); the counters follow.</li><li>Hovering a block lights up its chain; clicking it opens the chain alone in a centred view.</li><li>The identifier of a block opens its page of the detailed design; the <code>{ }</code> icon of an endpoint shows its schemas.</li></ul></dd>
+          <dt>Source</dt><dd>The arrows: <code>data-links</code> on the start block. The filter: <code>data-release</code> and <code>data-adapted</code> of each block.</dd>
+        </dl>
+      </div>
+      <div class="grid c5">
+        <div class="kpi" data-count="screen"><div class="label">Screens</div><div class="value">0</div><div class="sub abbr"></div></div>
+        <div class="kpi" data-count="feature"><div class="label">Features</div><div class="value">0</div><div class="sub abbr"></div></div>
+        <div class="kpi" data-count="endpoint"><div class="label">Endpoints</div><div class="value">0</div><div class="sub abbr"></div></div>
+        <div class="kpi" data-count="process"><div class="label">Processes</div><div class="value">0</div><div class="sub abbr"></div></div>
+        <div class="kpi" data-count="entity"><div class="label">Entities</div><div class="value">0</div><div class="sub abbr"></div></div>
+      </div>
+      <div class="todo">replace the example diagram below with the real diagram of the whole project; the counters compute themselves</div>
+
+      <div class="diagram">
+        <div class="chain c3">
+          <div class="container app">
+            <div class="c-title">Application FRONT_NAME</div>
+            <div class="cols">
+              <div class="col">
+                <div class="col-title">Screens</div>
+                <div class="node screen" id="SCR-01" data-release="MVP" data-badge="todo" data-adapted="R2" data-links="f-01 f-02">SCR-01 Resource list</div>
+              </div>
+              <div class="col">
+                <div class="col-title">Features</div>
+                <div class="node feature" id="f-01" data-release="MVP" data-badge="todo" data-links="EP-01">Search a resource</div>
+                <div class="node feature" id="f-02" data-release="R2" data-badge="todo" data-links="EP-02">Create a resource</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="container dom">
+            <div class="c-title">Domain DOMAIN_NAME</div>
+            <div class="cols">
+              <div class="col">
+                <div class="col-title">Endpoints</div>
+                <div class="node endpoint" id="EP-01" data-release="MVP" data-badge="todo" data-links="EN-01">EP-01 GET /resources</div>
+                <div class="node endpoint" id="EP-02" data-release="R2" data-badge="todo" data-links="EN-01 EN-02 ext-01|check_eligibility">EP-02 POST /resources</div>
+              </div>
+              <div class="col">
+                <div class="col-title">Processes</div>
+                <div class="node process" id="PROC-01" data-release="R2" data-badge="todo" data-links="EN-02">PROC-01 Update the references</div>
+              </div>
+              <div class="col">
+                <div class="col-title">Entities</div>
+                <div class="node entity" id="EN-01" data-release="MVP" data-badge="todo" data-adapted="R2">EN-01 Resource</div>
+                <div class="node entity" id="EN-02" data-release="R2" data-badge="todo">EN-02 Reference</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="stack">
+            <div class="container dom">
+              <div class="c-title">Neighbouring domain NAME</div>
+              <div class="col">
+                <div class="node topic" id="tp-01" data-release="R2" data-links="PROC-01|reference_changed">reference-changed</div>
+              </div>
+            </div>
+            <div class="container ext">
+              <div class="c-title">External systems</div>
+              <div class="col">
+                <div class="node external" id="ext-01" data-release="R2">External system X</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="deployable-applications-and-containers">Deployable applications and containers</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know what is built and started separately.</dd>
+          <dt>Content</dt><dd>One row per deployable unit, infrastructure dependencies included: role, technology, local port, dependencies, startup.</dd>
+          <dt>Why this formalism</dt><dd>The container view of the C4 model, as a table: same columns for each unit.</dd>
+          <dt>Reading</dt><dd>Technologies, ports and startup commands: those of the stack foundation, unless there is a deviation.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Unit</th><th>Role</th><th>Technology</th><th>Local port</th><th>Depends on</th><th>Startup</th></tr></thead>
+        <tbody>
+          <tr><td><code>frontend</code></td><td><span class="todo">role</span></td><td><span class="todo">technology of the foundation</span></td><td><span class="todo">port</span></td><td><code>backend</code></td><td><span class="todo">command of the foundation</span></td></tr>
+          <tr><td><code>backend</code></td><td><span class="todo">role</span></td><td><span class="todo">technology of the foundation</span></td><td><span class="todo">port</span></td><td><code>store</code></td><td><span class="todo">command of the foundation</span></td></tr>
+          <tr><td><code>store</code></td><td>persistence</td><td><span class="todo">chosen store, version</span></td><td><span class="todo">port</span></td><td></td><td><span class="todo">startup</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="chosen-stack-and-deviations">Chosen stack and deviations</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say which stack applies and how the project departs from it.</dd>
+          <dt>Content</dt><dd>The stack foundation declared in <code>.team/foundation.md</code>, the choices it leaves open (persistence, for example), then the deviations, each with its ADR in status <code>proposed</code>.</dd>
+          <dt>Why this formalism</dt><dd>A definition list that cites the foundation without copying it: only the deviations are read here, and each one goes up to the human before the sprint.</dd>
+          <dt>Reading</dt><dd>Without a foundation provided by the human, the Architect creates one in <code>.team/foundations/stacks/&lt;name&gt;/</code> of the project, validated by the human at G2.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Stack foundation</dt><dd><span class="todo">name of the foundation, link to its foundation.md</span></dd>
+        <dt>Version</dt><dd><span class="todo">version of the foundation chosen</span></dd>
+        <dt>Foundation status</dt><dd><span class="todo">active, or created for the project and to validate at G2</span></dd>
+      </dl>
+      <table>
+        <thead><tr><th>Layer</th><th>Foundation</th><th>Chosen</th><th>Deviation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">layer left open by the foundation</span></td><td><span class="todo">what the foundation offers</span></td><td><span class="todo">choice</span></td><td><span class="tag ok">none</span></td></tr>
+          <tr><td><span class="todo">layer</span></td><td><span class="todo">value of the foundation</span></td><td><span class="todo">choice</span></td><td><span class="tag danger">deviation</span> <a href="../adr/0001-title.html">ADR-0001</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="persistence-per-entity">Persistence per entity</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Justify the store of each entity.</dd>
+          <dt>Content</dt><dd>One row per entity: store, justification (shape of the data, transactions, queries), volume, retention.</dd>
+          <dt>Why this formalism</dt><dd>A table per entity: the name of a store is not enough, its reason is on the same row. The detail of the fields is in the detailed design.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Entity</th><th>Store</th><th>Justification</th><th>Volume</th><th>Retention</th></tr></thead>
+        <tbody>
+          <tr><td>EN-01 Resource</td><td><span class="tag info"><span class="todo">store A</span></span></td><td><span class="todo">shape of the data, access, transactions</span></td><td><span class="todo">order of magnitude</span></td><td><span class="todo">duration, source</span></td></tr>
+          <tr><td>EN-02 Reference</td><td><span class="tag violet"><span class="todo">store B</span></span></td><td><span class="todo">justification</span></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="non-functional-requirements">Non-functional requirements</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Set what the application must hold beyond its functions.</dd>
+          <dt>Content</dt><dd>Per domain (performance, availability, security, observability, accessibility): requirement, target, means to hold it, check.</dd>
+          <dt>Why this formalism</dt><dd>One measurable target per row: "fast" cannot be checked, "p95 &lt; 300 ms" can.</dd>
+          <dt>Source</dt><dd>Framing and specs; failing that, a hypothesis of the points of attention.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Domain</th><th>Requirement</th><th>Target</th><th>Means</th><th>Checked by</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Performance</span></td><td><span class="todo">e.g. response time of the search</span></td><td><span class="todo">p95 &lt; X ms</span></td><td><span class="todo">index, pagination</span></td><td>QA, <code>performance-audit</code></td></tr>
+          <tr><td><span class="tag">Security</span></td><td><span class="todo">requirement</span></td><td></td><td></td><td><code>security-audit</code></td></tr>
+          <tr><td><span class="tag">Observability</span></td><td><span class="todo">structured logs, correlation, metrics</span></td><td></td><td></td><td>Reviewer</td></tr>
+          <tr><td><span class="tag">Accessibility</span></td><td><span class="todo">target level</span></td><td></td><td></td><td>QA</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="security-and-authentication">Security and authentication</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say who can call what, how we know it, what we protect.</dd>
+          <dt>Content</dt><dd>Five cards: authentication, roles and their permissions, authorization, sensitive data, secrets.</dd>
+          <dt>Why this formalism</dt><dd>One card per subject, in short lists, that the security review goes through one by one. The detail per endpoint is in the detailed design.</dd>
+        </dl>
+      </div>
+      <div class="grid c3">
+        <div class="card soft">
+          <h4>Authentication</h4>
+          <ul><li><span class="todo">mechanism, identity provider, session duration</span></li></ul>
+        </div>
+        <div class="card soft">
+          <h4>Roles</h4>
+          <table>
+            <thead><tr><th>Role</th><th>Permissions</th></tr></thead>
+            <tbody><tr><td><code>role</code></td><td><span class="todo">what it allows</span></td></tr></tbody>
+          </table>
+        </div>
+        <div class="card soft">
+          <h4>Authorization</h4>
+          <ul><li><span class="todo">where the check happens (backend, per endpoint), default rule: deny</span></li></ul>
+        </div>
+        <div class="card soft">
+          <h4>Sensitive data</h4>
+          <ul><li><span class="todo">personal or sensitive data, handling (masking, encryption, logging)</span></li></ul>
+        </div>
+        <div class="card soft">
+          <h4>Secrets</h4>
+          <ul><li><span class="todo">where they live, never in the repository</span></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="architecture-decisions">Architecture decisions</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Lead to the register of the architecture decisions of the project.</dd>
+          <dt>Content</dt><dd>One sentence and the link to the register <a href="../adr/index.html">docs/adr/index.html</a>. ADRs are cited by their link where they justify a choice (stack, persistence, security).</dd>
+          <dt>Why this formalism</dt><dd>The register, generated from the ADR pages (skill <code>deliverable-adr</code>), already carries identifier, status, date and deviation from the foundation: a list here would be a second source that diverges.</dd>
+        </dl>
+      </div>
+      <p>The architecture decisions of the project, their status and their deviations from the foundation are in the <a href="../adr/index.html">ADR register</a>.</p>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="external-systems-and-contracts">External systems and contracts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know what the project depends on outside the organization.</dd>
+          <dt>Content</dt><dd>Per system: what is fetched there, protocol and contract, owner, availability, degraded mode. Not applicable: write it.</dd>
+          <dt>Why this formalism</dt><dd>A table, the same questions for each system. A tool of another internal team is a neighbouring domain, not an external system.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>System</th><th>What is fetched there</th><th>Protocol and contract</th><th>Owner</th><th>Availability</th><th>Degraded mode</th></tr></thead>
+        <tbody>
+          <tr><td>External system X</td><td><span class="todo">data or service</span></td><td><span class="todo">REST, link to the documentation</span></td><td><span class="todo">supplier</span></td><td><span class="todo">known SLA</span></td><td><span class="todo">behaviour if unavailable</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="asynchronous-flows">Asynchronous flows</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know which messages circulate, and with which guarantee.</dd>
+          <dt>Content</dt><dd>Per topic: producer, consumers, key, delivery guarantee, content. Not applicable: write it.</dd>
+          <dt>Why this formalism</dt><dd>A table of the attributes that make a message contract. The schema of the messages is in the detailed design.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Topic</th><th>Producer</th><th>Consumers</th><th>Key</th><th>Guarantee</th><th>Content</th></tr></thead>
+        <tbody>
+          <tr><td><code>reference-changed</code></td><td>Neighbouring domain</td><td>Update the references</td><td><span class="todo">partition key</span></td><td><span class="todo">at least once, idempotent consumer</span></td><td><span class="todo">what the message carries</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="environments">Environments</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know what runs where.</dd>
+          <dt>Content</dt><dd>Per environment (local, test, demo): use, what runs, data.</dd>
+          <dt>Why this formalism</dt><dd>A table, one row per environment. Locally, the dependencies start as the stack foundation provides.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Environment</th><th>Use</th><th>What runs</th><th>Data</th></tr></thead>
+        <tbody>
+          <tr><td>Local</td><td>development, tests</td><td>front and back directly, dependencies according to the foundation</td><td>fictitious set</td></tr>
+          <tr><td><span class="todo">demo or acceptance</span></td><td>QA, G3 acceptance</td><td></td><td>fictitious set</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="technical-risks">Technical risks</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Anticipate what can derail the delivery.</dd>
+          <dt>Content</dt><dd>Per risk: impact, probability, mitigation.</dd>
+          <dt>Why this formalism</dt><dd>The risk register (impact × probability), rows sorted by impact then by probability.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Risk</th><th>Impact</th><th>Probability</th><th>Mitigation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">description; rows sorted by impact then probability</span></td><td><span class="tag danger">high</span></td><td><span class="tag warn">medium</span></td><td><span class="todo">spike, proof ticket, degraded mode</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="points-of-attention">Points of attention</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>See what is not settled.</dd>
+          <dt>Content</dt><dd>The questions asked to the PO (<code>Q-xxx</code>) and the hypotheses, each with what it blocks or what changes if it is wrong.</dd>
+          <dt>Why this formalism</dt><dd>Question and hypothesis callouts, spotted at a glance; a question has its identifier and is followed in the questions page.</dd>
+        </dl>
+      </div>
+      <div class="callout question"><b>Q-001</b><span class="todo">question asked to the PO, what it blocks</span></div>
+      <div class="callout hypothesis"><b>Hypothesis</b><span class="todo">what we assume, what changes if it is wrong</span></div>
+    </section>
+  </main>
+</div>
+<!-- Generated by the detailed design: links of the ids to their pages and the { } schema chip.
+     Absent until the detailed design exists: harmless. -->
+<script src="detailed/xref.js"></script>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

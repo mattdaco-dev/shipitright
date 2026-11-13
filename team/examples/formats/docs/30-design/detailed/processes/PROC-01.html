@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PROC-01 Calculer les occurrences et leurs conflits · Conception technique détaillée · Réservation de salles</title>
+  <!-- Process metadata, read by team/scripts/detailed-pages.mjs -->
+  <meta name="id" content="PROC-01">
+  <meta name="name" content="Calculer les occurrences et leurs conflits">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/serie">
+  <meta name="entities" content="EN-03:R EN-05:R">
+  <meta name="errors" content="SALLE_INTROUVABLE SALLE_DESACTIVEE CRENEAU_HORS_REGLES SERIE_TROP_LONGUE">
+  <meta name="rules" content="BR-01 BR-02 BR-03 BR-04 BR-05 BR-08 CALC-01">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Traitement PROC-01</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#crud-matrix">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">PROC-01</span> : Calculer les occurrences et leurs conflits</h1>
+      <p class="lede">Le calcul d'une série, en deux temps : les dates (<a href="../../../20-specs/functional-design.html#CALC-01">CALC-01</a>) par une fonction pure du domaine, puis les conflits par une seule requête. Partagé par l'aperçu et la création, pour que les deux disent exactement la même chose.</p>
+      <div class="meta">
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Appelé par et entités</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Situer le traitement dans l'application.</dd>
+          <dt>Contenu</dt><dd>Qui l'appelle, ce qu'il appelle, les données qu'il touche en lettres CRUD, ses règles et ses erreurs métier.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste de définitions, un fait par terme ; calculée, elle reste juste sans rien écrire.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les balises <code>meta</code> de la page.</dd>
+        </dl>
+      </div>
+      <!-- gen:process-usage -->
+      <dl class="defs">
+        <dt>Module</dt><dd><a href="../cross-cutting/code-organization.html#module-domain-serie"><code>domain/serie</code></a></dd>
+        <dt>Appelé par</dt><dd><a href="../endpoints/EP-09.html">EP-09</a> <code>POST /series/apercu</code> <span class="tag accent">MVP</span><br><a href="../endpoints/EP-10.html">EP-10</a> <code>POST /series</code> <span class="tag accent">MVP</span></dd>
+        <dt>Données</dt><dd><a href="../entities/EN-03.html">EN-03</a> Salle <span class="crud" data-tip="lecture">R</span><br><a href="../entities/EN-05.html">EN-05</a> Réservation <span class="crud" data-tip="lecture">R</span></dd>
+        <dt>Règles</dt><dd><a href="../../../20-specs/functional-design.html#BR-01">BR-01</a>, <a href="../../../20-specs/functional-design.html#BR-02">BR-02</a>, <a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>, <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a>, <a href="../../../20-specs/functional-design.html#BR-05">BR-05</a>, <a href="../../../20-specs/functional-design.html#BR-08">BR-08</a>, <a href="../../../20-specs/functional-design.html#CALC-01">CALC-01</a></dd>
+        <dt>Erreurs métier</dt><dd><a href="../cross-cutting/errors.html#SALLE_INTROUVABLE"><code>SALLE_INTROUVABLE</code></a>, <a href="../cross-cutting/errors.html#SALLE_DESACTIVEE"><code>SALLE_DESACTIVEE</code></a>, <a href="../cross-cutting/errors.html#CRENEAU_HORS_REGLES"><code>CRENEAU_HORS_REGLES</code></a>, <a href="../cross-cutting/errors.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a></dd>
+      </dl><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Signature et transaction</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le contrat du traitement dans le code.</dd>
+          <dt>Contenu</dt><dd>Sa signature dans le langage du socle (entrées typées, résultat, refus en valeurs de <a href="../schemas/index.html#CodeErreur"><code>CodeErreur</code></a>), puis la transaction où il s'exécute : toujours celle de son appelant (<a href="../cross-cutting/code-organization.html#transactions">règle des transactions</a>).</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une signature typée est la forme la plus courte et la moins ambiguë ; le dev la recopie dans le domaine.</dd>
+        </dl>
+      </div>
+      <pre class="signature"><code>// module domain/serie : calcul du domaine, testé seul
+occurrences(
+  demande: <a href="../schemas/SerieDemande.html"><code>SerieDemande</code></a>,        // salle, premierJour, debut, fin, frequence, jusquAu
+  deps: { salles: SalleRepository; reservations: ReservationRepository; horloge: Horloge },
+): Result&lt;Occurrence[],             // dans l'ordre des jours ; Occurrence = { jour, statut: 'libre' | 'conflit' }
+          'SALLE_INTROUVABLE' | 'SALLE_DESACTIVEE' | 'CRENEAU_HORS_REGLES' | 'SERIE_TROP_LONGUE'&gt;</code></pre>
+      <dl class="defs">
+        <dt>Sortie</dt><dd>la matière de <a href="../schemas/SerieApercu.html"><code>SerieApercu</code></a>, projetée par <a href="../endpoints/EP-09.html">EP-09</a> et relue par <a href="../endpoints/EP-10.html">EP-10</a></dd>
+        <dt>Transaction</dt><dd>aucune pour <a href="../endpoints/EP-09.html">EP-09</a> (lecture) ; dans la transaction immédiate que <a href="../endpoints/EP-10.html">EP-10</a> ouvre, ce qui rend le recalcul et la création atomiques (<a href="../../../adr/0002-concurrence-des-reservations-sqlite.html">ADR-0002</a>)</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Algorithme</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que fait le traitement, dans l'ordre.</dd>
+          <dt>Contenu</dt><dd>Une étape par contrôle ou par action, chacune avec sa règle de gestion et son refus.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste numérotée fixe l'ordre (un contrôle avant l'écriture) sans prose.</dd>
+        </dl>
+      </div>
+      <ol>
+        <li><b>Contrôles</b> : salle existante et active (<a href="../../../20-specs/functional-design.html#BR-08">BR-08</a>), sinon <a href="../cross-cutting/errors.html#SALLE_INTROUVABLE"><code>SALLE_INTROUVABLE</code></a> ou <a href="../cross-cutting/errors.html#SALLE_DESACTIVEE"><code>SALLE_DESACTIVEE</code></a> ; <code>Creneau</code> de la première occurrence valide (<a href="../../../20-specs/functional-design.html#BR-02">BR-02</a>, <a href="../../../20-specs/functional-design.html#BR-03">BR-03</a>), sinon <a href="../cross-cutting/errors.html#CRENEAU_HORS_REGLES"><code>CRENEAU_HORS_REGLES</code></a>.</li>
+        <li><b>Borne</b> : refus <a href="../cross-cutting/errors.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a> si <code>jusquAu</code> dépasse <code>premierJour</code> + 3 mois (<a href="../../../20-specs/functional-design.html#BR-04">BR-04</a>). Le « + 3 mois » garde le quantième ; s'il n'existe pas dans le mois d'arrivée, le dernier jour du mois (30.11 donne 28.02). Une série trop longue est refusée, jamais tronquée.</li>
+        <li><b>Dates</b>, fonction pure (<a href="../../../20-specs/functional-design.html#CALC-01">CALC-01</a>) : à partir de <code>premierJour</code>, chaque jour du lundi au vendredi (quotidienne) ou tous les 7 jours (hebdomadaire), tant que le jour est au plus <code>jusquAu</code>. Jours fériés non exclus.</li>
+        <li><b>Conflits</b>, une requête : les réservations actives de la salle entre la première et la dernière occurrence, au même créneau, avec la condition de <a href="PROC-02.html">PROC-02</a> (<code>debut &lt; fin_existante AND fin &gt; debut_existant</code>). Une occurrence qui en chevauche une est <code>conflit</code> (<a href="../../../20-specs/functional-design.html#BR-01">BR-01</a>, <a href="../../../20-specs/functional-design.html#BR-05">BR-05</a>).</li>
+      </ol>
+      <div class="callout decision"><b>Côté front</b>Aucune copie de ce calcul (<a href="../cross-cutting/compliance.html#INV-66">INV-66</a>) : le front appelle <a href="../endpoints/EP-09.html">EP-09</a>.</div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Cas limites</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister les cas que les tests du traitement couvrent.</dd>
+          <dt>Contenu</dt><dd>Une ligne par situation, avec son résultat attendu.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une table de décision : chaque ligne devient un test unitaire. Les <a href="../cross-cutting/tests.html">tests imposés</a> la citent sans la recopier.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Situation</th><th>Résultat attendu</th></tr></thead>
+        <tbody>
+          <tr><td>hebdomadaire, mardi 06.10.2026, jusqu'au 29.12.2026</td><td>13 occurrences (exemple de <a href="../../../20-specs/functional-design.html#CALC-01">CALC-01</a>)</td></tr>
+          <tr><td>quotidienne, un vendredi puis le lundi</td><td>samedi et dimanche sautés</td></tr>
+          <tr><td><code>jusquAu</code> = premier jour + 3 mois exactement</td><td>accepté ; un jour de plus : <a href="../cross-cutting/errors.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a></td></tr>
+          <tr><td>premier jour le 30.11</td><td>borne au 28.02</td></tr>
+          <tr><td><code>jusquAu</code> = <code>premierJour</code></td><td>une seule occurrence</td></tr>
+          <tr><td>une réservation de 10:00 à 11:00 existe, série de 11:00 à 12:00</td><td>aucun conflit (bornes strictes)</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" id="open-points" data-level="recommended">
+      <h2>Points ouverts</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Lister ce qui reste à trancher sur ce traitement.</dd>
+          <dt>Contenu</dt><dd>Un point par ligne, rangé par impact décroissant : le sujet, l'hypothèse que le code suit en attendant, la question <code>Q-xxx</code> si elle est posée au PO.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Un tableau, parce que chaque point a les mêmes attributs et se compare aux autres.</dd>
+          <dt>Lire</dt><dd><ul><li><span class="impact high">fort</span> la réponse peut changer le modèle de données, une opération figée du contrat d'API ou ce qui structure tout le code</li><li><span class="impact medium">moyen</span> la réponse peut changer une opération provisoire, un traitement, un schéma non figé ou un écran</li><li><span class="impact low">faible</span> la réponse ne change qu'un libellé, un message, une valeur ou un cas limite</li></ul></dd>
+          <dt>Source</dt><dd>Écrit ici une seule fois ; le générateur le reprend dans la <a href="../open-points.html">vue des points ouverts</a>.</dd>
+        </dl>
+      </div>
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Sujet</th><th>Hypothèse retenue</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="high"><span class="impact high">fort</span></td><td>Série de plus de 3 mois : <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a> veut un refus, mais la formule de <a href="../../../20-specs/functional-design.html#CALC-01">CALC-01</a> (« tant que la date est au plus la dernière date demandée et au plus la première + 3 mois ») se lit comme une troncature silencieuse. Une troncature changerait la réponse de <a href="../endpoints/EP-09.html">EP-09</a>, opération figée.</td><td>refus, <code>422</code> <a href="../cross-cutting/errors.html#SERIE_TROP_LONGUE"><code>SERIE_TROP_LONGUE</code></a> sur <code>jusquAu</code> ; question au BA : retirer « au plus la première + 3 mois » de <a href="../../../20-specs/functional-design.html#CALC-01">CALC-01</a> et laisser la borne à <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a>. La conception fonctionnelle n'est pas modifiée ici.</td><td></td></tr>
+          <tr><td data-value="medium"><span class="impact medium">moyen</span></td><td>Fréquence mensuelle (release R3) : même date du mois ou même jour de la semaine du mois, sort d'un 31 ou d'un jour non ouvré, borne de 3 mois (point d'attention de la <a href="../../macro.html#points-of-attention">conception macro</a>).</td><td>aucune ; la valeur <code>mensuelle</code> de <a href="../schemas/index.html#Frequence"><code>Frequence</code></a> est annoncée, la règle reste à poser.</td><td></td></tr>
+          <tr><td data-value="medium"><span class="impact medium">moyen</span></td><td>Borne de 3 mois en fin de mois, quand le quantième n'existe pas dans le mois d'arrivée.</td><td>ramenée au dernier jour du mois (30.11 donne 28.02).</td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

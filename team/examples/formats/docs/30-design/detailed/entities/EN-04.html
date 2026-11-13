@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-04 Équipement · Conception technique détaillée · Réservation de salles</title>
+  <!-- Entity metadata, read by team/scripts/detailed-pages.mjs -->
+  <meta name="id" content="EN-04">
+  <meta name="name" content="Équipement">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/equipement">
+  <meta name="tables" content="equipements">
+  <meta name="rules" content="BR-09">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Entité EN-04</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#crud-matrix">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">EN-04</span> : Équipement</h1>
+      <p class="lede">Référentiel de trois équipements, chargé par migration. Une table plutôt qu'une énumération dans le code, pour qu'un libellé soit le même sur tous les écrans.</p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info">SQLite</span> table <code>equipements</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required" data-section="physical-model">
+      <h2>Modèle physique</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
+          <dt>Contenu</dt><dd>Le DDL SQL dans le dialecte du store, chaque contrainte commentée par la règle qu'elle tient, puis les règles que la base ne peut pas tenir et l'endroit où elles vivent.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le DDL est ce que contient la migration : le dev le reprend sans traduction.</dd>
+          <dt>Lire</dt><dd>Un index porte en commentaire la requête qu'il sert ; une colonne d'une release suivante porte sa release, à titre indicatif. Les conventions communes sont dans la <a href="../cross-cutting/code-organization.html#persistance">persistance</a>.</dd>
+        </dl>
+      </div>
+      <pre class="ddl"><code>CREATE TABLE equipements (
+  id       INTEGER PRIMARY KEY,
+  code     TEXT NOT NULL UNIQUE,    -- ecran, visio, tableau_blanc (<a href="../../../20-specs/functional-design.html#BR-09">BR-09</a>)
+  libelle  TEXT NOT NULL            -- Écran, Visioconférence, Tableau blanc
+);
+-- chargée par la migration ; aucun endpoint n'écrit dans cette table, un équipement de plus passe par
+-- une migration</code></pre>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Machine à états</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
+          <dt>Contenu</dt><dd>Une ligne par transition (de, vers, événement, garde, action), puis le diagramme d'états tiré de ce tableau. Sans cycle de vie, une phrase le dit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La notation UML <i>événement [garde] / action</i>, en deux vues d'une seule source : le tableau porte les liens et se relit ligne à ligne, le diagramme montre le cycle d'un coup d'œil.</dd>
+        </dl>
+      </div>
+      <p>Sans cycle de vie : référentiel chargé par migration, jamais modifié par un endpoint.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Qui agit dessus</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
+          <dt>Contenu</dt><dd>Sa colonne de la matrice CRUD, endpoint par endpoint et traitement par traitement, puis les schémas qui en sont la projection.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, standard de ce croisement ; la même que celle du <a href="../index.html#crud-matrix">sommaire</a>, lue depuis l'entité.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les pages des traitements : rien à écrire.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage -->
+      <table>
+        <thead><tr><th>Id</th><th>Endpoint ou traitement</th><th>CRUD</th><th>Comment</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../endpoints/EP-05.html">EP-05</a></td><td><code>GET /equipements</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-15.html">EP-15</a></td><td><code>POST /salles</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-16.html">EP-16</a></td><td><code>PUT /salles/{id}</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+        </tbody>
+      </table>
+      <p><b>Schémas qui l'exposent</b> : <a href="../schemas/Equipement.html"><code>Equipement</code></a>. <b>Module</b> : <a href="../cross-cutting/code-organization.html#module-domain-equipement"><code>domain/equipement</code></a>.</p><!-- /gen -->
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <title>Error handling · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/cross-cutting/errors.html. Its gen: block is filled by team/scripts/detailed-pages.mjs. -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Error handling</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#site-map">Cross-cutting</a></div>
+      <h1><span class="doc-kind">Error handling</span>: codes, statuses, screens</h1>
+      <p class="lede">Each error of the API carries a stable business code that the front translates into a message. The catalogue below is drawn from the API contract: for each code it gives the HTTP status, the case, what the user sees and the endpoints that return it.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="principles">Principles</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say how an error travels from the API to the screen.</dd>
+          <dt>Content</dt><dd>The format of the errors, the choice of the HTTP status, the translation by the front, the handling of an unknown code.</dd>
+          <dt>Why this formalism</dt><dd>A short list, each principle with the invariant that makes it checkable; the detail code by code is in the catalogue.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li>Format <code>application/problem+json</code> (RFC 9457), schema <a href="../schemas/Problem.html"><code>Problem</code></a>. The <code>code</code> field takes a value of <a href="../schemas/index.html#ErrorCode"><code>ErrorCode</code></a>.</li>
+        <li>Request outside the schema in <code>400</code>, missing session in <code>401</code>, insufficient role in <code>403</code>, unknown resource in <code>404</code>, state conflict in <code>409</code>, input rule in <code>422</code>.</li>
+        <li>The front translates the <code>code</code>, never <code>title</code> nor <code>detail</code>, from a single catalogue of labels.</li>
+        <li>A <code>code</code> the front does not know (value added by a later release) is displayed as the technical error of the screen, without crashing (<a href="compliance.html#INV-59">INV-59</a>). Announced codes carry their release in the catalogue.</li>
+        <li>A code that puts an object in question (Entity column) is returned only by an endpoint or a process that declares that entity; the generator checks it. The translation screen by screen is in the <a href="screens.html">screens view</a>.</li>
+        <li>No response carries a technical detail (stack, query, table name). An unexpected error rolls back the transaction and answers <a href="errors.html#INTERNAL_ERROR"><code>INTERNAL_ERROR</code></a>.</li>
+        <li><span class="todo">rules specific to the project, or remove this line</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="code-catalogue">Code catalogue</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know everything about a business error code.</dd>
+          <dt>Content</dt><dd>One row per value of <a href="../schemas/index.html#ErrorCode"><code>ErrorCode</code></a>: HTTP status, case, what the user sees (screen and message), entity in question, endpoints that return it.</dd>
+          <dt>Why this formalism</dt><dd>The problem type registry of RFC 9457, as a table.</dd>
+          <dt>Source</dt><dd><code>x-error-catalog</code> and <code>x-codes</code> of <code>openapi.yaml</code>: the catalogue cannot diverge from the API contract.</dd>
+        </dl>
+      </div>
+      <!-- gen:error-catalog --><!-- /gen -->
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>US-xxx Title · PROJECT_NAME</title>
+  <!-- Story metadata, read and filtered by the agents: grep -l 'name="epic" content="EPIC-02"' stories/ -->
+  <meta name="id" content="US-xxx">
+  <meta name="type" content="story">
+  <meta name="epic" content="EPIC-xx">
+  <meta name="status" content="draft">          <!-- draft | ready | validated | in-sprint | done | abandoned -->
+  <meta name="validated_by" content="">         <!-- human | po, filled when status becomes validated -->
+  <meta name="validated_on" content="">         <!-- YYYY-MM-DD (ISO), filled when status becomes validated -->
+  <meta name="priority" content="must">         <!-- must | should | could | wont -->
+  <meta name="release" content="MVP">
+  <meta name="actor" content="role">
+  <meta name="screens" content="SCR-xx">        <!-- separated by spaces -->
+  <meta name="rules" content="BR-xx">
+  <meta name="endpoints" content="">            <!-- EP-xx, filled by the Architect in P3: feeds the gen:story-tech block -->
+  <meta name="depends_on" content="">           <!-- US-xxx to deliver first -->
+  <meta name="size" content="M">                <!-- XS | S | M | L | XL (XL: split before entering a sprint) -->
+  <meta name="front" content="50">              <!-- 0 to 100: front share of the story in %, back is the rest -->
+  <meta name="notion_url" content="">           <!-- filled by the PO -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">User story US-xxx</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../story-map.html">← Story map</a><br><a href="../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P2 · Specifications · <a href="../epics/EPIC-xx-slug.html">EPIC-xx <span class="todo">epic name</span></a></div>
+      <h1><span class="doc-kind">US-xxx</span>: <span class="todo">title as an infinitive or a noun phrase</span></h1>
+      <div class="meta">
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Priority</b> <span class="moscow must">Must</span></span>
+        <span><b>Release</b> MVP</span>
+        <span><b>Size</b> M</span>
+        <span><b>Front / back</b> 50 / 50</span>
+        <span><b>Actor</b> <a href="../../00-framing/framing.html#PER-01"><span class="todo">role</span></a></span>
+        <span><b>Depends on</b> <span class="todo">US-xxx as a link, or "none"</span></span>
+        <span><b>Validated</b> <span class="todo">when moving to validated: "by the human at G1 on YYYY-MM-DD" or "by the PO on YYYY-MM-DD", otherwise "no"</span></span>
+      </div>
+      <div class="meta">
+        <span><b>Sources</b> <span class="todo">FL-xx, BR-xx, MSG-xx, SCR-xx the story derives from, as links</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="context">Context</h2>
+      <p><span class="todo">where we are in the product, what exists and why it is not enough. 2 to 4 lines: an agent discovering the product must be able to place the story.</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="need">Need</h2>
+      <p class="us-need"><b>As</b> <span class="todo">a single role</span>, <b>I want</b> <span class="todo">capability</span>, <b>so that</b> <span class="todo">purpose delivered by this story</span>.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="scope">Scope</h2>
+      <div class="scope two">
+        <div class="in"><h4>In the story</h4>
+          <ul><li><span class="todo">what the story delivers</span></li></ul>
+        </div>
+        <div class="out"><h4>Outside the story</h4>
+          <ul><li><span class="todo">downstream dependencies, excluded flows, with the story that carries them as a link</span></li></ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="functional-rules">Functional rules</h2>
+      <p class="hint">Declarative invariants, numbered. A shared business rule cites its BR-xx. An open question carries its badge, which points to the question.</p>
+      <table>
+        <thead><tr><th style="width:56px">No.</th><th>Rule</th><th style="width:110px">Business rule</th></tr></thead>
+        <tbody>
+          <tr id="R1"><td>R1</td><td><span class="todo">invariant, declarative sentence</span></td><td><a href="../functional-design.html#BR-xx">BR-xx</a></td></tr>
+          <tr id="R2"><td>R2</td><td><span class="todo">invariant specific to the story</span> <a class="qmark" href="../../questions.html#Q-xxx">Q-xxx</a></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="cross-cutting-requirements">Cross-cutting requirements</h2>
+      <p class="hint">What acceptance checks without a business rule saying it: screen states, accessibility, labels, performance, security. One row per requirement, with how to check it.</p>
+      <table>
+        <thead><tr><th style="width:215px">Category</th><th>Requirement</th><th style="width:210px">Check</th></tr></thead>
+        <tbody>
+          <!-- Categories: <span class="tag info">State</span>, <span class="tag violet">Accessibility</span>, <span class="tag">Labels</span>,
+               <span class="tag warn">Performance</span>, <span class="tag danger">Security</span>, followed by the precise topic -->
+          <tr><td><span class="tag info">State</span> loading</td><td><span class="todo">what shows while loading</span></td><td>visual acceptance</td></tr>
+          <tr><td><span class="tag info">State</span> error</td><td><span class="todo">what shows on failure</span></td><td>scenario <a href="#S2">S2</a></td></tr>
+          <tr><td><span class="tag violet">Accessibility</span> keyboard</td><td><span class="todo">focus, tab order, Escape</span></td><td>keyboard test</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="acceptance-criteria">Acceptance criteria</h2>
+      <p class="hint">Numbered scenarios, one behavior each, without test data. A ticket, a test or a campaign cites a scenario by its identifier US-xxx/S2, as a link to the #S2 anchor of this page.</p>
+      <!-- Plain text. Each "Scenario n: title" becomes a card anchored #Sn. Keywords in the project language
+           (team/i18n/<lang>/gherkin.json): Given, When, Then, And, But.
+           Visible labels between quotes, variable parts between &lt;angle brackets&gt;. -->
+      <pre class="gherkin">
+Scenario 1: <span class="todo">nominal case, what the scenario demonstrates</span>
+  Given &lt;initial state&gt;
+  When &lt;actor's action&gt;
+  Then &lt;observable result&gt;
+  And &lt;verifiable side effect&gt;
+
+Scenario 2: <span class="todo">blocked case or error</span>
+  Given &lt;initial state&gt;
+  When &lt;actor's action&gt;
+  Then the message "&lt;exact label with &lt;variable&gt;&gt;" is displayed
+      </pre>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="screens-and-prototype">Screens and prototype</h2>
+      <p class="hint">Each screen and state touched, with its link in the prototype and its screenshot (US-xxx_&lt;what-it-shows&gt;.jpg, next to the story). Story without a screen: say so.</p>
+      <table>
+        <thead><tr><th>Screen</th><th>State</th><th>Prototype</th><th>What it shows</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../../20-ux/ux-ui-spec.html#SCR-xx">SCR-xx</a></td><td>nominal</td><td><a href="../../../prototype/index.html#SCR-xx">#SCR-xx</a></td><td><span class="todo">entry point</span></td></tr>
+          <tr><td><a href="../../20-ux/ux-ui-spec.html#SCR-xx">SCR-xx</a></td><td>error</td><td><a href="../../../prototype/index.html#SCR-xx">#SCR-xx</a>, bar: States &gt; Error</td><td><span class="todo">message and way out</span></td></tr>
+        </tbody>
+      </table>
+      <div class="shots">
+        <figure class="shot"><img src="US-xxx_nominal.jpg" alt=""><figcaption><span class="todo">what the screenshot shows</span> · <code>US-xxx_nominal.jpg</code></figcaption></figure>
+        <figure class="shot"><img src="US-xxx_error.jpg" alt=""><figcaption><span class="todo">what the screenshot shows</span> · <code>US-xxx_error.jpg</code></figcaption></figure>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="example-data">Example data</h2>
+      <p class="hint">Fictional, for the QA and the devs. Each set says which scenario it illustrates. No rule here.</p>
+      <table>
+        <thead><tr><th>Set</th><th>Illustrates</th><th>Data</th></tr></thead>
+        <tbody>
+          <tr id="D1"><td>D1</td><td><a href="#S1">S1</a></td><td><span class="todo">fictional values</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="technical-notes">Technical notes</h2>
+      <div class="info-body" hidden>
+        <p>Filled by the Architect in P3. Endpoints, processes, entities and schemas: block generated by <code>team/scripts/detailed-pages.mjs</code> from the <code>meta name="endpoints"</code> tag and the <a href="../../30-design/detailed/index.html">detailed design</a>, do not edit it. The Architect writes the constraints and the scenario, element that serves it, screen table. No code paths.</p>
+      </div>
+      <!-- gen:story-tech --><!-- /gen -->
+      <dl class="defs">
+        <dt>Constraints</dt><dd><span class="todo">transaction, idempotence, arbitration, volume, security, with links to the objects of the detailed design</span></dd>
+      </dl>
+      <table>
+        <thead><tr><th>Scenario</th><th>Served by</th><th>Screen</th></tr></thead>
+        <tbody>
+          <tr><td><a href="#S1">S1</a> <span class="todo">short name</span></td><td><span class="todo">EP-xx, PROC-xx or error code as links, and what it does for this scenario</span></td><td><span class="todo">SCR-xx and message as links</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="points-to-settle">Points to settle</h2>
+      <ul>
+        <li><a class="qmark" href="../../questions.html#Q-xxx">Q-xxx</a> <span class="todo">open question, assumption kept meanwhile, blocking or not. None: say so</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="definition-of-ready">Definition of Ready</h2>
+      <!-- Tick an item with class="done". The count next to the title is computed. -->
+      <ul class="checklist">
+        <li>A single actor in the need, and the "so that" can be checked at the story's acceptance</li>
+        <li>Each rule is declarative; shared rules cite their BR-xx</li>
+        <li>Scenarios are numbered, named, complete, without test data</li>
+        <li>Nominal, blocked case, each actor, each flow and the error state are covered</li>
+        <li>Labels are word for word, consistent with the functional design</li>
+        <li>Each screen touched is cited, reachable in the prototype, with its screenshot</li>
+        <li>No blocking point to settle; each open question carries its Q-xxx badge</li>
+        <li>Size XS to L (an XL story is split before entering a sprint, and before G1 for a release presented at G1), front share filled, dependencies listed</li>
+        <li>Technical notes and endpoints filled by the Architect (required before sprint planning)</li>
+      </ul>
+    </section>
+  </main>
+</div>
+<script src="../../_assets/doc.js"></script>
+</body>
+</html>

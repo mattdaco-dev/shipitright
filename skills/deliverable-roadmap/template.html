@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Roadmap metadata, read by dashboard-pages.mjs (codes, never translated): status draft | in-review | validated;
+       date and version, the same as the Date and Version fields of the header (date in ISO, YYYY-MM-DD). -->
+  <meta name="status" content="draft">
+  <meta name="date" content="YYYY-MM-DD">
+  <meta name="version" content="v0.1">
+  <title>Roadmap · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Roadmap</div>
+    <nav></nav>
+    <div class="toc-back"><a href="index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Specifications</div>
+      <h1><span class="doc-kind">Roadmap</span>: PROJECT_NAME</h1>
+      <p class="lede"><span class="todo">one sentence: where the project stands</span>. In AI-assisted human mode, the MVP acceptance is probable on <span data-plan="mvp:p50">…</span>, at the latest on <span data-plan="mvp:p85">…</span> to be prudent.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> YYYY-MM-DD</span>
+        <span><b>Author</b> PO</span>
+        <span><b>Contributors</b> SM, Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Update</b> first version, before G1</span>
+        <span><b>Sources</b> <a href="20-specs/story-map.html">story map</a>, <a href="00-framing/framing.html">framing</a>, <a href="questions.html">questions</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="releases">Releases</h2>
+      <p class="hint">The releases of the story map, with their goal and their G3 acceptance date, taken from the <a href="#delivery-schedule">schedule</a> in AI-assisted human mode: probable (50% chance) and prudent (85%).</p>
+      <table>
+        <thead><tr><th>Release</th><th>Goal</th><th>G3 acceptance</th><th>Epics</th><th>Stories</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag accent">MVP</span></td><td><span class="todo">goal taken from the story map</span></td><td>probable <span data-plan="mvp:p50">…</span>, prudent <span data-plan="mvp:p85">…</span></td><td>EPIC-01, EPIC-02</td><td class="num">2</td><td><span class="tag info">in specification</span></td></tr>
+          <tr><td><span class="tag warn">R2</span></td><td><span class="todo">goal</span></td><td>probable <span data-plan="r2:p50">…</span>, prudent <span data-plan="r2:p85">…</span></td><td>EPIC-02</td><td class="num">1</td><td><span class="tag">planned</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="roadmap">
+      <h2 id="roadmap">Roadmap</h2>
+      <p class="hint">One column per phase (P0 to P3), then one per release, in story map order; a Later column is added for stories without a release. A Deliverables row with one card per phase deliverable (planned, produced and waiting for its gate, validated), then the epics as rows. Gates are the vertical bars between columns, with their verdict once crossed. One item per story: identifier as a link and short title. Dates are in the schedule; the split into sprints is done at sprint planning.</p>
+      <div class="legend">
+        <span><i style="background:var(--accent-soft)"></i>Planned</span><span><i style="background:repeating-linear-gradient(135deg,var(--ok-soft),var(--ok-soft) 3px,#fff 3px,#fff 5px);border:1px dashed var(--ok)"></i>Produced, waiting for the gate</span>
+        <span><i style="background:var(--ok-soft)"></i>Validated at the gate, story accepted</span>
+        <span><i style="background:var(--danger-soft)"></i>At risk</span>
+        <span><i class="gate"></i>Gate</span><span><i class="gate" style="background:var(--ok)"></i>Gate crossed</span>
+      </div>
+      <div class="roadmap">
+        <div class="rm-grid" style="--cols: 6">
+<div class="rm-head">Epic</div>
+<div class="rm-head" data-gate="G0|validated" data-gate-name="Framing approval">P0 Framing</div>
+<div class="rm-head">P1 Analysis</div>
+<div class="rm-head" data-gate="G1" data-gate-name="Functional design approval">P2 Specs, UX</div>
+<div class="rm-head" data-gate="G2" data-gate-name="Technical design approval">P3 Design</div>
+<div class="rm-head" data-gate="G3" data-gate-name="MVP acceptance">MVP</div>
+<div class="rm-head" data-gate="G3" data-gate-name="R2 acceptance">R2</div>
+
+<div class="rm-lane">Deliverables</div>
+<div><div class="rm-item done"><a href="00-framing/framing.html">Framing and vision</a></div><div class="rm-item done">Project foundations</div></div>
+<div><div class="rm-item made"><a href="10-analysis/big-picture.html">Big picture</a></div><div class="rm-item made"><a href="20-specs/story-map.html">Story map</a></div></div>
+<div><div class="rm-item"><a href="20-specs/functional-design.html">Functional design</a></div><div class="rm-item">Epics and stories</div><div class="rm-item"><a href="20-ux/ux-ui-spec.html">UX/UI spec</a></div><div class="rm-item"><a href="../prototype/index.html">Prototype</a></div><div class="rm-item"><a href="roadmap.html">Roadmap</a></div></div>
+<div><div class="rm-item"><a href="30-design/macro.html">Macro technical design</a></div><div class="rm-item"><a href="30-design/detailed/index.html">Detailed technical design</a></div><div class="rm-item"><a href="30-design/api/openapi.yaml">API contract</a></div><div class="rm-item"><a href="30-design/detailed/cross-cutting/compliance.html">Compliance</a></div><div class="rm-item"><a href="40-qa/strategy.html">Test strategy</a></div></div>
+<div></div>
+<div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-01-xxx.html">EPIC-01</a> <span class="todo">name</span></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-001-xxx.html">US-001</a> <span class="todo">short title</span></div></div>
+<div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-02-xxx.html">EPIC-02</a> <span class="todo">name</span></div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item risk"><a href="20-specs/stories/US-002-xxx.html">US-002</a> <span class="todo">short title</span> <small>at risk: <a href="#risks">risk</a></small></div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-003-xxx.html">US-003</a> <span class="todo">short title</span></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="macro-estimate">Macro estimate</h2>
+      <div class="callout warn">
+        <b>Source of the estimates: macro estimate, not yet the team's</b>
+        Set in P2 by the Architect and the SM, from the size of the stories. When the team has estimated the stories in the project tool (Jira or other, depending on the framework configuration), its estimates will replace these and the schedule will adjust. Until then, every value is an assumption.
+      </div>
+      <dl class="defs">
+        <dt>Delivery by mode</dt><dd><b>Human</b>: a developer without assistance, in working days (d). <b>AI-assisted</b>: the same with a coding assistant. <b>Autonomous AI</b>: the agents' working hours (h)</dd>
+        <dt>Validation, acceptance</dt><dd>the human effort that remains in every mode, in days: business validation of each story, gates, acceptance</dd>
+        <dt>Work outside stories</dt><dd>design, foundation, QA campaign and acceptance: their values come from the <a href="#delivery-schedule">schedule</a> configuration, so they are written only once. Design and the automated QA campaign are durations, not team effort</dd>
+        <dt>Scale</dt><dd>story values are computed from their size; the settings button, top right of the section, changes the scale (in your browser only) and the schedule follows</dd>
+        <dt>Front</dt><dd>the share of the story's work on the front end, in %, the rest on the back end; it splits the effort between front-end, back-end and full stack developers in the schedule</dd>
+        <dt>Size</dt><dd>XS to XL, the relative complexity, which does not depend on the mode. Story values go from cold (low) to hot (high), column by column; work outside stories is not colored.</dd>
+      </dl>
+      <div class="table-wrap est" data-h="XS:1 S:2 M:4 L:5 XL:8" data-assist="50" data-agent="0.5" data-hpart="XS:0.25 S:0.25 M:0.5 L:0.75 XL:1" data-source="Example values, guessed, not measured.">
+        <h4 class="est-title">Design</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story or work</th><th rowspan="2">Size</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Delivery by mode</th><th rowspan="2" class="num">Validation, acceptance</th></tr>
+            <tr><th class="num grp grp-start">Human</th><th class="num grp">AI-assisted</th><th class="num grp grp-end">Autonomous AI</th></tr>
+          </thead>
+          <tbody>
+            <tr class="work" data-rel="design" data-items="p1 p2 review-g1 p3 review-g2"><td>Design P1 to P3 (analysis, specs, UX, prototype, technical design) and reviews of gates G1, G2</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="design"><td><b>Design total</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">MVP</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story or work</th><th rowspan="2">Size</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Delivery by mode</th><th rowspan="2" class="num">Validation, acceptance</th></tr>
+            <tr><th class="num grp grp-start">Human</th><th class="num grp">AI-assisted</th><th class="num grp grp-end">Autonomous AI</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="S" data-front="40" data-rel="mvp"><td><a href="20-specs/stories/US-001-xxx.html">US-001</a> <span class="todo">short title</span></td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="60" data-rel="mvp"><td><a href="20-specs/stories/US-002-xxx.html">US-002</a> <span class="todo">short title</span></td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="total" data-rel="mvp" data-only="stories"><td><b>MVP stories</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="mvp" data-items="foundation"><td>Stack foundation, tooling, application skeletons</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="mvp" data-items="qa-mvp acceptance-mvp"><td>Automated QA campaign and MVP acceptance</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="mvp"><td><b>MVP total</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">R2</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story or work</th><th rowspan="2">Size</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Delivery by mode</th><th rowspan="2" class="num">Validation, acceptance</th></tr>
+            <tr><th class="num grp grp-start">Human</th><th class="num grp">AI-assisted</th><th class="num grp grp-end">Autonomous AI</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="M" data-front="50" data-rel="r2"><td><a href="20-specs/stories/US-003-xxx.html">US-003</a> <span class="todo">short title</span></td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="work" data-rel="r2" data-items="qa-r2 acceptance-r2"><td>Automated QA campaign and R2 acceptance</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="r2"><td><b>R2 total</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">Project total</h4>
+        <table class="est-sum">
+          <colgroup><col><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Batch</th><th colspan="3" class="group grp grp-start grp-end">Delivery by mode</th><th rowspan="2" class="num">Validation, acceptance</th></tr>
+            <tr><th class="num grp grp-start">Human</th><th class="num grp">AI-assisted</th><th class="num grp grp-end">Autonomous AI</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Design</td><td class="num grp grp-start"><span data-est="design:h"></span></td><td class="num grp"><span data-est="design:a"></span></td><td class="num grp grp-end"><span data-est="design:ag"></span></td><td class="num"><span data-est="design:hu"></span></td></tr>
+            <tr><td>MVP</td><td class="num grp grp-start"><span data-est="mvp:h"></span></td><td class="num grp"><span data-est="mvp:a"></span></td><td class="num grp grp-end"><span data-est="mvp:ag"></span></td><td class="num"><span data-est="mvp:hu"></span></td></tr>
+            <tr><td>R2</td><td class="num grp grp-start"><span data-est="r2:h"></span></td><td class="num grp"><span data-est="r2:a"></span></td><td class="num grp grp-end"><span data-est="r2:ag"></span></td><td class="num"><span data-est="r2:hu"></span></td></tr>
+            <tr class="total"><td><b>Project total</b></td><td class="num grp grp-start"><span data-est="*:h"></span></td><td class="num grp"><span data-est="*:a"></span></td><td class="num grp grp-end"><span data-est="*:ag"></span></td><td class="num"><span data-est="*:hu"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout hypothesis">
+        <b>Assumption</b>
+        <span class="todo">what weakens the estimate of a story (open question, option chosen), or delete</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="team-composition">Team composition</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>What it is</dt><dd>Who does the work, with their presence in <b>full-time equivalents</b>: 1.5 = one person full time and one half time.</dd>
+          <dt>By mode</dt><dd>The dev team serves the Human and AI-assisted human modes. The PO and the acceptance helpers serve every mode. The number of agents is set in the <a href="#delivery-schedule">schedule</a> settings.</dd>
+          <dt>One more, one less</dt><dd>The effect of one full-time more or less on the date of the last release, in each mode. In Autonomous AI, only the PO and the acceptance helpers count: developers are not in it.</dd>
+          <dt>Your trials</dt><dd>Your changes stay in your browser.</dd>
+        </dl>
+      </div>
+      <div class="capa-team"></div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="delivery-schedule">Delivery schedule</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>The calculation</dt><dd>Scheduling under capacity constraints. In priority order, each story starts as soon as its dependencies are done, on the free people who have the skill.</dd>
+          <dt>The dates</dt><dd>Each estimate (stories, work, durations of design and QA campaign) is drawn at random within its range (at best, probable, at worst), over several hundred simulations; deliveries from other teams stay at their date. Each release has a <b>probable date</b> (50% chance of being ready before) and a <b>prudent date</b> (85%).</dd>
+          <dt>The settings</dt><dd>One tab per mode. The team comes from the <a href="#team-composition">Team composition</a> section; the Settings block sets the dates, the other teams and the calculation rules.</dd>
+          <dt>Your trials</dt><dd>They stay in your browser. The reference configuration is in the page.</dd>
+          <dt>Reading</dt><dd>Click a group row of the schedule to see the detail.</dd>
+        </dl>
+      </div>
+      <div class="callout warn">
+        <b>An estimation aid, not a commitment</b>
+        This schedule simulates a plan from estimates, capacities and dependencies that are guessed. It serves to compare team scenarios and to spot bottlenecks; its dates are not reliable enough to commit to the business.
+      </div>
+      <div class="callout hypothesis">
+        <b>Assumptions</b>
+        <ul>
+          <li>The team, its capacities and the dependencies between stories are guessed.</li>
+          <li><span class="todo">delivery dates of the external teams to confirm with them</span></li>
+          <li>Design (P1 to P3) is a duration: the BA, the UX and the Architect run it outside the dev team, which does not shorten it. In Autonomous AI, the agents do.</li>
+        </ul>
+      </div>
+      <div class="legend">
+        <span><i class="lg-done"></i>Done</span><span><i class="lg-plan"></i>To do</span><span><i class="lg-late"></i>Late</span><span><i class="lg-hatch"></i>Human time</span><span><i class="lg-gate"></i>Gate</span><span><i class="lg-crit"></i>Critical path</span>
+      </div>
+      <div class="capa">
+<script type="application/json">
+{
+  "start": "YYYY-MM-DD",
+  "holidays": [],
+  "modes": [
+    { "id": "human", "label": "Human", "note": "Developers without assistance, tests included; the business validation of each story and the acceptance belong to the PO and the acceptance helpers." },
+    { "id": "assisted", "label": "AI-assisted human", "default": true, "note": "Developers with a coding assistant, tests included; an AI-automated QA campaign precedes each acceptance; business validation and acceptance by the PO and the acceptance helpers." },
+    { "id": "ai", "label": "Autonomous AI", "note": "Agent team, tests and QA campaign included; the PO holds the gates, the business validation and the acceptance, with the acceptance helpers." }
+  ],
+  "profiles": [
+    { "id": "front", "label": "Front-end dev", "skills": ["front"], "count": 0, "team": "dev", "modes": ["human", "assisted"] },
+    { "id": "back", "label": "Back-end dev", "skills": ["back"], "count": 0, "team": "dev", "modes": ["human", "assisted"] },
+    { "id": "full", "label": "Full stack dev", "skills": ["front", "back"], "count": 1, "team": "dev", "modes": ["human", "assisted"] },
+    { "id": "helper", "label": "Acceptance helpers", "hint": "BA, business people, testers", "skills": ["acceptance", "validation"], "count": 0 },
+    { "id": "agent", "label": "Agents", "skills": ["agent"], "count": 5, "unit": "h", "hoursPerDay": 8, "maxPerItem": 1, "modes": ["ai"] },
+    { "id": "po", "label": "PO", "skills": ["gate", "acceptance", "validation"], "count": 1, "maxPerItem": 1, "fixed": true, "note": "The only one holding the gates. Does the business validation and the acceptance, or delegates them to the acceptance helpers." },
+    { "id": "ux", "label": "UX", "skills": ["uxreview"], "count": 1, "fixed": true, "calc": false, "note": "Cross-cutting team, always available. Checks along the way or at the end of the chain that UX and UI follow the mockups, accessibility and the design system. Never blocks: out of the calculation." }
+  ],
+  "rules": { "loss": 10, "maxPerStory": 2, "optimistic": 70, "pessimistic": 160, "runs": 300, "calibration": { "factor": 1, "sprints": [] } },
+  "releases": [
+    { "id": "mvp", "label": "MVP", "gate": "g3" },
+    { "id": "r2", "label": "R2", "gate": "g3-r2" }
+  ],
+  "groups": ["P0 Framing", "Design", "Other teams", "MVP delivery", "MVP acceptance", "R2 delivery", "R2 acceptance"],
+  "storyGroup": { "mvp": "MVP delivery", "r2": "R2 delivery" },
+  "storyAfter": ["foundation"],
+  "storyDeps": { "US-002": ["US-001"], "US-001": ["ext"] },
+  "items": [
+    { "id": "framing", "label": "Framing and vision", "group": "P0 Framing", "start": "YYYY-MM-DD", "end": "YYYY-MM-DD" },
+    { "id": "g0", "label": "G0", "group": "P0 Framing", "gate": true, "at": "YYYY-MM-DDT18:00", "who": "approved" },
+    { "id": "p1", "label": "P1 Analysis", "group": "Design", "after": ["g0"], "d": { "assisted": 2, "human": 4 }, "work": { "ai": [["agent", 8]] }, "kind": "phase" },
+    { "id": "p2", "label": "P2 Specs, UX, prototype", "group": "Design", "after": ["p1"], "d": { "assisted": 2, "human": 5 }, "work": { "ai": [["agent", 16]] }, "kind": "phase" },
+    { "id": "review-g1", "label": "G1 review", "group": "Design", "after": ["p2"], "work": { "all": [["gate", 0.5]] }, "kind": "human" },
+    { "id": "g1", "label": "G1", "group": "Design", "after": ["review-g1"], "gate": true },
+    { "id": "p3", "label": "P3 Technical design", "group": "Design", "after": ["g1"], "d": { "assisted": 2, "human": 3 }, "work": { "ai": [["agent", 8]] }, "kind": "phase" },
+    { "id": "review-g2", "label": "G2 review, tooling agreement", "group": "Design", "after": ["p3"], "work": { "all": [["gate", 0.5]] }, "kind": "human" },
+    { "id": "g2", "label": "G2", "group": "Design", "after": ["review-g2"], "gate": true },
+    { "id": "ext", "label": "Delivery from another team", "group": "Other teams", "team": "External team", "deliver": "YYYY-MM-DD", "duration": 3 },
+    { "id": "foundation", "label": "Foundation, tooling", "group": "MVP delivery", "after": ["g2"], "work": { "human": [["back", 3]], "assisted": [["back", 1.5]], "ai": [["agent", 1]] } },
+    { "id": "qa-mvp", "label": "MVP automated QA campaign", "group": "MVP acceptance", "after": ["rel:mvp"], "d": { "assisted": 1 }, "work": { "ai": [["agent", 2]] }, "kind": "qa" },
+    { "id": "acceptance-mvp", "label": "MVP acceptance", "group": "MVP acceptance", "after": ["qa-mvp"], "work": { "all": [["acceptance", 1]] }, "kind": "human" },
+    { "id": "g3", "label": "G3 MVP", "group": "MVP acceptance", "after": ["acceptance-mvp"], "gate": true },
+    { "id": "qa-r2", "label": "R2 automated QA campaign", "group": "R2 acceptance", "after": ["rel:r2", "g3"], "d": { "assisted": 0.5 }, "work": { "ai": [["agent", 1]] }, "kind": "qa" },
+    { "id": "acceptance-r2", "label": "R2 acceptance", "group": "R2 acceptance", "after": ["qa-r2"], "work": { "all": [["acceptance", 0.5]] }, "kind": "human" },
+    { "id": "g3-r2", "label": "G3 R2", "group": "R2 acceptance", "after": ["acceptance-r2"], "gate": true }
+  ]
+}
+</script>
+      </div>
+      <div class="callout hypothesis">
+        <b>Assumption</b>
+        These dates only hold if the gates are decided within the day (<a href="#risks">risk</a> "human gate pending"). They will be adjusted on the measured sprints (<a href="#calibration">calibration</a>).
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="dependencies-and-risks">Dependencies and risks</h2>
+      <p class="hint">What can make the schedule slip. Each risk has a countermeasure or a question. None: say so.</p>
+      <h3 id="dependencies">Dependencies</h3>
+      <table>
+        <thead><tr><th>Item</th><th>Depends on</th><th>Type</th><th>State</th></tr></thead>
+        <tbody>
+          <tr><td>Start of delivery</td><td>G2: stack foundation validated by the human, tooling installed</td><td><span class="tag">human</span></td><td><span class="tag warn">open</span></td></tr>
+          <tr><td><span class="todo">story or epic</span></td><td><span class="todo">story, external team, decision</span></td><td><span class="tag">internal</span></td><td><span class="tag ok">in the schedule</span></td></tr>
+        </tbody>
+      </table>
+      <h3 id="risks">Risks</h3>
+      <table>
+        <thead><tr><th>Risk</th><th>Impact on the schedule</th><th>Probability</th><th>Countermeasure</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">risk</span></td><td><span class="todo">what slips, by how much</span></td><td><span class="tag warn">medium</span></td><td><span class="todo">countermeasure or Q-xxx</span></td></tr>
+          <tr><td>Human gate pending for several days</td><td>the whole schedule slips as much: the team does not pass a gate alone</td><td><span class="tag">low</span></td><td>gates announced in advance, deliverables ready and checked before asking the human</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="changelog">Changelog</h2>
+      <p class="hint">One row per update, the most recent first. Previous rows are never erased.</p>
+      <table>
+        <thead><tr><th>Version</th><th>Date</th><th>What moved</th><th>Why</th><th>Decided by</th></tr></thead>
+        <tbody>
+          <tr><td>v0.1</td><td>YYYY-MM-DD</td><td>First version</td><td>out of the story map</td><td>PO</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2 id="calibration">Calibration</h2>
+      <p class="hint">After each sprint, the SM adds the estimated time and the actual time of the finished stories, in agent hours, to the schedule configuration (<code>rules.calibration.sprints</code>). The actual over estimated ratio corrects every story estimate; it can be forced in the schedule settings for a trial.</p>
+      <div class="capa-calib"></div>
+    </section>
+  </main>
+</div>
+<script src="_assets/doc.js"></script>
+<script src="_assets/plan.js"></script>
+</body>
+</html>

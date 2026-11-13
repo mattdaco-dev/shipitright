@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- Roadmap metadata, read by dashboard-pages.mjs (codes, never translated): statut brouillon | en-revue | valide;
+       date and version, the same as the Date and Version fields of the header (date in ISO, AAAA-MM-JJ). -->
+  <meta name="status" content="draft">
+  <meta name="date" content="2026-10-05">
+  <meta name="version" content="v0.1">
+  <title>Roadmap · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Roadmap</div>
+    <nav></nav>
+    <div class="toc-back"><a href="index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">Roadmap</span> : Réservation de salles</h1>
+      <p class="lede">Cadrage validé, analyse et spécifications en cours. En Humain assisté par IA, la recette du MVP est probable le <span data-plan="mvp:p50">…</span>, au plus tard le <span data-plan="mvp:p85">…</span> par prudence, si les gates humains sont tranchés dans la journée.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> 05.10.2026</span>
+        <span><b>Auteur</b> PO (exemple de format)</span>
+        <span><b>Contributeurs</b> SM, Architecte</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Mise à jour</b> première version, avant G1</span>
+        <span><b>Sources</b> <a href="20-specs/story-map.html">story map</a> v0.1, <a href="00-framing/framing.html">cadrage</a> (validé G0), <a href="questions.html">questions</a></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Releases</h2>
+      <p class="hint">Les releases de la story map, avec leur objectif et leur date de recette G3, reprise du <a href="#calendrier-de-realisation">calendrier</a> en Humain assisté par IA : probable (50 % de chances) et prudente (85 %).</p>
+      <table>
+        <thead><tr><th>Release</th><th>Objectif</th><th>Recette G3</th><th>Epics</th><th>Stories</th><th>Statut</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag accent">MVP</span></td><td>l'employé réserve et annule, en ponctuel ou en série ; le gestionnaire tient le parc et règle les conflits</td><td>probable <span data-plan="mvp:p50">…</span>, prudente <span data-plan="mvp:p85">…</span></td><td><a href="20-specs/epics/EPIC-01-acces.html">EPIC-01</a>, <a href="20-specs/epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a>, <a href="20-specs/epics/EPIC-03-mes-reservations.html">EPIC-03</a>, <a href="20-specs/epics/EPIC-04-parc-de-salles.html">EPIC-04</a></td><td class="num">13</td><td><span class="tag info">en spécification</span></td></tr>
+          <tr><td><span class="tag warn">R2</span></td><td>moins de manipulations : modifier sans annuler, se voir proposer un créneau</td><td>probable <span data-plan="r2:p50">…</span>, prudente <span data-plan="r2:p85">…</span></td><td><a href="20-specs/epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a>, <a href="20-specs/epics/EPIC-03-mes-reservations.html">EPIC-03</a>, <a href="20-specs/epics/EPIC-04-parc-de-salles.html">EPIC-04</a></td><td class="num">3</td><td><span class="tag">prévu</span></td></tr>
+          <tr><td><span class="tag">R3</span></td><td>récurrences plus riches, pilotage du parc</td><td>probable <span data-plan="r3:p50">…</span>, prudente <span data-plan="r3:p85">…</span></td><td><a href="20-specs/epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a>, <a href="20-specs/epics/EPIC-04-parc-de-salles.html">EPIC-04</a></td><td class="num">3</td><td><span class="tag">envisagé</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="roadmap">
+      <h2 id="roadmap">Roadmap</h2>
+      <p class="hint">Une colonne par phase (P0 à P3), puis une par release, dans l'ordre de la story map ; une colonne Later s'ajoute pour les stories sans release. Une ligne Livrables avec une carte par livrable de phase (prévu, produit en attente de son gate, validé), puis les epics en lignes. Les gates sont les barres verticales entre les colonnes, avec leur verdict une fois franchis. Un item par story : identifiant en lien et titre court. Les dates sont dans le calendrier ; le découpage en sprints se fait au sprint planning.</p>
+      <div class="legend">
+        <span><i style="background:var(--accent-soft)"></i>Prévu</span><span><i style="background:repeating-linear-gradient(135deg,var(--ok-soft),var(--ok-soft) 3px,#fff 3px,#fff 5px);border:1px dashed var(--ok)"></i>Produit, en attente du gate</span>
+        <span><i style="background:var(--ok-soft)"></i>Validé au gate, story recettée</span>
+        <span><i style="background:var(--danger-soft)"></i>Menacé</span>
+        <span><i class="gate"></i>Gate</span><span><i class="gate" style="background:var(--ok)"></i>Gate franchi</span>
+      </div>
+      <div class="roadmap">
+        <div class="rm-grid" style="--cols: 7">
+<div class="rm-head">Epic</div>
+<div class="rm-head" data-gate="G0|validated|2026-10-02" data-gate-name="Validation du cadrage">P0 Cadrage</div>
+<div class="rm-head">P1 Analyse</div>
+<div class="rm-head" data-gate="G1" data-gate-name="Validation de la conception fonctionnelle">P2 Specs, UX</div>
+<div class="rm-head" data-gate="G2" data-gate-name="Validation de la conception technique">P3 Conception</div>
+<div class="rm-head" data-gate="G3" data-gate-name="Validation de la recette du MVP">MVP</div>
+<div class="rm-head" data-gate="G3" data-gate-name="Validation de la recette de la release R2">R2</div>
+<div class="rm-head" data-gate="G3" data-gate-name="Validation de la recette de la release R3">R3</div>
+
+<div class="rm-lane">Livrables</div>
+<div><div class="rm-item done"><a href="00-framing/framing.html">Cadrage et vision</a></div><div class="rm-item done">Socles du projet</div></div>
+<div><div class="rm-item made"><a href="10-analysis/big-picture.html">Big picture</a></div><div class="rm-item made"><a href="10-analysis/modification-reservation.html">Analyse : modification</a></div><div class="rm-item made"><a href="20-specs/story-map.html">Story map</a></div></div>
+<div><div class="rm-item made"><a href="20-specs/functional-design.html">Conception fonctionnelle</a></div><div class="rm-item made"><a href="20-specs/epics/EPIC-02-recherche-et-reservation.html">Epics et stories</a> <small>EPIC-02 et US-006 ; le reste à produire</small></div><div class="rm-item made">Design system</div><div class="rm-item made"><a href="20-ux/ux-ui-spec.html">Spec UX/UI</a></div><div class="rm-item made"><a href="../prototype/index.html">Prototype</a></div><div class="rm-item made"><a href="roadmap.html">Roadmap</a></div></div>
+<div><div class="rm-item"><a href="30-design/macro.html">Conception technique macro</a></div><div class="rm-item"><a href="30-design/detailed/index.html">Conception technique détaillée</a></div><div class="rm-item"><a href="30-design/api/openapi.yaml">Contrat d'API</a></div><div class="rm-item"><a href="30-design/detailed/cross-cutting/compliance.html">Conformité</a></div><div class="rm-item">Socle de stack</div><div class="rm-item"><a href="40-qa/strategy.html">Stratégie de test</a></div></div>
+<div></div>
+<div></div>
+<div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-01-acces.html">EPIC-01</a> Accès</div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-001-se-connecter.html">US-001</a> Se connecter</div></div>
+<div></div>
+<div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-02-recherche-et-reservation.html">EPIC-02</a> Recherche et réservation</div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-002-voir-occupation-salle.html">US-002</a> Occupation d'une salle</div><div class="rm-item"><a href="20-specs/stories/US-003-voir-occupation-journee.html">US-003</a> Occupation de la journée</div><div class="rm-item"><a href="20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</div><div class="rm-item"><a href="20-specs/stories/US-004-chercher-une-salle.html">US-004</a> Chercher une salle</div><div class="rm-item risk"><a href="20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série <small>menacée : <a href="#risques">concurrence</a></small></div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-010-proposer-creneau-proche.html">US-010</a> Créneau libre le plus proche</div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-012-reserver-une-serie-mensuelle.html">US-012</a> Série mensuelle</div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-03-mes-reservations.html">EPIC-03</a> Mes réservations</div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-007-lister-mes-reservations.html">US-007</a> Mes réservations</div><div class="rm-item"><a href="20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</div><div class="rm-item"><a href="20-specs/stories/US-009-annuler-une-serie.html">US-009</a> Annuler une série</div></div>
+<div><div class="rm-item risk"><a href="20-specs/stories/US-011-modifier-une-reservation.html">US-011</a> Modifier une réservation <small>menacée : <a href="#risques">Q-002</a></small></div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-013-confirmer-presence.html">US-013</a> Confirmer ma présence</div></div>
+
+<div class="rm-lane"><a href="20-specs/epics/EPIC-04-parc-de-salles.html">EPIC-04</a> Parc de salles</div>
+<div></div>
+<div></div>
+<div></div>
+<div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-014-declarer-une-salle.html">US-014</a> Déclarer une salle</div><div class="rm-item"><a href="20-specs/stories/US-015-modifier-une-salle.html">US-015</a> Modifier une salle</div><div class="rm-item"><a href="20-specs/stories/US-016-desactiver-une-salle.html">US-016</a> Désactiver une salle</div><div class="rm-item"><a href="20-specs/stories/US-017-annuler-avec-motif.html">US-017</a> Annuler avec un motif</div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-018-voir-occupation-semaine.html">US-018</a> Occupation de la semaine</div></div>
+<div><div class="rm-item"><a href="20-specs/stories/US-019-consulter-statistiques.html">US-019</a> Statistiques d'occupation</div></div>
+        </div>
+            </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="macro-estimate">Estimation macro</h2>
+      <div class="callout warn">
+        <b>Source des estimations : estimation macro, pas encore celle de l'équipe</b>
+        Posée en P2 par l'architecte et le SM, à partir de la taille des stories. Quand l'équipe aura estimé les stories dans l'outil du projet (Jira ou autre, selon la configuration du framework), ses estimations remplaceront celles-ci et le calendrier s'ajustera. Jusque-là, toutes les valeurs sont des hypothèses.
+      </div>
+      <dl class="defs">
+        <dt>Réalisation selon le mode</dt><dd><b>Humain</b> : un développeur sans assistance, en jours de travail (j). <b>Assisté IA</b> : le même avec un assistant de code. <b>IA en autonomie</b> : les heures de travail des agents (h)</dd>
+        <dt>Validation, recette</dt><dd>la charge humaine qui reste dans tous les modes, en jours : validation métier de chaque story, gates, recette</dd>
+        <dt>Travaux hors stories</dt><dd>conception, socle, campagne QA et recette : leurs valeurs viennent de la configuration du <a href="#calendrier-de-realisation">calendrier</a>, pour n'être écrites qu'une fois. La conception et la campagne QA automatisée sont des durées, pas de la charge de l'équipe</dd>
+        <dt>Échelle</dt><dd>les valeurs des stories sont calculées depuis leur taille ; le bouton de réglage, en haut à droite de la section, change l'échelle (dans ton navigateur seulement) et le calendrier suit</dd>
+        <dt>Front</dt><dd>la part du travail de la story côté front, en %, le reste côté back ; elle sert à répartir la charge entre développeurs front, back et full stack dans le calendrier</dd>
+        <dt>Taille</dt><dd>XS à XL, la complexité relative, qui ne dépend pas du mode. Les valeurs des stories vont du froid (faible) au chaud (élevé), colonne par colonne ; les travaux hors stories ne sont pas colorés.</dd>
+      </dl>
+      <div class="table-wrap est" data-h="XS:1 S:2 M:4 L:5 XL:8" data-assist="50" data-agent="0.5" data-hpart="XS:0.25 S:0.25 M:0.5 L:0.75 XL:1" data-source="Valeurs de l'exemple, posées à l'estime, non mesurées.">
+        <h4 class="est-title">Conception</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr class="work" data-rel="design" data-items="p1 p2 revue-g1 p3 revue-g2"><td>Conception P1 à P3 (analyse, specs, UX, prototype, conception technique) et revues des gates G1, G2</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="design"><td><b>Total conception</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">MVP</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="S" data-front="40" data-rel="mvp"><td><a href="20-specs/stories/US-001-se-connecter.html">US-001</a> Se connecter</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="60" data-rel="mvp"><td><a href="20-specs/stories/US-002-voir-occupation-salle.html">US-002</a> Occupation d'une salle</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="70" data-rel="mvp"><td><a href="20-specs/stories/US-003-voir-occupation-journee.html">US-003</a> Occupation de la journée</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="50" data-rel="mvp"><td><a href="20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="50" data-rel="mvp"><td><a href="20-specs/stories/US-014-declarer-une-salle.html">US-014</a> Déclarer une salle</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="50" data-rel="mvp"><td><a href="20-specs/stories/US-004-chercher-une-salle.html">US-004</a> Chercher une salle</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="40" data-rel="mvp"><td><a href="20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="60" data-rel="mvp"><td><a href="20-specs/stories/US-007-lister-mes-reservations.html">US-007</a> Mes réservations</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="40" data-rel="mvp"><td><a href="20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="30" data-rel="mvp"><td><a href="20-specs/stories/US-009-annuler-une-serie.html">US-009</a> Annuler une série</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="XS" data-front="50" data-rel="mvp"><td><a href="20-specs/stories/US-015-modifier-une-salle.html">US-015</a> Modifier une salle</td><td><span class="size xs">XS</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="30" data-rel="mvp"><td><a href="20-specs/stories/US-016-desactiver-une-salle.html">US-016</a> Désactiver une salle</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="S" data-front="40" data-rel="mvp"><td><a href="20-specs/stories/US-017-annuler-avec-motif.html">US-017</a> Annuler avec un motif</td><td><span class="size s">S</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="total" data-rel="mvp" data-only="stories"><td><b>Stories du MVP</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="mvp" data-items="socle"><td>Socle de stack, outillage, squelette des applications</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="mvp" data-items="qa-mvp recette-mvp"><td>Campagne QA automatisée et recette du MVP</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="mvp"><td><b>Total MVP</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">R2</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="L" data-front="40" data-rel="r2"><td><a href="20-specs/stories/US-011-modifier-une-reservation.html">US-011</a> Modifier une réservation</td><td><span class="size l">L</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="30" data-rel="r2"><td><a href="20-specs/stories/US-010-proposer-creneau-proche.html">US-010</a> Proposer un créneau proche</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="70" data-rel="r2"><td><a href="20-specs/stories/US-018-voir-occupation-semaine.html">US-018</a> Occupation de la semaine</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="total" data-rel="r2" data-only="stories"><td><b>Stories R2</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="r2" data-items="qa-r2 recette-r2"><td>Campagne QA automatisée et recette R2</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="r2"><td><b>Total R2</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">R3</h4>
+        <table class="heat">
+          <colgroup><col><col class="c-size"><col class="c-front"><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Story ou travail</th><th rowspan="2">Taille</th><th rowspan="2" class="num">Front</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr data-size="M" data-front="30" data-rel="r3"><td><a href="20-specs/stories/US-012-reserver-une-serie-mensuelle.html">US-012</a> Série mensuelle</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="M" data-front="50" data-rel="r3"><td><a href="20-specs/stories/US-013-confirmer-presence.html">US-013</a> Confirmer sa présence</td><td><span class="size m">M</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr data-size="L" data-front="60" data-rel="r3"><td><a href="20-specs/stories/US-019-consulter-statistiques.html">US-019</a> Statistiques d'occupation</td><td><span class="size l">L</span></td><td class="num e-front"></td><td class="heat grp grp-start e-h"></td><td class="heat grp e-a"></td><td class="heat grp grp-end e-ag"></td><td class="heat e-hu"></td></tr>
+            <tr class="total" data-rel="r3" data-only="stories"><td><b>Stories R3</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="work" data-rel="r3" data-items="qa-r3 recette-r3"><td>Campagne QA automatisée et recette R3</td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+            <tr class="total" data-rel="r3"><td><b>Total R3</b></td><td></td><td></td><td class="num grp grp-start e-h"></td><td class="num grp e-a"></td><td class="num grp grp-end e-ag"></td><td class="num e-hu"></td></tr>
+          </tbody>
+        </table>
+        <h4 class="est-title">Total projet</h4>
+        <table class="est-sum">
+          <colgroup><col><col class="c-val"><col class="c-val"><col class="c-val"><col class="c-val"></colgroup>
+          <thead>
+            <tr><th rowspan="2">Lot</th><th colspan="3" class="group grp grp-start grp-end">Réalisation selon le mode</th><th rowspan="2" class="num">Validation, recette</th></tr>
+            <tr><th class="num grp grp-start">Humain</th><th class="num grp">Assisté IA</th><th class="num grp grp-end">IA en autonomie</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Conception</td><td class="num grp grp-start"><span data-est="conception:h"></span></td><td class="num grp"><span data-est="conception:a"></span></td><td class="num grp grp-end"><span data-est="conception:ag"></span></td><td class="num"><span data-est="conception:hu"></span></td></tr>
+            <tr><td>MVP</td><td class="num grp grp-start"><span data-est="mvp:h"></span></td><td class="num grp"><span data-est="mvp:a"></span></td><td class="num grp grp-end"><span data-est="mvp:ag"></span></td><td class="num"><span data-est="mvp:hu"></span></td></tr>
+            <tr><td>R2</td><td class="num grp grp-start"><span data-est="r2:h"></span></td><td class="num grp"><span data-est="r2:a"></span></td><td class="num grp grp-end"><span data-est="r2:ag"></span></td><td class="num"><span data-est="r2:hu"></span></td></tr>
+            <tr><td>R3</td><td class="num grp grp-start"><span data-est="r3:h"></span></td><td class="num grp"><span data-est="r3:a"></span></td><td class="num grp grp-end"><span data-est="r3:ag"></span></td><td class="num"><span data-est="r3:hu"></span></td></tr>
+            <tr class="total"><td><b>Total projet</b></td><td class="num grp grp-start"><span data-est="*:h"></span></td><td class="num grp"><span data-est="*:a"></span></td><td class="num grp grp-end"><span data-est="*:ag"></span></td><td class="num"><span data-est="*:hu"></span></td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="callout hypothesis">
+        <b>Hypothèse</b>
+        <a href="20-specs/stories/US-011-modifier-une-reservation.html">US-011</a> est estimée selon l'option B de l'analyse ; la réponse à <a href="questions.html#Q-002">Q-002</a> peut changer sa taille.
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Composition de l'équipe</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Ce que c'est</dt><dd>Qui réalise le travail, avec son temps de présence en <b>équivalents temps plein</b> : 1,5 = une personne à plein temps et une à mi-temps.</dd>
+          <dt>Selon le mode</dt><dd>L'équipe de dev sert aux modes Humain et Humain assisté par IA. Le PO et l'aide à la recette servent à tous les modes. Le nombre d'agents se règle dans les paramètres du <a href="#calendrier-de-realisation">calendrier</a>.</dd>
+          <dt>Un de plus, un de moins</dt><dd>L'effet d'un temps plein de plus ou de moins sur la date de la dernière release, dans chaque mode. En IA en autonomie, seuls le PO et l'aide à la recette comptent : les développeurs n'y sont pas.</dd>
+          <dt>Tes essais</dt><dd>Tes changements restent dans ton navigateur.</dd>
+        </dl>
+      </div>
+      <div class="capa-team"></div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Calendrier de réalisation</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Le calcul</dt><dd>Un ordonnancement sous contrainte de capacité. Dans l'ordre de priorité, chaque story part dès que ses dépendances sont finies, vers les personnes libres qui ont la compétence.</dd>
+          <dt>Les dates</dt><dd>Chaque estimation (stories, travaux, durées de conception et de campagne QA) est tirée au hasard dans sa fourchette (au mieux, probable, au pire), sur plusieurs centaines de simulations ; les livraisons des autres équipes restent à leur date. Chaque release a une <b>date probable</b> (50 % de chances d'être prête avant) et une <b>date prudente</b> (85 %).</dd>
+          <dt>Les réglages</dt><dd>Un onglet par mode. L'équipe vient de la section <a href="#composition-de-l-equipe">Composition de l'équipe</a> ; le bloc Paramètres fixe les dates, les autres équipes et les règles de calcul.</dd>
+          <dt>Tes essais</dt><dd>Ils restent dans ton navigateur. La configuration de référence est dans la page.</dd>
+          <dt>Lecture</dt><dd>Cliquer sur une ligne de groupe du planning pour voir le détail.</dd>
+        </dl>
+      </div>
+      <div class="callout warn">
+        <b>Une aide à l'estimation, pas un engagement</b>
+        Ce calendrier simule un planning à partir d'estimations, de capacités et de dépendances posées à l'estime. Il sert à comparer des scénarios d'équipe et à repérer les goulots ; ses dates ne sont pas fiables pour s'engager auprès du métier.
+      </div>
+      <div class="callout hypothesis">
+        <b>Hypothèses</b>
+        <ul>
+          <li>L'équipe, ses capacités et les dépendances entre stories sont posées à l'estime.</li>
+          <li>Les dates de livraison des équipes identités et exploitation sont à confirmer avec elles.</li>
+          <li>La conception (P1 à P3) est une durée : le BA, l'UX et l'architecte la mènent hors de l'équipe de dev, qui ne la raccourcit pas. En IA en autonomie, ce sont les agents.</li>
+        </ul>
+      </div>
+      <div class="legend">
+        <span><i class="lg-done"></i>Fait</span><span><i class="lg-plan"></i>À faire</span><span><i class="lg-late"></i>En retard</span><span><i class="lg-hatch"></i>Temps de l'humain</span><span><i class="lg-gate"></i>Gate</span><span><i class="lg-crit"></i>Chemin critique</span>
+      </div>
+      <div class="capa">
+<script type="application/json">
+{
+  "start": "2026-10-05",
+  "holidays": ["2026-12-25", "2026-12-26", "2027-01-01"],
+  "modes": [
+    { "id": "human", "label": "Humain", "note": "Développeurs sans assistance, tests compris ; la validation métier de chaque story et la recette reviennent au PO et à l'aide à la recette." },
+    { "id": "assisted", "label": "Humain assisté par IA", "default": true, "note": "Développeurs avec un assistant de code, tests compris ; une campagne QA automatisée par IA précède chaque recette ; validation métier et recette par le PO et l'aide à la recette." },
+    { "id": "ai", "label": "IA en autonomie", "note": "Team d'agents, tests et campagne QA compris ; le PO tient les gates, la validation métier et la recette, avec l'aide à la recette." }
+  ],
+  "profiles": [
+    { "id": "front", "label": "Dev front", "skills": ["front"], "count": 0, "team": "dev", "modes": ["human", "assisted"] },
+    { "id": "back", "label": "Dev back", "skills": ["back"], "count": 0, "team": "dev", "modes": ["human", "assisted"] },
+    { "id": "full", "label": "Dev full stack", "skills": ["front", "back"], "count": 1, "team": "dev", "modes": ["human", "assisted"] },
+    { "id": "aide", "label": "Aide à la recette", "hint": "BA, gens du métier, testeurs", "skills": ["acceptance", "validation"], "count": 0 },
+    { "id": "agent", "label": "Agents", "skills": ["agent"], "count": 5, "unit": "h", "hoursPerDay": 8, "maxPerItem": 1, "modes": ["ai"] },
+    { "id": "po", "label": "PO", "skills": ["gate", "acceptance", "validation"], "count": 1, "maxPerItem": 1, "fixed": true, "note": "Seul à tenir les gates. Fait la validation métier et la recette, ou les délègue à l'aide à la recette." },
+    { "id": "ux", "label": "UX", "skills": ["uxreview"], "count": 1, "fixed": true, "calc": false, "note": "Équipe transverse, toujours disponible. Vérifie au fil de l'eau ou en bout de chaîne que l'UX et l'UI respectent les maquettes, l'accessibilité et le design system. Ne bloque jamais : hors calcul." }
+  ],
+  "rules": { "loss": 10, "maxPerStory": 2, "optimistic": 70, "pessimistic": 160, "runs": 300, "calibration": { "factor": 1, "sprints": [{ "sprint": 2, "estimated": 5.5, "actual": 7 }] } },
+  "releases": [
+    { "id": "mvp", "label": "MVP", "gate": "g3" },
+    { "id": "r2", "label": "R2", "gate": "g3-r2" },
+    { "id": "r3", "label": "R3", "gate": "g3-r3" }
+  ],
+  "groups": ["P0 Cadrage", "Conception", "Autres équipes", "Réalisation du MVP", "Recette du MVP", "Réalisation R2", "Recette R2", "Réalisation R3", "Recette R3"],
+  "storyGroup": { "mvp": "Réalisation du MVP", "r2": "Réalisation R2", "r3": "Réalisation R3" },
+  "storyAfter": ["socle"],
+  "storyDeps": {
+    "US-001": ["sso"], "US-002": ["US-014"], "US-005": ["US-014"], "US-006": ["US-005"], "US-008": ["US-005"], "US-009": ["US-006"],
+    "US-017": ["US-008"], "US-011": ["US-005"], "US-010": ["US-004"], "US-012": ["US-006"]
+  },
+  "items": [
+    { "id": "cadrage", "label": "Cadrage et vision", "group": "P0 Cadrage", "start": "2026-10-01", "end": "2026-10-03" },
+    { "id": "g0", "label": "G0", "group": "P0 Cadrage", "gate": true, "at": "2026-10-02T18:00", "who": "validé" },
+    { "id": "p1", "label": "P1 Analyse", "group": "Conception", "after": ["g0"], "d": { "assisted": 2, "human": 4 }, "work": { "ai": [["agent", 8]] }, "kind": "phase" },
+    { "id": "p2", "label": "P2 Specs, UX, prototype", "group": "Conception", "after": ["p1"], "d": { "assisted": 2, "human": 5 }, "work": { "ai": [["agent", 16]] }, "kind": "phase" },
+    { "id": "revue-g1", "label": "Revue G1", "group": "Conception", "after": ["p2"], "work": { "all": [["gate", 0.5]] }, "kind": "human" },
+    { "id": "g1", "label": "G1", "group": "Conception", "after": ["revue-g1"], "gate": true },
+    { "id": "p3", "label": "P3 Conception technique", "group": "Conception", "after": ["g1"], "d": { "assisted": 2, "human": 3 }, "work": { "ai": [["agent", 8]] }, "kind": "phase" },
+    { "id": "revue-g2", "label": "Revue G2, accord outillage", "group": "Conception", "after": ["p3"], "work": { "all": [["gate", 0.5]] }, "kind": "human" },
+    { "id": "g2", "label": "G2", "group": "Conception", "after": ["revue-g2"], "gate": true },
+    { "id": "sso", "label": "Ouverture du SSO", "group": "Autres équipes", "team": "Équipe identités", "deliver": "2026-10-09", "duration": 3 },
+    { "id": "env", "label": "Environnement de recette", "group": "Autres équipes", "team": "Équipe exploitation", "deliver": "2026-10-16", "duration": 3 },
+    { "id": "socle", "label": "Socle, outillage", "group": "Réalisation du MVP", "after": ["g2"], "work": { "human": [["back", 3]], "assisted": [["back", 1.5]], "ai": [["agent", 1]] } },
+    { "id": "qa-mvp", "label": "Campagne QA automatisée MVP", "group": "Recette du MVP", "after": ["rel:mvp", "env"], "d": { "assisted": 1 }, "work": { "ai": [["agent", 2]] }, "kind": "qa" },
+    { "id": "recette-mvp", "label": "Recette MVP", "group": "Recette du MVP", "after": ["qa-mvp"], "work": { "all": [["acceptance", 1]] }, "kind": "human" },
+    { "id": "g3", "label": "G3 MVP", "group": "Recette du MVP", "after": ["recette-mvp"], "gate": true },
+    { "id": "qa-r2", "label": "Campagne QA automatisée R2", "group": "Recette R2", "after": ["rel:r2", "g3"], "d": { "assisted": 0.5 }, "work": { "ai": [["agent", 1]] }, "kind": "qa" },
+    { "id": "recette-r2", "label": "Recette R2", "group": "Recette R2", "after": ["qa-r2"], "work": { "all": [["acceptance", 0.5]] }, "kind": "human" },
+    { "id": "g3-r2", "label": "G3 R2", "group": "Recette R2", "after": ["recette-r2"], "gate": true },
+    { "id": "qa-r3", "label": "Campagne QA automatisée R3", "group": "Recette R3", "after": ["rel:r3", "g3-r2"], "d": { "assisted": 0.5 }, "work": { "ai": [["agent", 1]] }, "kind": "qa" },
+    { "id": "recette-r3", "label": "Recette R3", "group": "Recette R3", "after": ["qa-r3"], "work": { "all": [["acceptance", 0.5]] }, "kind": "human" },
+    { "id": "g3-r3", "label": "G3 R3", "group": "Recette R3", "after": ["recette-r3"], "gate": true }
+  ]
+}
+</script>
+      </div>
+      <div class="callout hypothesis">
+        <b>Hypothèse</b>
+        Ces dates ne tiennent que si les gates sont tranchés dans la journée (<a href="#risques">risque</a> « gate humain en attente »). Elles seront recalées sur les sprints mesurés (<a href="#calibration">calibrage</a>).
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Dépendances et risques</h2>
+      <p class="hint">Ce qui peut faire glisser le calendrier. Chaque risque a une parade ou une question. Aucun : l'écrire.</p>
+      <h3>Dépendances</h3>
+      <table>
+        <thead><tr><th>Élément</th><th>Dépend de</th><th>Type</th><th>État</th></tr></thead>
+        <tbody>
+          <tr><td>Début de la réalisation</td><td>G2 : socle de stack complété et validé par l'humain, outillage installé (Node, Angular CLI)</td><td><span class="tag">humain</span></td><td><span class="tag warn">ouverte</span></td></tr>
+          <tr><td><a href="20-specs/stories/US-005-reserver-un-creneau.html">US-005</a>, <a href="20-specs/stories/US-002-voir-occupation-salle.html">US-002</a></td><td><a href="20-specs/stories/US-014-declarer-une-salle.html">US-014</a> : sans salle déclarée, rien à réserver ni à afficher</td><td><span class="tag">interne</span></td><td><span class="tag ok">au calendrier</span></td></tr>
+          <tr><td><a href="20-specs/stories/US-006-reserver-une-serie.html">US-006</a></td><td><a href="20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> : la série réutilise le contrôle du créneau</td><td><span class="tag">interne</span></td><td><span class="tag ok">au calendrier</span></td></tr>
+          <tr><td><a href="20-specs/stories/US-011-modifier-une-reservation.html">US-011</a></td><td><a href="questions.html#Q-002">Q-002</a> : modification au MVP ou en release R2</td><td><span class="tag">décision humain</span></td><td><span class="tag warn">ouverte</span></td></tr>
+        </tbody>
+      </table>
+      <h3>Risques</h3>
+      <table>
+        <thead><tr><th>Risque</th><th>Impact sur le calendrier</th><th>Probabilité</th><th>Parade</th></tr></thead>
+        <tbody>
+          <tr><td>Deux réservations simultanées passent toutes les deux (SQLite)</td><td><a href="20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> et <a href="20-specs/stories/US-006-reserver-une-serie.html">US-006</a> repassent en développement après la campagne QA, la recette du MVP glisse de quelques jours</td><td><span class="tag warn">moyenne</span></td><td>contrainte en base ou transaction sérialisée tranchée en P3 (<a href="questions.html#Q-001">Q-001</a>), test de concurrence dans la campagne QA automatisée, et dès la story chez le développeur</td></tr>
+          <tr><td>L'humain fait remonter la modification au MVP</td><td>une story L de plus dans le MVP (voir l'effet dans le calendrier)</td><td><span class="tag warn">moyenne</span></td><td>réponse à <a href="questions.html#Q-002">Q-002</a> avant G1 ; l'analyse recommande l'option B, la moins coûteuse</td></tr>
+          <tr><td>Gate humain en attente plusieurs jours</td><td>tout le calendrier glisse d'autant : la team ne passe pas un gate seule</td><td><span class="tag">faible</span></td><td>gates annoncés à l'avance, livrables prêts et vérifiés avant de solliciter l'humain</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Changelog</h2>
+      <p class="hint">Une ligne par mise à jour, la plus récente en tête. On n'efface pas les lignes précédentes.</p>
+      <table>
+        <thead><tr><th>Version</th><th>Date</th><th>Ce qui a bougé</th><th>Pourquoi</th><th>Décidé par</th></tr></thead>
+        <tbody>
+          <tr><td>v0.1</td><td>05.10.2026</td><td>Première version</td><td>sortie de la story map v0.1</td><td>PO</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2 id="calibration">Calibrage</h2>
+      <p class="hint">Après chaque sprint, le SM ajoute le temps estimé et le temps réel des stories finies, en heures d'agents, dans la configuration du calendrier (<code>rules.calibration.sprints</code>). Le rapport réel sur estimé corrige toutes les estimations des stories ; il se force dans les paramètres du calendrier pour un essai.</p>
+      <div class="capa-calib"></div>
+    </section>
+  </main>
+</div>
+<script src="_assets/doc.js"></script>
+<script src="_assets/plan.js"></script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-xx Name · Detailed technical design · PROJECT_NAME</title>
+  <!-- Copy to docs/30-design/detailed/entities/EN-xx.html (file name = id).
+       Entity metadata, read by team/scripts/detailed-pages.mjs: -->
+  <meta name="id" content="EN-xx">
+  <meta name="name" content="Name of the entity">
+  <meta name="release" content="MVP">          <!-- first release that needs it, as in the macro (indicative) -->
+  <meta name="module" content="domain/resource">     <!-- backend module where it lives, a row of table.modules in code-organization.html -->
+  <meta name="tables" content="">              <!-- tables or collections, separated by spaces -->
+  <meta name="rules" content="">               <!-- BR-xx carried by the model, each one cited in the physical model -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Entity EN-xx</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Summary of the detailed design</a><br><a href="../../macro.html">← Macro technical design</a><br><a href="../../../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Detailed technical design · <a href="../index.html#crud-matrix">CRUD matrix</a></div>
+      <h1><span class="doc-kind">EN-xx</span>: <span class="todo">Name of the entity</span></h1>
+      <p class="lede"><span class="todo">What the entity represents in one or two sentences, and the most important rule it carries.</span></p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info"><span class="todo">store</span></span> table <code>table_name</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> Architect</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required" data-section="physical-model">
+      <h2 id="physical-model">Physical model</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Give the physical schema of the entity, precise enough to write the migration.</dd>
+          <dt>Content</dt><dd>The SQL DDL in the dialect of the store, each constraint commented with the rule it holds, then the rules the database cannot hold and the place where they live.</dd>
+          <dt>Why this formalism</dt><dd>The DDL is what the migration contains: the dev takes it over without translation.</dd>
+          <dt>Reading</dt><dd>An index carries in a comment the query it serves; a column of a later release carries its release, as an indication. The common conventions are in the <a href="../cross-cutting/code-organization.html#persistence">persistence</a>.</dd>
+        </dl>
+      </div>
+      <!-- DDL in the dialect of the store; < > & escaped; ids cited in comments are links. A document store:
+           the JSON Schema of the document, same rules. -->
+<pre class="ddl"><code>CREATE TABLE <span class="todo">table_name</span> (
+  id     INTEGER PRIMARY KEY,
+  <span class="todo">field</span>  <span class="todo">TYPE NOT NULL CHECK (...)</span>,        -- <span class="todo">BR-xx as a link, what the constraint holds</span>
+  <span class="todo">other_id</span>  INTEGER NOT NULL REFERENCES <span class="todo">other_table(id)</span>   -- <span class="todo">EN-xx as a link</span>
+);
+-- <span class="todo">the query the index serves, with the endpoint or the process as a link</span>
+CREATE INDEX <span class="todo">index_name</span> ON <span class="todo">table_name(columns)</span>;</code></pre>
+      <h3 id="rules-outside-the-database">Rules outside the database</h3>
+      <ul>
+        <li><span class="todo">BR-xx as a link: why it cannot be a constraint (current time, other row, session), and where it lives (domain object, PROC-xx as a link); not applicable: remove this title and the list</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="state-machine">State machine</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show the lifecycle of the entity and what makes it change state.</dd>
+          <dt>Content</dt><dd>One row per transition (from, to, event, guard, action), then the state diagram drawn from this table. Without a lifecycle, one sentence says so.</dd>
+          <dt>Why this formalism</dt><dd>The UML notation <i>event [guard] / action</i>, in two views of a single source: the table carries the links and is reread row by row, the diagram shows the cycle at a glance.</dd>
+        </dl>
+      </div>
+      <!-- From: [*] for the creation. A state without an outgoing transition is drawn as final. -->
+      <table class="transitions">
+        <thead><tr><th>From</th><th>To</th><th>Event</th><th>Guard</th><th>Action</th></tr></thead>
+        <tbody>
+          <tr><td>[*]</td><td><span class="todo">Active</span></td><td><span class="todo">EP-xx, through PROC-xx, as links</span></td><td><span class="todo">BR-xx as a link</span></td><td><span class="todo">what is written</span></td></tr>
+        </tbody>
+      </table>
+      <!-- gen:state-diagram --><!-- /gen -->
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="who-acts-on-it">Who acts on it</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know who creates, reads, updates or deletes the entity.</dd>
+          <dt>Content</dt><dd>Its column of the CRUD matrix, endpoint by endpoint and process by process, then the schemas that are its projection.</dd>
+          <dt>Why this formalism</dt><dd>The CRUD matrix, standard of this cross-reference; the same as the one of the <a href="../index.html#crud-matrix">summary</a>, read from the entity.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> and the process pages: nothing to write.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage --><!-- /gen -->
+    </section>
+
+    <section class="section" id="open-points" data-level="recommended">
+      <h2 id="open-points">Open points</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>List what remains to settle on this entity.</dd>
+          <dt>Content</dt><dd>One point per row, sorted by decreasing impact: the subject, the hypothesis the code follows meanwhile, the question <code>Q-xxx</code> if it is asked to the PO.</dd>
+          <dt>Why this formalism</dt><dd>A table, because each point has the same attributes and compares with the others.</dd>
+          <dt>Reading</dt><dd><ul><li><span class="impact high">high</span> the answer can change the data model, a frozen operation of the API contract or what structures the whole code</li><li><span class="impact medium">medium</span> the answer can change a provisional operation, a process, a schema not frozen or a screen</li><li><span class="impact low">low</span> the answer only changes a label, a message, a value or an edge case</li></ul></dd>
+          <dt>Source</dt><dd>Written here only once; the generator takes it over in the <a href="../open-points.html">open points view</a>.</dd>
+        </dl>
+      </div>
+      <!-- One row per point, highest impact first; impact: code high, medium or low in data-value
+           and in the class of span.impact, its label in the project language; question: Q-xxx link
+           (class qmark) or empty. No point: <p data-value="none">No open point.</p>, or remove the section. -->
+      <table class="open-points">
+        <thead><tr><th>Impact</th><th>Subject</th><th>Hypothesis kept</th><th>Question</th></tr></thead>
+        <tbody>
+          <tr><td data-value="medium"><span class="impact medium">medium</span></td><td><span class="todo">what remains to settle, and what a different answer would change</span></td><td><span class="todo">what the code follows meanwhile</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

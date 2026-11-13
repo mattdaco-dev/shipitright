@@ -1,0 +1,534 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">
+  <meta name="date" content="2026-10-05">
+  <title>Spécifications UX/UI · Réservation de salles</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Spécifications UX/UI</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main wide">
+    <header class="doc-header">
+      <div class="kicker">P2 · Spécifications</div>
+      <h1><span class="doc-kind">Spec UX/UI</span> : Réservation de salles</h1>
+      <p class="lede">L'employé voit d'un coup d'œil ce qui est libre et réserve en moins d'une minute ; le gestionnaire tient le parc sans quitter la vue d'occupation.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> 05.10.2026</span>
+        <span><b>Auteur</b> PO (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag warn">brouillon</span></span>
+        <span><b>Sources</b> <a href="../00-framing/framing.html">cadrage</a> (validé G0), <a href="../../foundations/design-systems/reservation-salles/foundation.md">DS reservation-salles</a> v0.1, <a href="../20-specs/story-map.html">story map</a> v0.1, <a href="../20-specs/functional-design.html">conception fonctionnelle</a> v0.1, prototype v1</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2>Principes UX</h2>
+      <p class="hint">Trois à six principes propres au produit. Chacun dit ce qu'il change concrètement sur les écrans.</p>
+      <div class="grid c3">
+        <div class="card">
+          <h4>L'occupation d'abord</h4>
+          <p>Après connexion, on arrive sur la grille du jour (<a href="#SCR-02">SCR-02</a>) : toutes les salles, tous les créneaux. Un clic sur une case libre ouvre la réservation, préremplie. C'est l'objectif « savoir ce qui est libre en moins de 30 s ».</p>
+        </div>
+        <div class="card">
+          <h4>Le refus avant l'envoi</h4>
+          <p>Les règles du créneau (<a href="../20-specs/functional-design.html#BR-02">BR-02</a>, <a href="../20-specs/functional-design.html#BR-03">BR-03</a>) sont portées par les sélecteurs : on ne peut choisir qu'un quart d'heure ouvré et futur. Le serveur reste juge du conflit (<a href="../20-specs/functional-design.html#BR-01">BR-01</a>), le formulaire garde la saisie si la salle vient d'être prise.</p>
+        </div>
+        <div class="card">
+          <h4>Rien de destructif sans le voir</h4>
+          <p>Toute annulation, désactivation ou série en conflit passe par une boîte de dialogue qui dit ce qui va se passer, avec le nombre d'occurrences concernées. Le bouton par défaut est celui qui ne détruit rien.</p>
+        </div>
+        <div class="card">
+          <h4>Deux rôles, une seule application</h4>
+          <p>Le gestionnaire voit les mêmes écrans que l'employé, plus l'entrée « Parc de salles » et l'action « Annuler avec un motif » sur toute réservation. Pas d'espace d'administration séparé.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Design system appliqué</h2>
+      <p class="hint">Le design system du projet, déclaré dans .team/foundation.md. La spec ne recopie ni ses tokens, ni ses composants, ni sa grille : elle dit lesquels elle utilise, et décrit seulement ce que le produit ajoute ou change.</p>
+      <dl class="defs">
+        <dt>Socle</dt><dd><a href="../../foundations/design-systems/reservation-salles/foundation.md">reservation-salles</a>, design system minimal créé pour le projet (aucun n'était imposé)</dd>
+        <dt>Version</dt><dd>v0.1 du 05.10.2026</dd>
+        <dt>Statut</dt><dd><span class="tag warn">à valider à G1</span></dd>
+      </dl>
+      <h3>Composants utilisés</h3>
+      <table>
+        <thead><tr><th>Composant du DS</th><th>Variante</th><th>Écrans</th></tr></thead>
+        <tbody>
+          <tr><td>Bandeau de navigation</td><td>avec menu utilisateur</td><td>tous sauf <a href="#SCR-01">SCR-01</a></td></tr>
+          <tr><td>Champ, liste déroulante, sélecteur de date</td><td>jours désactivables</td><td><a href="#SCR-01">SCR-01</a>, <a href="#SCR-03">SCR-03</a>, <a href="#SCR-04">SCR-04</a>, <a href="#SCR-07">SCR-07</a></td></tr>
+          <tr><td>Tableau</td><td>simple</td><td><a href="#SCR-06">SCR-06</a></td></tr>
+          <tr><td>Dialogue</td><td>confirmation, bouton par défaut non destructif</td><td><a href="#SCR-02">SCR-02</a>, <a href="#SCR-04">SCR-04</a>, <a href="#SCR-05">SCR-05</a>, <a href="#SCR-06">SCR-06</a></td></tr>
+          <tr><td>Bandeau de message</td><td>succès, erreur</td><td>tous</td></tr>
+          <tr><td>Squelette</td><td>ligne, bloc</td><td>tous les états de chargement</td></tr>
+        </tbody>
+      </table>
+      <h3>Compléments et écarts</h3>
+      <table>
+        <thead><tr><th>Élément</th><th>Nature</th><th>Écrans</th><th>Ce qui est décidé</th></tr></thead>
+        <tbody>
+          <tr><td>Grille d'occupation</td><td><span class="tag info">complément</span></td><td><a href="#SCR-02">SCR-02</a></td><td>composant propre au produit : une ligne par salle, une colonne par quart d'heure ; ses réservations en <code>--color-primary</code>, celles des autres en <code>--color-busy</code>. À verser au DS s'il sert ailleurs.</td></tr>
+          <tr><td>Grille d'occupation sous 768 px</td><td><span class="tag info">complément</span></td><td><a href="#SCR-02">SCR-02</a></td><td>la grille devient une liste des créneaux libres par salle ; le reste suit la grille du DS</td></tr>
+          <tr><td>Badge « Série »</td><td><span class="tag info">complément</span></td><td><a href="#SCR-05">SCR-05</a></td><td>étiquette sur une occurrence de série, aux couleurs du bandeau de message</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Parcours utilisateurs</h2>
+      <p class="hint">Wireflow : un schéma par persona, les écrans SCR-xx enchaînés par l'action qui fait passer de l'un à l'autre. Une boîte de dialogue appartient à son écran et y revient quand on la ferme : pas de flèche de retour. Un refus qui laisse sur l'écran est un état de l'écran : il figure en pastille, pas en étape. Le titre cite les parcours fonctionnels couverts.</p>
+      <div class="legend">
+        <span><i class="pf-screen"></i>Écran</span>
+        <span><i class="pf-dialog"></i>Boîte de dialogue</span>
+        <span><i class="pf-end"></i>Résultat affiché</span>
+              </div>
+
+      <h3>Employé : <a href="../20-specs/functional-design.html#FL-01">FL-01</a>, <a href="../20-specs/functional-design.html#FL-02">FL-02</a>, <a href="../20-specs/functional-design.html#FL-03">FL-03</a></h3>
+      <div class="pf">
+        <div class="pf-node screen" id="wf-e-01" data-c="1" data-r="1" data-links="wf-e-02|Se connecter"><a class="ec" href="#SCR-01">SCR-01</a>Connexion</div>
+        <div class="pf-node screen" id="wf-e-02" data-c="2" data-r="1" data-links="wf-e-04|Clic sur une case libre wf-e-03|Chercher une salle"><a class="ec" href="#SCR-02">SCR-02</a>Occupation du jour</div>
+        <div class="pf-node screen" id="wf-e-04" data-c="3" data-r="1" data-links="wf-e-05|Réserver wf-e-04d|Réserver une série en conflit"><a class="ec" href="#SCR-04">SCR-04</a>Réservation<span class="refs"><a href="../20-specs/functional-design.html#MSG-01">MSG-01</a><a href="../20-specs/functional-design.html#MSG-03">MSG-03</a></span></div>
+        <div class="pf-node screen" id="wf-e-05" data-c="4" data-r="1" data-links="wf-e-05d|Annuler"><a class="ec" href="#SCR-05">SCR-05</a>Mes réservations<span class="refs"><a href="../20-specs/functional-design.html#MSG-02">MSG-02</a></span></div>
+        <div class="pf-node screen" id="wf-e-03" data-c="2" data-r="2" data-links="wf-e-04|Réserver"><a class="ec" href="#SCR-03">SCR-03</a>Recherche de salle</div>
+        <div class="pf-node screen dialog" id="wf-e-04d" data-c="3" data-r="2" data-links="wf-e-05|Créer les libres"><a class="ec" href="#SCR-04-conflits">SCR-04</a>Conflits de la série<span class="refs"><a href="../20-specs/functional-design.html#MSG-04">MSG-04</a></span></div>
+        <div class="pf-node screen dialog" id="wf-e-05d" data-c="4" data-r="2"><a class="ec" href="#SCR-05-annuler">SCR-05</a>Annuler la réservation</div>
+      </div>
+
+      <h3>Gestionnaire : <a href="../20-specs/functional-design.html#FL-04">FL-04</a></h3>
+      <div class="pf">
+        <div class="pf-node screen" id="wf-g-06" data-c="1" data-r="1" data-links="wf-g-07|Nouvelle salle, Modifier wf-g-06d|Désactiver"><a class="ec" href="#SCR-06">SCR-06</a>Parc de salles</div>
+        <div class="pf-node screen" id="wf-g-07" data-c="2" data-r="1" data-links="wf-g-07r|Enregistrer"><a class="ec" href="#SCR-07">SCR-07</a>Fiche salle</div>
+        <div class="pf-node end" id="wf-g-07r" data-c="3" data-r="1">Retour à SCR-06, salle à jour</div>
+        <div class="pf-node screen dialog" id="wf-g-06d" data-c="2" data-r="2" data-links="wf-g-06r|Désactiver"><a class="ec" href="#SCR-06-desactiver">SCR-06</a>Désactiver la salle</div>
+        <div class="pf-node end" id="wf-g-06r" data-c="3" data-r="2">Salle désactivée<span class="refs"><a href="../20-specs/functional-design.html#MSG-06">MSG-06</a></span></div>
+        <div class="pf-node screen" id="wf-g-02" data-c="1" data-r="3" data-links="wf-g-02d|Clic sur une réservation"><a class="ec" href="#SCR-02">SCR-02</a>Occupation du jour</div>
+        <div class="pf-node screen dialog" id="wf-g-02d" data-c="2" data-r="3" data-links="wf-g-02r|Annuler la réservation"><a class="ec" href="#SCR-02-motif">SCR-02</a>Annuler avec un motif</div>
+        <div class="pf-node end" id="wf-g-02r" data-c="3" data-r="3">Le titulaire voit le motif sur SCR-05<span class="refs"><a href="../20-specs/functional-design.html#MSG-05">MSG-05</a></span></div>
+      </div>
+      <p>Navigation permanente : un bandeau en haut donne accès à <a href="#SCR-02">SCR-02</a> « Occupation », <a href="#SCR-05">SCR-05</a> « Mes réservations » et, pour le gestionnaire, <a href="#SCR-06">SCR-06</a> « Parc de salles ». Le nom de l'utilisateur et « Se déconnecter » sont à droite.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Inventaire des écrans</h2>
+      <p class="hint">Une carte par écran, qui mène à son détail. Vignette : capture du prototype (screenshots/SCR-xx-nominal.png), hachurée tant qu'elle n'est pas prise. Les tags listent les états décrits ; un état barré est sans objet pour l'écran.</p>
+      <div class="screens">
+        <a class="screen-card" href="#SCR-01">
+          <div class="thumb"><img src="screenshots/SCR-01-nominal.png" alt="SCR-01, état nominal"></div>
+          <div class="body">
+            <b>SCR-01 · Connexion</b>
+            <span class="who">tous · US-001</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag na">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag na">droits</span></div>
+          </div>
+        </a>
+        <a class="screen-card" href="#SCR-02">
+          <div class="thumb"><img src="screenshots/SCR-02-nominal.png" alt="SCR-02, état nominal"></div>
+          <div class="body">
+            <b>SCR-02 · Occupation du jour</b>
+            <span class="who">tous · US-002, US-003, US-017</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag warn">droits</span></div>
+          </div>
+        </a>
+        <a class="screen-card" href="#SCR-03">
+          <div class="thumb"><img src="screenshots/SCR-03-nominal.png" alt="SCR-03, état nominal"></div>
+          <div class="body">
+            <b>SCR-03 · Recherche de salle</b>
+            <span class="who">tous · US-004</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag na">droits</span></div>
+          </div>
+        </a>
+        <a class="screen-card" href="#SCR-04">
+          <div class="thumb"><img src="screenshots/SCR-04-nominal.png" alt="SCR-04, état nominal"></div>
+          <div class="body">
+            <b>SCR-04 · Réservation</b>
+            <span class="who">tous · US-005, US-006</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag na">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag na">droits</span></div>
+          </div>
+        </a>
+        <a class="screen-card" href="#SCR-05">
+          <div class="thumb"><img src="screenshots/SCR-05-nominal.png" alt="SCR-05, état nominal"></div>
+          <div class="body">
+            <b>SCR-05 · Mes réservations</b>
+            <span class="who">tous · US-007, US-008, US-009</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag na">droits</span></div>
+          </div>
+        </a>
+        <a class="screen-card" href="#SCR-06">
+          <div class="thumb"><img src="screenshots/SCR-06-nominal.png" alt="SCR-06, état nominal"></div>
+          <div class="body">
+            <b>SCR-06 · Parc de salles</b>
+            <span class="who">gestionnaire · US-015, US-016</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag warn">droits</span></div>
+          </div>
+        </a>
+        <a class="screen-card" href="#SCR-07">
+          <div class="thumb"><img src="screenshots/SCR-07-nominal.png" alt="SCR-07, état nominal"></div>
+          <div class="body">
+            <b>SCR-07 · Fiche salle</b>
+            <span class="who">gestionnaire · US-014, US-015</span>
+            <div class="states"><span class="tag ok">nominal</span><span class="tag na">vide</span><span class="tag">chargement</span><span class="tag danger">erreur</span><span class="tag warn">droits</span></div>
+          </div>
+        </a>
+      </div>
+      <h3>Couverture des stories du MVP</h3>
+      <p class="hint">Chaque story front a un écran, chaque écran a une story. Une ligne par story de la release.</p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Story</th><th>Écrans</th><th>États propres à la story</th></tr></thead>
+          <tbody>
+            <tr><td><a href="../20-specs/stories/US-001-se-connecter.html">US-001</a> Se connecter</td><td><a href="#SCR-01">SCR-01</a></td><td>erreur d'identifiants</td></tr>
+            <tr><td><a href="../20-specs/stories/US-002-voir-occupation-salle.html">US-002</a> Occupation d'une salle</td><td><a href="#SCR-02">SCR-02</a></td><td>filtre sur une salle</td></tr>
+            <tr><td><a href="../20-specs/stories/US-003-voir-occupation-journee.html">US-003</a> Occupation de toutes les salles</td><td><a href="#SCR-02">SCR-02</a></td><td>nominal, vide</td></tr>
+            <tr><td><a href="../20-specs/stories/US-004-chercher-une-salle.html">US-004</a> Chercher une salle</td><td><a href="#SCR-03">SCR-03</a></td><td>aucun résultat</td></tr>
+            <tr><td><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a> Réserver un créneau</td><td><a href="#SCR-04">SCR-04</a></td><td>conflit, créneau hors règles</td></tr>
+            <tr><td><a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a> Réserver une série</td><td><a href="#SCR-04">SCR-04</a></td><td>série, conflits de la série</td></tr>
+            <tr><td><a href="../20-specs/stories/US-007-lister-mes-reservations.html">US-007</a> Lister mes réservations</td><td><a href="#SCR-05">SCR-05</a></td><td>vide, annulée avec motif</td></tr>
+            <tr><td><a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a> Annuler une réservation</td><td><a href="#SCR-05">SCR-05</a></td><td>dialogue d'annulation</td></tr>
+            <tr><td><a href="../20-specs/stories/US-009-annuler-une-serie.html">US-009</a> Annuler une série</td><td><a href="#SCR-05">SCR-05</a></td><td>dialogue, choix occurrence ou série</td></tr>
+            <tr><td><a href="../20-specs/stories/US-014-declarer-une-salle.html">US-014</a> Déclarer une salle</td><td><a href="#SCR-06">SCR-06</a>, <a href="#SCR-07">SCR-07</a></td><td>nom déjà pris</td></tr>
+            <tr><td><a href="../20-specs/stories/US-015-modifier-une-salle.html">US-015</a> Modifier une salle</td><td><a href="#SCR-06">SCR-06</a>, <a href="#SCR-07">SCR-07</a></td><td>fiche préremplie</td></tr>
+            <tr><td><a href="../20-specs/stories/US-016-desactiver-une-salle.html">US-016</a> Désactiver une salle</td><td><a href="#SCR-06">SCR-06</a></td><td>dialogue de désactivation</td></tr>
+            <tr><td><a href="../20-specs/stories/US-017-annuler-avec-motif.html">US-017</a> Annuler avec un motif</td><td><a href="#SCR-02">SCR-02</a></td><td>dialogue avec motif</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Détail des écrans</h2>
+      <p class="hint">Un bloc par écran. Les messages fonctionnels citent leur MSG-xx et sont repris au mot près, parties variables entre chevrons ; les messages d'interface (états vide, erreur technique) sont définis ici en MSG-Uxx. Un état sans objet le dit.</p>
+
+      <h3 id="SCR-01">SCR-01 · Connexion</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>entrer dans l'application avec son email et son mot de passe</dd>
+        <dt>Accès</dt><dd>toute page ouverte sans session ; tous les rôles</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-001-se-connecter.html">US-001</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-01">prototype/#SCR-01</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol><li>Titre « Réservation de salles »</li><li>Champ « Email »</li><li>Champ « Mot de passe », bouton œil pour l'afficher</li></ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li>« Se connecter » : ouvre <a href="#SCR-02">SCR-02</a>, ou la page demandée avant la connexion</li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>formulaire vide, focus sur « Email »</td><td></td></tr>
+          <tr><td><span class="tag na">vide</span></td><td>sans objet : pas de données affichées</td><td></td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>bouton inactif, indicateur dans le bouton</td><td></td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>identifiants refusés : le mot de passe est vidé, l'email reste</td><td id="MSG-U01"><b>MSG-U01</b> « Email ou mot de passe incorrect. »</td></tr>
+          <tr><td><span class="tag na">droits insuffisants</span></td><td>sans objet : écran public</td><td></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="SCR-02">SCR-02 · Occupation du jour</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>voir en un coup d'œil quelles salles sont libres aujourd'hui, ou un autre jour</dd>
+        <dt>Accès</dt><dd>page d'accueil après connexion, entrée « Occupation » ; tous les rôles</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-002-voir-occupation-salle.html">US-002</a>, <a href="../20-specs/stories/US-003-voir-occupation-journee.html">US-003</a>, <a href="../20-specs/stories/US-017-annuler-avec-motif.html">US-017</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-02">prototype/#SCR-02</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol>
+            <li>Sélecteur de jour : « ‹ », date JJ.MM.AAAA, « › », « Aujourd'hui »</li>
+            <li>Filtre « Salle » (toutes par défaut)</li>
+            <li>Grille : une ligne par salle active (nom, capacité), une colonne par heure de 08:00 à 19:00, découpée en quarts d'heure</li>
+            <li>Réservation : bloc avec le titulaire et l'horaire ; les siennes en couleur d'accent</li>
+          </ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul>
+            <li>Clic sur une case libre : ouvre <a href="#SCR-04">SCR-04</a> avec salle, jour et heure préremplis</li>
+            <li>« Chercher une salle » : ouvre <a href="#SCR-03">SCR-03</a></li>
+            <li>Clic sur une réservation : détail en infobulle ; pour le gestionnaire, bouton « Annuler avec un motif »</li>
+          </ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Règle d'affichage</th><th>Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr><td>Seules les salles actives ont une ligne.</td><td><a href="../20-specs/functional-design.html#BR-08">BR-08</a></td></tr>
+          <tr><td>Les cases passées du jour courant sont grisées et ne s'ouvrent pas.</td><td><a href="../20-specs/functional-design.html#BR-03">BR-03</a></td></tr>
+          <tr><td>Samedi et dimanche s'affichent sans case cliquable, avec la mention « Pas de réservation le week-end ».</td><td><a href="../20-specs/functional-design.html#BR-02">BR-02</a></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>grille du jour avec ses réservations</td><td></td></tr>
+          <tr><td><span class="tag">vide</span></td><td>aucune salle active : la grille est remplacée par un message</td><td id="MSG-U02"><b>MSG-U02</b> « Aucune salle n'est encore déclarée. » ; pour le gestionnaire, lien « Déclarer une salle »</td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>squelette de la grille, sélecteur de jour actif</td><td></td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>la grille tombe, le sélecteur de jour reste</td><td id="MSG-U03"><b>MSG-U03</b> « L'occupation n'a pas pu être chargée. » + « Réessayer »</td></tr>
+          <tr><td><span class="tag warn">droits insuffisants</span></td><td>employé : pas de bouton « Annuler avec un motif » dans l'infobulle</td><td></td></tr>
+        </tbody>
+      </table>
+      <h4 id="SCR-02-motif">Dialogue « Annuler avec un motif » (gestionnaire)</h4>
+      <p>Proposé seulement pour une réservation qui n'a pas commencé (<a href="../20-specs/functional-design.html#BR-03">BR-03</a>, arbitrage PO : la règle vaut aussi pour le gestionnaire). Rappelle salle, jour, horaire et titulaire. Champ « Motif » obligatoire, 200 caractères au plus. « Annuler la réservation » est désactivé tant que le motif est vide ; « Fermer » est le bouton par défaut. Après validation, la case redevient libre et le titulaire voit <a href="../20-specs/functional-design.html#MSG-05">MSG-05</a> sur <a href="#SCR-05">SCR-05</a> (<a href="../20-specs/functional-design.html#BR-07">BR-07</a>).</p>
+
+      <h3 id="SCR-03">SCR-03 · Recherche de salle</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>trouver une salle libre qui convient à la réunion</dd>
+        <dt>Accès</dt><dd>« Chercher une salle » depuis <a href="#SCR-02">SCR-02</a> ; tous les rôles</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-004-chercher-une-salle.html">US-004</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-03">prototype/#SCR-03</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol><li>Critères : jour, début, fin, « Participants » (nombre), équipements (cases à cocher)</li><li>Résultats : nom, capacité, équipements, tri par capacité croissante</li></ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li>« Chercher » : rafraîchit les résultats</li><li>« Réserver » sur un résultat : ouvre <a href="#SCR-04">SCR-04</a> prérempli</li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Règle d'affichage</th><th>Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr><td>Les résultats ne montrent que les salles actives, libres sur tout le créneau, assez grandes, avec tous les équipements cochés.</td><td><a href="../20-specs/functional-design.html#BR-09">BR-09</a></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>critères et liste des salles trouvées</td><td></td></tr>
+          <tr><td><span class="tag">vide</span></td><td>aucun résultat : critères conservés</td><td id="MSG-U04"><b>MSG-U04</b> « Aucune salle libre ne correspond. Essayez un autre créneau ou moins d'équipements. »</td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>squelette de trois lignes sous les critères</td><td></td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>la liste tombe, les critères restent</td><td id="MSG-U05"><b>MSG-U05</b> « La recherche n'a pas abouti. » + « Réessayer »</td></tr>
+          <tr><td><span class="tag na">droits insuffisants</span></td><td>sans objet : même écran pour tous les rôles</td><td></td></tr>
+        </tbody>
+      </table>
+
+      <h3 id="SCR-04">SCR-04 · Réservation</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>poser une réservation, ponctuelle ou en série, sur une salle et un créneau</dd>
+        <dt>Accès</dt><dd>case libre de <a href="#SCR-02">SCR-02</a>, « Réserver » de <a href="#SCR-03">SCR-03</a> ; tous les rôles</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-005-reserver-un-creneau.html">US-005</a>, <a href="../20-specs/stories/US-006-reserver-une-serie.html">US-006</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-04">prototype/#SCR-04</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol>
+            <li>« Salle » : liste des salles actives, préremplie</li>
+            <li>« Jour » : sélecteur de date, JJ.MM.AAAA</li>
+            <li>« Début », « Fin » : listes au quart d'heure, de 08:00 à 19:00</li>
+            <li>« Répéter » : « Non » (défaut), « Chaque jour ouvré », « Chaque semaine »</li>
+            <li>« Jusqu'au » : visible quand « Répéter » n'est pas « Non », JJ.MM.AAAA</li>
+            <li>Récapitulatif : « &lt;n&gt; occurrences » sous le champ, recalculé à chaque changement</li>
+          </ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul>
+            <li>« Réserver » : enregistre, puis ouvre <a href="#SCR-05">SCR-05</a> avec <a href="../20-specs/functional-design.html#MSG-02">MSG-02</a> en bandeau de confirmation</li>
+            <li>« Retour » : revient à l'écran d'origine sans rien créer</li>
+          </ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Règle d'affichage</th><th>Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr><td>« Début » et « Fin » ne proposent que des quarts d'heure entre 08:00 et 19:00 ; « Fin » ne propose que les heures à 4 heures au plus après « Début ».</td><td><a href="../20-specs/functional-design.html#BR-02">BR-02</a></td></tr>
+          <tr><td>Le sélecteur de jour grise le passé et le week-end ; pour le jour courant, « Début » commence au quart d'heure suivant.</td><td><a href="../20-specs/functional-design.html#BR-02">BR-02</a>, <a href="../20-specs/functional-design.html#BR-03">BR-03</a></td></tr>
+          <tr><td>« Jusqu'au » n'accepte pas de date à plus de 3 mois de « Jour » ; au-delà, le champ est signalé invalide et « Réserver » est désactivé.</td><td><a href="../20-specs/functional-design.html#BR-04">BR-04</a></td></tr>
+          <tr><td>« Réserver » est désactivé tant qu'un champ obligatoire est vide ou invalide.</td><td></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>formulaire prérempli depuis l'écran d'origine</td><td></td></tr>
+          <tr><td><span class="tag ok">série</span></td><td>« Jusqu'au » et le récapitulatif des occurrences apparaissent</td><td>« 13 occurrences »</td></tr>
+          <tr><td><span class="tag na">vide</span></td><td>sans objet : formulaire de saisie</td><td></td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>pendant l'enregistrement : champs et bouton inactifs, indicateur dans le bouton</td><td></td></tr>
+          <tr><td><span class="tag danger">conflit</span></td><td>la salle vient d'être prise : bandeau d'erreur au-dessus du formulaire, saisie conservée</td><td><a href="../20-specs/functional-design.html#MSG-01">MSG-01</a> « La salle &lt;nom&gt; est déjà réservée de &lt;début&gt; à &lt;fin&gt;. »</td></tr>
+          <tr><td><span class="tag danger">hors règles</span></td><td>refus du serveur malgré les sélecteurs (horloge décalée) : bandeau d'erreur</td><td><a href="../20-specs/functional-design.html#MSG-03">MSG-03</a> « Les réservations se font du lundi au vendredi, de 08:00 à 19:00, par pas de 15 minutes, pour 4 heures au plus. »</td></tr>
+          <tr><td><span class="tag danger">champ invalide</span></td><td>texte sous le champ, champ marqué invalide, « Réserver » désactivé</td><td id="MSG-U12"><b>MSG-U12</b> « Choisissez un jour ouvré, à partir d'aujourd'hui. » (Jour)<br><span id="MSG-U13"><b>MSG-U13</b></span> « La série se termine au plus 3 mois après le premier jour. » (Jusqu'au)</td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>échec technique : bandeau d'erreur, saisie conservée, rien n'est créé</td><td id="MSG-U06"><b>MSG-U06</b> « La réservation n'a pas pu être enregistrée. Rien n'a été créé. » + « Réessayer »</td></tr>
+          <tr><td><span class="tag na">droits insuffisants</span></td><td>sans objet : tout utilisateur connecté réserve</td><td></td></tr>
+        </tbody>
+      </table>
+      <h4 id="SCR-04-conflits">Dialogue « Conflits de la série »</h4>
+      <p>S'ouvre quand des occurrences de la série sont déjà prises (<a href="../20-specs/functional-design.html#BR-05">BR-05</a>). Affiche <a href="../20-specs/functional-design.html#MSG-04">MSG-04</a> « &lt;n&gt; occurrences sur &lt;total&gt; sont déjà prises et ne seront pas créées. », puis la liste des dates en conflit (JJ.MM.AAAA). Boutons « Créer les &lt;total − n&gt; occurrences libres » (focus à l'ouverture) et « Revenir au formulaire ». « Échap » revient au formulaire sans rien créer. La liste est annoncée par le lecteur d'écran à l'ouverture.</p>
+
+      <h3 id="SCR-05">SCR-05 · Mes réservations</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>retrouver ses réservations à venir et en annuler une</dd>
+        <dt>Accès</dt><dd>entrée « Mes réservations », après une réservation ; tous les rôles, ses propres réservations</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-007-lister-mes-reservations.html">US-007</a>, <a href="../20-specs/stories/US-008-annuler-une-reservation.html">US-008</a>, <a href="../20-specs/stories/US-009-annuler-une-serie.html">US-009</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-05">prototype/#SCR-05</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol>
+            <li>Bandeau de confirmation après une réservation (<a href="../20-specs/functional-design.html#MSG-02">MSG-02</a>), fermable</li>
+            <li>Liste par jour, du plus proche au plus lointain : horaire, salle, badge « Série » le cas échéant</li>
+            <li>Réservations annulées par le gestionnaire ou par désactivation, barrées, avec leur motif, pendant 7 jours</li>
+          </ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li>« Annuler » sur une réservation à venir : ouvre le dialogue d'annulation</li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Règle d'affichage</th><th>Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr><td>« Annuler » n'apparaît que sur les réservations qui n'ont pas commencé.</td><td><a href="../20-specs/functional-design.html#BR-03">BR-03</a></td></tr>
+          <tr><td>Une réservation annulée par le gestionnaire affiche « Annulée par le gestionnaire : &lt;motif&gt;. »</td><td><a href="../20-specs/functional-design.html#BR-07">BR-07</a>, <a href="../20-specs/functional-design.html#MSG-05">MSG-05</a></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>liste des réservations à venir</td><td></td></tr>
+          <tr><td><span class="tag">vide</span></td><td>aucune réservation à venir</td><td id="MSG-U07"><b>MSG-U07</b> « Vous n'avez aucune réservation à venir. » + lien « Voir l'occupation »</td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>squelette de trois lignes</td><td></td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>la liste tombe</td><td id="MSG-U08"><b>MSG-U08</b> « Vos réservations n'ont pas pu être chargées. » + « Réessayer »</td></tr>
+          <tr><td><span class="tag na">droits insuffisants</span></td><td>sans objet : on ne voit que les siennes</td><td></td></tr>
+        </tbody>
+      </table>
+      <h4 id="SCR-05-annuler">Dialogue « Annuler la réservation »</h4>
+      <p>Rappelle salle, jour et horaire. Pour une occurrence de série, deux choix : « Cette occurrence » (défaut) et « Toutes les occurrences à venir de la série » (<a href="../20-specs/functional-design.html#BR-06">BR-06</a>), avec le nombre concerné. Boutons « Confirmer l'annulation » et « Garder » (focus à l'ouverture). Après confirmation, la ligne disparaît de la liste.</p>
+
+      <h3 id="SCR-06">SCR-06 · Parc de salles</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>voir toutes les salles et en déclarer, modifier ou désactiver une</dd>
+        <dt>Accès</dt><dd>entrée « Parc de salles » ; gestionnaire seulement</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-014-declarer-une-salle.html">US-014</a>, <a href="../20-specs/stories/US-015-modifier-une-salle.html">US-015</a>, <a href="../20-specs/stories/US-016-desactiver-une-salle.html">US-016</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-06">prototype/#SCR-06</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol><li>Tableau : nom, capacité, équipements, statut (badge « Active » ou « Désactivée »)</li><li>Salles désactivées en fin de liste</li></ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li>« Nouvelle salle » : ouvre <a href="#SCR-07">SCR-07</a> vide</li><li>« Modifier » : ouvre <a href="#SCR-07">SCR-07</a> prérempli</li><li>« Désactiver » sur une salle active : ouvre le dialogue de désactivation</li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>tableau des salles</td><td></td></tr>
+          <tr><td><span class="tag">vide</span></td><td>aucune salle</td><td><a href="#MSG-U02">MSG-U02</a> « Aucune salle n'est encore déclarée. » + « Nouvelle salle »</td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>squelette du tableau</td><td></td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>le tableau tombe</td><td id="MSG-U09"><b>MSG-U09</b> « Le parc de salles n'a pas pu être chargé. » + « Réessayer »</td></tr>
+          <tr><td><span class="tag warn">droits insuffisants</span></td><td>employé : l'entrée n'apparaît pas ; par l'URL, retour à <a href="#SCR-02">SCR-02</a></td><td id="MSG-U10"><b>MSG-U10</b> « Cette page est réservée au gestionnaire des salles. »</td></tr>
+        </tbody>
+      </table>
+      <h4 id="SCR-06-desactiver">Dialogue « Désactiver la salle »</h4>
+      <p>Annonce <a href="../20-specs/functional-design.html#MSG-08">MSG-08</a> « &lt;n&gt; réservations futures seront annulées avec le motif « salle désactivée ». » (<a href="../20-specs/functional-design.html#BR-08">BR-08</a>). Boutons « Désactiver la salle » et « Garder la salle » (focus à l'ouverture). Après validation, <a href="../20-specs/functional-design.html#MSG-06">MSG-06</a> s'affiche en bandeau.</p>
+
+      <h3 id="SCR-07">SCR-07 · Fiche salle</h3>
+      <dl class="defs">
+        <dt>Objectif</dt><dd>déclarer une salle ou corriger ses caractéristiques</dd>
+        <dt>Accès</dt><dd>« Nouvelle salle » ou « Modifier » depuis <a href="#SCR-06">SCR-06</a> ; gestionnaire seulement</dd>
+        <dt>Stories</dt><dd><a href="../20-specs/stories/US-014-declarer-une-salle.html">US-014</a>, <a href="../20-specs/stories/US-015-modifier-une-salle.html">US-015</a></dd>
+        <dt>Prototype</dt><dd><a href="../../prototype/index.html#SCR-07">prototype/#SCR-07</a></dd>
+      </dl>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Contenu</h4>
+          <ol><li>« Nom », 60 caractères au plus</li><li>« Capacité », nombre de 1 à 200</li><li>« Équipements » : écran, visioconférence, tableau blanc</li></ol>
+        </div>
+        <div class="card soft">
+          <h4>Actions</h4>
+          <ul><li>« Enregistrer » : revient à <a href="#SCR-06">SCR-06</a>, la salle à jour</li><li>« Retour » : revient à <a href="#SCR-06">SCR-06</a> sans enregistrer</li></ul>
+        </div>
+      </div>
+      <table>
+        <thead><tr><th>Règle d'affichage</th><th>Règle de gestion</th></tr></thead>
+        <tbody>
+          <tr><td>Un nom déjà porté par une salle active est signalé sous le champ à l'enregistrement : <a href="../20-specs/functional-design.html#MSG-07">MSG-07</a> « Une salle active porte déjà ce nom. »</td><td><a href="../20-specs/functional-design.html#BR-10">BR-10</a> <span class="qmark"><a href="../questions.html#Q-003">Q-003</a></span></td></tr>
+        </tbody>
+      </table>
+      <table>
+        <thead><tr><th>État</th><th>Ce qui s'affiche</th><th>Message</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag ok">nominal</span></td><td>formulaire vide ou prérempli</td><td></td></tr>
+          <tr><td><span class="tag na">vide</span></td><td>sans objet : formulaire de saisie</td><td></td></tr>
+          <tr><td><span class="tag">chargement</span></td><td>squelette du formulaire en modification ; bouton inactif à l'enregistrement</td><td></td></tr>
+          <tr><td><span class="tag danger">champ invalide</span></td><td>texte sous le champ, champ marqué invalide</td><td id="MSG-U14"><b>MSG-U14</b> « Donnez un nom à la salle. » (Nom)<br><span id="MSG-U15"><b>MSG-U15</b></span> « La capacité va de 1 à 200 places. » (Capacité)</td></tr>
+          <tr><td><span class="tag danger">erreur</span></td><td>échec d'enregistrement : bandeau, saisie conservée</td><td id="MSG-U11"><b>MSG-U11</b> « La salle n'a pas pu être enregistrée. » + « Réessayer »</td></tr>
+          <tr><td><span class="tag warn">droits insuffisants</span></td><td>comme <a href="#SCR-06">SCR-06</a></td><td><a href="#MSG-U10">MSG-U10</a></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Formats de données</h2>
+      <p class="hint">Les formats du design system s'appliquent (dates, heures, nombres). Ne figurent ici que les données propres au produit, avec leur affichage et leur saisie.</p>
+      <table>
+        <thead><tr><th>Donnée</th><th>Affichage</th><th>Saisie</th><th>Exemple fictif</th></tr></thead>
+        <tbody>
+          <tr><td>Jour dans <a href="#SCR-02">SCR-02</a></td><td>jour de la semaine en toutes lettres, puis la date du DS</td><td>sélecteur de date du DS</td><td>mardi 06.10.2026</td></tr>
+          <tr><td>Créneau</td><td>HH:MM à HH:MM</td><td>deux listes au quart d'heure</td><td>10:00 à 11:30</td></tr>
+          <tr><td>Capacité</td><td>« &lt;n&gt; places »</td><td>nombre entier, 1 à 200</td><td>12 places</td></tr>
+          <tr><td>Titulaire</td><td>Prénom Nom</td><td>sans objet</td><td>Léa Martin</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Accessibilité</h2>
+      <p class="hint">Le niveau et les règles générales viennent du design system. Ici, ce que le produit ajoute, vérifiable à la recette.</p>
+      <dl class="defs">
+        <dt>Niveau visé</dt><dd>celui du design system : WCAG 2.1 AA</dd>
+        <dt>Navigation clavier</dt><dd>dans la grille de <a href="#SCR-02">SCR-02</a>, les flèches déplacent d'une case, « Entrée » ouvre la case</dd>
+        <dt>Contrastes</dt><dd>ceux du DS ; dans la grille, une réservation ne se distingue jamais par la seule couleur (motif et texte)</dd>
+                <dt>Lecteurs d'écran</dt><dd>chaque case de la grille annonce « &lt;salle&gt;, &lt;heure&gt;, libre » ou « réservée par &lt;titulaire&gt; » ; le titre de la page suit l'écran</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Lien vers le prototype</h2>
+      <p class="hint">Le prototype est la version cliquable de cette spec. Il doit couvrir les mêmes écrans et les mêmes états.</p>
+      <dl class="defs">
+        <dt>Chemin</dt><dd><a href="../../prototype/index.html">prototype/index.html</a></dd>
+        <dt>Version</dt><dd>v1 du 05.10.2026</dd>
+        <dt>Écrans couverts</dt><dd><a href="#SCR-01">SCR-01</a> à <a href="#SCR-07">SCR-07</a> et leurs quatre dialogues ; états nominal, chargement et erreur par la barre du proto, vides par le réglage « Données », droits par le réglage « Profil » ; 390 à 1280 px</dd>
+        <dt>Écarts connus</dt><dd>les erreurs de champ <a href="#MSG-U12">MSG-U12</a> à <a href="#MSG-U15">MSG-U15</a> sont signalées par le champ seul, sans leur texte</dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2>Micro-interactions</h2>
+      <p class="hint">Transitions, retours visuels, temps de réponse perçus.</p>
+      <table>
+        <thead><tr><th>Interaction</th><th>Déclencheur</th><th>Effet</th><th>Durée</th></tr></thead>
+        <tbody>
+          <tr><td>Survol d'une case libre</td><td>souris sur la grille</td><td>la case et l'heure de fin par défaut (+1 h) se surlignent</td><td>immédiat</td></tr>
+          <tr><td>Bandeau de confirmation</td><td>réservation créée</td><td>apparaît en haut de <a href="#SCR-05">SCR-05</a>, la nouvelle ligne clignote une fois</td><td>bandeau fermable, ligne 1 s</td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

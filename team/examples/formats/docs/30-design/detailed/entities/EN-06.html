@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>EN-06 Série · Conception technique détaillée · Réservation de salles</title>
+  <!-- Entity metadata, read by team/scripts/detailed-pages.mjs -->
+  <meta name="id" content="EN-06">
+  <meta name="name" content="Série">
+  <meta name="release" content="MVP">
+  <meta name="module" content="domain/serie">
+  <meta name="tables" content="series">
+  <meta name="rules" content="BR-04 BR-05 BR-06">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../../../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Entité EN-06</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Sommaire de la détaillée</a><br><a href="../../macro.html">← Conception technique macro</a><br><a href="../../../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Conception technique détaillée · <a href="../index.html#crud-matrix">Matrice CRUD</a></div>
+      <h1><span class="doc-kind">EN-06</span> : Série</h1>
+      <p class="lede">La règle de récurrence d'un ensemble de réservations créées ensemble. Les occurrences sont des lignes de <a href="EN-05.html">EN-05</a> qui pointent vers leur série : une occurrence s'annule seule (<a href="../../../20-specs/functional-design.html#BR-06">BR-06</a>) et le contrôle de chevauchement ne connaît que des réservations.</p>
+      <div class="meta">
+        <span><b>Store</b> <span class="tag info">SQLite</span> table <code>series</code></span>
+        <span><b>Release</b> <span class="tag accent">MVP</span></span>
+        <span><b>Version</b> v0.3</span>
+        <span><b>Date</b> 08.10.2026</span>
+        <span><b>Auteur</b> Architecte (exemple de format)</span>
+        <span><b>Statut</b> <span class="tag info">en revue</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required" data-section="physical-model">
+      <h2>Modèle physique</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Donner le schéma physique de l'entité, assez précis pour écrire la migration.</dd>
+          <dt>Contenu</dt><dd>Le DDL SQL dans le dialecte du store, chaque contrainte commentée par la règle qu'elle tient, puis les règles que la base ne peut pas tenir et l'endroit où elles vivent.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le DDL est ce que contient la migration : le dev le reprend sans traduction.</dd>
+          <dt>Lire</dt><dd>Un index porte en commentaire la requête qu'il sert ; une colonne d'une release suivante porte sa release, à titre indicatif. Les conventions communes sont dans la <a href="../cross-cutting/code-organization.html#persistance">persistance</a>.</dd>
+        </dl>
+      </div>
+      <pre class="ddl"><code>CREATE TABLE series (
+  id            INTEGER PRIMARY KEY,
+  titulaire_id  INTEGER NOT NULL REFERENCES employes(id),                 -- <a href="EN-01.html">EN-01</a>
+  salle_id      INTEGER NOT NULL REFERENCES salles(id),                   -- <a href="EN-03.html">EN-03</a>
+  frequence     TEXT NOT NULL CHECK (frequence IN ('quotidienne','hebdomadaire')),  -- <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a> ; 'mensuelle'
+                                    -- en release R3 : SQLite ne modifie pas un CHECK, la migration reconstruit la table
+                                    -- (nouvelle table, copie, suppression, renommage, dans une transaction)
+  premier_jour  TEXT NOT NULL CHECK (premier_jour = date(premier_jour)),  -- <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a>
+  jusqu_au      TEXT NOT NULL CHECK (jusqu_au &gt;= premier_jour),           -- <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a> ; la borne de 3 mois reste
+                                                                          -- dans <a href="../processes/PROC-01.html">PROC-01</a> (règles hors de la base)
+  debut_min     INTEGER NOT NULL CHECK (debut_min % 15 = 0 AND debut_min &gt;= 480),         -- <a href="../../../20-specs/functional-design.html#BR-02">BR-02</a>
+  fin_min       INTEGER NOT NULL CHECK (fin_min % 15 = 0 AND fin_min &lt;= 1140
+                                        AND fin_min &gt; debut_min AND fin_min - debut_min &lt;= 240),  -- <a href="../../../20-specs/functional-design.html#BR-02">BR-02</a>
+  cree_le       TEXT NOT NULL                                             -- ISO 8601 UTC
+);
+-- aucun index au-delà de la clé primaire : une série se lit par ses occurrences, reservations(serie_id)
+-- dans <a href="EN-05.html">EN-05</a> ; une occurrence est une ligne de <a href="EN-05.html">EN-05</a> et s'annule seule (<a href="../../../20-specs/functional-design.html#BR-06">BR-06</a>)</code></pre>
+      <h3>Règles hors de la base</h3>
+      <ul>
+        <li>Borne de 3 mois de <a href="../../../20-specs/functional-design.html#BR-04">BR-04</a> : dans <a href="../processes/PROC-01.html">PROC-01</a> seulement. SQLite calcule <code>date('2026-11-30', '+3 months')</code> = 02.03, au lieu du 28.02 que retient <a href="../processes/PROC-01.html">PROC-01</a> : une seule définition, dans le domaine, évite deux calculs qui divergent en fin de mois.</li>
+        <li><a href="../../../20-specs/functional-design.html#BR-05">BR-05</a> (occurrences prises présentées avant validation, seules les libres créées) : calcul de <a href="../processes/PROC-01.html">PROC-01</a> à l'aperçu (<a href="../endpoints/EP-09.html">EP-09</a>) et à la confirmation (<a href="../endpoints/EP-10.html">EP-10</a>).</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2>Machine à états</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Montrer le cycle de vie de l'entité et ce qui la fait changer d'état.</dd>
+          <dt>Contenu</dt><dd>Une ligne par transition (de, vers, événement, garde, action), puis le diagramme d'états tiré de ce tableau. Sans cycle de vie, une phrase le dit.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La notation UML <i>événement [garde] / action</i>, en deux vues d'une seule source : le tableau porte les liens et se relit ligne à ligne, le diagramme montre le cycle d'un coup d'œil.</dd>
+        </dl>
+      </div>
+      <p>Sans cycle de vie stocké. Une série est « en cours » tant qu'une de ses occurrences est active et future, « terminée » sinon. <a href="../endpoints/EP-13.html">EP-13</a> annule ses occurrences, pas la série.</p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2>Qui agit dessus</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Savoir qui crée, lit, met à jour ou supprime l'entité.</dd>
+          <dt>Contenu</dt><dd>Sa colonne de la matrice CRUD, endpoint par endpoint et traitement par traitement, puis les schémas qui en sont la projection.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>La matrice CRUD, standard de ce croisement ; la même que celle du <a href="../index.html#crud-matrix">sommaire</a>, lue depuis l'entité.</dd>
+          <dt>Source</dt><dd><code>openapi.yaml</code> et les pages des traitements : rien à écrire.</dd>
+        </dl>
+      </div>
+      <!-- gen:entity-usage -->
+      <table>
+        <thead><tr><th>Id</th><th>Endpoint ou traitement</th><th>CRUD</th><th>Comment</th><th>Release</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../endpoints/EP-10.html">EP-10</a></td><td><code>POST /series</code></td><td><span class="crud" data-tip="création">C</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+          <tr><td><a href="../endpoints/EP-13.html">EP-13</a></td><td><code>POST /series/{id}/annulation</code></td><td><span class="crud" data-tip="lecture">R</span></td><td>directement</td><td><span class="tag accent">MVP</span></td></tr>
+        </tbody>
+      </table>
+      <p><b>Schémas qui l'exposent</b> : <a href="../schemas/SerieCreee.html"><code>SerieCreee</code></a>. <b>Module</b> : <a href="../cross-cutting/code-organization.html#module-domain-serie"><code>domain/serie</code></a>.</p><!-- /gen -->
+    </section>
+  </main>
+</div>
+<script src="../../../_assets/doc.js"></script>
+</body>
+</html>

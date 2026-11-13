@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="verdict" content="">                <!-- favorable | favorable-with-reservations | unfavorable; empty until the verdict -->
+  <meta name="status" content="in-progress">      <!-- in-progress | done: the Status field of the header, as a code -->
+  <meta name="date" content="YYYY-MM-DD">         <!-- the Date field of the header, ISO -->
+  <title>Test campaign sprint N · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Test campaign sprint N</div>
+    <nav></nav>
+    <div class="toc-back"><a href="strategy.html">→ Test strategy</a><br><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Sprint N · QA</div>
+      <h1><span class="doc-kind">Test campaign</span>: sprint N</h1>
+      <p class="lede"><span class="todo">verdict at the accepted commit of sprint/N, green scenarios out of the total, admitted bugs and the scenario they turn red, bugs fixed during the campaign</span> This campaign applies the <a href="strategy.html">test strategy</a> without copying it.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> YYYY-MM-DD</span>
+        <span><b>Author</b> QA: <span class="todo">qa-n who consolidates, other instances</span></span>
+        <span><b>Status</b> <span class="tag warn">in progress</span></span>
+        <span><b>Sources</b> <a href="strategy.html">test strategy</a>, <a href="../sprints/sprint-N.html">sprint N</a>, tickets of the sprint in the board</span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="scope">Scope</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the campaign tested, with which tests and where, so that a result is never read out of its context.</dd>
+          <dt>Content</dt><dd>The stories of the sprint, the merged <code>e2e</code> tickets the tests come from, the environment, the dates, the state of the entry criteria.</dd>
+          <dt>Why this format</dt><dd>A definition list, one topic per term. The <code>e2e</code> tickets are cited because the suite played is the one they merged: a test absent from a merged ticket does not exist for the campaign.</dd>
+          <dt>Read</dt><dd>Commits are in the <a href="#runs">runs</a>, not here: there is one per redeployment. The entry criteria are those of the <a href="strategy.html#campaign-entry-and-exit-criteria">strategy</a>: only their state is written here.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Stories</dt><dd><span class="todo">US-xxx as a link and title, each</span></dd>
+        <dt>e2e tickets</dt><dd><span class="todo">T-xxx as a link, QA instance, stories of the batch; reviewed without a blocker and merged into sprint/N before the start</span></dd>
+        <dt>Environment</dt><dd><a href="../30-design/macro.html#environments">Demo and acceptance</a>, started by the QA; <span class="todo">where Playwright runs, browser project</span></dd>
+        <dt>Dates</dt><dd><span class="todo">from YYYY-MM-DD to YYYY-MM-DD</span></dd>
+        <dt>Entry criteria</dt><dd><span class="todo">met, or the gap observed</span>; observed at the start line of the <a href="#runs">runs</a></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="runs">Runs</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know on which version each result was obtained, and prove that the results of the verdict come from the last commit.</dd>
+          <dt>Content</dt><dd>One row per event on "Demo and acceptance", in order: start, suite run, bug opened, redeployment after the merge of a fix, replay, reset.</dd>
+          <dt>Why this format</dt><dd>A dated log, one row per event, like a test log (ISO/IEC/IEEE 29119-3): the commit of each row ties a result to the code that produced it. The last commit of <code>sprint/N</code> played, replays included, is the accepted commit, which the acceptance report takes over.</dd>
+          <dt>Read</dt><dd>A suite run is done twice at the same commit; the second without the <code>limitation</code> project (<a href="strategy.html#test-data">test data</a>). The double run of the exit criterion is done at the accepted commit: a fix merged at the end of the campaign is therefore replayed twice there. The <a href="#results-by-scenario">results by scenario</a> are those of these two runs. A <code>BUG-xxx</code> test of an unfixed bug stays on its branch: it is not in <code>sprint/N</code> and does not run at the accepted commit. The reset is the last row: after it, no test runs before pre-acceptance.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Date</th><th>Commit of <code>sprint/N</code></th><th>Event</th><th>Result</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td>start: database recreated, fictional data set loaded, application started; contains <span class="todo">the merged e2e tickets</span></td><td><span class="todo">answers on the session endpoint with an account of the fictional data set</span></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td>1<sup>st</sup> run, full suite, <code>limitation</code> project included</td><td><span class="todo">green, or reds as links</span></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td>2<sup>nd</sup> run, without the <code>limitation</code> project</td><td><span class="todo">same results, or the instability</span></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td><span class="todo">BUG-xxx opened, red test committed on its fix branch</span></td><td>see <a href="#bugs">bugs</a></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td><span class="todo">redeployment: merge of bug-xxx-slug, application restarted by the QA</span></td><td><span class="todo">answers</span></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td><span class="todo">replay of the fix: BUG-xxx test and US-xxx/Sn</span></td><td><span class="todo">green</span></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td><span class="todo">1st and 2nd runs at the accepted commit, the last one played</span></td><td><span class="todo">results; a BUG-xxx test left on its branch does not run there</span></td></tr>
+          <tr><td><span class="todo">YYYY-MM-DD</span></td><td><code><span class="todo">short sha</span></code></td><td>reset, after the last run: <span class="todo">command from the foundation or the strategy</span></td><td><span class="todo">done, and how it is checked</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="scenario-results">
+      <h2 id="results-by-scenario">Results by scenario</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show, scenario by scenario, that each acceptance criterion of the sprint has a green test, or why it does not.</dd>
+          <dt>Content</dt><dd>One table per story, one row per scenario <code>US-xxx/Sn</code>: the test that proves it, its result in the two runs of the accepted commit, the bug or cause that explains a result that is not green.</dd>
+          <dt>Why this format</dt><dd>The strategy matrix says what is planned; this table says what happened, with the same identifier. Four results: <span class="tag ok">green</span>, <span class="tag danger">red</span> (a bug is open), <span class="tag warn">blocked</span> (the cause is written), <span class="tag">not run</span> (the reason is written). A result with no test, bug or cause does not count.</dd>
+          <dt>Read</dt><dd>Test "e2e": the one that carries the scenario identifier, under the naming rule of the <a href="strategy.html#coverage-matrix">matrix</a>. A scenario <span class="tag warn">without e2e</span> in the matrix is proven by the test of the complementary level it names; it has no second run, it is not an e2e. A bug fixed during the campaign stays cited, with the commit of its fix. A blocked or not run scenario has no green test, even with its cause written: it misses the first exit criterion and makes the verdict unfavorable.</dd>
+        </dl>
+      </div>
+      <h3><span class="todo">US-xxx as a link, title</span></h3>
+      <table>
+        <thead><tr><th>Scenario</th><th>Test</th><th>1<sup>st</sup> run</th><th>2<sup>nd</sup> run</th><th>Bug or cause</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">US-xxx/S1 as a link, title</span></td><td>e2e</td><td data-value="green"><span class="tag ok">green</span></td><td data-value="green"><span class="tag ok">green</span></td><td></td></tr>
+          <tr><td><span class="todo">US-xxx/S2 as a link, title</span></td><td>e2e</td><td data-value="red"><span class="tag danger">red</span></td><td data-value="red"><span class="tag danger">red</span></td><td><span class="todo">BUG-xxx as a link, open, admitted at the verdict or not</span></td></tr>
+          <tr><td><span class="todo">US-xxx/S3 as a link, title</span></td><td><span class="tag warn">without e2e</span> <span class="todo">complementary level from the matrix, test</span></td><td data-value="green"><span class="tag ok">green</span></td><td>not applicable</td><td></td></tr>
+          <tr><td><span class="todo">US-xxx/S4 as a link, title</span></td><td>e2e</td><td data-value="blocked"><span class="tag warn">blocked</span></td><td data-value="blocked"><span class="tag warn">blocked</span></td><td><span class="todo">cause; exit criterion 1 not met, verdict unfavorable</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="bugs">Bugs</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Follow each bug opened during the campaign up to its effect on the verdict.</dd>
+          <dt>Content</dt><dd>One row per bug: scenario affected, severity, fix branch, <code>BUG-xxx</code> test red then green, status in the board, effect on the verdict.</dd>
+          <dt>Why this format</dt><dd>Steps, expected, actual and proof are in the bug file, in the board: the campaign does not copy them, it traces the circuit of the <a href="strategy.html#bug-management">strategy</a>. The test red then green, with its commits, proves the fix better than a status.</dd>
+          <dt>Read</dt><dd>Status: the board's, kept by the PO. "Admitted": open and without a blocking effect on the verdict, because minor, or major accepted in writing by the PO in the <a href="#qa-verdict">verdict</a>; the scenario it turns red is cited there. An admitted minor stays at status <code>backlog</code>; at acceptance, the PO carries it over as a reservation <code>RES-xx</code> of the acceptance report. No bug: say so.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Bug</th><th>Scenario</th><th>Severity</th><th>Branch</th><th>Test <code>BUG-xxx</code></th><th>Status</th><th>At the verdict</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">BUG-xxx as a link, factual title</span></td><td><span class="todo">US-xxx/Sn as a link</span></td><td><span class="tag warn">major</span></td><td><code><span class="todo">bug-xxx-slug</span></code></td><td><span class="todo">red, committed at sha on its branch; green at the sprint/N sha, or not fixed</span></td><td><span class="tag"><span class="todo">board status</span></span></td><td><span class="todo">fixed and replayed; admitted (minor, or accepted major); or blocks the verdict</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="non-regression">Non-regression</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Prove that the sprint did not break what previous sprints delivered.</dd>
+          <dt>Content</dt><dd>One row per story of the previous sprints, then the non-functional tests of the previous sprints, the tests of closed bugs and the API contract version: number of tests, result in the two runs of the accepted commit, regression found.</dd>
+          <dt>Why this format</dt><dd>The replayed suite and the entry rule are in the <a href="strategy.html#non-regression">strategy</a>; here, only their result, per story, so that a regression points at once to what it affects. The same exit criterion as for the sprint scenarios: green, except a test an admitted bug turns red, cited here.</dd>
+          <dt>Read</dt><dd>Required: an exit criterion depends on it. A flaky test is written in "Regression or instability", with what is done about it. The numbers of this section plus the e2e added in the sprint make the e2e total of the <a href="#test-count">test count</a>. First sprint: "not applicable, no previous sprint".</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Suite of the previous sprints</th><th class="num">e2e tests</th><th>1<sup>st</sup> run</th><th>2<sup>nd</sup> run</th><th>Regression or instability</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">US-xxx as a link, title</span></td><td class="num"><span class="todo">nb</span></td><td data-value="green"><span class="tag ok">green</span></td><td data-value="green"><span class="tag ok">green</span></td><td><span class="todo">none, or BUG-xxx as a link</span></td></tr>
+          <tr><td>Non-functional tests of the previous sprints: <span class="todo">checks, as links</span></td><td class="num"><span class="todo">nb</span></td><td data-value="green"><span class="tag ok">green</span></td><td data-value="green"><span class="tag ok">green</span></td><td><span class="todo">none; limitation outside the 2nd run</span></td></tr>
+          <tr><td>Tests of closed bugs</td><td class="num"><span class="todo">nb</span></td><td data-value="green"><span class="tag ok">green</span></td><td data-value="green"><span class="tag ok">green</span></td><td></td></tr>
+          <tr><td>API contract</td><td></td><td colspan="2"><span class="todo">version as a link; operations already tested that are affected, and stories replayed, or nothing to replay</span></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="non-functional-tests">Non-functional tests</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Show that the non-functional checks due this sprint are within their thresholds.</dd>
+          <dt>Content</dt><dd>One row per check played: the environment of the measurement, the number of measurements, the measured value against the threshold, the status.</dd>
+          <dt>Why this format</dt><dd>The check, its tool, its threshold and its frequency are in the <a href="strategy.html#non-functional-tests">non-functional tests</a> of the strategy; here, what was measured, where, and how many times. The threshold is recalled in figures only, next to the measurement, so that the row is judged without going back and forth.</dd>
+          <dt>Read</dt><dd>A measurement only counts in the environment its target names (<a href="strategy.html#environments">environments</a>). Required: an exit criterion depends on it. A manual check has its proof versioned in <code>docs/40-qa/evidence/sprint-N/</code>, linked from its row. A strategy check not due this sprint, by its frequency, has no row: the last row names them.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Check</th><th>Environment</th><th>Measurements</th><th>Measured</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag"><span class="todo">area</span></span> <span class="todo">check, as a link to the strategy or to the measured object</span></td><td><span class="todo">environment from the macro design</span></td><td><span class="todo">number of measurements</span></td><td><span class="todo">measured value (threshold in figures); manual check: proof as a link to evidence/sprint-N/file</span></td><td><span class="tag ok">within threshold</span></td></tr>
+          <tr><td colspan="5"><span class="todo">Not due this sprint: checks and reason (frequency)</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="test-count">Test count</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Record, sprint after sprint, the number of tests at each level, so that the shape of the pyramid can be checked.</dd>
+          <dt>Content</dt><dd>One row per level of the <a href="strategy.html#test-levels-and-pyramid">pyramid</a>: the runner, the number of tests it reports at the accepted commit, what the sprint added.</dd>
+          <dt>Why this format</dt><dd>A number reported by a runner can be checked; "enough tests" cannot. Orders of magnitude are in the strategy, this page does not copy them: the gap is discussed at the retro, over the series of counts.</dd>
+          <dt>Read</dt><dd>Level names are those of the pyramid, word for word. The number is the runner's, not a hand count. e2e total: the tests of the <a href="#non-regression">non-regression</a> plus those added in the sprint; a <code>BUG-xxx</code> test left on its branch is not counted.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Level</th><th>Runner</th><th class="num">Tests at the accepted commit</th><th class="num">Added in sprint N</th></tr></thead>
+        <tbody>
+          <tr><td>Domain unit (back)</td><td><span class="todo">named runner, link to the strategy tooling</span></td><td class="num"><span class="todo">nb</span></td><td class="num"><span class="todo">nb</span></td></tr>
+          <tr><td>Repository integration (back)</td><td><span class="todo">named runner, link to the strategy tooling</span></td><td class="num"><span class="todo">nb</span></td><td class="num"><span class="todo">nb</span></td></tr>
+          <tr><td>Route (back), simulated request</td><td><span class="todo">named runner, link to the strategy tooling</span></td><td class="num"><span class="todo">nb</span></td><td class="num"><span class="todo">nb</span></td></tr>
+          <tr><td>Component (front)</td><td><span class="todo">named runner, link to the strategy tooling</span></td><td class="num"><span class="todo">nb</span></td><td class="num"><span class="todo">nb</span></td></tr>
+          <tr><td>e2e</td><td>Playwright</td><td class="num"><span class="todo">nb</span></td><td class="num"><span class="todo">nb: scenarios, fixed bugs, non-functional</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="qa-verdict">QA verdict</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Give the PO a verdict that follows from the campaign, and tell them how to prepare the acceptance.</dd>
+          <dt>Content</dt><dd>The counters of the accepted commit, the state of each exit criterion of the strategy, the verdict, the admitted bugs and the scenarios they turn red, the PO's written acceptances, the recommendation for the acceptance.</dd>
+          <dt>Why this format</dt><dd>The exit criteria of the <a href="strategy.html#campaign-entry-and-exit-criteria">strategy</a>, each met or not met, with the link to the section that proves it: the verdict follows, it is not negotiated. Three verdicts: favorable without reservations (all criteria met, no open bug), favorable with reservations (only minors open, or a major accepted in writing by the PO), unfavorable (an open blocking bug, an open major not accepted, or another criterion missed).</dd>
+          <dt>Read</dt><dd>A blocked or not run scenario has no green test: the first criterion is not met and the verdict is unfavorable. Only a major can be accepted, and only in writing, by the PO, in this section, with the date. The PO only prepares the acceptance on a favorable verdict, with or without reservations (G3).</dd>
+        </dl>
+      </div>
+      <div class="grid c4">
+        <div class="kpi"><div class="label">Green scenarios</div><div class="value" style="color:var(--ok)"><span class="todo">nb</span></div><div class="sub">out of <span class="todo">total</span>, at the accepted commit</div></div>
+        <div class="kpi"><div class="label">Admitted reds</div><div class="value" style="color:var(--danger)"><span class="todo">nb</span></div><div class="sub"><span class="todo">US-xxx/Sn, by BUG-xxx</span></div></div>
+        <div class="kpi"><div class="label">Blocked or not run</div><div class="value"><span class="todo">nb</span></div><div class="sub"><span class="todo">cause written for each; a single one makes the verdict unfavorable</span></div></div>
+        <div class="kpi"><div class="label">Open bugs</div><div class="value"><span class="todo">nb</span></div><div class="sub">blocking <span class="todo">0</span>, major <span class="todo">0</span>, minor <span class="todo">0</span></div></div>
+      </div>
+      <table>
+        <thead><tr><th>Exit criterion</th><th>State</th><th>Proof</th></tr></thead>
+        <tbody>
+          <tr><td>each scenario of the sprint has a green test, except those an admitted bug turns red</td><td><span class="todo">met or not met; an admitted red is cited in the proof</span></td><td><a href="#results-by-scenario">results by scenario</a></td></tr>
+          <tr><td>each e2e replayed twice, same result, the second without <code>limitation</code></td><td><span class="todo">state</span></td><td><a href="#runs">runs</a></td></tr>
+          <tr><td>no open blocking bug, no open major without written acceptance</td><td><span class="todo">state</span></td><td><a href="#bugs">bugs</a></td></tr>
+          <tr><td>non-regression green, except the tests an admitted bug turns red</td><td><span class="todo">state</span></td><td><a href="#non-regression">non-regression</a></td></tr>
+          <tr><td>non-functional checks of the sprint within their thresholds</td><td><span class="todo">state</span></td><td><a href="#non-functional-tests">non-functional tests</a></td></tr>
+        </tbody>
+      </table>
+      <div class="callout decision"><b>Verdict: <span class="todo">favorable without reservations, favorable with reservations, unfavorable</span></b><span class="todo">the rule applied: open bugs by severity, missed criteria</span></div>
+      <dl class="defs">
+        <dt>Admitted bugs</dt><dd><span class="todo">BUG-xxx as a link, severity, scenario it turns red; a minor stays in the backlog and becomes a reservation RES-xx of the acceptance report; or "none"</span></dd>
+        <dt>PO's written acceptances</dt><dd><span class="todo">major BUG-xxx accepted by the PO, date, reason; or "none"</span></dd>
+        <dt>Recommendation</dt><dd><span class="todo">acceptance possible or not, accepted commit, environment reset; scenarios for the human to run first</span></dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Analysis WORKSTREAM_NAME · PROJECT_NAME</title>
+  <!-- Analysis metadata, read by dashboard-pages.mjs for the inventory docs/10-analysis/index.html.
+       author: "ai" when a team agent handled the workstream, else the person's name.
+       status: draft | in-review | validated. progress: in-progress | done | partial.
+       target: the phase or release the workstream prepares (P1, P2, P3, R2...); P1 for a workstream of P1.
+       date: the Date field of the header, in ISO (YYYY-MM-DD).
+       Keep them in line with the Author, Status, For, Workstream and Date fields of the header: codes, never translated. -->
+  <meta name="type" content="analysis">
+  <meta name="author" content="ai">
+  <meta name="status" content="draft">
+  <meta name="progress" content="in-progress">
+  <meta name="target" content="P1">
+  <meta name="date" content="YYYY-MM-DD">
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Analysis: WORKSTREAM_NAME</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <!-- Kicker: keep "P1 · Analysis and exploration" when target is P1. Otherwise, proposed form:
+           "Analysis for release R2" (or "Analysis for P2", "Analysis for P3"). -->
+      <div class="kicker">P1 · Analysis and exploration</div>
+      <h1><span class="doc-kind">Analysis</span>: WORKSTREAM_NAME</h1>
+      <p class="lede"><span class="todo">the question of the workstream, worded so that we know when it is answered</span></p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> DD.MM.YYYY</span>
+        <span><b>Author</b> AI</span>
+        <span><b>Contributors</b> Architect (feasibility)</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <!-- For: a phase in plain text (P1, P2, P3); a release in its tag: <span data-release>R2</span> -->
+        <span><b>For</b> P1</span>
+        <span><b>Workstream</b> <span class="tag info">in progress</span>, <span class="tag ok">done</span> or <span class="tag danger">partial</span></span>
+        <span><b>Sources</b> <a href="../00-framing/framing.html">framing</a>, <a href="big-picture.html">big picture</a>, <span class="todo">questions Q-xxx, other analyses, external references, as links</span></span>
+      </div>
+    </header>
+
+    <section class="section" data-level="required">
+      <h2 id="workstream-question">Workstream question</h2>
+      <p class="hint">The question is in the lede. Here: why it arises, and where the workstream stops.</p>
+      <dl class="defs">
+        <dt>Why</dt><dd><span class="todo">what makes it necessary: hotspot, goal, constraint</span></dd>
+        <dt>Outside the workstream</dt><dd><span class="todo">neighbouring subjects not handled here</span></dd>
+        <dt>Timebox</dt><dd><span class="todo">limit given by the brief</span></dd>
+        <dt>Progress</dt><dd><span class="todo">in progress with the remaining pass, done, or partial with the reason</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="findings">Findings</h2>
+      <p class="hint">What is established. A finding without a source is a hypothesis.</p>
+      <table>
+        <thead><tr><th style="width:60px">No.</th><th>Finding</th><th>Source</th></tr></thead>
+        <tbody>
+          <tr id="C1"><td>C1</td><td><span class="todo">established fact</span></td><td>framing, Q-xxx</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="edge-cases-and-exceptions">Edge cases and exceptions</h2>
+      <p class="hint">Rare situations, errors, boundary values. Each one has an expected behaviour or a question.</p>
+      <table>
+        <thead><tr><th>Situation</th><th>Expected behaviour</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">edge case</span></td><td><span class="todo">what must happen</span></td><td><span class="tag ok">established</span></td></tr>
+          <tr><td><span class="todo">exception</span></td><td>Q-xxx</td><td><span class="tag accent">question</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="solution-exploration">Solution exploration</h2>
+      <p class="hint">Leads considered and what exists (current tools, market solutions, practices of the domain).</p>
+      <div class="grid c3">
+        <div class="card">
+          <h4>Option A: <span class="todo">name</span></h4>
+          <p><span class="todo">principle in two sentences</span></p>
+          <dl class="defs">
+            <dt>Strengths</dt><dd><span class="todo">what it brings</span></dd>
+            <dt>Limits</dt><dd><span class="todo">what it costs or prevents</span></dd>
+          </dl>
+        </div>
+        <div class="card">
+          <h4>Option B: <span class="todo">name</span></h4>
+          <p><span class="todo">principle in two sentences</span></p>
+          <dl class="defs">
+            <dt>Strengths</dt><dd></dd>
+            <dt>Limits</dt><dd></dd>
+          </dl>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="recommended">
+      <h2 id="compared-options">Compared options</h2>
+      <p class="hint">Criteria drawn from the framing, weights from 1 to 3, scores from 1 to 5. Total = sum of scores × weights. Descriptive workstream with no choice to make: write it.</p>
+      <h3 id="criteria">Criteria</h3>
+      <table>
+        <thead><tr><th>Criterion</th><th class="num">Weight</th><th>What we measure</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">criterion</span></td><td class="num">3</td><td><span class="todo">goal or constraint of the framing</span></td></tr>
+          <tr><td><span class="todo">criterion</span></td><td class="num">2</td><td></td></tr>
+        </tbody>
+      </table>
+      <h3 id="scoring">Scoring</h3>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Option</th><th class="num">Criterion 1 (×3)</th><th class="num">Criterion 2 (×2)</th><th class="num">Total</th><th>Comment</th></tr></thead>
+          <tbody>
+            <tr class="recommended"><td>Option A</td><td class="num"><span class="score s4">4</span></td><td class="num"><span class="score s3">3</span></td><td class="num"><b>18</b></td><td><span class="todo">justification of the debatable scores</span></td></tr>
+            <tr><td>Option B</td><td class="num"><span class="score s2">2</span></td><td class="num"><span class="score s5">5</span></td><td class="num"><b>16</b></td><td></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="section" data-level="required" data-section="recommendation">
+      <h2 id="recommendation">Recommendation</h2>
+      <p class="hint">The option or conclusion chosen, and why. The PO decides afterwards.</p>
+      <div class="callout decision">
+        <b>Recommendation</b>
+        <span class="todo">chosen option or conclusion of the workstream</span>
+      </div>
+      <dl class="defs">
+        <dt>Why</dt><dd><span class="todo">arguments, citing findings and criteria</span></dd>
+        <dt>Conditions</dt><dd><span class="todo">what must be true for it to hold</span></dd>
+        <dt>To conclude</dt><dd><span class="todo">if partial: what is missing, proposed new split. Otherwise: not applicable</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="recommended" data-section="impacts">
+      <h2 id="impacts-on-other-deliverables">Impacts on other deliverables</h2>
+      <p class="hint">What the recommendation changes elsewhere. The BA does not edit the deliverables of others: they flag.</p>
+      <table>
+        <thead><tr><th>Deliverable</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td><a href="big-picture.html">Big picture</a></td><td><span class="todo">event, hotspot or opportunity to add or correct</span></td></tr>
+          <tr><td><a href="../20-specs/story-map.html">Story map</a></td><td><span class="todo">task or story concerned</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="questions">
+      <h2 id="questions-and-hypotheses">Questions and hypotheses</h2>
+      <p class="hint">The questions asked to the PO in .team/questions/, and the hypotheses taken to move forward. Empty list: write it.</p>
+      <table>
+        <thead><tr><th>Id</th><th>Question</th><th>Blocking</th></tr></thead>
+        <tbody>
+          <tr><td><a href="../questions.html#Q-001">Q-001</a></td><td><span class="todo">question</span></td><td><span class="tag">no</span></td></tr>
+        </tbody>
+      </table>
+      <div class="callout hypothesis">
+        <b>HYPOTHESIS</b>
+        <span class="todo">what we assume true, and the question that will confirm it</span>
+      </div>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2 id="cross-workstream-synthesis">Cross-workstream synthesis</h2>
+      <p class="hint">Links and tensions with the other workstreams, when the BA has read them.</p>
+      <table>
+        <thead><tr><th>Workstream</th><th>Link or tension</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">other-workstream.html</span></td><td><span class="todo">common point, contradiction, dependency</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

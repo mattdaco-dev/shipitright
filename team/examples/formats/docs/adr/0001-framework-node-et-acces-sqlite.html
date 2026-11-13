@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADR-0001 Fastify et better-sqlite3 pour l'API · Réservation de salles</title>
+  <!-- ADR metadata, read by team/scripts/adr-pages.mjs (header and register docs/adr/index.html) -->
+  <meta name="id" content="ADR-0001">           <!-- ADR- + the 4 digits of the file name -->
+  <meta name="title" content="Fastify et better-sqlite3 pour l'API">   <!-- same text as the h1 after "ADR-0001 :" -->
+  <meta name="status" content="accepted">        <!-- propose | accepte | remplace | abandonne -->
+  <meta name="date" content="2026-10-06">       <!-- date of the last status change -->
+  <meta name="supersedes" content="">             <!-- ADR-xxxx this decision replaces, separated by spaces -->
+  <meta name="answers" content="Q-001">             <!-- Q-xxx this decision answers, separated by spaces -->
+  <meta name="foundation_deviation" content="no">       <!-- oui | non : the decision deviates from the stack socle -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">Réservation de salles</div>
+    <div class="toc-type">Décision ADR-0001</div>
+    <nav></nav>
+    <div class="toc-back"><a href="index.html">← Registre des ADR</a><br><a href="../30-design/macro.html">← Conception technique macro</a><br><a href="../index.html">← Pilotage du projet</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Architecte · Décisions d'architecture · <a href="index.html">Registre</a></div>
+      <h1><span class="doc-kind">ADR-0001</span> : Fastify et better-sqlite3 pour l'API</h1>
+      <!-- gen:adr-meta -->
+      <div class="meta">
+        <span><b>Statut</b> <span class="tag ok">accepté</span></span>
+        <span><b>Date</b> 06.10.2026</span>
+        <span><b>Remplace</b> <span class="none">aucun</span></span>
+        <span><b>Remplacé par</b> <span class="none">aucun</span></span>
+        <span><b>Répond à</b> <a class="qmark" href="../questions.html#Q-001">Q-001</a></span>
+        <span><b>Écart au socle</b> <span class="tag ok">non</span></span>
+      </div>
+      <!-- /gen -->
+    </header>
+
+    <section class="section" data-level="required" data-section="foundation-deviation">
+      <h2>Écart au socle</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire si la décision s'écarte du socle de stack du projet. Un écart passe par un ADR au statut proposé, que le PO remonte à l'humain.</dd>
+          <dt>Contenu</dt><dd>Non : ce que le socle dit sur le sujet et pourquoi la décision le respecte. Oui : la règle ou l'invariant du socle écarté, et la portée de l'écart.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une ou deux phrases : c'est un fait vérifié à G2, pas un débat ; le débat est dans « Raison ».</dd>
+          <dt>Lire</dt><dd>Le oui ou non de l'en-tête vient de la balise <code>meta ecart_socle</code>.</dd>
+        </dl>
+      </div>
+      <p>Non. Le socle <code>node-sqlite-angular</code> laisse le framework à choisir, et le <a href="../00-framing/framing.html#contraintes">cadrage</a> (contraintes, 01.10.2026) le confie à l'architecte. La stack complète reste validée par l'humain à G2.</p>
+    </section>
+
+    <section class="section" data-level="required" data-section="context">
+      <h2>Contexte</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce qui force un choix, pour qu'un lecteur le comprenne sans autre source dans trois mois.</dd>
+          <dt>Contenu</dt><dd>Le problème, les contraintes du cadrage, du socle et des règles de gestion, et le volet de la question à laquelle l'ADR répond.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Quelques phrases de prose, comme dans le format ADR de Michael Nygard : le contexte se raconte, il ne se tabule pas.</dd>
+        </dl>
+      </div>
+      <p>Le cadrage impose Node.js, SQLite et Angular 20+. Le socle <code>node-sqlite-angular</code> (statut « à compléter ») ne fixe ni le framework HTTP, ni la façon d'accéder à SQLite. Le produit est petit (17 endpoints, 6 entités, une centaine d'utilisateurs), mais une règle est critique : <a href="../20-specs/functional-design.html#BR-01">BR-01</a>, aucune double réservation. Le contrat d'API est en OpenAPI 3 (constant du framework de la team), et les devs travaillent en parallèle contre ce contrat.</p>
+      <p>Cet ADR répond à <a class="qmark" href="../questions.html#Q-001">Q-001</a>, volet framework et accès aux données.</p>
+    </section>
+
+    <section class="section" data-level="required" data-section="decision">
+      <h2>Décision</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce qui est décidé, applicable tel quel par un dev.</dd>
+          <dt>Contenu</dt><dd>Une affirmation par choix, à l'affirmatif, sans condition ni alternative.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Une liste : chaque choix se cite seul en revue ou dans un invariant ; l'affirmatif ne laisse aucune lecture hésiter.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li>Backend en <b>TypeScript</b> sur <b>Node 24 LTS</b>, framework <b>Fastify 5</b>.</li>
+        <li>Validation des entrées et des sorties par les schémas JSON de chaque route, alignés sur <a href="../30-design/api/openapi.yaml"><code>openapi.yaml</code></a>.</li>
+        <li>Accès à SQLite par <b>better-sqlite3</b> (API synchrone), une seule connexion par processus, requêtes SQL écrites à la main dans les dépôts du domaine, requêtes préparées uniquement.</li>
+        <li>Schéma de base géré par des <b>migrations SQL numérotées</b>, appliquées au démarrage.</li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required" data-section="rationale">
+      <h2>Raison</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire pourquoi cette option, et pourquoi pas les autres.</dd>
+          <dt>Contenu</dt><dd>Les arguments de la décision, puis une ligne par option écartée avec la raison de l'écarter.</dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Le tableau des options considérées du format MADR : une option écartée et sa raison restent visibles, et le débat ne se rouvre pas sans fait nouveau.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><b>Fastify</b> : validation par schéma JSON intégrée, donc proche du contrat OpenAPI ; journal JSON structuré intégré ; léger, sans cérémonie.</li>
+        <li><b>better-sqlite3</b> : transactions synchrones, ce qui interdit tout entrelacement de deux requêtes dans une transaction du même processus (base de l'<a href="0002-concurrence-des-reservations-sqlite.html">ADR-0002</a>) ; transactions <code>immediate</code> disponibles.</li>
+        <li><b>SQL à la main</b> : 6 tables, des requêtes de recherche et de chevauchement qu'on veut lire telles quelles en revue. Un constructeur de requêtes n'apporte rien à cette taille.</li>
+      </ul>
+      <table class="options">
+        <thead><tr><th style="width:240px">Option écartée</th><th>Pourquoi</th></tr></thead>
+        <tbody>
+          <tr><td>Express</td><td>pas de validation ni de typage des routes, tout est à assembler</td></tr>
+          <tr><td>NestJS</td><td>modules, décorateurs et injection : cérémonie disproportionnée pour 17 endpoints</td></tr>
+          <tr><td>Hono</td><td>adapté, mais moins outillé côté OpenAPI et journal</td></tr>
+          <tr><td>ORM (Prisma, TypeORM)</td><td>masquent les déclencheurs et les transactions dont <a href="../20-specs/functional-design.html#BR-01">BR-01</a> dépend</td></tr>
+          <tr><td>sqlite3</td><td>API asynchrone, transactions plus faciles à entrelacer par erreur</td></tr>
+          <tr><td>node:sqlite intégré à Node</td><td>gardé comme repli si le module natif pose problème sur la machine</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="consequences">
+      <h2>Conséquences</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>À quoi sert</dt><dd>Dire ce que la décision implique, en bien et en mal, et ce qu'elle oblige à faire.</dd>
+          <dt>Contenu</dt><dd><ul><li>Positif : ce qu'elle apporte.</li><li>Négatif : ce qu'elle coûte, la dette acceptée.</li><li>Suites : les actions à prévoir, avec le livrable ou le rôle qui les porte.</li></ul></dd>
+          <dt>Pourquoi ce formalisme</dt><dd>Trois termes fixes : un ADR sans négatif cache un coût, un ADR sans suite n'a rien changé.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt data-value="positive">Positif</dt><dd>peu de dépendances, contrat d'API et validation au même endroit, transactions lisibles.</dd>
+        <dt data-value="negative">Négatif</dt><dd>module natif (compilation ou binaire précompilé à l'installation) ; les types des lignes SQL sont écrits à la main et doivent rester alignés sur les migrations.</dd>
+        <dt data-value="next">Suites</dt><dd>Architecte : reporter ces choix dans <code>.team/foundations/stacks/node-sqlite-angular/foundation.md</code> (organisation du code, outillage, commandes) et créer son <code>compliance.md</code> en P3 réelle. Dev backend : vérifier l'installation de better-sqlite3 sur la machine avant le premier sprint.</dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="status" content="draft">            <!-- draft | in-review | validated: the Status field of the header, as a code -->
+  <meta name="date" content="YYYY-MM-DD">         <!-- the Date field of the header, ISO -->
+  <title>Test strategy · PROJECT_NAME</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Test strategy</div>
+    <nav></nav>
+    <div class="toc-back"><a href="../30-design/detailed/cross-cutting/tests.html">→ Technical test strategy (devs)</a><br><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">P3 · Technical design</div>
+      <h1><span class="doc-kind">Test strategy</span>: PROJECT_NAME</h1>
+      <p class="lede">Each Gherkin scenario has a green test: an e2e that carries its identifier, or, if the matrix marks it without e2e, the test of the complementary level. The devs' tests prove the rules below. This page sets the QA's rules once for the project; each sprint campaign applies them. What the devs test is in the <a href="../30-design/detailed/cross-cutting/tests.html">technical test strategy</a>.</p>
+      <div class="meta">
+        <span><b>Version</b> v0.1</span>
+        <span><b>Date</b> YYYY-MM-DD</span>
+        <span><b>Author</b> QA</span>
+        <span><b>Review</b> Architect, Dev backend, Dev frontend</span>
+        <span><b>Status</b> <span class="tag warn">draft</span></span>
+        <span><b>Sources</b> stories of the <a href="../20-specs/story-map.html">story map</a>, <a href="../20-ux/ux-ui-spec.html">UX/UI spec</a>, <a href="../30-design/macro.html">macro technical design</a>, <a href="../30-design/detailed/index.html">detailed technical design</a>, foundations</span>
+      </div>
+    </header>
+
+
+    <section class="section" data-level="required">
+      <h2 id="scope-and-goals">Scope and goals</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the QA proves, what it leaves to others, and where it puts the effort.</dd>
+          <dt>Content</dt><dd>What is tested, not tested or postponed; then the product risks, from highest to lowest, with the test effort each one gets.</dd>
+          <dt>Why this format</dt><dd>The scope in three columns, like the framing; the risks as a risk, impact, effort table, the shape of a risk-based strategy (ISO/IEC/IEEE 29119-3).</dd>
+          <dt>Read</dt><dd>Technical risks and their design countermeasure are in the <a href="../30-design/macro.html#technical-risks">macro design</a>: here, only what testing does about them.</dd>
+        </dl>
+      </div>
+      <div class="scope">
+        <div class="in"><h4>Tested</h4><div class="todo">each Gherkin scenario of the release has a green test: an e2e that carries its identifier, or, if the matrix marks it without e2e, the test of the complementary level; non-regression, each area of the non-functional requirements the macro design gives the QA (integrity, performance, availability, security, accessibility…), GDPR if personal data</div></div>
+        <div class="out"><h4>Not tested by the QA</h4><div class="todo">what is proven elsewhere (devs' tests, Reviewer, acceptance) or not at all, and why</div></div>
+        <div class="later"><h4>Later</h4><div class="todo">postponed checks</div></div>
+      </div>
+      <h3 id="priority-product-risks">Priority product risks</h3>
+      <table>
+        <thead><tr><th>Risk</th><th>Impact</th><th>Test effort</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">e.g. two bookings overlap (BR-xx)</span></td><td><span class="tag danger">high</span></td><td><span class="todo">dedicated test in each campaign, checked by a read after each write</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="test-levels-and-pyramid">Test levels and pyramid</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Spread the proof: each level proves what the others do not, at the lowest cost.</dd>
+          <dt>Content</dt><dd>One row per level, from base to top: who writes it, what it proves, the expected order of magnitude in number of tests.</dd>
+          <dt>Why this format</dt><dd>The test pyramid: many fast tests at the bottom, few e2e at the top. A number is recorded at sprint end; "enough tests" cannot be checked.</dd>
+          <dt>Read</dt><dd>Orders of magnitude, not quotas: they follow from the number of design objects (endpoints, processes, screens) and of scenarios. Recorded at sprint end: the number of tests each runner reports, noted in the campaign. Tools and required cases of the devs' levels (domain unit, repository integration, route, component): <a href="../30-design/detailed/cross-cutting/tests.html">technical test strategy</a>, written by the Architect; this page does not copy them.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Level</th><th>Written by</th><th>What it proves</th><th>Order of magnitude</th></tr></thead>
+        <tbody>
+          <tr><td>Domain unit (back)</td><td>Dev backend</td><td>business rules at the boundaries, entity invariants, processes</td><td><span class="todo">number, and where it comes from</span></td></tr>
+          <tr><td>Repository integration (back)</td><td>Dev backend</td><td>persistence on a real database: constraints, transactions</td><td><span class="todo">number, and where it comes from</span></td></tr>
+          <tr><td>Route (back), simulated request</td><td>Dev backend</td><td>API contract: statuses, bodies, errors, rights per role</td><td><span class="todo">e.g. 5 to 10 per endpoint</span></td></tr>
+          <tr><td>Component (front)</td><td>Dev frontend</td><td>screen states, interactions, tolerant reading of the contract</td><td><span class="todo">number</span></td></tr>
+          <tr><td>e2e</td><td>QA</td><td>each Gherkin scenario on the assembled application: an e2e that carries its identifier, or, if the <a href="#coverage-matrix">matrix</a> marks it without e2e, the test of the complementary level</td><td><span class="todo">one per scenario planned in e2e, plus non-functional and bugs</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="tooling">Tooling</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the QA tests with, the command that runs each suite and where the tests live.</dd>
+          <dt>Content</dt><dd>The QA's tools, their command and the location of the tests; one pointer row for the devs' tooling.</dd>
+          <dt>Why this format</dt><dd>A tool, command, location table: a row can be copied into a terminal. Playwright for e2e, whatever the foundation; the devs' tools come from the stack foundation.</dd>
+          <dt>Read</dt><dd><code>retries: 0</code>: a test that passes on the second automatic try hides an instability. A flaky test follows the <a href="#non-regression">non-regression</a> rule, visible in the campaign.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Use</th><th>Tool</th><th>Command</th><th>Location</th></tr></thead>
+        <tbody>
+          <tr><td>Devs' tests</td><td>those of the <a href="../30-design/detailed/cross-cutting/tests.html#tooling">technical test strategy</a></td><td><span class="todo">commands of the stack foundation</span></td><td>next to the code</td></tr>
+          <tr><td>e2e, full suite</td><td>Playwright</td><td><code>npx playwright test</code></td><td><code>e2e/</code>, one file per story: <code>e2e/us-xxx-&lt;slug&gt;.spec.ts</code></td></tr>
+          <tr><td>e2e, one story or scenario</td><td>Playwright</td><td><code>npx playwright test -g "US-xxx/"</code>, <code>-g "US-xxx/Sn "</code></td><td>the space after <code>Sn</code> keeps <code>S1</code> from also taking <code>S10</code> to <code>S19</code></td></tr>
+          <tr><td>Configuration</td><td>Playwright</td><td></td><td><code>playwright.config.ts</code>: <code>setup</code> project (one login per account, session in <code>storageState</code>), <span class="todo">browser projects</span>, a separate project, run alone at the end of the suite, for a test that triggers a limitation; <code>retries: 0</code>, <code>baseURL</code> of the targeted environment</td></tr>
+          <tr><td>Versioning</td><td>git</td><td></td><td>one <code>T-xxx</code> ticket of type <code>e2e</code> per batch of stories, planned by the scrum-master at sprint planning in the list of tickets, created by the PO and given to a QA instance: its branch and worktree, review by a fresh Reviewer (3 rounds at most), merge into <code>sprint/N</code> by the PO; commit scope the ticket, e.g. <code>test(t-xxx): cover US-xxx/Sn</code> (<code>team/conventions/git.md</code>)</td></tr>
+          <tr><td>Evidence</td><td>Playwright HTML report and traces</td><td><code>npx playwright show-report</code></td><td><code>playwright-report/</code>, outside git</td></tr>
+          <tr><td>Exploration, bugs</td><td>chrome-devtools MCP, <code>agent-skills:browser-testing-with-devtools</code></td><td></td><td>screenshots attached to the bug</td></tr>
+          <tr><td>Non-functional</td><td><code>performance-audit</code>, <code>security-audit</code>, <code>gdpr-audit</code>, Lighthouse of the chrome-devtools MCP</td><td>see <a href="#non-functional-tests">non-functional tests</a></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="environments">Environments</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Know where each QA suite runs and how the application is started for e2e.</dd>
+          <dt>Content</dt><dd>One row per environment of the macro design: what the QA does there, how the application starts, the data.</dd>
+          <dt>Why this format</dt><dd>A table, one row per environment, that cites the <a href="../30-design/macro.html#environments">environments of the macro design</a> without adding any: one more environment would be an architecture decision.</dd>
+          <dt>Read</dt><dd>The campaign runs on the acceptance environment of the macro design: what the human accepts. A performance target the macro design gives for an environment is measured in that one. A command the stack foundation does not provide is written as an assumption.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Macro design environment</th><th>What the QA does there</th><th>Application start</th><th>Data</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">name, as a link to the macro design</span></td><td><span class="todo">e.g. writing the e2e in the worktree of the <code>e2e</code> ticket; performance measurements whose target is given for this environment</span></td><td><span class="todo">foundation commands, run by Playwright's <code>webServer</code></span></td><td><span class="todo">fictional data set, test seed</span></td></tr>
+          <tr><td><span class="todo">acceptance environment of the macro design</span></td><td>sprint campaign, non-regression, non-functional tests</td><td><span class="todo">started by the QA, branch <code>sprint/N</code> at the commit noted in the campaign, which contains the merged <code>e2e</code> tickets, and restarted by them after each merge of a fix; foundation command, as an assumption as long as it does not provide it</span></td><td><span class="todo">fictional data set reloaded before the campaign; reset by the QA after their last run, before pre-acceptance</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="test-data">Test data</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>That a test always starts from a known state, with fictional data, without depending on another test or another story.</dd>
+          <dt>Content</dt><dd>The base data set, each test's own data, the story data sets, the dates, the sessions, the reset, the edge cases; then the accounts per role and their passwords.</dd>
+          <dt>Why this format</dt><dd>A definition list, one topic per term; the accounts as a table, one row per role.</dd>
+          <dt>Read</dt><dd>The data sets of a story (<code>D1</code>, <code>D2</code>…, anchored <code>#Dn</code>) are in its "Example data" section; outside the story, they are cited <code>US-xxx/Dn</code> as a link: the test reuses them, this page does not copy them.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Base data set</dt><dd><span class="todo">fictional data set of the design and its command, as a link to its description (without copying it); what the tests read from it</span></dd>
+        <dt>Data of a test</dt><dd><span class="todo">test seed (fixture) that prepares the situation of each test without going through the endpoints of a story, so as not to depend on delivered stories; unique name per run (scenario and run identifier) so that no test or run shares data; tests independent of their order</span></dd>
+        <dt>Story data sets</dt><dd><span class="todo">how a story data set <code>Dn</code> is reused, dates shifted</span></dd>
+        <dt>Dates</dt><dd><span class="todo">computed from the day of the test, or an adjustable clock if the design provides one</span></dd>
+        <dt>Sessions</dt><dd><span class="todo">one session per account and per run: <code>setup</code> project that logs in once and saves a <code>storageState</code>; only the login tests go through the screen; number of logins of the suite against a possible attempt limitation</span></dd>
+        <dt>Limitation test</dt><dd><span class="todo">if the design limits attempts: the test that triggers it runs alone, at the end of the suite, in its own Playwright project; the second run of the suite (criterion "each e2e replayed twice") runs without that project; otherwise, remove</span></dd>
+        <dt>Reset</dt><dd><span class="todo">before the campaign; then by the QA after their last run (fix replays included), before pre-acceptance: how we get back to the fictional data set alone</span></dd>
+        <dt>Edge cases</dt><dd><span class="todo">boundaries visible on screen only; the others are in the devs' required cases</span></dd>
+      </dl>
+      <table>
+        <thead><tr><th>Fictional account</th><th>Role</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">one fictional account per role, plus an "other user"; an account missing from the fictional data set is written as an assumption, to add to it</span></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+      <p><span class="todo">passwords: given to the seed and to Playwright through environment variables, never in the repository, as a link to the macro design rule without copying it (<a href="../30-design/detailed/cross-cutting/compliance.html#INV-50">INV-50</a>)</span></p>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="campaign-entry-and-exit-criteria">Campaign entry and exit criteria</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Make the verdict of a campaign mechanical: it follows from these criteria, it is not negotiated.</dd>
+          <dt>Content</dt><dd>The conditions to start a campaign, then those of a favorable verdict.</dd>
+          <dt>Why this format</dt><dd>Entry and exit criteria of a test plan (ISO/IEC/IEEE 29119-3), as lists: each criterion is true or false.</dd>
+          <dt>Read</dt><dd>Favorable without reservations: all exit criteria met, no open bug. Favorable with reservations: the other criteria met, and only minor bugs or a major accepted in writing by the PO remain open, acceptance noted in the campaign. Unfavorable: an open blocking bug, an open major not accepted, or another exit criterion missed.</dd>
+        </dl>
+      </div>
+      <div class="grid c2">
+        <div class="card soft">
+          <h4>Entry</h4>
+          <ul>
+            <li>all tickets of the sprint are reviewed without a blocker and merged into <code>sprint/N</code>, <code>e2e</code> tickets included: the campaign runs at the commit that contains them;</li>
+            <li>build green, devs' tests green on <code>sprint/N</code>;</li>
+            <li>the QA has started the assembled application on the acceptance environment, at the commit noted in the campaign, and it answers;</li>
+            <li><span class="todo">project-specific criterion</span></li>
+          </ul>
+        </div>
+        <div class="card soft">
+          <h4>Exit (favorable verdict, with or without reservations)</h4>
+          <ul>
+            <li>each scenario of the sprint stories has a green test (an e2e that carries its identifier, or, if the <a href="#coverage-matrix">matrix</a> marks it without e2e, the test of the complementary level), except those an open bug admitted at the verdict turns red (minor, or major accepted in writing by the PO), cited in the campaign;</li>
+            <li>each e2e replayed twice, same result; the second run runs without the <code>limitation</code> project;</li>
+            <li>no open blocking bug; no open major without the PO's written acceptance;</li>
+            <li>non-regression green, except the tests an open bug admitted at the verdict turns red (minor, or major accepted in writing by the PO), cited in the campaign;</li>
+            <li><span class="todo">non-functional checks of the sprint within their thresholds, if any</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="coverage-matrix">Coverage matrix</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Prove that no scenario is forgotten, and find the test of a scenario with one search.</dd>
+          <dt>Content</dt><dd>One row per Gherkin scenario: how the e2e plays it when not through the interface alone, and the lower-level test that proves the same rule.</dd>
+          <dt>Why this format</dt><dd>The requirement to test traceability matrix (RTM), with a shared identifier: <code>US-xxx/Sn</code>, the team glossary notation for scenario n of a story (anchor <code>#Sn</code> of the story), in the test name and in the campaign.</dd>
+          <dt>Read</dt><dd>Complete at G2: all scenarios of the stories validated at G1. A story added or changed after G2 updates the matrix at the sprint planning that takes it. Empty e2e means: the interface, by default. Only exceptions are written: API, network interception, two accounts, special input. <span class="tag warn">without e2e</span>: the reason is written, and the test of the complementary level is the one the exit criterion requires. The progress of a test and its result (passed, failed, blocked) are in the campaign, not here.</dd>
+          <dt>Source</dt><dd>Scenarios come from the stories of the <a href="../20-specs/story-map.html">story map</a>; "served by" and the screen are in their technical notes, not copied here.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>File</dt><dd><code>e2e/us-xxx-&lt;slug&gt;.spec.ts</code>, the file name of the story, one <code>test.describe('US-xxx')</code> per file: the matrix does not repeat it</dd>
+        <dt>Test</dt><dd><code>test('US-xxx/Sn &lt;scenario title&gt;', …)</code>: identifier, then the scenario title word for word; the matrix does not repeat it</dd>
+        <dt>Steps</dt><dd>one <code>test.step</code> per Given, When, Then line</dd>
+      </dl>
+      <table>
+        <thead><tr><th>Scenario</th><th>e2e means, if other than the interface</th><th>Complementary level</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">US-xxx/Sn as a link to <code>stories/US-xxx-&lt;slug&gt;.html#Sn</code>, scenario title</span></td><td><span class="todo">empty for the interface; otherwise API, network interception, two accounts; or <span class="tag warn">without e2e</span> and why</span></td><td><span class="todo">a pyramid level and its object: domain unit PROC-xx, repository integration, route EP-xx, component</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="bug-management">Bug management</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>That a bug can be reproduced without the QA and that its severity does not depend on mood.</dd>
+          <dt>Content</dt><dd>The severity grid and its effect on the verdict, the content of a bug, its circuit.</dd>
+          <dt>Why this format</dt><dd>A three-level severity grid, each defined by its effect on the user; the circuit as an ordered list, aligned on the board statuses (<code>team/conventions/ticket.md</code>).</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Severity</th><th>Definition</th><th>Example on this project</th><th>Effect on the verdict</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag danger">blocking</span></td><td>a main journey is impossible, data loss or corruption, security flaw</td><td><span class="todo">example</span></td><td>open: unfavorable</td></tr>
+          <tr><td><span class="tag warn">major</span></td><td>a business rule or criterion is not met, a workaround exists</td><td><span class="todo">example</span></td><td>open: unfavorable, unless accepted in writing by the PO and noted in the campaign, then favorable with reservations</td></tr>
+          <tr><td><span class="tag info">minor</span></td><td>gap with no effect on the result: label, layout, format</td><td><span class="todo">example</span></td><td>open: favorable with reservations</td></tr>
+        </tbody>
+      </table>
+      <dl class="defs">
+        <dt>File</dt><dd><code>.team/board/BUG-xxx-&lt;slug&gt;.md</code>, one bug per file, ticket format with <code>severity</code>, <code>found_by</code>, <code>scenario</code></dd>
+        <dt>Content</dt><dd>steps from the base data set, expected, actual, commit of <code>sprint/N</code>, proof (screenshot, console, request and response), scenario <code>US-xxx/Sn</code></dd>
+        <dt>Test</dt><dd>every bug gets a test that reproduces it, named <code>BUG-xxx</code>; it also carries <code>US-xxx/Sn</code> if it affects a scenario. When opening it, the QA creates the branch <code>bug-xxx-&lt;slug&gt;</code> from <code>sprint/N</code> in their worktree, commits the red test there, then removes their worktree; the dev reopens the same branch, without recreating it (<code>team/conventions/git.md</code>)</dd>
+      </dl>
+      <ol>
+        <li>The QA opens the bug and commits its red test on its branch <code>bug-xxx-&lt;slug&gt;</code>; the PO prioritizes it and assigns it to a dev in the sprint.</li>
+        <li>The dev reopens the same branch and fixes it, until the test is green; a fresh Reviewer reviews it like a ticket (3 rounds at most), then the PO merges it into <code>sprint/N</code>.</li>
+        <li>After the merge, the PO moves it to test; the QA replays its test and the linked scenario on the acceptance environment.</li>
+        <li>Green: the PO closes it and the test joins the non-regression. Red: back to the dev, with the new proof.</li>
+      </ol>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="non-regression">Non-regression</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>That a sprint does not break what a previous sprint delivered.</dd>
+          <dt>Content</dt><dd>The replayed suite, the entry rule of a test, the handling of a flaky test, the effect of a new API contract version.</dd>
+          <dt>Why this format</dt><dd>A definition list, one rule per term: the campaign applies them without rephrasing them.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt>Replayed suite</dt><dd><span class="todo">by default: the whole e2e suite of the previous sprints, target duration</span></dd>
+        <dt>Entry into the suite</dt><dd>a scenario test after its first favorable campaign; a bug test when the bug is closed</dd>
+        <dt>Flaky test</dt><dd>replayed twice by hand (<code>retries: 0</code>); if it stays flaky, noted in the campaign and fixed in the sprint, never silently disabled</dd>
+        <dt>API contract</dt><dd><span class="todo">by default: a new contract version that touches an operation already tested replays the stories that call it, even outside the sprint</span></dd>
+      </dl>
+    </section>
+
+    <section class="section" data-level="required">
+      <h2 id="non-functional-tests">Non-functional tests</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Check the requirements the macro design gives the QA.</dd>
+          <dt>Content</dt><dd>One row per check: area, check (with the tool, the number of measurements and the environment), threshold, frequency. Not applicable: say so.</dd>
+          <dt>Why this format</dt><dd>One measurable threshold per row: a check without a threshold gives no verdict. The threshold is the target of the macro design, quoted as written; a threshold the QA adds is marked "QA's own", with its reason.</dd>
+          <dt>Source</dt><dd>Targets are those of the <a href="../30-design/macro.html#non-functional-requirements">non-functional requirements</a>; only their verification is written here.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Area</th><th>Check</th><th>Tool</th><th>Threshold</th><th>Frequency</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag">Integrity</span></td><td><span class="todo">e.g. simultaneous requests on the same resource, database check, number of repetitions</span></td><td><span class="todo">Playwright, API request context</span></td><td><span class="todo">macro design target, as written</span></td><td><span class="todo">each campaign</span></td></tr>
+          <tr><td><span class="tag">Performance</span></td><td><span class="todo">endpoint or screen measured, number of requests or traces, environment (the one the target names, otherwise the acceptance one)</span></td><td><span class="todo">e.g. Playwright for an endpoint, <code>performance-audit</code> for a screen</span></td><td><span class="todo">macro design target, as written (p95 only if the macro design says so)</span></td><td><span class="todo">each sprint or end of release</span></td></tr>
+          <tr><td><span class="tag">Availability</span></td><td><span class="todo">e.g. restart, data and session read back</span></td><td></td><td><span class="todo">macro design target</span></td><td></td></tr>
+          <tr><td><span class="tag">Security</span></td><td><span class="todo">probing of the rights matrix, audit</span></td><td><code>security-audit</code></td><td><span class="todo">macro design target</span></td><td></td></tr>
+          <tr><td><span class="tag">Accessibility</span></td><td><span class="todo">keyboard journey, audit, screen reader</span></td><td>Playwright, Lighthouse of the chrome-devtools MCP</td><td><span class="todo">design system level; a Lighthouse score is the QA's own, with its reason</span></td><td></td></tr>
+          <tr><td><span class="tag">GDPR</span></td><td><span class="todo">if personal data</span></td><td><code>gdpr-audit</code></td><td></td><td></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="optional">
+      <h2 id="test-risks">Test risks</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>See what is hard to test before it blocks a campaign.</dd>
+          <dt>Content</dt><dd>One row per difficulty: what it prevents, the countermeasure chosen, who must act.</dd>
+          <dt>Why this format</dt><dd>A difficulty, effect, countermeasure table: the same shape as the technical risks of the macro design, plus the role that acts, so that a countermeasure is never left without an owner.</dd>
+          <dt>Read</dt><dd>A countermeasure that asks something of the Architect (a case to add to the required cases, an adjustable clock) goes through a forum post addressed to them; they record it as an open point of the target page, here the <a href="../30-design/detailed/cross-cutting/tests.html#open-points">technical test strategy</a>, and the strategy cites it as a link.</dd>
+        </dl>
+      </div>
+      <table>
+        <thead><tr><th>Difficulty</th><th>Effect</th><th>Countermeasure</th><th>Who acts</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">e.g. a server error cannot be triggered on the real application</span></td><td><span class="todo">the e2e proves the message, not the rollback of the transaction</span></td><td><span class="todo">network interception for the screen, repository integration for the data</span></td><td><span class="todo">role</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

@@ -1,7 +1,7 @@
 #!/usr/bin/env node
-// Maintenance of the plugin, not of a project: rewrites the French labels embedded in team/assets/doc.js
-// (namespaces common, doc, gherkin) and team/assets/plan.js (plan) from team/i18n/fr/*.json. They are used
-// by the pages of a project older than 0.4.0, which has no docs/_assets/i18n.js (team/conventions/langue.md).
+// Maintenance of the plugin, not of a project: rewrites the English labels embedded in team/assets/doc.js
+// (namespaces common, doc, gherkin) and team/assets/plan.js (plan) from team/i18n/en/*.json. They are the
+// default labels, used by a page without docs/_assets/i18n.js (team/conventions/language.md).
 // It also checks that team/i18n/fr and team/i18n/en hold the same keys.
 // Usage: node team/scripts/i18n-fallback.mjs [--check]   --check: exit code 1 if a copy has drifted, no write.
 import { readFileSync, writeFileSync, readdirSync } from 'node:fs';
@@ -9,8 +9,8 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
-const fr = (ns) => JSON.parse(readFileSync(join(root, 'team', 'i18n', 'fr', `${ns}.json`), 'utf8'));
-const entries = (namespaces) => namespaces.flatMap((ns) => Object.entries(fr(ns)).map(([k, v]) => `    ${JSON.stringify(`${ns}.${k}`)}: ${JSON.stringify(v)}`)).join(',\n') + ',';
+const en = (ns) => JSON.parse(readFileSync(join(root, 'team', 'i18n', 'en', `${ns}.json`), 'utf8'));
+const entries = (namespaces) => namespaces.flatMap((ns) => Object.entries(en(ns)).map(([k, v]) => `    ${JSON.stringify(`${ns}.${k}`)}: ${JSON.stringify(v)}`)).join(',\n') + ',';
 const TARGETS = [
   { file: 'team/assets/doc.js', open: '  const FALLBACK = {\n', close: '\n  };', namespaces: ['common', 'doc', 'gherkin'] },
   { file: 'team/assets/plan.js', open: '  I.addFallback({\n', close: '\n  });', namespaces: ['plan'] },
@@ -24,7 +24,7 @@ for (const { file, open, close, namespaces } of TARGETS) {
   const out = src.slice(0, a + open.length) + entries(namespaces) + src.slice(b);
   if (out === src) { console.log(`up to date: ${file}`); continue; }
   drift = true;
-  if (check) console.error(`i18n-fallback: ${file} differs from team/i18n/fr, run node team/scripts/i18n-fallback.mjs`);
+  if (check) console.error(`i18n-fallback: ${file} differs from team/i18n/en, run node team/scripts/i18n-fallback.mjs`);
   else { writeFileSync(path, out); console.log(`written: ${file}`); }
 }
 // fr and en must hold the same keys: en is the fallback of every other language

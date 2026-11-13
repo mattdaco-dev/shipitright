@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADR-NNNN Title · PROJECT_NAME</title>
+  <!-- ADR metadata, read by team/scripts/adr-pages.mjs (header and register docs/adr/index.html) -->
+  <meta name="id" content="ADR-NNNN">           <!-- ADR- + the 4 digits of the file name -->
+  <meta name="title" content="Decision title">  <!-- same text as the h1 after "ADR-NNNN:" -->
+  <meta name="status" content="proposed">       <!-- proposed | accepted | superseded | abandoned -->
+  <meta name="date" content="YYYY-MM-DD">       <!-- date of the last status change -->
+  <meta name="supersedes" content="">           <!-- ADR-xxxx this decision supersedes, separated by spaces -->
+  <meta name="answers" content="">              <!-- Q-xxx this decision answers, separated by spaces -->
+  <meta name="foundation_deviation" content="no"> <!-- yes | no: the decision deviates from the stack foundation -->
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../_assets/doc.css">
+</head>
+<body>
+<div class="doc">
+  <aside class="doc-toc">
+    <div class="toc-project">PROJECT_NAME</div>
+    <div class="toc-type">Decision ADR-NNNN</div>
+    <nav></nav>
+    <div class="toc-back"><a href="index.html">← ADR register</a><br><a href="../30-design/macro.html">← Macro technical design</a><br><a href="../index.html">← Project dashboard</a></div>
+  </aside>
+
+  <main class="doc-main">
+    <header class="doc-header">
+      <div class="kicker">Architect · Architecture decisions · <a href="index.html">Register</a></div>
+      <h1><span class="doc-kind">ADR-NNNN</span>: <span class="todo">decision title, noun phrase</span></h1>
+      <!-- gen:adr-meta --><!-- /gen -->
+    </header>
+
+    <section class="section" data-level="required" data-section="foundation-deviation">
+      <h2 id="foundation-deviation">Foundation deviation</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>State whether the decision deviates from the project's stack foundation. A deviation goes through an ADR with status proposed, which the PO brings to the human.</dd>
+          <dt>Content</dt><dd>No: what the foundation says on the subject and why the decision complies. Yes: the foundation rule or invariant set aside, and the scope of the deviation.</dd>
+          <dt>Why this format</dt><dd>One or two sentences: it is a fact checked at G2, not a debate; the debate is in "Rationale".</dd>
+          <dt>Read</dt><dd>The yes or no of the header comes from the <code>meta foundation_deviation</code> tag.</dd>
+        </dl>
+      </div>
+      <p><span class="todo">what the foundation says on the subject and why the decision complies, or the exact deviation (rule, invariant INV-xx as a link) and its scope</span></p>
+    </section>
+
+    <section class="section" data-level="required" data-section="context">
+      <h2 id="context">Context</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what forces a choice, so that a reader understands it with no other source three months from now.</dd>
+          <dt>Content</dt><dd>The problem, the constraints from framing, foundation and business rules, and the part of the question the ADR answers.</dd>
+          <dt>Why this format</dt><dd>A few sentences of prose, as in Michael Nygard's ADR format: context is told, not tabulated.</dd>
+        </dl>
+      </div>
+      <p><span class="todo">problem, constraints, what forces a choice; every cited identifier (BR-xx, Q-xxx, EP-xx…) as a link</span></p>
+    </section>
+
+    <section class="section" data-level="required" data-section="decision">
+      <h2 id="decision">Decision</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what is decided, applicable as is by a dev.</dd>
+          <dt>Content</dt><dd>One statement per choice, affirmative, with no condition or alternative.</dd>
+          <dt>Why this format</dt><dd>A list: each choice can be cited alone in a review or an invariant; the affirmative leaves no reading in doubt.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><span class="todo">choice, affirmative</span></li>
+      </ul>
+    </section>
+
+    <section class="section" data-level="required" data-section="rationale">
+      <h2 id="rationale">Rationale</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say why this option, and why not the others.</dd>
+          <dt>Content</dt><dd>The arguments for the decision, then one row per rejected option with the reason for rejecting it.</dd>
+          <dt>Why this format</dt><dd>The considered options table of the MADR format: a rejected option and its reason stay visible, and the debate does not reopen without a new fact.</dd>
+        </dl>
+      </div>
+      <ul>
+        <li><span class="todo">argument, tied to a constraint of the context</span></li>
+      </ul>
+      <table class="options">
+        <thead><tr><th style="width:240px">Rejected option</th><th>Why</th></tr></thead>
+        <tbody>
+          <tr><td><span class="todo">option</span></td><td><span class="todo">reason for rejecting it</span></td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <section class="section" data-level="required" data-section="consequences">
+      <h2 id="consequences">Consequences</h2>
+      <div class="info-body" hidden>
+        <dl class="defs">
+          <dt>Purpose</dt><dd>Say what the decision implies, good and bad, and what it requires doing.</dd>
+          <dt>Content</dt><dd><ul><li>Positive: what it brings.</li><li>Negative: what it costs, the debt accepted.</li><li>Next steps: the actions to plan, with the deliverable or role that carries them.</li></ul></dd>
+          <dt>Why this format</dt><dd>Three fixed terms: an ADR without a negative hides a cost, an ADR without next steps changed nothing.</dd>
+        </dl>
+      </div>
+      <dl class="defs">
+        <dt data-value="positive">Positive</dt><dd><span class="todo">what the decision brings</span></dd>
+        <dt data-value="negative">Negative</dt><dd><span class="todo">what it costs</span></dd>
+        <dt data-value="next">Next steps</dt><dd><span class="todo">actions to plan and who carries them, or "none"</span></dd>
+      </dl>
+    </section>
+  </main>
+</div>
+<script src="../_assets/doc.js"></script>
+</body>
+</html>

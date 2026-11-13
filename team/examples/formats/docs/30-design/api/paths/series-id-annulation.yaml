@@ -1,0 +1,97 @@
+# Path item /series/{id}/annulation, referenced by openapi.yaml
+
+parameters:
+  - name: id
+    in: path
+    required: true
+    description: identifiant de série
+    schema: {type: integer, minimum: 1}
+post:
+  tags: [series]
+  operationId: annulerSerie
+  x-endpoint-id: EP-13
+  x-module: domain/serie
+  x-release: MVP
+  x-contract: frozen
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - titulaire de la série ou gestionnaire, sinon 403 INTERDIT (BR-11)
+    - motif obligatoire quand le gestionnaire annule la série d'autrui (BR-07)
+    - "gestionnaire sur la série d'autrui : permis par l'API, sans écran au MVP (SCR-05 ne liste que
+      ses propres réservations)"
+  x-processes: [PROC-06]
+  x-entities:
+    - {id: EN-06, access: R}
+    - {id: EN-05, access: R}
+    - {id: EN-05, access: RU, via: PROC-06}
+  x-rules: [BR-06, BR-03, BR-07, BR-11]
+  x-idempotence: >-
+    Idempotent : un second appel annule 0 occurrence et répond 200.
+  x-sequence: |
+    sequenceDiagram
+      actor U as Titulaire
+      participant F as Front SCR-05
+      participant A as API
+      participant T as PROC-06
+      participant D as SQLite
+      U->>F: Toutes les occurrences à venir de la série, Confirmer
+      F->>A: POST /series/{id}/annulation (motif si gestionnaire sur la série d'autrui)
+      A->>D: BEGIN IMMEDIATE (UnitOfWork)
+      A->>D: série et titulaire
+      alt série inconnue
+        A->>D: ROLLBACK
+        A-->>F: 404 SERIE_INTROUVABLE
+      else ni titulaire ni gestionnaire (BR-11)
+        A->>D: ROLLBACK
+        A-->>F: 403 INTERDIT
+      else gestionnaire sur la série d'autrui, sans motif (BR-07)
+        A->>D: ROLLBACK
+        A-->>F: 422 MOTIF_OBLIGATOIRE
+      else
+        A->>D: occurrences actives de la série, pas commencées (BR-03)
+        loop chaque occurrence
+          A->>T: annuler (auteur = session, motif)
+          T->>D: UPDATE statut annulee, motif, annulee_le, annulee_par
+        end
+        A->>D: COMMIT
+        A-->>F: 200 SerieAnnulee (n annulées)
+        F-->>U: lignes de la série retirées
+      end
+  x-open:
+    - impact: high
+      subject: "Annulation de la série d'autrui par le gestionnaire : un refus changerait les droits d'une opération figée ; offrir « toute la série » sur SCR-02 est un arbitrage PO, non posé dans cet exemple."
+      hypothesis: "permise, BR-11 valant pour chaque occurrence ; aucun écran ne l'offre au MVP."
+  summary: Annuler les occurrences à venir d'une série
+  description: >-
+    Annule toutes les occurrences actives de la série qui n'ont pas commencé (BR-06, BR-03), chacune
+    par PROC-06, dans une seule transaction. Le motif est contrôlé avant toute annulation quand le
+    gestionnaire annule la série d'autrui (BR-07). Une occurrence en cours ou passée reste. La série
+    elle-même n'a pas de statut : elle est terminée quand plus aucune occurrence n'est active et
+    future.
+  requestBody:
+    required: false
+    content:
+      application/json:
+        schema: {$ref: '../components/schemas/reservations.yaml#/AnnulationDemande'}
+  responses:
+    '200':
+      description: occurrences annulées
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/series.yaml#/SerieAnnulee'}
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '403': {$ref: '../components/responses.yaml#/Forbidden'}
+    '404':
+      description: aucune série avec cet identifiant
+      x-codes: [SERIE_INTROUVABLE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Probleme'}
+    '422':
+      description: motif absent alors que le gestionnaire annule la série d'autrui (BR-07)
+      x-codes: [MOTIF_OBLIGATOIRE]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

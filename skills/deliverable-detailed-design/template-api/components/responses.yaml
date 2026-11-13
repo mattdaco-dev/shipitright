@@ -1,0 +1,34 @@
+# components/responses, each entry referenced by openapi.yaml
+# Common error responses: reuse them rather than copy them; an error specific to an operation is
+# written in its file of paths/, with its x-codes.
+
+BadRequest:
+  description: malformed request, parameter or body outside the schema
+  x-codes: [VALIDATION]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/errors.yaml#/Problem'}
+      example:
+        type: about:blank
+        title: Invalid request
+        status: 400
+        code: VALIDATION
+        errors: [{field: day, message: YYYY-MM-DD date expected}]
+Unauthorized:
+  description: missing or expired session
+  x-codes: [UNAUTHENTICATED]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/errors.yaml#/Problem'}
+Forbidden:
+  description: insufficient role
+  x-codes: [FORBIDDEN]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/errors.yaml#/Problem'}
+InternalError:
+  description: unexpected error, no technical detail exposed
+  x-codes: [INTERNAL_ERROR]
+  content:
+    application/problem+json:
+      schema: {$ref: 'schemas/errors.yaml#/Problem'}

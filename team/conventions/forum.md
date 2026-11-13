@@ -1,68 +1,69 @@
-# Forum et questions
+# Forum and questions
 
 ## Forum
 
-Pour tout échange entre agents qui n'est pas une question métier : désaccord technique, précision d'un
-contrat, signalement d'un risque. Un fichier par sujet dans `.team/forum/`, nommé
-`AAAA-MM-JJ-<slug>.md`. **Posts en ajout seulement**, jamais de réécriture d'un post existant.
+For any exchange between agents that is not a business question: technical disagreement, clarification
+of a contract, report of a risk. One file per topic in `.team/forum/`, named `YYYY-MM-DD-<slug>.md`.
+**Posts are append-only**, an existing post is never rewritten.
 
 ```markdown
 ---
-sujet: Format des montants dans l'API
-ouvert_par: dev-frontend-1
-mentions: [architecte]
-statut: ouvert        # ouvert | resolu
-lie_a: [T-014, US-006]
+subject: Format of amounts in the API
+opened_by: dev-frontend-1
+mentions: [architect]
+status: open          # open | resolved
+linked_to: [T-014, US-006]
 ---
 
 ### [dev-frontend-1] 2026-10-01 14:32
-Le contrat expose les montants en `number`. Arrondis côté front ou chaîne décimale ?
+The contract exposes amounts as `number`. Round on the front side, or a decimal string?
 
-### [architecte] 2026-10-01 15:10
-Chaîne décimale, ADR-0004. `openapi.yaml` mis à jour.
-→ résolu
+### [architect] 2026-10-01 15:10
+Decimal string, ADR-0004. `openapi.yaml` updated.
+→ resolved
 ```
 
-Les agents ne tournent pas en continu : le forum est asynchrone d'une vague à l'autre. Après chaque
-vague, le PO relève les sujets ouverts et les met dans le brief du prochain agent mentionné. Celui qui
-clôt un sujet ajoute `→ résolu` et passe `statut: resolu`.
+Agents do not run continuously: the forum is asynchronous from one wave to the next. After each wave,
+the PO collects the open topics and puts them in the brief of the next agent mentioned. Whoever closes
+a topic adds `→ resolved` and sets `status: resolved`.
 
-## Questions métier
+## Business questions
 
-Adressées au PO, dans `.team/questions/Q-007-<slug>.md`.
-Après avoir créé une question ou écrit sa réponse, régénérer la page de lecture, vers laquelle pointent
-les livrables (`questions.html#Q-007`) :
+Addressed to the PO, in `.team/questions/Q-007-<slug>.md`.
+After creating a question or writing its answer, regenerate the reading page, which the deliverables
+point to (`questions.html#Q-007`):
 
 ```sh
-node <racine du plugin>/team/scripts/questions-page.mjs .
+node <plugin root>/team/scripts/questions-page.mjs .
 ```
 
 ```markdown
 ---
 id: Q-007
-de: business-analyst-2  # instance qui pose la question ; nom de la personne pour un chantier mené hors de la team
-statut: ouverte       # ouverte | repondue | remontee
-bloquant: non         # oui | non
-lie_a: [US-012, RG-08]
+from: business-analyst-2  # instance that asks the question; the person's name for a workstream led outside the team
+target: architect         # optional: who should answer, when it is not the PO
+status: open              # open | answered | raised
+blocking: no              # yes | no
+linked_to: [US-012, BR-08]
 ---
 
 ## Question
-<une seule question, fermée si possible, avec la réponse pressentie>
+<a single question, closed if possible, with the expected answer>
 
-## Contexte
-<pourquoi elle se pose, ce qui dépend de la réponse>
+## Context
+<why it arises, what depends on the answer>
 
-## Hypothèse en attendant
-<si non bloquante : l'hypothèse retenue pour avancer>
+## Hypothesis meanwhile
+<if not blocking: the hypothesis adopted to move forward>
 
-## Réponse
-<remplie par le PO, avec la source : "humain, 2026-10-02" ou "PO, d'après le cadrage RG-04">
+## Answer
+<filled in by the PO, with the source: "human, 2026-10-02" or "PO, from framing BR-04">
 ```
 
-Les titres de sections s'écrivent dans la langue du projet ; leur **ordre** est fixe, c'est lui que
-les scripts lisent (`team/conventions/langue.md`) : question, contexte, hypothèse, réponse. Les quatre
-sections restent présentes même vides, la réponse est toujours la dernière.
+Section headings are written in the project language; their **order** is fixed, and that is what the
+scripts read (`team/conventions/language.md`): question, context, hypothesis, answer. The four
+sections stay present even when empty, the answer is always the last one.
 
-Le PO répond s'il peut, à partir du cadrage et de ce que l'humain a déjà dit. Sinon il passe la question
-en `remontee` et la pose à l'humain, **groupée** avec les autres, jamais une par une au fil de l'eau.
-Une réponse qui crée ou modifie une règle de gestion est reportée dans le livrable concerné.
+The PO answers if it can, from the framing and what the human has already said. Otherwise it sets the
+question to `raised` and asks the human, **grouped** with the others, never one at a time as they come.
+An answer that creates or changes a business rule is carried over into the deliverable concerned.

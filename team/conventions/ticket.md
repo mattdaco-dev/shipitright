@@ -1,76 +1,76 @@
-# Ticket du board
+# Board ticket
 
-Un fichier par ticket dans `.team/board/`, nommé `T-012-<slug>.md` (ou `BUG-003-<slug>.md`).
-Le board local est la **source de vérité** des agents. Le board Notion, s'il existe, en est le miroir
-pour l'humain, tenu par le PO (skill `shipitright:notion-board`).
+One file per ticket in `.team/board/`, named `T-012-<slug>.md` (or `BUG-003-<slug>.md`).
+The local board is the agents' **source of truth**. The Notion board, if any, is its mirror for the
+human, kept by the PO (skill `shipitright:notion-board`).
 
-Un ticket est une **tranche verticale** : il tient dans un contexte frais, se démontre seul et vaut un
-cycle complet dev + revue. Une story qui touche back et front donne en général deux tickets reliés par
-une opération du contrat d'API : le back la produit, le front la consomme. Les tickets se découpent au
-sprint planning (SM et architecte) à partir des pages de la conception détaillée
-(`docs/30-conception/detaillee/`) : endpoints, traitements, entités, vue par écran.
+A ticket is a **vertical slice**: it fits in a fresh context, can be demonstrated on its own and is
+worth a full dev + review cycle. A story that touches back and front usually gives two tickets linked
+by an operation of the API contract: the back produces it, the front consumes it. Tickets are cut at
+sprint planning (SM and Architect) from the pages of the detailed design (`docs/30-design/detailed/`):
+endpoints, processes, entities, per-screen view.
 
-Le champ `contrat` dit si le ticket touche au contrat d'API :
+The `contract` field says whether the ticket touches the API contract:
 
-- **`fige`** : le ticket produit ou consomme des opérations du contrat d'API, toutes figées (rien
-  n'en sera retiré ni changé). Back et front partent en parallèle, le front travaille contre un mock
-  tiré du contrat d'API ; le ticket front ne dépend pas du ticket back.
-- **champ laissé vide** : le ticket ne touche aucune opération du contrat d'API.
+- **`frozen`**: the ticket produces or consumes operations of the API contract, all frozen (nothing
+  will be removed or changed). Back and front start in parallel, the front works against a mock drawn
+  from the API contract; the front ticket does not depend on the back ticket.
+- **field left empty**: the ticket touches no operation of the API contract.
 
-Une opération provisoire ne donne pas de ticket : l'architecte la fige au sprint planning, sinon la
-story qui la touche sort du sprint.
+A provisional operation does not give a ticket: the Architect freezes it at sprint planning, otherwise
+the story that touches it leaves the sprint.
 
 ```markdown
 ---
 id: T-012
-titre: Créer une facture
+title: Create an invoice
 role: dev-backend
 instance: dev-backend-1
-statut: pret          # backlog | pret | en-cours | en-revue | en-test | fait | bloque
+status: ready          # backlog | ready | in-progress | in-review | in-test | done | blocked
 sprint: 1
 stories: [US-004]
-depend_de: []
-consomme: []
-produit: ["EP-03 POST /factures", "EN-02 Facture"]
-contrat: fige         # fige, ou vide si le ticket ne touche aucune opération du contrat d'API
-branche: t-012-creer-facture
-tours_revue: 0        # revues par un Relecteur frais, revues de fermeture comprises ; +1 à chaque ligne « rapport · T-xxx ← relecteur-n » du journal
+depends_on: []
+consumes: []
+produces: ["EP-03 POST /factures", "EN-02 Facture"]
+contract: frozen       # frozen, or empty if the ticket touches no operation of the API contract
+branch: t-012-creer-facture
+review_rounds: 0       # reviews by a fresh Reviewer, closing reviews included; +1 for each line "report · T-xxx ← reviewer-n" of the journal
 notion_url:
 ---
 
 ## Brief
-Comportement attendu, types et signatures, critères d'acceptation repris des stories,
-hors périmètre. Scénarios `US-xxx/Sn` servis et jeux de données d'exemple de la story qui les
-illustrent (`US-xxx/Dn`, en lien). Pas de chemins de fichiers de code.
+Expected behavior, types and signatures, acceptance criteria taken from the stories, out of scope.
+`US-xxx/Sn` scenarios served and the story's example data sets that illustrate them (`US-xxx/Dn`, as
+links). No code file paths.
 
-## Rapport
-Rempli par l'auteur (format rapport.md).
+## Report
+Filled in by the author (format report.md).
 
-## Revue
-Rempli par le Relecteur : verdict (ok | bloquant), constats numérotés.
+## Review
+Filled in by the Reviewer: verdict (ok | blocking), numbered findings.
 
-## Rétro
-Une ou deux lignes.
+## Retro
+One or two lines.
 ```
 
-**Qui écrit quoi** : le PO crée le ticket (à partir du découpage du SM et de l'architecte), remplit le
-frontmatter et change le statut. L'auteur remplit `Rapport` et `Rétro`. Le Relecteur remplit `Revue`.
-Personne d'autre ne modifie le brief.
+**Who writes what**: the PO creates the ticket (from the SM's and Architect's slicing), fills in the
+front matter and changes the status. The author fills in `Report` and `Retro`. The Reviewer fills in
+`Review`. Nobody else modifies the brief.
 
-**Anomalie** : `BUG-xxx`, même format, avec en plus `severite: bloquante | majeure | mineure`,
-`trouve_par`, `scenario` (au format `US-xxx/Sn`, ex. `US-006/S4`), étapes de reproduction, attendu, obtenu.
-À l'ouverture, le QA crée la branche de correction `bug-xxx-<slug>` depuis `sprint/N` dans
-`.worktrees/bug-xxx`, y commite le test de l'anomalie, rouge, puis supprime ce worktree ; le dev
-rouvre la branche existante dans son worktree et corrige ; revue et merge comme un ticket
-(`team/conventions/git.md`). Une anomalie mineure laissée ouverte au verdict reste au statut
-`backlog` ; à la recette, le PO la reporte en réserve `RES-xx` du PV.
+**Bug**: `BUG-xxx`, same format, plus `severity: blocking | major | minor`, `found_by`, `scenario` (in
+the `US-xxx/Sn` format, e.g. `US-006/S4`), reproduction steps, expected, actual.
+At opening, the QA creates the fix branch `bug-xxx-<slug>` from `sprint/N` in `.worktrees/bug-xxx`,
+commits the bug's test there, red, then removes that worktree; the dev reopens the existing branch in
+their worktree and fixes it; review and merge like a ticket (`team/conventions/git.md`). A minor bug
+left open at the verdict stays in `backlog` status; at acceptance, the PO carries it over as a
+reservation `RES-xx` of the acceptance report.
 
-**Ticket e2e** : `T-xxx`, même format, avec en plus `type: e2e` et `role: qa`. Le SM en prévoit un par
-lot de stories au sprint planning, dans la liste des tickets à créer, et le PO en crée le fichier ;
-il est confié à une instance QA (`qa-1`, `qa-2`…) ; plusieurs instances QA
-donnent plusieurs tickets `e2e`, chacun son worktree. `stories` : le lot ; `consomme` : les stories et
-leurs scénarios (`US-006/S4`) ; `produit` : les tests e2e du lot ; `contrat` et `depend_de` vides. Il suit le circuit
-normal : branche, worktree, section Revue, Relecteur frais, 3 tours au maximum, merge par le PO.
-DoR propre : les stories du lot ont passé G1, les opérations qu'elles consomment sont figées, la
-matrice de couverture de la stratégie de test est à jour pour le lot, et son brief cite les scénarios
-`US-xxx/Sn` du lot avec les jeux de données d'exemple qui les illustrent.
+**e2e ticket**: `T-xxx`, same format, plus `type: e2e` and `role: qa`. The SM plans one per batch of
+stories at sprint planning, in the list of tickets to create, and the PO creates its file; it is given
+to a QA instance (`qa-1`, `qa-2`…); several QA instances give several `e2e` tickets, each with its
+worktree. `stories`: the batch; `consumes`: the stories and their scenarios (`US-006/S4`); `produces`:
+the batch's e2e tests; `contract` and `depends_on` empty. It follows the normal circuit: branch,
+worktree, Review section, fresh Reviewer, 3 rounds at most, merge by the PO.
+Own DoR: the batch's stories have passed G1, the operations they consume are frozen, the coverage
+matrix of the test strategy is up to date for the batch, and its brief cites the batch's `US-xxx/Sn`
+scenarios with the example data sets that illustrate them.

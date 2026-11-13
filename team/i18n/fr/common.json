@@ -6,7 +6,7 @@
   "decision.validated": "validé",
   "decision.changes-requested": "retours demandés",
   "date.short": "dd.mm.yyyy",
-  "decision.accepte": "accepté",
-  "decision.accepte-avec-reserves": "accepté avec réserves",
-  "decision.refuse": "refusé"
+  "decision.accepted": "accepté",
+  "decision.accepted-with-reservations": "accepté avec réserves",
+  "decision.rejected": "refusé"
 }

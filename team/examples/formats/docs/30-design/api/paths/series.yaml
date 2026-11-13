@@ -1,0 +1,142 @@
+# Path item /series, referenced by openapi.yaml
+
+post:
+  tags: [series]
+  operationId: creerSerie
+  x-endpoint-id: EP-10
+  x-module: domain/serie
+  x-release: MVP
+  x-contract: frozen
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - titulaire = employé de la session (INV-63)
+  x-processes: [PROC-01, PROC-02]
+  x-entities:
+    - {id: EN-06, access: C}
+    - {id: EN-03, access: R, via: PROC-01}
+    - {id: EN-05, access: R, via: PROC-01}
+    - {id: EN-05, access: CR, via: PROC-02}
+    - {id: EN-03, access: R, via: PROC-02}
+  x-rules: [BR-04, BR-05, BR-01, BR-02, BR-03]
+  x-idempotence: >-
+    Non idempotent ; un second envoi répond 409 SERIE_CONFLITS_CHANGES, toutes les occurrences étant
+    prises par la première série.
+  x-sequence: |
+    sequenceDiagram
+      actor U as Employé
+      participant F as Front SCR-04
+      participant A as API
+      participant T1 as PROC-01
+      participant T2 as PROC-02
+      participant D as SQLite
+      U->>F: Réserver
+      F->>A: POST /series/apercu (EP-09)
+      A-->>F: 200 aperçu
+      alt aucun conflit
+        F->>A: POST /series, tous les jours
+      else conflits
+        F-->>U: dialogue Conflits de la série, MSG-04
+        alt Revenir au formulaire ou Échap
+          F-->>U: formulaire, rien n'est créé
+        else Créer les occurrences libres
+          F->>A: POST /series, jours libres confirmés
+        end
+      end
+      A->>D: BEGIN IMMEDIATE (UnitOfWork)
+      A->>T1: occurrences et conflits, recalculés
+      T1->>D: réservations actives de la salle sur la période
+      T1-->>A: aperçu
+      alt un jour confirmé est pris depuis l'aperçu
+        A->>D: ROLLBACK
+        A-->>F: 409 SERIE_CONFLITS_CHANGES + nouvel aperçu
+        F-->>U: dialogue rouvert avec la nouvelle liste
+      else
+        A->>D: INSERT series
+        loop chaque jour confirmé et encore libre
+          A->>T2: poser le créneau (série)
+          T2->>D: INSERT reservations
+        end
+        alt PROC-02 refuse CRENEAU_PRIS (filet du déclencheur)
+          A->>D: ROLLBACK
+          A-->>F: 409 SERIE_CONFLITS_CHANGES + aperçu recalculé
+        else
+          A->>D: COMMIT
+          A-->>F: 201 SerieCreee
+          F-->>U: SCR-05 avec MSG-02 (première occurrence)
+        end
+      end
+  x-open:
+    - impact: medium
+      subject: "Série dont toutes les occurrences sont prises."
+      hypothesis: "le dialogue n'offre que « Revenir au formulaire » ; EP-10 exige au moins un jour confirmé."
+    - impact: low
+      subject: "Message quand le dialogue se rouvre après 409 SERIE_CONFLITS_CHANGES."
+      hypothesis: "aucun message dédié ; la liste et MSG-04 sont mis à jour."
+  summary: Créer une série
+  description: >-
+    Crée la série et exactement les occurrences confirmées (`joursConfirmes`), dans une seule
+    transaction immédiate : PROC-01 recalcule les conflits, puis PROC-02 pose chaque jour confirmé
+    (ADR-0002). Arbitrage PO : si une occurrence confirmée est prise depuis l'aperçu, rien n'est
+    créé et la réponse 409 SERIE_CONFLITS_CHANGES porte le nouvel aperçu, à confirmer de nouveau.
+    Une occurrence en conflit à l'aperçu et libérée depuis n'est pas créée : elle part dans
+    `ignorees`. Un refus CRENEAU_PRIS de PROC-02 (filet du déclencheur, que le recalcul de PROC-01 dans
+    la même transaction rend improbable) est traduit par l'endpoint en SERIE_CONFLITS_CHANGES avec
+    l'aperçu recalculé : la série ne renvoie jamais CRENEAU_PRIS.
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema: {$ref: '../components/schemas/series.yaml#/SerieConfirmation'}
+        example:
+          salleId: 1
+          premierJour: '2026-10-06'
+          debut: '10:00'
+          fin: '11:00'
+          frequence: hebdomadaire
+          jusquAu: '2026-12-29'
+          joursConfirmes: ['2026-10-06', '2026-10-13', '2026-10-27']
+  responses:
+    '201':
+      description: série et occurrences créées
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/series.yaml#/SerieCreee'}
+          example:
+            serieId: 7
+            reservations:
+              - {id: 41, salleId: 1, jour: '2026-10-06', debut: '10:00', fin: '11:00', titulaire: {nom: Léa Martin}, estAMoi: true, serieId: 7, annulable: true}
+              - {id: 42, salleId: 1, jour: '2026-10-13', debut: '10:00', fin: '11:00', titulaire: {nom: Léa Martin}, estAMoi: true, serieId: 7, annulable: true}
+              - {id: 43, salleId: 1, jour: '2026-10-27', debut: '10:00', fin: '11:00', titulaire: {nom: Léa Martin}, estAMoi: true, serieId: 7, annulable: true}
+            ignorees: ['2026-10-20', '2026-11-03', '2026-11-10', '2026-11-17', '2026-11-24', '2026-12-01', '2026-12-08', '2026-12-15', '2026-12-22', '2026-12-29']
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '404': {$ref: '../components/responses.yaml#/SalleIntrouvable'}
+    '409':
+      description: >-
+        au moins une occurrence confirmée est prise depuis l'aperçu ; rien n'est créé, le champ
+        apercu porte le nouvel aperçu
+      x-codes: [SERIE_CONFLITS_CHANGES]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Probleme'}
+          example:
+            type: about:blank
+            title: Disponibilités changées depuis l'aperçu
+            status: 409
+            code: SERIE_CONFLITS_CHANGES
+            apercu:
+              total: 13
+              libres: 11
+              conflits: 2
+              occurrences:
+                - {jour: '2026-10-06', statut: libre}
+                - {jour: '2026-10-13', statut: conflit}
+    '422':
+      description: >-
+        série trop longue, première occurrence hors règles, salle désactivée, ou jour confirmé qui
+        n'est pas une occurrence de la série
+      x-codes: [SERIE_TROP_LONGUE, CRENEAU_HORS_REGLES, SALLE_DESACTIVEE, JOURS_CONFIRMES_INVALIDES]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}

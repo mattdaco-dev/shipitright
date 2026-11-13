@@ -1,0 +1,50 @@
+# Path item /creneaux/plus-proche, referenced by openapi.yaml
+
+get:
+  tags: [reservations]
+  operationId: proposerCreneauPlusProche
+  x-endpoint-id: EP-18
+  x-module: domain/reservation
+  x-release: R2
+  x-contract: provisional
+  x-roles: [employe, gestionnaire]
+  x-data-control:
+    - ne révèle pas qui occupe une salle
+  x-processes: [PROC-04]
+  x-entities:
+    - {id: EN-03, access: R, via: PROC-04}
+    - {id: EN-05, access: R, via: PROC-04}
+  x-rules: [BR-09, BR-02, BR-03]
+  x-idempotence: lecture
+  x-open:
+    - impact: medium
+      subject: "Créneau le plus proche : jour, salles, durée et sens de la recherche ; aucune règle ne les fixe (point d'attention de la release R2 de la conception macro)."
+      hypothesis: "même jour, toute salle qui respecte capacité et équipements, même durée, avant ou après l'heure demandée ; algorithme de PROC-04."
+  summary: Proposer le créneau libre le plus proche
+  description: >-
+    Quand la recherche ne trouve rien, propose le créneau libre de même durée le plus proche du
+    début demandé, le même jour, dans une salle qui respecte BR-09. À égalité d'écart, le plus tôt
+    puis la plus petite salle.
+  parameters:
+    - {$ref: '../components/parameters.yaml#/Jour'}
+    - {$ref: '../components/parameters.yaml#/Debut'}
+    - {$ref: '../components/parameters.yaml#/Fin'}
+    - {$ref: '../components/parameters.yaml#/Participants'}
+    - {$ref: '../components/parameters.yaml#/Equipements'}
+  responses:
+    '200':
+      description: un créneau proposé
+      content:
+        application/json:
+          schema: {$ref: '../components/schemas/reservations.yaml#/CreneauPropose'}
+    '204':
+      description: aucun créneau libre ce jour-là
+    '400': {$ref: '../components/responses.yaml#/BadRequest'}
+    '401': {$ref: '../components/responses.yaml#/Unauthorized'}
+    '422':
+      description: créneau demandé hors règles (BR-02, BR-03)
+      x-codes: [CRENEAU_HORS_REGLES]
+      content:
+        application/problem+json:
+          schema: {$ref: '../components/schemas/errors.yaml#/Probleme'}
+    '500': {$ref: '../components/responses.yaml#/InternalError'}
