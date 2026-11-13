@@ -87,8 +87,9 @@ ajout compatible, rupture).
 
 ## Style
 
-- Français pour tout ce qui est rédigé ; code, identifiants, noms de fichiers et messages de commit
-  en anglais (Conventional Commits).
+- Français pour les fiches, skills, `PROCESS.md` et `team/` (en attendant leur passage en anglais) ;
+  anglais pour le `README.md`, les descriptions de `plugin.json` et `marketplace.json`, le code, les
+  identifiants, les noms de fichiers et les messages de commit (Conventional Commits).
 - Pas de tiret cadratin ni demi-cadratin, pas d'emojis, pas de formules creuses. Direct, concret,
   phrases courtes.
 - On ne francise pas les termes d'usage courant (roadmap, backlog, release, sprint, story, epic,

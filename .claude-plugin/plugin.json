@@ -1,7 +1,7 @@
 {
   "name": "shipitright",
   "version": "0.4.0",
-  "description": "ShipItRight (Product Builder) : une équipe d'agents Claude Code, menée par un Product Owner, qui construit un produit du besoin à la recette (cadrage, analyse, specs, UX et prototype, conception technique, sprints, recette).",
+  "description": "ShipItRight (Product Builder): a team of Claude Code agents, led by a Product Owner, that builds a product from the first need to acceptance testing (framing, analysis, specs, UX and prototype, technical design, sprints, acceptance). Deliverables in the project's language.",
   "author": {
     "name": "Matthieu Da Costa"
   },
