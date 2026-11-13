@@ -59,6 +59,7 @@
     "doc.shot.missing": "screenshot to take",
     "doc.gate.tip": "{gate} · {decision}",
     "doc.gate.tipDate": "{gate} · {decision} on {date}",
+    "doc.gate.tipBy": "{tip} by {name}",
     "doc.filter.aria": "Filter by type",
     "doc.filter.all": "All",
     "doc.filter.shown": "{n} shown out of {total}",
@@ -1592,11 +1593,11 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
   //   data-gate="G1"                        gate not crossed yet: violet band
   //   data-gate="G1|validated"              gate crossed: green band; the decision is said by the tooltip, not under the band
   //   data-gate="G0|validated|2026-10-02"   crossed, with the date of the decision (tooltip)
+  //   data-gate="G0|validated|2026-10-02|Claire Martin"  and the name of the person who decided (tooltip)
   //   data-gate-name="..."                  optional: the gate in plain words, else the label common.gate.<gate>
   // The decision is a code (common.decision.<code>, team/conventions/language.md). Hovering the badge or the band
   // (a few pixels around it), or focusing the badge, shows at once a tooltip: "Framing validation · Validated on
-  // 10/2/2026". Every gate is decided by the
-  // human: the decider is not written.
+  // 10/2/2026 by Claire Martin". The decider is the real name of the person, never "human".
   // When the last column has a gate, the grid gets one more 30 px track (.has-end) and the cells of the last
   // column span it (.rm-end): the band of that gate runs at the start of that track, so its badge stays
   // centred on it, inside the grid frame.
@@ -1618,9 +1619,10 @@ const JUNCTION_DOTS = false; // dots where links of a same card fork (off: share
         $$(':scope > .rm-gate', host).forEach((x) => x.remove());
         const box = host.getBoundingClientRect();
         $$('.rm-head[data-gate]', g).forEach((h) => {
-          const [name, verdict, date] = h.dataset.gate.split('|').map((x) => x.trim());
+          const [name, verdict, date, by] = h.dataset.gate.split('|').map((x) => x.trim());
           const gate = h.dataset.gateName || (I.has('common.gate.' + name) ? t('common.gate.' + name) : name);
-          const tip = !verdict ? gate : t(date ? 'doc.gate.tipDate' : 'doc.gate.tip', { gate, decision: cap(decision(verdict)), date: day(date) });
+          const tip0 = !verdict ? gate : t(date ? 'doc.gate.tipDate' : 'doc.gate.tip', { gate, decision: cap(decision(verdict)), date: day(date) });
+          const tip = verdict && by ? t('doc.gate.tipBy', { tip: tip0, name: by }) : tip0;
           const d = document.createElement('div');
           d.className = 'rm-gate' + (verdict ? ' done' : '');
           const end = h.classList.contains('rm-end') ? RM_END : 0;

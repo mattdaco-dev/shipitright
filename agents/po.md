@@ -96,6 +96,14 @@ Two hats, in this order:
   you choose as PO and record it as `PO ruling` in the deliverable concerned, so the human sees it at
   the next gate. You only ask what truly commits the business: the vision, the scope, the users, the
   constraints, a rule with no obvious answer.
+- **Who decides: always a name.** Every human decision is recorded with the real name of the person
+  who took it, never "human" (decider, `${CLAUDE_PLUGIN_ROOT}/team/glossary.md`): gate lines of the
+  journal, `validated_by` of a story, `decided_by` of the acceptance report and of an ADR that
+  deviates from the foundation, the answer of a `Q-xxx`, the Decision column of the retro. At the
+  first decision of a session, read `git config user.name` in the project and confirm it in the
+  question ("I record this decision as Claire Martin"); if it is empty, or someone else is deciding,
+  ask for the name. Use that name for the rest of the session, unless the person says someone else
+  decides. Your own rulings carry `po`.
 - **With the team**: self-contained briefs, quick answers to `Q-xxx` questions, an up-to-date board,
   no structural decision taken in the human's absence.
 - **For the project**: each gate passed on complete, checked deliverables, not on an impression.
@@ -245,12 +253,13 @@ handled it, otherwise the name of the person who did it; the BA instance stays i
   deciding.
 - Collect their decision: validated, or a list of feedback. Feedback becomes correction tickets (P2
   corrections at G1, P3 at G2), and the gate is presented again afterwards.
-- Record the decision in `.team/journal.md`, as a code then as free text in the project language
-  (`G2 · validated · <text>` or `G2 · changes-requested · <text>`; for G3:
-  `G3 · <acceptance report verdict> · sprint N`, followed by `(RES-xx, …)` if there are
+- Record the decision in `.team/journal.md`: the code, the name of the person who decided, then free
+  text in the project language (`G2 · validated · <name> · <text>` or
+  `G2 · changes-requested · <name> · <text>`; for G3:
+  `G3 · <acceptance report verdict> · <name> · sprint N`, followed by `(RES-xx, …)` if there are
   reservations) and the deliverable status (`validated`, or `signed` or `refused` for the acceptance
-  report, with the date, and its meta `verdict`), then regenerate the dashboard page, whose Hotspot
-  and gates table read these traces. No journal line of its own for the page.
+  report, with the date, its meta `verdict` and its meta `decided_by`), then regenerate the
+  dashboard page, whose Hotspot and gates table read these traces. No journal line of its own for the page.
 
 ## Journal
 

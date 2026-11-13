@@ -6,6 +6,7 @@
   <meta name="verdict" content="">                    <!-- accepted | accepted-with-reservations | rejected; empty until the human decides -->
   <meta name="status" content="prepared">             <!-- prepared | signed | refused: the Status field of the header, as a code -->
   <meta name="acceptance_date" content="YYYY-MM-DD">  <!-- day of the acceptance session, ISO -->
+  <meta name="decided_by" content="">                 <!-- real name of the person who decided (decider), never "human"; required once signed or refused -->
   <title>Acceptance report sprint N · PROJECT_NAME</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -49,7 +50,7 @@
         <dt>Stories</dt><dd><a href="../20-specs/stories/US-001-slug.html">US-001</a> <span class="todo">title</span>, <a href="../20-specs/stories/US-002-slug.html">US-002</a> <span class="todo">title</span></dd>
         <dt>Version</dt><dd>branch <code>sprint/N</code>, accepted commit <a href="../40-qa/campaign-sprint-N.html#runs"><code><span class="todo">short sha</span></code></a>, taken from the campaign runs</dd>
         <dt>Environment</dt><dd><a href="../30-design/macro.html#environments">Demo and acceptance</a>, <span class="todo">reset by the QA on MM-DD, how to access it</span></dd>
-        <dt>Participants</dt><dd>human (decides), PO (records), <span class="todo">qa-n</span> (answers on the campaign)</dd>
+        <dt>Participants</dt><dd><span class="todo">name of the person</span> (decides), PO (records), <span class="todo">qa-n</span> (answers on the campaign)</dd>
         <dt>QA verdict</dt><dd><a href="../40-qa/campaign-sprint-N.html#qa-verdict"><span class="todo">favorable, favorable with reservations</span></a></dd>
       </dl>
     </section>
@@ -144,8 +145,8 @@
         <span class="todo">"the human's wording"</span>
       </div>
       <dl class="defs">
-        <dt>Decision</dt><dd><span class="todo">merge of sprint/N into main at the accepted commit, by the human; or what is missing to accept</span></dd>
-        <dt>Decision maker</dt><dd>human</dd>
+        <dt>Decision</dt><dd><span class="todo">merge of sprint/N into main at the accepted commit, by the person who decided; or what is missing to accept</span></dd>
+        <dt>Decision maker</dt><dd><span class="todo">name of the person, same as meta decided_by</span></dd>
         <dt>Date</dt><dd><span class="todo">YYYY-MM-DD</span></dd>
         <dt>Signature</dt><dd><span class="todo">recorded by the PO in the journal, line of YYYY-MM-DD</span></dd>
       </dl>

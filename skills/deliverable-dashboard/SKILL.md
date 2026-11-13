@@ -73,7 +73,7 @@ metas, `data-section`, `data-col`, `data-value` and journal codes (Sources table
 |---|---|---|
 | Project name, vision (banner) | `h1` and `lede` of the framing | name: `toc-project` of the existing page, then folder name; vision: nothing |
 | Board link | `.team/notion.md`, line "Base" (URL of the database) | no button |
-| Gates G0, G1, G2 crossed, date | last `G0`, `G1`, `G2` line of the journal, code `validated` (`YYYY-MM-DD HH:MM · G1 · validated · text`; `changes-requested`: not crossed) | `data-gate="Gn\|validated\|YYYY-MM-DD"` of the roadmap grid (section `data-section="roadmap"`) |
+| Gates G0, G1, G2 crossed, date | last `G0`, `G1`, `G2` line of the journal, code `validated` and name of the person who decided (`YYYY-MM-DD HH:MM · G1 · validated · <name> · text`; `changes-requested`: not crossed) | `data-gate="Gn\|validated\|YYYY-MM-DD\|<name>"` of the roadmap grid (section `data-section="roadmap"`) |
 | Stories, titles, releases, release order | story map (`.sm-release`, `.sm-story`) | releases: G3 headers of the roadmap grid; otherwise a single release "Release" |
 | Epic of a story | section `data-section="epic-mapping"` of the story map: `data-value` of the stories cell (`US-002..US-006 US-010`); without `data-value`, the ids of the text | meta `epic` of the story, then roadmap lane |
 | Status, size, front share, validation | story `meta` tags: `status`, `size`, `front`, `validated_by`, `validated_on` (`YYYY-MM-DD`), `type` | size and front: `data-size`, `data-front` of the roadmap macro estimate |
@@ -162,9 +162,9 @@ sprint page win over the meta. Abandoned (`abandoned`): at the end of the epic, 
 of the counts. **Spikes** (`meta type="spike"`) do not appear.
 
 **Details** (untitled column): acceptance report and reservations `RES-xx` of the story for a
-delivered one; sprint for a story in a sprint; for a validated one, "at G1 on …" (`validated_by`
-`human`), "by the human on …" (raised after G1), "by the PO on …, shown at the G3 of sprint N"
-(`po`); the unanswered questions linked to the story (`linked_to`, or a `qmark` link in its page);
+delivered one; sprint for a story in a sprint; for a validated one, "at the G1 of …, by <name>"
+(`validated_by` holds the person's name), "by <name> on …" (raised after G1), "by the PO on …,
+shown at the G3 of sprint N" (`po`); the unanswered questions linked to the story (`linked_to`, or a `qmark` link in its page);
 one "!" per gap.
 
 **Summary.** One card for all releases, then one per release: delivered out of the total, gauge per
@@ -214,7 +214,9 @@ state**: "No analysis workstream: the big picture is not split into workstreams 
 ## Checks
 
 The script exits with an error (code 1) on: invalid meta `status`, `size`, `front`, `validated_by` or
-`validated_on` in a story; meta `status` or `progress` of an analysis outside its values; meta
+`validated_on` in a story (`validated_by` holding a generic word such as `human` instead of a name);
+gate line of the journal without the name of the person who decided; acceptance report `signed` or
+`refused` without meta `decided_by`; meta `status` or `progress` of an analysis outside its values; meta
 `target` that is neither `P1`, `P2`, `P3` nor a release of the story map or the roadmap (the card
 would have no column: fix the meta or the release rather than lose the workstream); campaign or
 acceptance report `verdict` outside its values; unknown ticket `status`; template without a `gen`

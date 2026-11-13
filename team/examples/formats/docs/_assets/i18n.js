@@ -51,6 +51,7 @@ window.SIR_I18N = {
   "doc.shot.missing": "capture à prendre",
   "doc.gate.tip": "{gate} · {decision}",
   "doc.gate.tipDate": "{gate} · {decision} le {date}",
+  "doc.gate.tipBy": "{tip} par {name}",
   "doc.filter.aria": "Filtrer par type",
   "doc.filter.all": "Tous",
   "doc.filter.shown": {

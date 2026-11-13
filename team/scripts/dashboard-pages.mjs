@@ -154,13 +154,15 @@ const parseFront = (src) => {
   return { meta, body: m[2] };
 };
 // A gate line carries its decision as a code right after the gate (team/conventions/language.md, section 4):
-// "2026-10-02 14:10 · G1 · validated · text"; G3 carries the verdict code of the acceptance report
+// "2026-10-02 14:10 · G1 · validated · Claire Martin · text"; G3 carries the verdict code of the acceptance report.
+// The field after the code names who decided: the person's real name, never the word "human".
 const DECISIONS = ['validated', 'changes-requested', 'accepted', 'accepted-with-reservations', 'rejected'];
 const journal = read(join(TEAM, 'journal.md')).split('\n').map((l) => l.match(/^(\d{4}-\d{2}-\d{2}) (\d{2}:\d{2}) · ([^·]+?) · (.*)$/))
   .filter(Boolean).map(([, day, time, type, text]) => {
-    const e = { day, time, type: type.trim(), text: text.trim(), decision: null };
-    const d = /^G[0-3]$/i.test(e.type) && e.text.match(/^([a-z-]+)\s*(?:·\s*([\s\S]*))?$/);
-    if (d && DECISIONS.includes(d[1])) { e.decision = d[1]; e.text = (d[2] || '').trim(); }
+    const e = { day, time, type: type.trim(), text: text.trim(), decision: null, by: '' };
+    // code · name · text: both fields are required, a single field cannot tell a name from a text
+    const d = /^G[0-3]$/i.test(e.type) && e.text.match(/^([a-z-]+)\s*(?:·\s*([^·]*?)\s*(?:·\s*([\s\S]*))?)?$/);
+    if (d && DECISIONS.includes(d[1])) { e.decision = d[1]; e.by = d[3] != null ? (d[2] || '').trim() : ''; e.text = (d[3] != null ? d[3] : d[2] || '').trim(); }
     return e;
   });
 const mentionDay = (id) => {
@@ -280,10 +282,10 @@ const rmEpic = new Map();
   });
 }
 const rmGates = new Map();
-// data-gate="G1|validated|2026-10-12" (code, ISO date)
+// data-gate="G1|validated|2026-10-12|Claire Martin" (code, ISO date, who decided)
 const isoDay = (d) => (/^\d{4}-\d{2}-\d{2}$/.test(d || '') ? d : null);
-for (const m of sectionOf(rmHtml, 'roadmap').matchAll(/data-gate="(G[0-2])\|([^"|]+)(?:\|([^"]+))?"/g)) {
-  if (m[2] === 'validated') rmGates.set(m[1], { date: isoDay(m[3]) });
+for (const m of sectionOf(rmHtml, 'roadmap').matchAll(/data-gate="(G[0-2])\|([^"|]+)(?:\|([^"|]*))?(?:\|([^"]+))?"/g)) {
+  if (m[2] === 'validated') rmGates.set(m[1], { date: isoDay(m[3]), by: (m[4] || '').trim() });
 }
 // Releases named by the roadmap when the story map does not name them
 if (!releases.length) {
@@ -306,6 +308,8 @@ const RK = (base, r, params = {}) => P(`${base}.${r.kind}`, { name: r.label, ...
 const relOf = (k) => releases.find((r) => r.key === k) || releases[0];
 
 // ---------- story pages ----------
+// Who decided: the real name of a person, or po for a PO ruling; never a generic word
+const isGenericHuman = (v) => /^(human|humain|user|utilisateur|client|customer)$/i.test(v.trim());
 const STORY_ST = ['draft', 'ready', 'validated', 'in-sprint', 'done', 'abandoned'];
 const SIZES = ['XS', 'S', 'M', 'L', 'XL'];
 const pages = new Map();
@@ -323,7 +327,7 @@ filesIn('20-specs/stories', /^US-\d+.*\.html$/).forEach((f) => {
     if (p.size && !SIZES.includes(p.size)) err(`${where}: meta size "${p.size}", expected ${SIZES.join(' | ')}`);
     if (p.front != null && p.front !== '' && !/^(100|\d{1,2})$/.test(p.front)) err(`${where}: meta front "${p.front}", expected an integer from 0 to 100`);
   }
-  if (p.validatedBy && !['human', 'po'].includes(p.validatedBy)) err(`${where}: meta validated_by "${p.validatedBy}", expected human | po`);
+  if (p.validatedBy && isGenericHuman(p.validatedBy)) err(`${where}: meta validated_by "${p.validatedBy}": write the name of the person who validated, or po`);
   if (p.validatedOn && !/^\d{4}-\d{2}-\d{2}$/.test(p.validatedOn)) err(`${where}: meta validated_on "${p.validatedOn}", expected YYYY-MM-DD`);
   if (p.status === 'validated' && !p.validatedBy) warn(`${where}: status validated without meta validated_by`);
   if (['draft', 'ready'].includes(p.status) && (p.validatedBy || p.validatedOn)) warn(`${where}: status ${p.status} with validated_by or validated_on set; a validated story has the status validated or beyond`);
@@ -390,7 +394,9 @@ const sprints = filesIn('sprints', /^sprint-\d+\.html$/).map((f) => {
       item: (strip(body).match(/\b(?:BUG|T)-\d+\b/) || [])[0] || null,
     }));
     const dt = dayOf(p, 'acceptance_date');
-    s.report = { file: pf, status: st, signed: st === 'signed', refused: st === 'refused', verdict: verdictOf(p, pf, VERDICT_P), date: dt, accepted, reserves };
+    const by = metaOf(p, 'decided_by') || '';
+    if ((st === 'signed' || st === 'refused') && (!by || isGenericHuman(by))) err(`${pf}: meta decided_by "${by}": write the name of the person who decided`);
+    s.report = { file: pf, status: st, signed: st === 'signed', refused: st === 'refused', verdict: verdictOf(p, pf, VERDICT_P), date: dt, by, accepted, reserves };
   }
   s.done = !!(s.report && s.report.signed) || s.status === 'closed';
   return s;
@@ -423,8 +429,9 @@ const gate = {};
   const last = lines[lines.length - 1];
   // decision code right after the gate
   const ok = (e) => e.decision === 'validated';
-  if (last) gate[g] = { crossed: ok(last), date: last.day, source: 'journal' };
-  else if (rmGates.has(g)) gate[g] = { crossed: true, date: rmGates.get(g).date, source: 'roadmap' };
+  if (last && last.decision && (!last.by || isGenericHuman(last.by))) err(`journal.md: ${g} line of ${last.day} without the name of the person who decided ("${g} · <decision> · <name> · <text>")`);
+  if (last) gate[g] = { crossed: ok(last), date: last.day, by: last.by, source: 'journal' };
+  else if (rmGates.has(g)) gate[g] = { crossed: true, date: rmGates.get(g).date, by: rmGates.get(g).by, source: 'roadmap' };
   else gate[g] = { crossed: false };
 });
 const crossed = (g) => !!(gate[g] && gate[g].crossed);
@@ -854,22 +861,22 @@ const genGates = () => {
   const reportLink = (s) => `<a href="${s.report.file}">${P('report-of', { n: s.n })}</a>`;
   ['G0', 'G1', 'G2'].forEach((g) => {
     const x = gate[g];
-    if (x.crossed) rowsOut.push(`<tr><td>${g}</td><td>${P(`gate.object.${g}`)}</td><td>${showDate(x.date)}</td><td>${verdictTag('validated')}</td><td>${P('gates.none')}</td><td>${trace(g)}</td></tr>`);
-    else rowsOut.push(`<tr><td>${g}</td><td>${P(`gate.object.${g}`)}</td><td></td><td>${upcoming}</td><td></td><td></td></tr>`);
+    if (x.crossed) rowsOut.push(`<tr><td>${g}</td><td>${P(`gate.object.${g}`)}</td><td>${showDate(x.date)}</td><td>${verdictTag('validated')}</td><td>${esc(x.by || '')}</td><td>${P('gates.none')}</td><td>${trace(g)}</td></tr>`);
+    else rowsOut.push(`<tr><td>${g}</td><td>${P(`gate.object.${g}`)}</td><td></td><td>${upcoming}</td><td></td><td></td><td></td></tr>`);
   });
   sprints.forEach((s) => {
     if (s.report && (s.report.signed || s.report.refused)) {
       const res = s.report.reserves.length ? s.report.reserves.map((x) => `<a href="${s.report.file}#${x.id}">${x.id}</a>`).join(', ') : P('gates.none');
-      rowsOut.push(`<tr><td>G3</td><td>${P('gates.sprint', { n: s.n })}</td><td>${showDate(s.report.date)}</td><td>${verdictTag(s.report.verdict || (s.report.refused ? 'rejected' : 'accepted'))}</td><td>${res}</td><td>${reportLink(s)}</td></tr>`);
-    } else rowsOut.push(`<tr><td>G3</td><td>${P('gates.sprint', { n: s.n })}</td><td>${s.end ? P('gates.sprint-end', { date: showDate(s.end) }) : ''}</td><td>${upcoming}</td><td></td><td>${s.report ? reportLink(s) : ''}</td></tr>`);
+      rowsOut.push(`<tr><td>G3</td><td>${P('gates.sprint', { n: s.n })}</td><td>${showDate(s.report.date)}</td><td>${verdictTag(s.report.verdict || (s.report.refused ? 'rejected' : 'accepted'))}</td><td>${esc(s.report.by)}</td><td>${res}</td><td>${reportLink(s)}</td></tr>`);
+    } else rowsOut.push(`<tr><td>G3</td><td>${P('gates.sprint', { n: s.n })}</td><td>${s.end ? P('gates.sprint-end', { date: showDate(s.end) }) : ''}</td><td>${upcoming}</td><td></td><td></td><td>${s.report ? reportLink(s) : ''}</td></tr>`);
   });
   releases.filter((r) => r.crossed || r === curRelease).forEach((r) => {
     if (r.crossed) {
       const last = inRel(r.key).map((s) => s.sprint).sort((a, b) => a.n - b.n).pop();
-      rowsOut.push(`<tr><td>G3</td><td>${RK('gates.release', r)}</td><td>${showDate(r.date)}</td><td>${verdictTag('accepted')}</td><td></td><td>${reportLink(last)}</td></tr>`);
-    } else rowsOut.push(`<tr><td>G3</td><td>${RK('gates.release', r)}</td><td>${P('gates.release-when', { n: r.total, done: r.delivered })}</td><td>${upcoming}</td><td></td><td></td></tr>`);
+      rowsOut.push(`<tr><td>G3</td><td>${RK('gates.release', r)}</td><td>${showDate(r.date)}</td><td>${verdictTag('accepted')}</td><td>${esc(last.report.by)}</td><td></td><td>${reportLink(last)}</td></tr>`);
+    } else rowsOut.push(`<tr><td>G3</td><td>${RK('gates.release', r)}</td><td>${P('gates.release-when', { n: r.total, done: r.delivered })}</td><td>${upcoming}</td><td></td><td></td><td></td></tr>`);
   });
-  const th = ['gate', 'object', 'held', 'verdict', 'reserves', 'trace'].map((c) => `<th>${P(`gates.col.${c}`)}</th>`).join('');
+  const th = ['gate', 'object', 'held', 'verdict', 'by', 'reserves', 'trace'].map((c) => `<th>${P(`gates.col.${c}`)}</th>`).join('');
   return `<table>
         <thead><tr>${th}</tr></thead>
         <tbody>
@@ -1141,7 +1148,7 @@ const genBacklog = () => {
     else if (s.status === 'validated' && s.page) {
       const p = s.page, le = isoDay(p.validatedOn);
       if (p.validatedBy === 'po') out.push(le ? P('backlog.by-po-on', { date: showDate(le), next: nextG3(le) }) : P('backlog.by-po', { next: P('backlog.show-next-g3') }));
-      else if (p.validatedBy === 'human') out.push(le && g1 && le !== g1 ? P('backlog.by-human-on', { date: showDate(le) }) : P('backlog.at-g1', { date: showDate(le || g1) }).trim());
+      else if (p.validatedBy) out.push(le && g1 && le !== g1 ? P('backlog.by-person-on', { name: esc(p.validatedBy), date: showDate(le) }) : P('backlog.at-g1-by', { name: esc(p.validatedBy), date: showDate(le || g1) }).trim());
     }
     const qs = [...new Set([...questions.filter((q) => q.status !== 'answered' && q.linked.includes(s.id)).map((q) => q.id), ...(s.page ? s.page.questions : [])])]
       .filter((q) => { const x = questions.find((y) => y.id === q); return !x || x.status !== 'answered'; }).sort();

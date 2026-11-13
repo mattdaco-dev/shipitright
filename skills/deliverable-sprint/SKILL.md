@@ -104,8 +104,8 @@ is KO at check until the sprint is closed, as expected.
   none yet gives an action, to the PO (with the BA for a functional limit).
 - **The SM proposes, they do not modify.** A proposed plugin change (`PROCESS.md`, agent file,
   convention, skill) is written as a proposal (text before, text after); the PO submits it to the
-  human with the acceptance, and the Decision column keeps the answer (`data-value="to-submit"` until
-  then). Meanwhile, the linked action covers it. Once accepted, it is applied in the ShipItRight
+  human with the acceptance, and the Decision column keeps the answer with the name of the person
+  who gave it (`data-value="to-submit"` until then). Meanwhile, the linked action covers it. Once accepted, it is applied in the ShipItRight
   framework repository, never in the installed plugin.
 - **Metrics are counted in the board**, not from memory: tickets' front matter, and the journal for
   durations. Both times are in agent hours. The estimate of a story comes from the roadmap estimate;

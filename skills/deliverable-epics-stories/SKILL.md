@@ -70,14 +70,14 @@ The `status` tag takes one of these values, in journey order:
 
 Who validates:
 
-- **Story written before G1**: validated by the human at gate G1. `validated_by` is `human`,
-  `validated_on` the date of G1.
+- **Story written before G1**: validated by the human at gate G1. `validated_by` is the name of
+  the person who decided (decider, `team/glossary.md`), `validated_on` the date of G1.
 - **Story written after G1** (releases R2, R3…): validated by the PO, as a PO ruling, then shown to
   the human at the next G3. `validated_by` is `po`, `validated_on` the date of the validation. If the
   story changes the scope or carries a strong business rule, the PO first raises it to the human:
-  `validated_by` is then `human`.
+  `validated_by` is then the name of the person who decided.
 
-The `validated_by` (`human` or `po`) and `validated_on` (`YYYY-MM-DD`, ISO date) tags stay empty
+The `validated_by` (name of the person, or `po`) and `validated_on` (`YYYY-MM-DD`, ISO date) tags stay empty
 until the story is validated. They are filled when `status` moves to `validated`, with the
 "Validated" line of the banner, and do not change afterwards: a story in a sprint or done keeps who
 validated it and when.

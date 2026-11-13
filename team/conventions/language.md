@@ -65,14 +65,17 @@ Files without attributes (Markdown, YAML): the structure is read from a fixed fo
 
 ## 4. Journal: the decision of a gate
 
-A gate line carries its decision as a code, right after the gate, then free text in the project
-language:
+A gate line carries its decision as a code, right after the gate, then the name of the person who
+decided, then free text in the project language:
 
 ```
-2026-10-02 14:10 · G1 · validated · functional design validated, P2 comments addressed
-2026-10-09 11:00 · G2 · changes-requested · three comments on the booking API
-2026-10-20 17:30 · G3 · accepted-with-reservations · sprint 1 (RES-01, RES-02)
+2026-10-02 14:10 · G1 · validated · Claire Martin · functional design validated, P2 comments addressed
+2026-10-09 11:00 · G2 · changes-requested · Claire Martin · three comments on the booking API
+2026-10-20 17:30 · G3 · accepted-with-reservations · Paul Durand · sprint 1 (RES-01, RES-02)
 ```
+
+The name is the real name of the person (decider, `team/glossary.md`), never the word "human":
+`dashboard-pages.mjs` rejects a gate line without it.
 
 Codes: `validated`, `changes-requested` for G0 to G2; for G3, the code of the acceptance report
 `verdict` (`accepted`, `accepted-with-reservations`, `rejected`). The other lines (`dispatch`,

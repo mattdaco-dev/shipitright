@@ -29,6 +29,7 @@
   "shot.missing": "screenshot to take",
   "gate.tip": "{gate} · {decision}",
   "gate.tipDate": "{gate} · {decision} on {date}",
+  "gate.tipBy": "{tip} by {name}",
   "filter.aria": "Filter by type",
   "filter.all": "All",
   "filter.shown": "{n} shown out of {total}",

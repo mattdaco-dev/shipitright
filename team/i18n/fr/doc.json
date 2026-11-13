@@ -29,6 +29,7 @@
   "shot.missing": "capture à prendre",
   "gate.tip": "{gate} · {decision}",
   "gate.tipDate": "{gate} · {decision} le {date}",
+  "gate.tipBy": "{tip} par {name}",
   "filter.aria": "Filtrer par type",
   "filter.all": "Tous",
   "filter.shown": { "one": "{n} affiché sur {total}", "other": "{n} affichés sur {total}" },

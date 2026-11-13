@@ -97,8 +97,8 @@ A single `.est` block (scale set with the gear wheel, in the reader's browser), 
 
 Gates sit on the header of the column they close: `<div class="rm-head" data-gate="G1"
 data-gate-name="Functional design approval">`. As long as the gate is not crossed, `data-gate` holds
-only its name (`G1`); crossed, it holds the decision code and its ISO date:
-`data-gate="G1|validated|2026-10-12"` (`accepted` for a G3). These codes are never translated;
+only its name (`G1`); crossed, it holds the decision code, its ISO date and the name of the person
+who decided: `data-gate="G1|validated|2026-10-12|Claire Martin"` (`accepted` for a G3). These codes are never translated;
 `data-gate-name` gives the gate in plain words, in the project language, for the tooltip. The
 section carries `data-section="roadmap"`, and the page header the metas `status` (`draft`,
 `in-review`, `validated`), `date` (ISO) and `version`, aligned with its fields: the dashboard page

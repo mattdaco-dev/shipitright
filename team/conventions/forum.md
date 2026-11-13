@@ -57,7 +57,7 @@ linked_to: [US-012, BR-08]
 <if not blocking: the hypothesis adopted to move forward>
 
 ## Answer
-<filled in by the PO, with the source: "human, 2026-10-02" or "PO, from framing BR-04">
+<filled in by the PO, with the source: "Claire Martin, 2026-10-02" (the name of the person who answered, never "human") or "PO, from framing BR-04">
 ```
 
 Section headings are written in the project language; their **order** is fixed, and that is what the
