@@ -172,7 +172,7 @@
           <tr><td><span class="tag">Technique</span></td><td>Backend en Node.js, framework au choix de l'architecte. Socle de stack <code>node-sqlite-angular</code>, à compléter en P3.</td><td>humain, 01.10.2026</td></tr>
           <tr><td><span class="tag">Technique</span></td><td>Base de données SQLite.</td><td>humain, 01.10.2026</td></tr>
           <tr><td><span class="tag">Technique</span></td><td>Frontend Angular 20+.</td><td>humain, 01.10.2026</td></tr>
-          <tr><td><span class="tag">Technique</span></td><td>Aucun design system imposé : l'UX pose un design system minimal en P2.</td><td>arbitrage PO, 05.10.2026</td></tr>
+          <tr><td><span class="tag">Technique</span></td><td>Aucun design system imposé : l'UX pose un design system minimal en P2.</td><td>arbitrage IA, 05.10.2026</td></tr>
           <tr><td><span class="tag">Réglementaire</span></td><td>Données personnelles limitées au nom, à l'email et aux réservations. Uniquement des données fictives pendant le pilote.</td><td>règles de la team</td></tr>
           <tr><td><span class="tag">Calendrier</span></td><td>Aucune échéance : projet pilote pour éprouver ShipItRight.</td><td>humain</td></tr>
         </tbody>
@@ -198,13 +198,13 @@
         <tbody>
           <tr id="BR-01"><td>BR-01</td><td>Une salle ne peut pas porter deux réservations actives qui se chevauchent, même d'une minute. Une réservation qui finit à 10h00 et une qui commence à 10h00 ne se chevauchent pas.</td><td>humain</td></tr>
           <tr id="BR-02"><td>BR-02</td><td>Les créneaux se posent par pas de 15 minutes, en heures ouvrées : du lundi au vendredi, de 8h00 à 19h00. Une réservation dure au plus 4 heures.</td><td>humain</td></tr>
-          <tr id="BR-03"><td>BR-03</td><td>On ne réserve pas dans le passé. Une réservation passée ou en cours ne s'annule plus.</td><td>arbitrage PO</td></tr>
-          <tr id="BR-04"><td>BR-04</td><td>Une réservation récurrente est quotidienne (jours ouvrés) ou hebdomadaire. Sa dernière occurrence tombe au plus 3 mois après la première.</td><td>arbitrage PO</td></tr>
-          <tr id="BR-05"><td>BR-05</td><td>Quand des occurrences d'une série tombent sur un créneau déjà pris, l'application les liste avant validation. Après confirmation, seules les occurrences libres sont créées.</td><td>arbitrage PO</td></tr>
-          <tr id="BR-06"><td>BR-06</td><td>Le titulaire annule une occurrence seule ou toutes les occurrences futures de sa série.</td><td>arbitrage PO</td></tr>
-          <tr id="BR-07"><td>BR-07</td><td>Le gestionnaire peut annuler toute réservation, avec un motif obligatoire visible par le titulaire dans « Mes réservations ».</td><td>arbitrage PO</td></tr>
-          <tr id="BR-08"><td>BR-08</td><td>Désactiver une salle annule ses réservations futures avec le motif « salle désactivée ». Une salle désactivée n'apparaît plus à la réservation.</td><td>arbitrage PO</td></tr>
-          <tr id="BR-09"><td>BR-09</td><td>La recherche ne propose que les salles actives, libres sur tout le créneau, de capacité au moins égale au besoin, qui ont tous les équipements demandés.</td><td>humain (périmètre), arbitrage PO (règle)</td></tr>
+          <tr id="BR-03"><td>BR-03</td><td>On ne réserve pas dans le passé. Une réservation passée ou en cours ne s'annule plus.</td><td>arbitrage IA</td></tr>
+          <tr id="BR-04"><td>BR-04</td><td>Une réservation récurrente est quotidienne (jours ouvrés) ou hebdomadaire. Sa dernière occurrence tombe au plus 3 mois après la première.</td><td>arbitrage IA</td></tr>
+          <tr id="BR-05"><td>BR-05</td><td>Quand des occurrences d'une série tombent sur un créneau déjà pris, l'application les liste avant validation. Après confirmation, seules les occurrences libres sont créées.</td><td>arbitrage IA</td></tr>
+          <tr id="BR-06"><td>BR-06</td><td>Le titulaire annule une occurrence seule ou toutes les occurrences futures de sa série.</td><td>arbitrage IA</td></tr>
+          <tr id="BR-07"><td>BR-07</td><td>Le gestionnaire peut annuler toute réservation, avec un motif obligatoire visible par le titulaire dans « Mes réservations ».</td><td>arbitrage IA</td></tr>
+          <tr id="BR-08"><td>BR-08</td><td>Désactiver une salle annule ses réservations futures avec le motif « salle désactivée ». Une salle désactivée n'apparaît plus à la réservation.</td><td>arbitrage IA</td></tr>
+          <tr id="BR-09"><td>BR-09</td><td>La recherche ne propose que les salles actives, libres sur tout le créneau, de capacité au moins égale au besoin, qui ont tous les équipements demandés.</td><td>humain (périmètre), arbitrage IA (règle)</td></tr>
         </tbody>
       </table>
     </section>

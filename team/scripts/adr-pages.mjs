@@ -91,10 +91,10 @@ const adrs = pages.map((file) => {
   if (!(a.status in STATUS)) { err(`${where}: meta status "${a.status ?? ''}", expected ${Object.keys(STATUS).join(' | ')}`); a.status = 'proposed'; }
   if (!/^\d{4}-\d{2}-\d{2}$/.test(a.date || '') || isNaN(Date.parse(a.date))) { err(`${where}: meta date "${a.date ?? ''}", expected YYYY-MM-DD`); a.date = a.date || ''; }
   if (!['yes', 'no'].includes(a.deviation)) err(`${where}: meta foundation_deviation "${a.deviation ?? ''}", expected yes | no`);
-  // who decided: the real name of the person, or architect for a choice the foundation leaves open; never "human"
+  // who decided: the real name of the person, or ai (AI ruling) for a choice the foundation leaves open; never "human"
   if (/^(human|humain|user|utilisateur)$/i.test(a.decider)) err(`${where}: meta decided_by "${a.decider}": write the name of the person who decided`);
   if (['accepted', 'superseded'].includes(a.status) && !a.decider) err(`${where}: status ${a.status} without meta decided_by`);
-  if (a.status === 'accepted' && a.deviation === 'yes' && ['architect', 'po'].includes(a.decider.toLowerCase())) err(`${where}: an accepted foundation deviation is decided by the human: meta decided_by holds the person's name`);
+  if (a.status === 'accepted' && a.deviation === 'yes' && a.decider.toLowerCase() === 'ai') err(`${where}: an accepted foundation deviation is decided by the human: meta decided_by holds the person's name`);
   a.answers.forEach((q) => { if (!/^Q-\d{3}$/.test(q)) err(`${where}: answers "${q}", expected Q-xxx`); });
   // h1: "ADR-NNNN: title"
   const h1 = strip((html.match(/<h1[^>]*>([\s\S]*?)<\/h1>/) || [])[1] || '');
@@ -194,7 +194,7 @@ const header = (a) => {
         <span><b>${t('adr.meta.replaced-by')}</b> ${links(a.by, t('adr.none.adr'))}</span>
         <span><b>${t('adr.meta.answers')}</b> ${a.answers.length ? a.answers.map(qLink).join(', ') : `<span class="none">${t('adr.none.question')}</span>`}</span>
         <span><b>${t('adr.meta.deviation')}</b> ${deviationTag(a.deviation)}</span>
-        <span><b>${t('adr.meta.decided-by')}</b> ${a.decider ? (a.decider.toLowerCase() === 'architect' ? t('adr.decider.architect') : esc(a.decider)) : `<span class="none">${t('adr.none.decider')}</span>`}</span>
+        <span><b>${t('adr.meta.decided-by')}</b> ${a.decider ? (a.decider.toLowerCase() === 'ai' ? t('adr.decider.ai') : esc(a.decider)) : `<span class="none">${t('adr.none.decider')}</span>`}</span>
       </div>`];
   if (a.by.length) out.push(`<div class="callout warn"><b>${t('adr.callout.replaced.title')}</b>${t('adr.callout.replaced.text', { links: a.by.map(adrLink).join(', ') })}</div>`);
   if (a.byProposed.length) out.push(`<div class="callout warn"><b>${t('adr.callout.replacement.title')}</b>${t('adr.callout.replacement.text', { links: a.byProposed.map(adrLink).join(', ') })}</div>`);

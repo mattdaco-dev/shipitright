@@ -438,8 +438,8 @@
     "one": "réserve {list}",
     "other": "réserves {list}"
   },
-  "backlog.by-po": "par le PO, {next}",
-  "backlog.by-po-on": "par le PO le {date}, {next}",
+  "backlog.by-ai": "arbitrage IA, {next}",
+  "backlog.by-ai-on": "arbitrage IA le {date}, {next}",
   "backlog.by-person-on": "par {name} le {date}",
   "backlog.at-g1-by": "au G1 du {date}, par {name}",
   "backlog.gap-tip": "Écart : {label}",

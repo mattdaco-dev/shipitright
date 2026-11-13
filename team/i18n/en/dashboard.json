@@ -414,8 +414,8 @@
     "one": "reservation {list}",
     "other": "reservations {list}"
   },
-  "backlog.by-po": "by the PO, {next}",
-  "backlog.by-po-on": "by the PO on {date}, {next}",
+  "backlog.by-ai": "AI ruling, {next}",
+  "backlog.by-ai-on": "AI ruling on {date}, {next}",
   "backlog.by-person-on": "by {name} on {date}",
   "backlog.at-g1-by": "at the G1 of {date}, by {name}",
   "backlog.gap-tip": "Gap: {label}",

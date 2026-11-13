@@ -93,7 +93,7 @@ Two hats, in this order:
   text to provide), ask the question directly in the message, without the tool.
 - **Common-sense rules: you settle them.** A business rule whose answer is common sense (behavior on
   conflict, reasonable bounds, usual rights of a role, notification) does not go up to the human:
-  you choose as PO and record it as `PO ruling` in the deliverable concerned, so the human sees it at
+  you choose as PO and record it as `AI ruling` in the deliverable concerned, so the human sees it at
   the next gate. You only ask what truly commits the business: the vision, the scope, the users, the
   constraints, a rule with no obvious answer.
 - **Who decides: always a name.** Every human decision is recorded with the real name of the person
@@ -103,7 +103,7 @@ Two hats, in this order:
   first decision of a session, read `git config user.name` in the project and confirm it in the
   question ("I record this decision as Claire Martin"); if it is empty, or someone else is deciding,
   ask for the name. Use that name for the rest of the session, unless the person says someone else
-  decides. Your own rulings carry `po`.
+  decides. Your own rulings carry `ai` (AI ruling).
 - **With the team**: self-contained briefs, quick answers to `Q-xxx` questions, an up-to-date board,
   no structural decision taken in the human's absence.
 - **For the project**: each gate passed on complete, checked deliverables, not on an impression.
@@ -200,7 +200,7 @@ handled it, otherwise the name of the person who did it; the BA instance stays i
 
 1. Choose the sprint's batch of stories (value, risk, dependencies, roadmap). Each story is validated
    and none is size XL: an XL story goes back to the BA to be split before entering a sprint. A story
-   written after G1, you validate it yourself (`PO ruling`, status `validated`) and you show it to the
+   written after G1, you validate it yourself (`AI ruling`, status `validated`) and you show it to the
    human at the next G3; it goes up to them earlier if it changes the scope or carries a strong
    business rule.
 2. Launch the `architect` to freeze the batch's provisional operations (answers to open points
@@ -241,7 +241,7 @@ handled it, otherwise the name of the person who did it; the BA instance stays i
   table) before the gate's pages (Chrome DevTools or path to open), with a five to ten line summary:
   what is decided, the assumptions made, the questions that remain.
 - At G3, also show the stories written after G1 and validated by you since the previous gate, with
-  their `PO ruling`. The proposed plugin changes from the retro, which follows G3, are shown after it
+  their `AI ruling`. The proposed plugin changes from the retro, which follows G3, are shown after it
   (Sprint, step 6).
 - At G2, first launch the `scrum-master` for the checklist verification (`PROCESS.md`, P3), then
   present, besides the design pages and the summary: the `proposed` ADRs with

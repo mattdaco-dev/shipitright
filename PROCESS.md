@@ -178,7 +178,7 @@ overview in `team/deliverables.md`.
   corrections, then the gate is presented again.
 - **After G1**: epics and stories carried over to the Notion board, if it exists.
 - **Story written after G1**, whether or not it comes from an analysis workstream opened after G1:
-  the PO validates it (`PO ruling`, status `validated`), then shows it to the human at the next G3.
+  the PO validates it (`AI ruling`, status `validated`), then shows it to the human at the next G3.
   It goes up to them earlier, without waiting for that gate, if it changes the scope or carries a
   strong business rule.
 

@@ -41,7 +41,7 @@ The acceptance report records what the human checked and what they decided. It i
 | Section | Level | What is expected |
 |---|---|---|
 | Accepted scope | required | stories, version (branch and accepted commit, taken from the campaign, as a link to `campaign-sprint-N.html#runs`), environment and its reset, date, participants, starting QA verdict as a link |
-| Acceptance path | required | 15 minutes at most: one table per journey, steps numbered end to end, targeting the decisions taken by delegation (PO rulings), the accepted limits and one complete journey; the other scenarios point to the campaign. Per step: scenario `US-xxx/Sn` as a link, action and data to enter, expected result, actual result, status (`ok`, `reservation` with its `RES-xx`, `ko`); an end-of-journey line names the scenarios without a step and where the campaign proves them |
+| Acceptance path | required | 15 minutes at most: one table per journey, steps numbered end to end, targeting the decisions taken by delegation (AI rulings), the accepted limits and one complete journey; the other scenarios point to the campaign. Per step: scenario `US-xxx/Sn` as a link, action and data to enter, expected result, actual result, status (`ok`, `reservation` with its `RES-xx`, `ko`); an end-of-journey line names the scenarios without a step and where the campaign proves them |
 | Results | required | per story: steps, accepted, accepted with reservations, rejected, human's comment word for word |
 | Reservations | required | `RES-xx` (row anchor), gap observed, story and step, ticket (existing `BUG-xxx` or `T-xxx` created), due. None: say so |
 | Accepted open bugs | required | majors only: `BUG-xxx`, title, written acceptance by the PO in the campaign, human's reason, due. None: say so, naming the minors carried over as reservations |
@@ -68,7 +68,7 @@ is not rewritten; the dashboard page removes the reservation from its Hotspot ba
 ## Quality rules
 
 - **The acceptance path takes 15 minutes at most.** The human plays it in full: it targets what only
-  they can judge, the decisions taken by delegation (PO rulings), the accepted limits
+  they can judge, the decisions taken by delegation (AI rulings), the accepted limits
   (upcoming reservations, open bugs, sprint debts) and one complete journey end to end. The other
   scenarios have no step: the end-of-journey line points them to the campaign results.
 - **The acceptance path reads without the team.** Each step says what to do on screen and what one

@@ -163,8 +163,8 @@ of the counts. **Spikes** (`meta type="spike"`) do not appear.
 
 **Details** (untitled column): acceptance report and reservations `RES-xx` of the story for a
 delivered one; sprint for a story in a sprint; for a validated one, "at the G1 of …, by <name>"
-(`validated_by` holds the person's name), "by <name> on …" (raised after G1), "by the PO on …,
-shown at the G3 of sprint N" (`po`); the unanswered questions linked to the story (`linked_to`, or a `qmark` link in its page);
+(`validated_by` holds the person's name), "by <name> on …" (raised after G1), "AI ruling on …,
+shown at the G3 of sprint N" (`ai`); the unanswered questions linked to the story (`linked_to`, or a `qmark` link in its page);
 one "!" per gap.
 
 **Summary.** One card for all releases, then one per release: delivered out of the total, gauge per

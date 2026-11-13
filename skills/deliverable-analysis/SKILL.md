@@ -45,7 +45,7 @@ in scope), what is outside the workstream.
 The PO may open a workstream after G1, to prepare a later phase or release. It follows the same
 format and the same rules as in P1; its meta `target` carries the phase or release aimed at. The
 stories that come out of it follow the rule of stories written after G1
-(`${CLAUDE_PLUGIN_ROOT}/PROCESS.md`, section 4, P2): the PO validates them (`PO ruling`, status
+(`${CLAUDE_PLUGIN_ROOT}/PROCESS.md`, section 4, P2): the PO validates them (`AI ruling`, status
 `validated`) and shows them to the human at the next G3; they go up to the human earlier if they
 change the scope or carry a strong business rule.
 

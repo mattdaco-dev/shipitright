@@ -13,7 +13,7 @@ devs implement them, the QA tests their criteria, the PO carries them into the N
 and stories are **HTML pages**, rendered like the other deliverables: the human reads them from the
 story map, agents filter them by their `<meta>` tags.
 
-- **Author**: Business Analyst. **Contributors**: PO (priority, PO rulings), QA (acceptance
+- **Author**: Business Analyst. **Contributors**: PO (priority, AI rulings), QA (acceptance
   criteria), Architect ("Technical notes" section and `endpoints` tag, in P3).
 - **Phase**: P2. They go through gate **G1**, validated by the human. Technical notes are completed
   in P3, before sprint planning. A story written after G1 (releases R2, R3…) is validated by the PO,
@@ -72,12 +72,12 @@ Who validates:
 
 - **Story written before G1**: validated by the human at gate G1. `validated_by` is the name of
   the person who decided (decider, `team/glossary.md`), `validated_on` the date of G1.
-- **Story written after G1** (releases R2, R3…): validated by the PO, as a PO ruling, then shown to
-  the human at the next G3. `validated_by` is `po`, `validated_on` the date of the validation. If the
+- **Story written after G1** (releases R2, R3…): validated by the PO, as an AI ruling, then shown to
+  the human at the next G3. `validated_by` is `ai`, `validated_on` the date of the validation. If the
   story changes the scope or carries a strong business rule, the PO first raises it to the human:
   `validated_by` is then the name of the person who decided.
 
-The `validated_by` (name of the person, or `po`) and `validated_on` (`YYYY-MM-DD`, ISO date) tags stay empty
+The `validated_by` (name of the person, or `ai` for an AI ruling) and `validated_on` (`YYYY-MM-DD`, ISO date) tags stay empty
 until the story is validated. They are filled when `status` moves to `validated`, with the
 "Validated" line of the banner, and do not change afterwards: a story in a sprint or done keeps who
 validated it and when.

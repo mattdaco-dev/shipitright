@@ -59,7 +59,7 @@ post:
       end
   x-open:
     - impact: high
-      subject: "Annulation de la série d'autrui par le gestionnaire : un refus changerait les droits d'une opération figée ; offrir « toute la série » sur SCR-02 est un arbitrage PO, non posé dans cet exemple."
+      subject: "Annulation de la série d'autrui par le gestionnaire : un refus changerait les droits d'une opération figée ; offrir « toute la série » sur SCR-02 est un arbitrage IA, non posé dans cet exemple."
       hypothesis: "permise, BR-11 valant pour chaque occurrence ; aucun écran ne l'offre au MVP."
   summary: Annuler les occurrences à venir d'une série
   description: >-

@@ -76,7 +76,7 @@ post:
   description: >-
     Crée la série et exactement les occurrences confirmées (`joursConfirmes`), dans une seule
     transaction immédiate : PROC-01 recalcule les conflits, puis PROC-02 pose chaque jour confirmé
-    (ADR-0002). Arbitrage PO : si une occurrence confirmée est prise depuis l'aperçu, rien n'est
+    (ADR-0002). Arbitrage IA : si une occurrence confirmée est prise depuis l'aperçu, rien n'est
     créé et la réponse 409 SERIE_CONFLITS_CHANGES porte le nouvel aperçu, à confirmer de nouveau.
     Une occurrence en conflit à l'aperçu et libérée depuis n'est pas créée : elle part dans
     `ignorees`. Un refus CRENEAU_PRIS de PROC-02 (filet du déclencheur, que le recalcul de PROC-01 dans

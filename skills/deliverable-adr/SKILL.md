@@ -63,7 +63,7 @@ page (block `<!-- gen:adr-meta -->`) and the register. They are not copied elsew
 | `status` | `proposed`, `accepted`, `superseded`, `abandoned` | required |
 | `date` | `YYYY-MM-DD`, date of the last status change | required |
 | `foundation_deviation` | `yes` or `no` | required |
-| `decided_by` | who decided, once `accepted`: `architect` for a choice the foundation leaves open; the real name of the person for a foundation deviation (decider, `team/glossary.md`), never "human" | required once accepted |
+| `decided_by` | who decided, once `accepted`: `ai` (AI ruling) for a choice the foundation leaves open; the real name of the person for a foundation deviation (decider, `team/glossary.md`), never "human" | required once accepted |
 | `supersedes` | the `ADR-xxxx` this decision supersedes, separated by spaces; empty otherwise | required if it supersedes |
 | `answers` | the `Q-xxx` it answers; empty otherwise | recommended |
 

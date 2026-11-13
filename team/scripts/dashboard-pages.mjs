@@ -308,7 +308,7 @@ const RK = (base, r, params = {}) => P(`${base}.${r.kind}`, { name: r.label, ...
 const relOf = (k) => releases.find((r) => r.key === k) || releases[0];
 
 // ---------- story pages ----------
-// Who decided: the real name of a person, or po for a PO ruling; never a generic word
+// Who decided: the real name of a person, or ai for an AI ruling; never a generic word
 const isGenericHuman = (v) => /^(human|humain|user|utilisateur|client|customer)$/i.test(v.trim());
 const STORY_ST = ['draft', 'ready', 'validated', 'in-sprint', 'done', 'abandoned'];
 const SIZES = ['XS', 'S', 'M', 'L', 'XL'];
@@ -327,7 +327,7 @@ filesIn('20-specs/stories', /^US-\d+.*\.html$/).forEach((f) => {
     if (p.size && !SIZES.includes(p.size)) err(`${where}: meta size "${p.size}", expected ${SIZES.join(' | ')}`);
     if (p.front != null && p.front !== '' && !/^(100|\d{1,2})$/.test(p.front)) err(`${where}: meta front "${p.front}", expected an integer from 0 to 100`);
   }
-  if (p.validatedBy && isGenericHuman(p.validatedBy)) err(`${where}: meta validated_by "${p.validatedBy}": write the name of the person who validated, or po`);
+  if (p.validatedBy && isGenericHuman(p.validatedBy)) err(`${where}: meta validated_by "${p.validatedBy}": write the name of the person who validated, or ai for an AI ruling`);
   if (p.validatedOn && !/^\d{4}-\d{2}-\d{2}$/.test(p.validatedOn)) err(`${where}: meta validated_on "${p.validatedOn}", expected YYYY-MM-DD`);
   if (p.status === 'validated' && !p.validatedBy) warn(`${where}: status validated without meta validated_by`);
   if (['draft', 'ready'].includes(p.status) && (p.validatedBy || p.validatedOn)) warn(`${where}: status ${p.status} with validated_by or validated_on set; a validated story has the status validated or beyond`);
@@ -1147,7 +1147,7 @@ const genBacklog = () => {
     } else if (s.status === 'sprint') out.push(`<a href="${s.sprint.committed}">${P('sprint', { n: s.sprint.n })}</a>`);
     else if (s.status === 'validated' && s.page) {
       const p = s.page, le = isoDay(p.validatedOn);
-      if (p.validatedBy === 'po') out.push(le ? P('backlog.by-po-on', { date: showDate(le), next: nextG3(le) }) : P('backlog.by-po', { next: P('backlog.show-next-g3') }));
+      if (p.validatedBy === 'ai') out.push(le ? P('backlog.by-ai-on', { date: showDate(le), next: nextG3(le) }) : P('backlog.by-ai', { next: P('backlog.show-next-g3') }));
       else if (p.validatedBy) out.push(le && g1 && le !== g1 ? P('backlog.by-person-on', { name: esc(p.validatedBy), date: showDate(le) }) : P('backlog.at-g1-by', { name: esc(p.validatedBy), date: showDate(le || g1) }).trim());
     }
     const qs = [...new Set([...questions.filter((q) => q.status !== 'answered' && q.linked.includes(s.id)).map((q) => q.id), ...(s.page ? s.page.questions : [])])]

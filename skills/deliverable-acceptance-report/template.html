@@ -60,7 +60,7 @@
       <div class="info-body" hidden>
         <dl class="defs">
           <dt>Purpose</dt><dd>Give the human a walkthrough they follow alone, on screen, and keep track of what they saw.</dd>
-          <dt>Content</dt><dd>15 minutes at most: steps numbered end to end, per journey, that target the decisions taken by delegation (PO rulings), the accepted limits and one complete journey; per step, scenario served, action with the data to enter, expected result, actual result, status.</dd>
+          <dt>Content</dt><dd>15 minutes at most: steps numbered end to end, per journey, that target the decisions taken by delegation (AI rulings), the accepted limits and one complete journey; per step, scenario served, action with the data to enter, expected result, actual result, status.</dd>
           <dt>Why this format</dt><dd>An acceptance test case: action, expected, actual. The expected result and the data come from the scenarios and data sets <code>US-xxx/Dn</code> of the stories, shifted to future dates without changing the day of the week; the actual result is noted during acceptance, with the words of the screen. Three statuses: <span class="tag ok">ok</span>, <span class="tag warn">reservation</span> (the gap becomes a reservation), <span class="tag danger">ko</span> (the human rejects the step).</dd>
           <dt>Read</dt><dd>A journey, not one scenario per step: the human plays the whole path, the other scenarios and those the screen cannot trigger (technical error, past state) have no step, the end-of-journey line says where the campaign proves them. The order follows the recommendation of the QA verdict: the human first judges a reservation on screen.</dd>
         </dl>
