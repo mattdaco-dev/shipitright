@@ -86,7 +86,7 @@ and Grep if available, otherwise `find` or `grep` as a single command.
   `feat(t-012): add invoice creation endpoint`. Details:
   `${CLAUDE_PLUGIN_ROOT}/team/conventions/git.md`.
 - **Installing tools** on the machine (JDK, sbt, Docker…): only if the brief plans it, the human
-  having agreed with the PO.
+  having given the PO their approval.
 - **Outside the project**: an agent changes nothing outside the project root, nor the plugin. A
   foundation created for the project goes to `.team/foundations/`. A plugin change is written as a
   proposal (proposed plugin change, `Sn-Em`, in the retro of the sprint page), applied by the human

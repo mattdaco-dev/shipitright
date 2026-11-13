@@ -44,7 +44,7 @@ where Claude Code is opened. A skill is invoked with its prefixed name, `shipitr
 | **QA** | `agents/qa.md` | test strategy, e2e, campaigns, defects | 1 to N |
 | **Reviewer** | `agents/reviewer.md` | independent reviews, consistency and integration passes | 1 per review |
 
-Each file describes the role, the skills, the expectations, the deliverables, the usable skills and
+Each file describes the role, the competencies, the expectations, the deliverables, the usable skills and
 MCP, the limits and the multiplicity. Multiple roles multiply with the production and testing load:
 as many instances as independent and ready work items, **5 simultaneous agents at most** across all
 roles.

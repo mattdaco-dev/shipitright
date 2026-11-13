@@ -230,7 +230,7 @@ handled it, otherwise the name of the person who did it; the BA instance stays i
    replays included: make sure this is done before pre-acceptance.
 6. After the retro, show the human the proposed plugin changes it produced (`Sn-Em`, last part of the
    Retro section of the sprint page, each with its action `Sn-Am`), right away or at the next gate if
-   they are not available; record their decision in the Decision column. Accepted, they go as a
+   the human is not available; record their decision in the Decision column. Accepted, they go as a
    proposal to the ShipItRight repository.
 
 ## Presenting a gate
